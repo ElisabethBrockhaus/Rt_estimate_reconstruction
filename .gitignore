@@ -1,0 +1,2 @@
+# ignore incidence data that is not needed for estimation
+incidence_data/*.csv

@@ -1,6 +1,6 @@
 library(EpiEstim)
 
-# estimate as in RKI2020
+### estimate as in RKI2020
 estimate_RKI_R <- function(incid){
   
   # calculate estimates
@@ -14,7 +14,7 @@ estimate_RKI_R <- function(incid){
 
 
 
-# estimate as in RKI2020 but using EpiEstim (Bayes)
+### estimate as in RKI2020 but using EpiEstim (Bayes)
 estimate_RKI_R_EpiEstim <- function(incid){
   
   # deterministic serial interval (4 days)
@@ -39,7 +39,7 @@ estimate_RKI_R_EpiEstim <- function(incid){
 
 
 
-# estimate as in Huisman2021
+### estimate as in Huisman2021
 estimate_ETH_R <- function(incid,
                            window=3,
                            delays=c(Cori = 10, WallingaTeunis = 5),
@@ -68,7 +68,7 @@ estimate_ETH_R <- function(incid,
 
 
 
-# estimate as in Hotz2020
+### estimate as in Hotz2020
 estimate_Ilmenau_R <- function(incid){
   
   # infectivity profile
@@ -81,13 +81,20 @@ estimate_Ilmenau_R <- function(incid){
   report.delay <- 7
   alpha <- 0.05
   
-  # estimation
-  estimate <- repronum(new.cases = incid$I,
-                       profile = infectivity)$repronum
+  # calculate estimates
+  estimate <- repronum(
+    new.cases = incid$new.cases,
+    profile = infectivity,
+    window = width,
+    delay = report.delay,
+    conf.level = 1 - alpha,
+    pad.zeros = TRUE
+  )$repronum
 
   return(estimate)
 }
 
+### function from Ilmenau repo for Rt estimation
 repronum <- function(
   new.cases, # I
   profile, # w

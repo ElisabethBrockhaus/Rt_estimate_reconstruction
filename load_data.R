@@ -1,5 +1,7 @@
 library(readr)
 library(dplyr)
+library(qs)
+library(lubridate)
 
 
 download_OWID_data <- function(){
@@ -80,22 +82,19 @@ load_ETH_data <- function(){
 
 load_Ilmenau_data <- function(){
   
-  # path to RKI incidence data
-  repo_incid <- "https://raw.githubusercontent.com/robert-koch-institut/SARS-CoV-2-Nowcasting_und_-R-Schaetzung/main/Nowcast_R_aktuell.csv"
+  # path to preprocessed RKI incidence data
+  path_incid <- "Rt_estimate_reconstruction/incidence_data/data_ger_tot.qs"
   
   # load incidence data
-  incidence <- read_csv(repo_incid)
-  names(incidence) <- c("Datum", "NeuErkr", "lb_NeuErkr", "ub_NeuErkr",
-                        "NeuErkr_ma4", "lb_NeuErkr_ma4", "ub_NeuErkr_ma4",
-                        "R_7Tage", "lb_R_7Tage", "ub_R_7Tage")
-  incidence <- data.frame(dates=incidence$Datum, I=incidence$NeuErkr)
+  incidence <- qread(path_incid)
+  incidence <- data.frame(dates=incidence$date, I=incidence$tot.cases, new.cases=incidence$new.cases)
+  incidence$dates <- as_date(incidence$dates)
   
   # load Rt estimates published by TU Ilmenau
   path <- "reproductive_numbers/data-processed/ilmenau/2021-07-12-ilmenau.csv"
   Ilmenau_7day <- read_csv(path)
   Ilmenau_7day <- Ilmenau_7day[Ilmenau_7day$type=="point",][c("date", "value")]
   names(Ilmenau_7day) <- c("dates", "R")
-  #Ilmenau_7day <- na.omit(Ilmenau_7day)
   
   # return data frame with incidence and published R estimates
   return(full_join(data.frame(incidence), Ilmenau_7day, by="dates"))
