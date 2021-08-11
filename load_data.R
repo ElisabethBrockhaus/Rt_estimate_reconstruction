@@ -62,7 +62,7 @@ load_ETH_data <- function(){
   caseData$local_infection <- rep(T, nrow(caseData))
   
   # use deconvoluted ts instead of reported values
-  caseData$value <- round(caseData$deconvoluted, digits=0)
+  caseData$value <- caseData$deconvoluted
   
   # only keep data for which the deconvoluted ts is known
   caseData <- caseData[!is.na(caseData$value),]
@@ -88,19 +88,17 @@ load_Ilmenau_data <- function(){
   names(incidence) <- c("Datum", "NeuErkr", "lb_NeuErkr", "ub_NeuErkr",
                         "NeuErkr_ma4", "lb_NeuErkr_ma4", "ub_NeuErkr_ma4",
                         "R_7Tage", "lb_R_7Tage", "ub_R_7Tage")
+  incidence <- data.frame(dates=incidence$Datum, I=incidence$NeuErkr)
   
   # load Rt estimates published by TU Ilmenau
   path <- "reproductive_numbers/data-processed/ilmenau/2021-07-12-ilmenau.csv"
   Ilmenau_7day <- read_csv(path)
   Ilmenau_7day <- Ilmenau_7day[Ilmenau_7day$type=="point",][c("date", "value")]
-  Ilmenau_7day <- na.omit(Ilmenau_7day)
+  names(Ilmenau_7day) <- c("dates", "R")
+  #Ilmenau_7day <- na.omit(Ilmenau_7day)
   
   # return data frame with incidence and published R estimates
-  return(data.frame(dates=incidence$Datum,
-                    I=incidence$NeuErkr,
-                    R=c(rep(NA, min(Ilmenau_7day$date)-min(incidence$Datum)),
-                        Ilmenau_7day$value,
-                        rep(NA, max(incidence$Datum)-max(Ilmenau_7day$date)))))
+  return(full_join(data.frame(incidence), Ilmenau_7day, by="dates"))
 }
 
 

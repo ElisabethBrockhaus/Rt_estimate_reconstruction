@@ -69,7 +69,7 @@ estimate_ETH_R <- function(incid,
 
 
 # estimate as in Hotz2020
-estimate_Illmenau_R <- function(incid){
+estimate_Ilmenau_R <- function(incid){
   
   # infectivity profile
   infectivity <- c((0:3)/3, 1, (5:0)/5)
@@ -83,8 +83,9 @@ estimate_Illmenau_R <- function(incid){
   
   # estimation
   estimate <- repronum(new.cases = incid$I,
-                       profile = infectivity)
-  print(estimate)
+                       profile = infectivity)$repronum
+
+  return(estimate)
 }
 
 repronum <- function(

@@ -48,7 +48,15 @@ plot_published_vs_calculated(published=data.frame(dates=ETH_data$date,
 Ilmenau_data <- load_Ilmenau_data()
 
 # estimation
+source("Rt_estimate_reconstruction/calculate_estimates.R")
 Ilmenau_est <- estimate_Ilmenau_R(Ilmenau_data)
 
 # plots for comparison
 plot_published_vs_calculated(Ilmenau_data, Ilmenau_est, method_name="Ilmenau")
+
+
+
+
+
+
+
