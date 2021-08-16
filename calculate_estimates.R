@@ -51,7 +51,7 @@ estimate_ETH_R <- function(incid,
   source("ETH/covid-19-re-shiny-app/app/otherScripts/3_utils_doReEstimates.R")
   
   # Run EpiEstim
-  estimate <- doReEstimation(
+  estimateRaw <- doReEstimation(
     incid,
     slidingWindow = window,
     methods = c("Cori"),
@@ -59,6 +59,18 @@ estimate_ETH_R <- function(incid,
     delays = delays,
     truncations = truncations
   )
+  
+  #estimate <- cleanCountryReEstimate(estimateRaw,
+  #                                   method = 'bootstrap',
+  #                                   rename_types = F) 
+  #View(estimate)
+  
+  #estimate <- estimate %>%
+  #  left_join(
+  #    dplyr::select(popData, region, countryIso3),
+  #    by = c("region")
+  #  )
+  estimate<-estimateRaw
   estimate <- estimate[estimate$variable=="R_mean",]
   
   estimate <- full_join(incid[,c("date", "deconvoluted")], estimate)$value

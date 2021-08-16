@@ -101,3 +101,22 @@ load_Ilmenau_data <- function(){
 }
 
 
+load_epiforecasts_data <- function(){
+  
+  # path to preprocessed RKI incidence data
+  #path_incid <- "Rt_estimate_reconstruction/incidence_data/RKI_COVID19.csv"
+  
+  # load incidence data
+  #incidence <- read_csv(path_incid)
+  #incidence <- data.frame(dates=incidence$date, I=incidence$tot.cases, new.cases=incidence$new.cases)
+  #incidence$dates <- as_date(incidence$dates)
+  
+  # load Rt estimates from epiforecasts
+  path <- "reproductive_numbers/data-processed/epiforecasts/2021-07-28-epiforecasts.csv"
+  epiforecasts_1day <- read_csv(path)
+  epiforecasts_1day <- epiforecasts_1day[epiforecasts_1day$type=="point"8i9,][c("date", "value")]
+  names(epiforecasts_1day) <- c("dates", "R")
+  
+  # return data frame with incidence and published R estimates
+  return(epiforecasts_1day)
+}

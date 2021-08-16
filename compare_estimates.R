@@ -55,7 +55,25 @@ plot_published_vs_calculated(Ilmenau_data, Ilmenau_est, method_name="Ilmenau")
 
 
 
+##############
+# epiforecasts
+##############
+source("Rt_estimate_reconstruction/load_data.R")
+source("Rt_estimate_reconstruction/calculate_estimates.R")
 
+# load data
+epiforecasts_data <- load_epiforecasts_data()
+
+# estimation
+EpiNow2_est <- estimate_EpiNow2_R(epiforecasts_data)
+EpiNow2_est <- out$estimates$summarised
+EpiNow2_est <- EpiNow2_est[EpiNow2_est$variable=="R", c("date", "mean")]
+
+# plots for comparison
+plot(epiforecasts_data, type="l")
+lines(EpiNow2_est, col="blue")
+
+plot_published_vs_calculated(epiforecasts_data, EpiNow2_est, method_name="EpiNow2")
 
 
 
