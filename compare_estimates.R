@@ -68,12 +68,10 @@ epiforecasts_data <- load_epiforecasts_data()
 EpiNow2_est <- estimate_EpiNow2_R(epiforecasts_data)
 EpiNow2_est <- out$estimates$summarised
 EpiNow2_est <- EpiNow2_est[EpiNow2_est$variable=="R", c("date", "mean")]
+EpiNow2_est <- EpiNow2_est[EpiNow2_est$date<="2020-12-14",]
 
 # plots for comparison
-plot(epiforecasts_data, type="l")
-lines(EpiNow2_est, col="blue")
-
-plot_published_vs_calculated(epiforecasts_data, EpiNow2_est, method_name="EpiNow2")
+plot_published_vs_calculated(epiforecasts_data, EpiNow2_est$mean, method_name="EpiNow2")
 
 
 

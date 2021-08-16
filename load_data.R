@@ -112,9 +112,10 @@ load_epiforecasts_data <- function(){
   #incidence$dates <- as_date(incidence$dates)
   
   # load Rt estimates from epiforecasts
-  path <- "reproductive_numbers/data-processed/epiforecasts/2021-07-28-epiforecasts.csv"
+  path <- "reproductive_numbers/data-processed/epiforecasts/2020-12-15-epiforecasts.csv"
   epiforecasts_1day <- read_csv(path)
-  epiforecasts_1day <- epiforecasts_1day[epiforecasts_1day$type=="point"8i9,][c("date", "value")]
+  epiforecasts_1day <- epiforecasts_1day[epiforecasts_1day$type=="point"&
+                                           epiforecasts_1day$location=="DE",][c("date", "value")]
   names(epiforecasts_1day) <- c("dates", "R")
   
   # return data frame with incidence and published R estimates
