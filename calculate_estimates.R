@@ -153,8 +153,33 @@ repronum <- function(
 }
 
 
-
-
+### estimate as in Richter2020
+estimate_AGES_R <- function(incid, window = 13){
+  
+  # filter incid to dates where incidence data is available
+  start_i <- min(which(!is.na(incid$I)))
+  end_i <- max(which(!is.na(incid$I)))
+  incid_wo_na <- incid[start_i:end_i,]
+  
+  # deterministic serial interval (4 days)
+  serial_interval <- c(0, dgamma(1:16, shape = 2.88, scale = 1.55))
+  
+  # start and end for estimations at each time point
+  start <- 2:(nrow(incid_wo_na) + 1 - window)
+  end <- start - 1 + window
+  
+  # estimation with EpiEstim function
+  r_EpiEstim <- estimate_R(incid_wo_na$I,
+                           method = "non_parametric_si",
+                           config = make_config(list(t_start=start, t_end=end,
+                                                     si_distr=serial_interval)))
+  
+  # assign estimates to time points properly
+  estimate <- rep(NA, nrow(incid))
+  estimate[(start_i+window):end_i] <- r_EpiEstim$R$`Mean(R)`
+  
+  return(estimate)
+}
 
 
 

@@ -6,7 +6,7 @@ source("Rt_estimate_reconstruction/calculate_estimates.R")
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
 ##############
-# RKI
+# RKI (AnDerHeiden2020)
 ##############
 
 # load data
@@ -23,7 +23,7 @@ plot_published_vs_calculated(RKI_data, RKI_EpiEstim_est, method_name="RKI with E
 
 
 ##############
-# ETH
+# ETH (Huisman2021)
 ##############
 
 # load data
@@ -41,7 +41,7 @@ plot_published_vs_calculated(published=data.frame(dates=ETH_data$date,
 
 
 ##############
-# Ilmenau
+# Ilmenau (Hotz2020)
 ##############
 
 # load data
@@ -56,10 +56,26 @@ plot_published_vs_calculated(Ilmenau_data, Ilmenau_est, method_name="Ilmenau")
 
 
 ##############
-# epiforecasts
+# AGES (Richter2020)
 ##############
+
+# load data (Austria only)
 source("Rt_estimate_reconstruction/load_data.R")
+AGES_data <- load_AGES_data()
+
+# estimation
 source("Rt_estimate_reconstruction/calculate_estimates.R")
+AGES_est <- estimate_AGES_R(AGES_data)
+
+# plots for comparison
+source("Rt_estimate_reconstruction/prepared_plots.R")
+plot_published_vs_calculated(AGES_data, AGES_est, method_name="AGES")
+
+
+
+##############
+# epiforecasts (Abbot2020)
+##############
 
 # load data
 epiforecasts_data <- load_epiforecasts_data()
