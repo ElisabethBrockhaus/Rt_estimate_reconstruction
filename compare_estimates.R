@@ -62,7 +62,7 @@ plot_published_vs_calculated(Ilmenau_data, Ilmenau_est, method_name="Ilmenau")
 # load data (Austria only)
 AGES_data <- load_AGES_data()
 
-# estimation with mean/sd used at 13th August 2021
+# estimation with mean/sd used since 18th June 2021
 AGES_est <- estimate_AGES_R(AGES_data, mean_si = 3.37, std_si = 1.83)
 
 # plots for comparison

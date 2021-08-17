@@ -15,14 +15,14 @@ estimate_RKI_R <- function(incid){
 
 
 ### estimate as in RKI2020 but using EpiEstim (Bayes)
-estimate_RKI_R_EpiEstim <- function(incid){
+estimate_RKI_R_EpiEstim <- function(incid, window=7){
   
   # deterministic serial interval (4 days)
   serial_interval <- c(0, 0, 0, 0, 1)
   
   # start and end for estimations at each time point (window size = 7)
-  start <- 5:(nrow(incid)-6)
-  end <- start + 6
+  start <- 5:(nrow(incid) + 1 - window)
+  end <- start - 1 + window
   
   # estimation with EpiEstim function
   r_EpiEstim <- estimate_R(incid$I,
@@ -32,7 +32,7 @@ estimate_RKI_R_EpiEstim <- function(incid){
   
   # assign estimates to time points properly
   estimate <- rep(NA, nrow(incid))
-  estimate[10:(nrow(incid)-1)] <- round(r_EpiEstim$R$`Mean(R)`, digits = 2)
+  estimate[(window+3):(nrow(incid)-window)] <- round(r_EpiEstim$R$`Mean(R)`, digits = 2)
   
   return(estimate)
 }
