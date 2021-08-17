@@ -124,7 +124,7 @@ load_AGES_data <- function(){
   link_incid <- "https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv"
 
   # load data
-  data_raw <- read.csv(link_incid, sep = ";")
+  data_raw <- read.csv(link_incid, sep = ";", dec = ",")
 
   incidence <- aggregate(data_raw$AnzahlFaelle, by=list(data_raw$Time), FUN=sum)
   names(incidence) <- c("dates", "I")

@@ -60,15 +60,12 @@ plot_published_vs_calculated(Ilmenau_data, Ilmenau_est, method_name="Ilmenau")
 ##############
 
 # load data (Austria only)
-source("Rt_estimate_reconstruction/load_data.R")
 AGES_data <- load_AGES_data()
 
-# estimation
-source("Rt_estimate_reconstruction/calculate_estimates.R")
-AGES_est <- estimate_AGES_R(AGES_data)
+# estimation with mean/sd used at 13th August 2021
+AGES_est <- estimate_AGES_R(AGES_data, mean_si = 3.37, std_si = 1.83)
 
 # plots for comparison
-source("Rt_estimate_reconstruction/prepared_plots.R")
 plot_published_vs_calculated(AGES_data, AGES_est, method_name="AGES")
 
 
