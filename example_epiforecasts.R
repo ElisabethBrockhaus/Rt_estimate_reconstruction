@@ -1,6 +1,6 @@
 # packages
-# install.packages(c("data.table", "remotes", "EpiNow2"))		
-# remotes::install_github("epiforecasts/covidregionaldata")
+install.packages(c("data.table", "remotes", "EpiNow2"))		
+remotes::install_github("epiforecasts/covidregionaldata")
 library(data.table)
 library(EpiNow2)
 library(covidregionaldata)
@@ -15,21 +15,42 @@ options(mc.cores = 4)
 # literature distributions - please reach out if there are others you think should be supported
 generation_time <- get_generation_time(disease = "SARS-CoV-2", source = "ganyani")
 incubation_period <- get_incubation_period(disease = "SARS-CoV-2", source = "lauer")
+incubation_period$mean <- 5.2
+incubation_period$mean_sd <- 1.1
+incubation_period$sd <- 1.52
+incubation_period$sd_sd <- 1.1
 
 # define reporting delay as lognormal with mean of 4 days and sd of 1 day in absence of
 # evidence. If data on onset -> report then can use estimate_delay to estimate the delay
+# with original values
 reporting_delay <- list(mean = convert_to_logmean(4, 1),
                         mean_sd = 0.1,
                         sd = convert_to_logsd(4, 1),
                         sd_sd = 0.1,
                         max = 15)
+# with values from Abbot2020
+reporting_delay <- list(mean = 6.5,
+                        mean_sd = 0.1,
+                        sd = 17,
+                        sd_sd = 0.1,
+                        max = 30)
 
-# precleaned ECDC data - alternative is to bring your own 
+# precleaned ECDC data - alternative is to bring your own
 reported_cases <- covidregionaldata::get_national_data(country, source = "ecdc")
 reported_cases <- data.table::setDT(reported_cases)
 reported_cases <- reported_cases[, .(date, confirm = cases_new)]
 # filter to the last 3 months of data (to speed up computation)
 reported_cases <- reported_cases[date >= (max(date) - 12*7)]
+
+# use same data source as used for published estimates for germany
+rki_data <- read.csv("Rt_estimate_reconstruction/incidence_data/RKI_COVID19.csv")
+rki_data <- mutate(rki_data, Refdatum = as.Date(Refdatum, format = "%Y/%m/%d"))
+rki_agg <- aggregate(rki_data$AnzahlFall, by=list(rki_data$Refdatum), FUN=sum)
+names(rki_agg) <- c("date", "I")
+plot(rki_agg, type="l")
+lines(reported_cases$date, reported_cases$confirm, col="blue")
+
+reported_cases <- data.table(date=rki_agg$date, confirm=rki_agg$I)
 
 # estimate Rt and nowcast/forecast cases by date of infection
 # on a 4 core computer this example should take between 2 ~ 5 minutes to run
@@ -47,12 +68,12 @@ reported_cases <- reported_cases[date >= (max(date) - 12*7)]
 out <- epinow(reported_cases = reported_cases, 
               generation_time = generation_time,
               delays = delay_opts(incubation_period, reporting_delay),
-              rt = rt_opts(prior = list(mean = 1.5, sd = 0.5)),
+              rt = rt_opts(prior = list(mean = 1, sd = 1)), # same as in the paper instead of mean = 1.5, sd = 0.5
               # here we define the quality of the gaussian process approximation
               # if the fit to data appears poor try increasing basis_prop and
               # potentially the boundary_scale (see ?gp_opts for details)
               # though this will likely increase runtimes.
-              gp = gp_opts(basis_prop = 0.2),
+              #gp = gp_opts(basis_prop = 0.2),
               # in some instances stan chains can get stuck when estimating in 
               # these instances consider using the future fitting mode by passing 
               # `future = TRUE, max_execution_time = 60 * 30` to stan_opts and calling 
