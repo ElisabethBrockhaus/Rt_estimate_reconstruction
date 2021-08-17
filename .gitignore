@@ -1,2 +1,8 @@
 # ignore incidence data that is not needed for estimation
 incidence_data/*.csv
+
+# ignore checkpoints
+.ipynb_checkpoints
+
+# ignore summaries of traces for now
+rtlive_summaries
