@@ -78,13 +78,12 @@ plot_published_vs_calculated(AGES_data, AGES_est, method_name="AGES")
 epiforecasts_data <- load_epiforecasts_data()
 
 # estimation
-EpiNow2_est <- estimate_EpiNow2_R(epiforecasts_data)
-EpiNow2_est <- out$estimates$summarised
-EpiNow2_est <- EpiNow2_est[EpiNow2_est$variable=="R", c("date", "mean")]
-EpiNow2_est <- EpiNow2_est[EpiNow2_est$date<="2020-12-14",]
+#EpiNow2_est <- estimate_EpiNow2_R(epiforecasts_data)
+EpiNow2_est <- EpiNow2_est[EpiNow2_est$date >= min(epiforecasts_data$dates)
+                           & EpiNow2_est$date <= max(epiforecasts_data$dates),]
 
 # plots for comparison
-plot_published_vs_calculated(epiforecasts_data, EpiNow2_est$mean, method_name="EpiNow2")
+plot_published_vs_calculated(epiforecasts_data, EpiNow2_est$median, method_name="EpiNow2")
 
 
 
