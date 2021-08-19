@@ -1,8 +1,12 @@
-# ignore incidence data that is not needed for estimation
+# incidence data that is not needed for estimation
 incidence_data/*.csv
 
-# ignore checkpoints
+# checkpoints
 .ipynb_checkpoints
 
-# ignore summaries of traces for now
+# summaries of traces
 rtlive_summaries
+rtlive_summary_validation.ipynb
+
+# example RScripts from authors
+example_epiforecasts.R
