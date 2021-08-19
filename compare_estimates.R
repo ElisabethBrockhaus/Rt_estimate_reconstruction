@@ -79,11 +79,14 @@ epiforecasts_data <- load_epiforecasts_data()
 
 # estimation
 #EpiNow2_est <- estimate_EpiNow2_R(epiforecasts_data)
-EpiNow2_est <- EpiNow2_est[EpiNow2_est$date >= min(epiforecasts_data$dates)
-                           & EpiNow2_est$date <= max(epiforecasts_data$dates),]
+EpiNow2_est <- qread("EpiNow2_est.qs")
+names(EpiNow2_est) <- c("dates", "R_median")
+EpiNow2_est <- full_join(data.frame(dates=epiforecasts_data$dates), EpiNow2_est, by="dates")
+EpiNow2_est <- EpiNow2_est[EpiNow2_est$dates >= min(epiforecasts_data$dates)
+                           & EpiNow2_est$dates <= max(epiforecasts_data$dates),]
 
 # plots for comparison
-plot_published_vs_calculated(epiforecasts_data, EpiNow2_est$median, method_name="EpiNow2")
+plot_published_vs_calculated(epiforecasts_data, EpiNow2_est$R_median, method_name="EpiNow2")
 
 
 
