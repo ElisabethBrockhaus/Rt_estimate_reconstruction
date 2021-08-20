@@ -43,6 +43,8 @@ plot_published_vs_calculated(published=data.frame(dates=ETH_data$date,
 ##############
 # Ilmenau (Hotz2020)
 ##############
+source("Rt_estimate_reconstruction/load_data.R")
+source("Rt_estimate_reconstruction/calculate_estimates.R")
 
 # load data
 Ilmenau_data <- load_Ilmenau_data()

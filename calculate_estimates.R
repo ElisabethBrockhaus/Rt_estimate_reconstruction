@@ -84,7 +84,7 @@ estimate_ETH_R <- function(incid,
 
 
 ### estimate as in Hotz2020
-estimate_Ilmenau_R <- function(incid){
+estimate_Ilmenau_R <- function(incid, window = 1){
   
   # infectivity profile
   infectivity <- c((0:3)/3, 1, (5:0)/5)
@@ -92,19 +92,20 @@ estimate_Ilmenau_R <- function(incid){
   infectivity <- infectivity / sum(infectivity)
   
   # other parameters
-  width <- 1
   report.delay <- 7
   alpha <- 0.05
   
   # calculate estimates
   estimate <- repronum(
-    new.cases = incid$new.cases,
+    new.cases = incid$I,
     profile = infectivity,
-    window = width,
+    window = window,
     delay = report.delay,
     conf.level = 1 - alpha,
     pad.zeros = TRUE
   )$repronum
+  
+  estimate <- data.frame(date=incid$date, R_calc=estimate)
 
   return(estimate)
 }

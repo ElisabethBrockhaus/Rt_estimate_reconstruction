@@ -24,39 +24,42 @@ download_OWID_data <- function(){
 }
 
 
+load_published_R_estimates <- function(source, incid){
+  # define path where Rt estimates are located
+  path <- paste0("reproductive_numbers/data-processed/", source, "/")
+  
+  # find most recent estimates
+  file <- max(list.files(path, pattern = paste0("\\d{4}-\\d{2}-\\d{2}-", source, ".csv")))
+  
+  # load estimates
+  R_est <- read_csv(paste0(path, file), col_types = list(date = col_date()))
+  R_est <- R_est[R_est$type=="point",][c("date", "value")]
+  names(R_est) <- c("date", "R_pub")
+  
+  # merge incidence data and published R estimates
+  data <- full_join(incid, R_est, by="date")
+  
+  return(data)
+}
+
+
 load_RKI_data <- function(include_R = TRUE){
   
   # path to RKI incidence data
   repo_incid <- "https://raw.githubusercontent.com/robert-koch-institut/SARS-CoV-2-Nowcasting_und_-R-Schaetzung/main/Nowcast_R_aktuell.csv"
   
   # load incidence data
-  data <- read_csv(repo_incid)
-  names(data) <- c("date", "NeuErkr", "lb_NeuErkr", "ub_NeuErkr",
-                   "NeuErkr_ma4", "lb_NeuErkr_ma4", "ub_NeuErkr_ma4",
-                   "R_7Tage", "lb_R_7Tage", "ub_R_7Tage")
-
-  # Rt estimates
+  incid <- read_csv(repo_incid)
+  names(incid) <- c("Datum", "NeuErkr", "lb_NeuErkr", "ub_NeuErkr",
+                    "NeuErkr_ma4", "lb_NeuErkr_ma4", "ub_NeuErkr_ma4",
+                    "R_7Tage", "lb_R_7Tage", "ub_R_7Tage")
+  incid <- data.frame(date=incid$Datum, I=incid$NeuErkr)
+  
+  # load Rt estimates
   if (include_R){
-    # define path where Rt estimates are located
-    path <- "reproductive_numbers/data-processed/RKI_7day/"
-    
-    # find most recent estimates
-    file <- max(list.files(path, pattern = "\\d{4}-\\d{2}-\\d{2}-RKI_7day.csv"))
-    
-    # load estimates
-    RKI_7day <- read_csv(paste0(path, file))
-    RKI_7day <- RKI_7day[RKI_7day$type=="point",][c("date", "value")]
-    
-    #path_rki4 <- "reproductive_numbers/data-processed/RKI_4day/"
-    #file_rki4 <- max(list.files(path_rki4, pattern = "\\d{4}-\\d{2}-\\d{2}-RKI_4day.csv"))
-    #RKI_4day <- read_csv(paste0(path_rki4, file_rki4))
-    #RKI_4day <- RKI_4day[RKI_4day$type=="point",][c("date", "value")]
-    
-    # merge incidence and published R estimates
-    data <- full_join(data[,c("date", "NeuErkr")], RKI_7day, by="date")
-    names(data) <- c("date", "I", "R_pub")
+    data <- load_published_R_estimates("RKI_7day", incid)
   }
-
+  
   return(data)
 }
 
@@ -78,46 +81,29 @@ load_ETH_data <- function(){
   # only keep data for which the deconvoluted ts is known
   caseData <- caseData[!is.na(caseData$value),]
   
-  
-  # define path where Rt estimates are located
-  path <- "reproductive_numbers/data-processed/ETHZ_sliding_window/"
-  
-  # find most recent estimates
-  file <- max(list.files(path, pattern = "\\d{4}-\\d{2}-\\d{2}-ETHZ_sliding_window.csv"))
-  
-  # load Rt estimates
-  ETH_3day <- read_csv(paste0(path, file))
-  ETH_3day <- ETH_3day[ETH_3day$type=="point",][c("date", "value")]
-  names(ETH_3day) <- c("date", "R")
+  data <- load_published_R_estimates("ETHZ_sliding_window", caseData)
   
   # return data frame with case data and published R estimates
-  return(full_join(data.frame(caseData), ETH_3day, by="date"))
+  return(data)
 }
 
 
-load_Ilmenau_data <- function(){
+load_Ilmenau_data <- function(include_R = TRUE){
   
   # path to preprocessed RKI incidence data
   path_incid <- "Rt_estimate_reconstruction/incidence_data/data_ger_tot.qs"
   
   # load incidence data
-  incidence <- qread(path_incid)
-  incidence <- data.frame(dates=incidence$date, I=incidence$tot.cases, new.cases=incidence$new.cases)
-  incidence$dates <- as_date(incidence$dates)
-  
-  # define path where Rt estimates are located
-  path <- "reproductive_numbers/data-processed/ilmenau/"
-  
-  # find most recent estimates
-  file <- max(list.files(path, pattern = "\\d{4}-\\d{2}-\\d{2}-ilmenau"))
+  incid <- qread(path_incid)
+  incid <- data.frame(date=incid$date, I=incid$new.cases)
+  incid$date <- as_date(incid$date)
   
   # load Rt estimates
-  Ilmenau_7day <- read_csv(paste0(path, file))
-  Ilmenau_7day <- Ilmenau_7day[Ilmenau_7day$type=="point",][c("date", "value")]
-  names(Ilmenau_7day) <- c("dates", "R")
+  if(include_R){
+    data <- load_published_R_estimates("ilmenau", incid)
+  }
   
-  # return data frame with incidence and published R estimates
-  return(full_join(data.frame(incidence), Ilmenau_7day, by="dates"))
+  return(data)
 }
 
 
