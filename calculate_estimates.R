@@ -4,9 +4,9 @@ library(EpiEstim)
 estimate_RKI_R <- function(incid){
   
   # calculate estimates
-  estimate <- rep(NA, nrow(incid))
+  estimate <- data.frame(date=incid$date, R_calc=rep(NA, nrow(incid)))
   for (t in 11:nrow(incid)){
-    estimate[t-1] <- round(sum(incid$I[t-0:6]) / sum(incid$I[t-4:10]), digits = 2)
+    estimate[t-1, "R_calc"] <- round(sum(incid$I[t-0:6]) / sum(incid$I[t-4:10]), digits = 2)
   }
   
   return(estimate)
@@ -21,7 +21,7 @@ estimate_RKI_R_EpiEstim <- function(incid, window=7){
   serial_interval <- c(0, 0, 0, 0, 1)
   
   # start and end for estimations at each time point (window size = 7)
-  start <- 5:(nrow(incid) + 1 - window)
+  start <- 2:(nrow(incid) + 1 - window)
   end <- start - 1 + window
   
   # estimation with EpiEstim function
@@ -30,10 +30,13 @@ estimate_RKI_R_EpiEstim <- function(incid, window=7){
                            config = make_config(list(t_start=start, t_end=end,
                                                      si_distr=serial_interval)))
   
-  # assign estimates to time points properly
-  estimate <- rep(NA, nrow(incid))
-  estimate[(window+3):(nrow(incid)-window)] <- round(r_EpiEstim$R$`Mean(R)`, digits = 2)
+  len_est <- length(r_EpiEstim$R$`Mean(R)`)
   
+  # assign estimates to time points properly
+  estimate <- data.frame(date=incid$date, R_calc=c(rep(NA, (window-1)),
+                                                   round(r_EpiEstim$R$`Mean(R)`, digits = 2),
+                                                   rep(NA, nrow(incid)+1-window-len_est)))
+
   return(estimate)
 }
 

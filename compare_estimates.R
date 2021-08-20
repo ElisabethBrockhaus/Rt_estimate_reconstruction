@@ -13,8 +13,8 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 RKI_data <- load_RKI_data()
 
 # estimation
-RKI_est <- estimate_RKI_R(RKI_data)
-RKI_EpiEstim_est <- estimate_RKI_R_EpiEstim(RKI_data)
+RKI_est <- estimate_RKI_R(RKI_data[,c("date", "I")])
+RKI_EpiEstim_est <- estimate_RKI_R_EpiEstim(RKI_data, window = 7)
 
 # plots for comparison
 plot_published_vs_calculated(RKI_data, RKI_est, method_name="RKI")
@@ -80,7 +80,7 @@ epiforecasts_data <- load_epiforecasts_data()
 # estimation
 #EpiNow2_est <- estimate_EpiNow2_R(epiforecasts_data)
 EpiNow2_est <- qread("EpiNow2_est.qs")
-names(EpiNow2_est) <- c("dates", "R_median")
+names(EpiNow2_est) <- c("dates", "R_median", "R_mean")
 EpiNow2_est <- full_join(data.frame(dates=epiforecasts_data$dates), EpiNow2_est, by="dates")
 EpiNow2_est <- EpiNow2_est[EpiNow2_est$dates >= min(epiforecasts_data$dates)
                            & EpiNow2_est$dates <= max(epiforecasts_data$dates),]

@@ -24,37 +24,40 @@ download_OWID_data <- function(){
 }
 
 
-load_RKI_data <- function(){
+load_RKI_data <- function(include_R = TRUE){
   
   # path to RKI incidence data
   repo_incid <- "https://raw.githubusercontent.com/robert-koch-institut/SARS-CoV-2-Nowcasting_und_-R-Schaetzung/main/Nowcast_R_aktuell.csv"
   
   # load incidence data
-  incidence_raw <- read_csv(repo_incid)
-  names(incidence_raw) <- c("Datum", "NeuErkr", "lb_NeuErkr", "ub_NeuErkr",
-                            "NeuErkr_ma4", "lb_NeuErkr_ma4", "ub_NeuErkr_ma4",
-                            "R_7Tage", "lb_R_7Tage", "ub_R_7Tage")
+  data <- read_csv(repo_incid)
+  names(data) <- c("date", "NeuErkr", "lb_NeuErkr", "ub_NeuErkr",
+                   "NeuErkr_ma4", "lb_NeuErkr_ma4", "ub_NeuErkr_ma4",
+                   "R_7Tage", "lb_R_7Tage", "ub_R_7Tage")
 
-  # define path where Rt estimates are located
-  path <- "reproductive_numbers/data-processed/RKI_7day/"
-  
-  # find most recent estimates
-  file <- max(list.files(path, pattern = "\\d{4}-\\d{2}-\\d{2}-RKI_7day.csv"))
-  
-  # load Rt estimates
-  RKI_7day <- read_csv(paste0(path, file))
-  RKI_7day <- RKI_7day[RKI_7day$type=="point",][c("date", "value")]
-  #path_rki4 <- "reproductive_numbers/data-processed/RKI_4day/"
-  #file_rki4 <- max(list.files(path_rki4, pattern = "\\d{4}-\\d{2}-\\d{2}-RKI_4day.csv"))
-  #RKI_4day <- read_csv(paste0(path_rki4, file_rki4))
-  #RKI_4day <- RKI_4day[RKI_4day$type=="point",][c("date", "value")]
-  
-  # return data frame with incidence and published R estimates
-  return(data.frame(dates=incidence_raw$Datum,
-                    I=incidence_raw$NeuErkr,
-                    R=c(rep(NA, min(RKI_7day$date)-min(incidence_raw$Datum)),
-                        RKI_7day$value,
-                        rep(NA, max(incidence_raw$Datum)-max(RKI_7day$date)))))
+  # Rt estimates
+  if (include_R){
+    # define path where Rt estimates are located
+    path <- "reproductive_numbers/data-processed/RKI_7day/"
+    
+    # find most recent estimates
+    file <- max(list.files(path, pattern = "\\d{4}-\\d{2}-\\d{2}-RKI_7day.csv"))
+    
+    # load estimates
+    RKI_7day <- read_csv(paste0(path, file))
+    RKI_7day <- RKI_7day[RKI_7day$type=="point",][c("date", "value")]
+    
+    #path_rki4 <- "reproductive_numbers/data-processed/RKI_4day/"
+    #file_rki4 <- max(list.files(path_rki4, pattern = "\\d{4}-\\d{2}-\\d{2}-RKI_4day.csv"))
+    #RKI_4day <- read_csv(paste0(path_rki4, file_rki4))
+    #RKI_4day <- RKI_4day[RKI_4day$type=="point",][c("date", "value")]
+    
+    # merge incidence and published R estimates
+    data <- full_join(data[,c("date", "NeuErkr")], RKI_7day, by="date")
+    names(data) <- c("date", "I", "R_pub")
+  }
+
+  return(data)
 }
 
 

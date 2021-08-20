@@ -6,7 +6,7 @@ library(cowplot)
 plot_published_vs_calculated <- function(published, calculated, method_name){
   
   # combine data
-  ts <- data.frame(date=published$dates, R_pub=published$R, R_calc=calculated)
+  ts <- full_join(published, calculated, by="date")[, c("date", "R_pub", "R_calc")]
   
   # calcuate difference between estimates
   diff <- data.frame(date=ts$date, difference=ts$R_pub-ts$R_calc)
@@ -20,7 +20,7 @@ plot_published_vs_calculated <- function(published, calculated, method_name){
   est_plot <- ggplot(data=ts, aes(x=date, y=value, color=variable)) +
     geom_hline(aes(yintercept = 1)) +
     geom_line() +
-    xlim(c(min(published$dates), max(published$dates))) + 
+    xlim(c(min(ts$date), max(ts$date))) + 
     scale_colour_viridis_d(end=0.7, name="Estimates", labels=c("published", "calculated")) +
     labs(title=method_name, x = "date", y = "Rt estimate") +
     theme(legend.position = "top")
@@ -28,7 +28,7 @@ plot_published_vs_calculated <- function(published, calculated, method_name){
   # build plot showing differences
   diff_plot <- ggplot(data=diff, aes(x=date, y=difference)) +
     geom_line() +
-    xlim(c(min(published$dates), max(published$dates))) + 
+    xlim(c(min(ts$date), max(ts$date))) + 
     labs(x = "date", y = "published - calculated")
   
   # align plots
