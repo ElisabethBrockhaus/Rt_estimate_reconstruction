@@ -29,7 +29,6 @@ estimate_RKI_R_EpiEstim <- function(incid, window=7){
                            method = "non_parametric_si",
                            config = make_config(list(t_start=start, t_end=end,
                                                      si_distr=serial_interval)))
-  
   len_est <- length(r_EpiEstim$R$`Mean(R)`)
   
   # assign estimates to time points properly
@@ -179,11 +178,11 @@ estimate_AGES_R <- function(incid, window = 13, mean_si = 4.46, std_si = 2.63){
                            config = make_config(list(t_start=start, t_end=end,
                                                      mean_si=mean_si, std_si=std_si)))
                                                      #si_distr=serial_interval)))
+  len_est <- length(r_EpiEstim$R$`Mean(R)`)
   
   # assign estimates to time points properly
-  estimate <- rep(NA, nrow(incid))
-  estimate[(start_i+window):end_i] <- r_EpiEstim$R$`Mean(R)`
-  
+  estimate <- data.frame(date=incid$date, R_calc=c(rep(NA, (start_i+window-1)),
+                                                   r_EpiEstim$R$`Mean(R)`))
   return(estimate)
 }
 

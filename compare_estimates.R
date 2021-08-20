@@ -43,8 +43,6 @@ plot_published_vs_calculated(published=data.frame(dates=ETH_data$date,
 ##############
 # Ilmenau (Hotz2020)
 ##############
-source("Rt_estimate_reconstruction/load_data.R")
-source("Rt_estimate_reconstruction/calculate_estimates.R")
 
 # load data
 Ilmenau_data <- load_Ilmenau_data()
@@ -60,7 +58,8 @@ plot_published_vs_calculated(Ilmenau_data, Ilmenau_est, method_name="Ilmenau")
 ##############
 # AGES (Richter2020)
 ##############
-
+source("Rt_estimate_reconstruction/load_data.R")
+source("Rt_estimate_reconstruction/calculate_estimates.R")
 # load data (Austria only)
 AGES_data <- load_AGES_data()
 
@@ -77,18 +76,19 @@ plot_published_vs_calculated(AGES_data, AGES_est, method_name="AGES")
 ##############
 
 # load data
-epiforecasts_data <- load_epiforecasts_data()
+epiforecasts_data <- load_published_R_estimates("epiforecasts",
+                                                incid=data.frame(date=seq(as.Date("2021-04-06"), as.Date("2021-07-27"), by="day")))
 
 # estimation
 #EpiNow2_est <- estimate_EpiNow2_R(epiforecasts_data)
 EpiNow2_est <- qread("EpiNow2_est.qs")
-names(EpiNow2_est) <- c("dates", "R_median", "R_mean")
-EpiNow2_est <- full_join(data.frame(dates=epiforecasts_data$dates), EpiNow2_est, by="dates")
-EpiNow2_est <- EpiNow2_est[EpiNow2_est$dates >= min(epiforecasts_data$dates)
-                           & EpiNow2_est$dates <= max(epiforecasts_data$dates),]
+names(EpiNow2_est) <- c("date", "R_calc", "R_mean")
+EpiNow2_est <- full_join(data.frame(date=epiforecasts_data$date), EpiNow2_est, by="date")
+EpiNow2_est <- EpiNow2_est[EpiNow2_est$date >= min(epiforecasts_data$date)
+                           & EpiNow2_est$date <= max(epiforecasts_data$date),]
 
 # plots for comparison
-plot_published_vs_calculated(epiforecasts_data, EpiNow2_est$R_median, method_name="EpiNow2")
+plot_published_vs_calculated(epiforecasts_data, EpiNow2_est, method_name="EpiNow2")
 
 
 

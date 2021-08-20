@@ -49,15 +49,15 @@ load_RKI_data <- function(include_R = TRUE){
   repo_incid <- "https://raw.githubusercontent.com/robert-koch-institut/SARS-CoV-2-Nowcasting_und_-R-Schaetzung/main/Nowcast_R_aktuell.csv"
   
   # load incidence data
-  incid <- read_csv(repo_incid)
-  names(incid) <- c("Datum", "NeuErkr", "lb_NeuErkr", "ub_NeuErkr",
-                    "NeuErkr_ma4", "lb_NeuErkr_ma4", "ub_NeuErkr_ma4",
-                    "R_7Tage", "lb_R_7Tage", "ub_R_7Tage")
-  incid <- data.frame(date=incid$Datum, I=incid$NeuErkr)
+  data <- read_csv(repo_incid)
+  names(data) <- c("Datum", "NeuErkr", "lb_NeuErkr", "ub_NeuErkr",
+                   "NeuErkr_ma4", "lb_NeuErkr_ma4", "ub_NeuErkr_ma4",
+                   "R_7Tage", "lb_R_7Tage", "ub_R_7Tage")
+  data <- data.frame(date=data$Datum, I=data$NeuErkr)
   
   # load Rt estimates
   if (include_R){
-    data <- load_published_R_estimates("RKI_7day", incid)
+    data <- load_published_R_estimates("RKI_7day", data)
   }
   
   return(data)
@@ -94,20 +94,20 @@ load_Ilmenau_data <- function(include_R = TRUE){
   path_incid <- "Rt_estimate_reconstruction/incidence_data/data_ger_tot.qs"
   
   # load incidence data
-  incid <- qread(path_incid)
-  incid <- data.frame(date=incid$date, I=incid$new.cases)
-  incid$date <- as_date(incid$date)
+  data <- qread(path_incid)
+  data <- data.frame(date=data$date, I=data$new.cases)
+  data$date <- as_date(data$date)
   
   # load Rt estimates
   if(include_R){
-    data <- load_published_R_estimates("ilmenau", incid)
+    data <- load_published_R_estimates("ilmenau", data)
   }
   
   return(data)
 }
 
 
-load_AGES_data <- function(){
+load_AGES_data <- function(include_R = TRUE){
   
   # path to EMS incidence data
   link_incid <- "https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv"
@@ -115,43 +115,17 @@ load_AGES_data <- function(){
   # load data
   data_raw <- read.csv(link_incid, sep = ";", dec = ",")
 
-  incidence <- aggregate(data_raw$AnzahlFaelle, by=list(data_raw$Time), FUN=sum)
-  names(incidence) <- c("dates", "I")
-  incidence <- mutate(incidence, dates = as.Date(dates, format = "%d.%m.%Y"))
-
-  # define path where Rt estimates are located
-  path <- "reproductive_numbers/data-processed/AGES/"
-  
-  # find most recent estimates
-  file <- max(list.files(path, pattern = "\\d{4}-\\d{2}-\\d{2}-AGES"))
+  data <- aggregate(data_raw$AnzahlFaelle, by=list(data_raw$Time), FUN=sum)
+  names(data) <- c("date", "I")
+  data <- mutate(data, date = as.Date(date, format = "%d.%m.%Y"))
   
   # load Rt estimates
-  AGES_13day <- read_csv(paste0(path, file))
-  AGES_13day <- AGES_13day[AGES_13day$type=="point",][c("date", "value")]
-  names(AGES_13day) <- c("dates", "R")
-  
-  # return data frame with incidence and published R estimates
-  data <- full_join(data.frame(incidence), AGES_13day, by="dates")
-  data <- data[order(data$dates),]
+  if (include_R){
+    data <- load_published_R_estimates("AGES", data)
+  }
+
+  data <- data[order(data$date),]
   rownames(data) <- 1:nrow(data)
   return(data)
 }
 
-
-load_epiforecasts_data <- function(){
-  
-  # define path where Rt estimates are located
-  path <- "reproductive_numbers/data-processed/epiforecasts/"
-  
-  # find most recent estimates
-  file <- max(list.files(path, pattern = "\\d{4}-\\d{2}-\\d{2}-epiforecasts.csv"))
-  
-  # load Rt estimates
-  epiforecasts_1day <- read_csv(paste0(path, file))
-  epiforecasts_1day <- epiforecasts_1day[epiforecasts_1day$type=="point"&
-                                           epiforecasts_1day$location=="DE",][c("date", "value")]
-  names(epiforecasts_1day) <- c("dates", "R")
-  
-  # return data frame with incidence and published R estimates
-  return(epiforecasts_1day)
-}
