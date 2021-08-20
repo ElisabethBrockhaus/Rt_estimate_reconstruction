@@ -3,7 +3,7 @@ library(ggplot2)
 library(cowplot)
 
 
-plot_published_vs_calculated <- function(published, calculated, method_name){
+plot_published_vs_calculated <- function(published, calculated, method_name, diff_bounds=c(-0.1, 0.1)){
   
   # combine data
   ts <- full_join(published, calculated, by="date")[, c("date", "R_pub", "R_calc")]
@@ -29,6 +29,7 @@ plot_published_vs_calculated <- function(published, calculated, method_name){
   diff_plot <- ggplot(data=diff, aes(x=date, y=difference)) +
     geom_line() +
     xlim(c(min(ts$date), max(ts$date))) + 
+    ylim(diff_bounds) +
     labs(x = "date", y = "published - calculated")
   
   # align plots
