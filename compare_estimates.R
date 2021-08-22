@@ -13,8 +13,9 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 RKI_data <- load_RKI_data()
 
 # estimation
-RKI_est <- estimate_RKI_R(RKI_data[,c("date", "I")])
-RKI_EpiEstim_est <- estimate_RKI_R_EpiEstim(RKI_data, window = 7)
+RKI_est <- estimate_RKI_R(RKI_data) # only allows gt_sd = 0
+RKI_EpiEstim_est <- estimate_RKI_R_EpiEstim(RKI_data, window = 7,
+                                            gt_mean = 4, gt_sd = 0) # gt_sd > 0 possible
 
 # plots for comparison
 plot_published_vs_calculated(RKI_data, RKI_est, method_name="RKI")
@@ -34,7 +35,7 @@ ETH_est <- estimate_ETH_R(ETH_data)
 
 # plots for comparison
 plot_published_vs_calculated(published=data.frame(dates=ETH_data$date,
-                                                  R=ETH_data$R),
+                                                  R_pub=ETH_data$R),
                              calculated=ETH_est,
                              method_name="ETH")
 
