@@ -49,7 +49,7 @@ plot_published_vs_calculated(published=data.frame(dates=ETH_data$date,
 Ilmenau_data <- load_Ilmenau_data()
 
 # estimation
-Ilmenau_est <- estimate_Ilmenau_R(Ilmenau_data)
+Ilmenau_est <- estimate_Ilmenau_R(Ilmenau_data, gt_type = "org")
 
 # plots for comparison
 plot_published_vs_calculated(Ilmenau_data, Ilmenau_est, method_name="Ilmenau")
@@ -59,8 +59,7 @@ plot_published_vs_calculated(Ilmenau_data, Ilmenau_est, method_name="Ilmenau")
 ##############
 # AGES (Richter2020)
 ##############
-source("Rt_estimate_reconstruction/load_data.R")
-source("Rt_estimate_reconstruction/calculate_estimates.R")
+
 # load data (Austria only)
 AGES_data <- load_AGES_data()
 
@@ -92,4 +91,16 @@ EpiNow2_est <- EpiNow2_est[EpiNow2_est$date >= min(epiforecasts_data$date)
 plot_published_vs_calculated(epiforecasts_data, EpiNow2_est, method_name="EpiNow2")
 
 
+
+###################
+
+# compare estimates from different sources
+estimates <- epiforecasts_data[, c("date", "R_pub")] %>% 
+  full_join(ETH_data[, c("date", "R_pub")], by = "date") %>%
+  full_join(Ilmenau_data[, c("date", "R_pub")], by = "date") %>% 
+  full_join(RKI_data[, c("date", "R_pub")], by = "date")
+names(estimates) <- c("date", "epiforecasts", "ETH", "Ilmenau", "RKI")
+
+source("Rt_estimate_reconstruction/prepared_plots.R")
+plot_multiple_estimates(estimates)
 

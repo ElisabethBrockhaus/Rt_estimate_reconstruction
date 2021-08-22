@@ -35,3 +35,22 @@ plot_published_vs_calculated <- function(published, calculated, method_name, dif
   # align plots
   plot_grid(est_plot, diff_plot, ncol = 1, align = "v", rel_heights = c(2, 1))
 }
+
+
+
+plot_multiple_estimates <- function(estimates) {
+  
+  legend_name <- "method"
+  legend_labels <- colnames(estimates)[-1]
+
+  # reshape data
+  estimates <- melt(estimates, id.var='date')
+  estimates <- na.omit(estimates)
+
+  ggplot(data=estimates, aes(x=date, y=value, color=variable)) +
+    geom_hline(aes(yintercept = 1)) +
+    geom_line() +
+    scale_colour_viridis_d(end=0.8, name=legend_name, labels=legend_labels) +
+    labs(x = "date", y = "Rt estimate") +
+    theme(legend.position = "top")
+}
