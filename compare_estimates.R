@@ -1,5 +1,6 @@
-wd <- "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code"
-setwd(wd)
+# git repositories "reproductive_numbers" and "Rt_estimate_reconstruction"
+# have to be located in the same directory
+setwd("..")
 
 source("Rt_estimate_reconstruction/load_data.R")
 source("Rt_estimate_reconstruction/calculate_estimates.R")
@@ -81,8 +82,8 @@ epiforecasts_data <- load_published_R_estimates("epiforecasts",
 
 # estimation
 #EpiNow2_est <- estimate_EpiNow2_R(epiforecasts_data)
-EpiNow2_est <- qread("EpiNow2_est.qs")
-names(EpiNow2_est) <- c("date", "R_calc", "R_mean")
+EpiNow2_est <- qread("EpiNow2_est_correct_data1.qs")
+names(EpiNow2_est) <- c("date", "R_calc")
 EpiNow2_est <- full_join(data.frame(date=epiforecasts_data$date), EpiNow2_est, by="date")
 EpiNow2_est <- EpiNow2_est[EpiNow2_est$date >= min(epiforecasts_data$date)
                            & EpiNow2_est$date <= max(epiforecasts_data$date),]
@@ -101,6 +102,5 @@ estimates <- epiforecasts_data[, c("date", "R_pub")] %>%
   full_join(RKI_data[, c("date", "R_pub")], by = "date")
 names(estimates) <- c("date", "epiforecasts", "ETH", "Ilmenau", "RKI")
 
-source("Rt_estimate_reconstruction/prepared_plots.R")
 plot_multiple_estimates(estimates)
 
