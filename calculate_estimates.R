@@ -1,12 +1,14 @@
 library(EpiEstim)
 
 ### estimate as in RKI2020
-estimate_RKI_R <- function(incid){
+estimate_RKI_R <- function(incid, window=7, gt_mean=4){
   
   # calculate estimates
   estimate <- data.frame(date=incid$date, R_calc=rep(NA, nrow(incid)))
-  for (t in 11:nrow(incid)){
-    estimate[t-1, "R_calc"] <- round(sum(incid$I[t-0:6]) / sum(incid$I[t-4:10]), digits = 2)
+  for (t in (gt_mean+window):nrow(incid)){
+    estimate[t-1, "R_calc"] <- round(sum(incid$I[t-0:(window-1)])
+                                     / sum(incid$I[t-gt_mean:(gt_mean+window-1)]),
+                                     digits = 2)
   }
   
   return(estimate)
@@ -15,20 +17,28 @@ estimate_RKI_R <- function(incid){
 
 
 ### estimate as in RKI2020 but using EpiEstim (Bayes)
-estimate_RKI_R_EpiEstim <- function(incid, window=7){
-  
-  # deterministic serial interval (4 days)
-  serial_interval <- c(0, 0, 0, 0, 1)
-  
+estimate_RKI_R_EpiEstim <- function(incid, window=7, gt_mean=4, gt_sd=0){
+
   # start and end for estimations at each time point (window size = 7)
   start <- 2:(nrow(incid) + 1 - window)
   end <- start - 1 + window
   
   # estimation with EpiEstim function
-  r_EpiEstim <- estimate_R(incid$I,
-                           method = "non_parametric_si",
-                           config = make_config(list(t_start=start, t_end=end,
-                                                     si_distr=serial_interval)))
+  if(gt_sd==0){
+    # deterministic serial interval (default 4 days)
+    serial_interval <- c(rep(0, gt_mean), 1)
+    
+    r_EpiEstim <- estimate_R(incid$I,
+                             method = "non_parametric_si",
+                             config = make_config(list(t_start=start, t_end=end,
+                                                       si_distr=serial_interval)))
+  } else {
+    r_EpiEstim <- estimate_R(incid$I,
+                             method = "parametric_si",
+                             config = make_config(list(t_start=start, t_end=end,
+                                                       mean_si=gt_mean, std_si=gt_sd)))
+  }
+
   len_est <- length(r_EpiEstim$R$`Mean(R)`)
   
   # assign estimates to time points properly
@@ -109,7 +119,7 @@ estimate_Ilmenau_R <- function(incid, window = 1){
   return(estimate)
 }
 
-### function from Ilmenau repo for Rt estimation
+### function from Ilmenau repo for their Rt estimation
 repronum <- function(
   new.cases, # I
   profile, # w
