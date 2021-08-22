@@ -24,7 +24,7 @@ download_OWID_data <- function(){
 }
 
 
-load_published_R_estimates <- function(source, incid){
+load_published_R_estimates <- function(source, incid, location="DE"){
   # define path where Rt estimates are located
   path <- paste0("reproductive_numbers/data-processed/", source, "/")
   
@@ -33,7 +33,7 @@ load_published_R_estimates <- function(source, incid){
   
   # load estimates
   R_est <- read_csv(paste0(path, file), col_types = list(date = col_date()))
-  R_est <- R_est[R_est$type=="point",][c("date", "value")]
+  R_est <- R_est[(R_est$type=="point") & (R_est$location==location), ][c("date", "value")]
   names(R_est) <- c("date", "R_pub")
   
   # merge incidence data and published R estimates
@@ -121,7 +121,7 @@ load_AGES_data <- function(include_R = TRUE){
   
   # load Rt estimates
   if (include_R){
-    data <- load_published_R_estimates("AGES", data)
+    data <- load_published_R_estimates("AGES", data, location="AT")
   }
 
   data <- data[order(data$date),]
