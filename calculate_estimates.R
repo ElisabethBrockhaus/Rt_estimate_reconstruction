@@ -82,10 +82,14 @@ estimate_ETH_R <- function(incid,
   #    dplyr::select(popData, region, countryIso3),
   #    by = c("region")
   #  )
-  estimate<-estimateRaw
+  estimate <- estimateRaw
+  
+  View(estimate)
+  
   estimate <- estimate[estimate$variable=="R_mean",]
   
-  estimate <- full_join(incid[,c("date", "deconvoluted")], estimate)$value
+  estimate <- full_join(incid[, c("date")], estimate, by="date")[, c("date", "value")]
+  names(estimate) <- c("date", "R_calc")
   
   return(estimate)
 }
@@ -93,13 +97,19 @@ estimate_ETH_R <- function(incid,
 
 
 ### estimate as in Hotz2020
-estimate_Ilmenau_R <- function(incid, window = 1){
+estimate_Ilmenau_R <- function(incid, window = 1,
+                               gt_type=c("org", "gamma"),
+                               gt_mean=5.611111, gt_sd=4.237654){
   
   # infectivity profile
-  infectivity <- c((0:3)/3, 1, (5:0)/5)
-  names(infectivity) <- seq_along(infectivity)
-  infectivity <- infectivity / sum(infectivity)
-  
+  if (gt_type == "org"){
+    infectivity <- c((0:3)/3, 1, (5:0)/5)
+    names(infectivity) <- seq_along(infectivity)
+    infectivity <- infectivity / sum(infectivity)
+  } else {
+    infectivity <- dgamma(1:11, shape = (gt_mean^2)/gt_sd, scale = gt_sd/gt_mean)
+  }
+
   # other parameters
   report.delay <- 7
   alpha <- 0.05
@@ -118,6 +128,7 @@ estimate_Ilmenau_R <- function(incid, window = 1){
 
   return(estimate)
 }
+
 
 ### function from Ilmenau repo for their Rt estimation
 repronum <- function(
