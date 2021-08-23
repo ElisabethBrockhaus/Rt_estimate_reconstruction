@@ -125,6 +125,8 @@ Germany <- R6::R6Class("Germany",
 )
 
 region <- Germany$new(verbose = TRUE, steps = TRUE, level = "1", get = TRUE)
+germany_regional_data <- get_regional_data(country = "germany", class = TRUE)
+germany_regional_data$data$processed
 
 data_processed <- data.frame(region$data$processed)
 data_aggregated <- aggregate(data_processed$cases_new, by=list(data_processed$date), FUN=sum)
