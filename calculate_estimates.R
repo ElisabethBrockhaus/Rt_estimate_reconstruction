@@ -108,6 +108,7 @@ estimate_Ilmenau_R <- function(incid, window = 1,
     infectivity <- infectivity / sum(infectivity)
   } else {
     infectivity <- dgamma(1:11, shape = (gt_mean^2)/gt_sd, scale = gt_sd/gt_mean)
+    infectivity <- infectivity / sum(infectivity)
   }
 
   # other parameters
