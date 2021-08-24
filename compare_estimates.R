@@ -15,7 +15,6 @@ RKI_data <- load_RKI_data()
 
 # estimation
 RKI_est <- estimate_RKI_R(RKI_data) # only allows gt_sd = 0
-RKI14_est <- estimate_RKI_R(RKI_data, window = 14)
 RKI_EpiEstim_est <- estimate_RKI_R_EpiEstim(RKI_data, window = 7,
                                             gt_mean = 4, gt_sd = 0) # gt_sd > 0 possible
 
@@ -106,5 +105,33 @@ names(estimates) <- c("date", "ETH", "Ilmenau", "RKI", "epiforecasts")
 
 plot_multiple_estimates(estimates)
 
+# compare estimates from different methods with same window size
+# 7 day
+RKI_est7 <- estimate_RKI_R(RKI_data, window = 7)
+Ilmenau_est7 <- estimate_Ilmenau_R(Ilmenau_data, window = 7)
 
+estimates <- RKI_est7[, c("date", "R_calc")] %>%
+  full_join(Ilmenau_est7[, c("date", "R_calc")], by = "date") %>%
+  full_join(EpiNow2_est[, c("date", "R_calc")], by = "date")
+names(estimates) <- c("date", "RKI", "Ilmenau", "epiforecasts")
 
+plot_multiple_estimates(estimates)
+
+# 3 day
+RKI_est3 <- estimate_RKI_R(RKI_data, window = 3)
+Ilmenau_est3 <- estimate_Ilmenau_R(Ilmenau_data, window = 3)
+
+estimates <- RKI_est3[, c("date", "R_calc")] %>%
+  full_join(Ilmenau_est3[, c("date", "R_calc")], by = "date") %>%
+  full_join(ETH_data[, c("date", "R_pub")], by = "date")
+names(estimates) <- c("date", "RKI", "Ilmenau", "ETH")
+
+plot_multiple_estimates(estimates)
+
+Ilmenau_est3_shifted <- estimate_Ilmenau_R(Ilmenau_data, gt_type = "gamma")
+Ilmenau_est3_shifted$date <- Ilmenau_est3_shifted$date+5
+estimates <- RKI_est3[, c("date", "R_calc")] %>%
+  full_join(Ilmenau_est3_shifted[, c("date", "R_calc")], by = "date")
+names(estimates) <- c("date", "RKI", "Ilmenau")
+
+plot_multiple_estimates(estimates)
