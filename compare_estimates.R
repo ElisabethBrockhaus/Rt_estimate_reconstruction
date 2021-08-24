@@ -78,45 +78,33 @@ plot_published_vs_calculated(AGES_data, AGES_est, method_name="AGES")
 ##############
 
 # load data
-epiforecasts_data <- load_published_R_estimates("epiforecasts",
-                                                incid=data.frame(date=seq(as.Date("2021-04-06"), as.Date("2021-07-27"), by="day")))
-
-# check if data in git reproductive_numbers might be wrong (MV instead of national)
-subnational_estimates <- read_csv("https://raw.githubusercontent.com/epiforecasts/covid-rt-estimates/master/subnational/germany/cases/summary/rt.csv")
-MV_estimates <- subnational_estimates[subnational_estimates$region == "Mecklenburg-Vorpommern", c("date", "median", "mean")]
-
-plot(MV_estimates$date, MV_estimates$mean, type="l")
-lines(epiforecasts_data$date, epiforecasts_data$R_pub, col="red")
+#epiforecasts_data <- load_published_R_estimates("epiforecasts",
+#                                                incid=data.frame(date=seq(as.Date("2021-04-06"), as.Date("2021-07-27"), by="day")))
+estimates_published <- read_csv("https://raw.githubusercontent.com/epiforecasts/covid-rt-estimates/master/national/cases/summary/rt.csv")
+estimates_published <- estimates_published[estimates_published$country=="Germany", c("date", "median")]
+names(estimates_published) <- c("date", "R_pub")
 
 # estimation
 #EpiNow2_est <- estimate_EpiNow2_R(epiforecasts_data)
-EpiNow2_est <- qread("EpiNow2_est_blue_line.qs")
+EpiNow2_est <- qread("Rt_estimate_reconstruction/epiforecast_estimates/EpiNow2_est.qs")
 names(EpiNow2_est) <- c("date", "R_calc")
-EpiNow2_est <- full_join(data.frame(date=epiforecasts_data$date), EpiNow2_est, by="date")
-EpiNow2_est <- EpiNow2_est[EpiNow2_est$date >= min(epiforecasts_data$date)
-                           & EpiNow2_est$date <= max(epiforecasts_data$date),]
 
 # plots for comparison
-plot_published_vs_calculated(epiforecasts_data, EpiNow2_est, method_name="EpiNow2")
+plot_published_vs_calculated(estimates_published, EpiNow2_est, method_name="EpiNow2")
 
-epiforecast_estimates <- read_csv("https://raw.githubusercontent.com/epiforecasts/covid-rt-estimates/master/national/cases/summary/rt.csv")
-epiforecast_estimates <- epiforecast_estimates[epiforecast_estimates$country=="Germany", c("date", "median", "mean")]
-names(epiforecast_estimates) <- c("date", "R_pub", "R_mean")
 
-estimates <- epiforecast_estimates[, c("date", "R_pub")] %>% 
-  full_join(EpiNow2_est[, c("date", "R_calc")], by = "date")
-names(estimates) <- c("date", "pub", "calc")
 
-plot_multiple_estimates(estimates)
 
 ###################
 
 # compare estimates from different sources
-estimates <- epiforecasts_data[, c("date", "R_pub")] %>% 
-  full_join(ETH_data[, c("date", "R_pub")], by = "date") %>%
+estimates <- ETH_data[, c("date", "R_pub")] %>%
   full_join(Ilmenau_data[, c("date", "R_pub")], by = "date") %>% 
-  full_join(RKI_data[, c("date", "R_pub")], by = "date")
-names(estimates) <- c("date", "epiforecasts", "ETH", "Ilmenau", "RKI")
+  full_join(RKI_data[, c("date", "R_pub")], by = "date") %>%
+  full_join(estimates_published[, c("date", "R_pub")], by = "date")
+names(estimates) <- c("date", "ETH", "Ilmenau", "RKI", "epiforecasts")
 
 plot_multiple_estimates(estimates)
+
+
 
