@@ -32,11 +32,14 @@ plot_published_vs_calculated(RKI_data, RKI_EpiEstim_est, method_name="RKI with E
 ETH_data <- load_ETH_data()
 
 # estimation
-ETH_est <- estimate_ETH_R(ETH_data)
+#ETH_est <- estimate_ETH_R(ETH_data)
+ETH_est <- countryEstimates[countryEstimates$data_type=="Confirmed cases" &
+                              countryEstimates$estimate_type=="Cori_slidingWindow",]
+ETH_est <- data.frame(date=ETH_est$date,
+                      R_calc=ETH_est$median_R_mean)
 
 # plots for comparison
-plot_published_vs_calculated(published=data.frame(dates=ETH_data$date,
-                                                  R_pub=ETH_data$R),
+plot_published_vs_calculated(published=ETH_data[,c("date", "R_pub")],
                              calculated=ETH_est,
                              method_name="ETH")
 
@@ -85,7 +88,7 @@ names(estimates_published) <- c("date", "R_pub")
 
 # estimation
 #EpiNow2_est <- estimate_EpiNow2_R(epiforecasts_data)
-EpiNow2_est <- qread("Rt_estimate_reconstruction/epiforecast_estimates/EpiNow2_est.qs")
+EpiNow2_est <- qread("Rt_estimate_reconstruction/epiforecast_estimates/EpiNow2_est_horizon14.qs")
 names(EpiNow2_est) <- c("date", "R_calc")
 
 # plots for comparison
