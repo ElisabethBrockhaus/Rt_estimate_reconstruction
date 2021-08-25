@@ -164,7 +164,7 @@ repronum <- function(
   repronum.se <- c(repronum.se,
                    rep(NA, delay))[(1:length(repronum.se)) + delay]
   
-  # standard normal qunatile
+  # standard normal quantile
   q <- qnorm(1 - (1-conf.level) / 2)
   
   # return data.frame with as many rows as new.cases
