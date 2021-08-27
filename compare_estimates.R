@@ -1,6 +1,5 @@
 setwd("..")
 # needs to be the directory with the repos "Rt_estimate_reconstruction", "reproductive_numbers"
-# and inside a extra folder "ETH" the repo "covid-19-re-shiny-app"
 getwd()
 
 source("Rt_estimate_reconstruction/load_data.R")
