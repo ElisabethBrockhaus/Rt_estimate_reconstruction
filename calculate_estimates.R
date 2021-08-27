@@ -52,46 +52,136 @@ estimate_RKI_R_EpiEstim <- function(incid, window=7, gt_mean=4, gt_sd=0){
 
 
 ### estimate as in Huisman2021
-estimate_ETH_R <- function(incid,
-                           window=3,
-                           delays=c(Cori = 10, WallingaTeunis = 5),
-                           truncations=list(
-                             left = c(Cori = 5, WallingaTeunis = 0),
-                             right = c(Cori = 0, WallingaTeunis = 8))){
+estimate_ETH_R <- function(incid, window=3){
+  
+  region <- unique(incid$region)
+  
+  parameter_list <- get_parameters_ETH(incid, region)
   
   # load functions for estimation
-  source("ETH/covid-19-re-shiny-app/app/otherScripts/3_utils_doReEstimates.R")
+  source("Rt_estimate_reconstruction/ETH/otherScripts/3_utils_doReEstimates.R")
   
   # Run EpiEstim
-  estimateRaw <- doReEstimation(
+  countryEstimatesRaw <- doAllReEstimations(
     incid,
     slidingWindow = window,
     methods = c("Cori"),
     variationTypes = c("slidingWindow"),
-    delays = delays,
-    truncations = truncations
+    all_delays =  parameter_list[["all_delays"]],
+    truncations =  parameter_list[["truncations"]],
+    interval_ends =  parameter_list[["interval_ends"]],
+    swissRegions = parameter_list[["swissRegions"]]
   )
   
-  #estimate <- cleanCountryReEstimate(estimateRaw,
-  #                                   method = 'bootstrap',
-  #                                   rename_types = F) 
-  #View(estimate)
+  gc()
+  cat("raw estimates done \n")
+  estimatePath <- "Rt_estimate_reconstruction/ETH/data/temp"
+  if (!dir.exists(estimatePath)) {
+    dir.create(estimatePath)
+  }
+  qs::qsave(countryEstimatesRaw, file = str_c(estimatePath, "/countryEstimatesRaw.qs"))
+  gc()
   
-  #estimate <- estimate %>%
-  #  left_join(
-  #    dplyr::select(popData, region, countryIso3),
-  #    by = c("region")
-  #  )
-  estimate <- estimateRaw
+  countryEstimates <- cleanCountryReEstimate(countryEstimatesRaw, method = 'bootstrap')
   
-  View(estimate)
+  # add extra truncation of 4 days for all Swiss cantonal estimates due to consolidation
+  if (region %in% c("CHE")) {
+    days_truncated <- 4
+    canton_list <- c("AG", "BE", "BL", "BS", "FR", "GE", "GR", "JU", "LU", "NE", "SG", "SO", "SZ", "TG", "TI",
+                     "VD", "VS", "ZG", "ZH", "SH", "AR", "GL", "NW", "OW", "UR", "AI")
+    
+    countryEstimates_cantons <- countryEstimates %>%
+      filter(region %in% canton_list) %>%
+      group_by(country, region, source, data_type, estimate_type) %>%
+      filter(row_number() <= (n() - days_truncated)) %>%
+      ungroup()
+    
+    countryEstimates_CH <- countryEstimates %>%
+      filter(!(region %in% canton_list))
+    
+    countryEstimates <- bind_rows(countryEstimates_cantons, countryEstimates_CH)
+    
+  }
   
-  estimate <- estimate[estimate$variable=="R_mean",]
+  countryDataPath <- file.path("Rt_estimate_reconstruction/ETH/data/countryData",
+                               str_c(region, "-Estimates.rds"))
+  saveRDS(countryEstimates, file = countryDataPath)
   
-  estimate <- full_join(incid[, c("date")], estimate, by="date")[, c("date", "value")]
+  estimate <- full_join(unique(incid[, c("date")]),
+                        countryEstimates,
+                        by="date")[, c("date", "median_R_mean")]
   names(estimate) <- c("date", "R_calc")
   
   return(estimate)
+}
+
+
+get_parameters_ETH <- function(deconvolvedCountryData, region){
+  
+  stringencyDataPath <- file.path("Rt_estimate_reconstruction/ETH/data/countryData",
+                                  str_c(region, "-OxCGRT.rds"))
+  stringencyIndex <- readRDS(stringencyDataPath)
+  
+  swissRegions <- deconvolvedCountryData %>%
+    filter(country %in% c("Switzerland", "Liechtenstein")) %>%
+    dplyr::select(region) %>%
+    distinct() %>%
+    .$region
+  
+  # in Re estimation, the interval starts on interval_end + 1
+  # so the intervention start dates need to be shifted to - 1
+  interval_ends_df <- stringencyIndex %>%
+    filter(c(0, diff(stringencyIndex$value, 1, 1)) != 0) %>%
+    mutate(interval_ends = date - 1) %>%
+    dplyr::select(region, interval_ends)
+  
+  interval_ends <- split(interval_ends_df$interval_ends, interval_ends_df$region)
+  interval_ends[["default"]] <- interval_ends[[region]]
+  
+  ### add additional interval 7 days before last Re estimate, for country level only
+  # discarding interval ends more recent than that.
+  lastIntervalEnd <- deconvolvedCountryData %>%
+    filter(data_type == "infection_Confirmed cases", region == region, replicate == 0) %>%
+    slice_max(date) %>%
+    pull(date)
+  lastIntervalStart <- lastIntervalEnd - 7
+  
+  if (length(interval_ends) == 0) {
+    interval_ends[[region]] <- lastIntervalStart
+  } else {
+    interval_ends[[region]] <- c(
+      interval_ends[[region]][interval_ends[[region]] < lastIntervalStart],
+      lastIntervalStart)
+  }
+  
+  if (region == "CHE") {
+    additionalRegions <- setdiff(swissRegions, names(interval_ends))
+    for (iregion in additionalRegions) {
+      interval_ends[[iregion]] <- interval_ends[[region]]
+    }
+  }
+  
+  ### Delays applied
+  all_delays <- list(
+    "infection_Confirmed cases" = c(Cori = 0, WallingaTeunis = -5),
+    "infection_Confirmed cases / tests" = c(Cori = 0, WallingaTeunis = -5),
+    "infection_Deaths" = c(Cori = 0, WallingaTeunis = -5),
+    "infection_Hospitalized patients" = c(Cori = 0, WallingaTeunis = -5),
+    "Confirmed cases" = c(Cori = 10, WallingaTeunis = 5),
+    "Confirmed cases / tests" = c(Cori = 10, WallingaTeunis = 5),
+    "Deaths" = c(Cori = 20, WallingaTeunis = 15),
+    "Hospitalized patients" = c(Cori = 8, WallingaTeunis = 3),
+    "infection_Excess deaths" = c(Cori = 0, WallingaTeunis = -5),
+    "Excess deaths" = c(Cori = 20, WallingaTeunis = 15))
+  
+  truncations <- list(
+    left = c(Cori = 5, WallingaTeunis = 0),
+    right = c(Cori = 0, WallingaTeunis = 8))
+  
+  parameter_list <- list(swissRegions, interval_ends, all_delays, truncations)
+  names(parameter_list) <- c("swissRegions", "interval_ends", "all_delays", "truncations")
+  
+  return(parameter_list)
 }
 
 

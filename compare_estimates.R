@@ -1,6 +1,7 @@
-# git repositories "reproductive_numbers" and "Rt_estimate_reconstruction"
-# have to be located in the same directory
 setwd("..")
+# needs to be the directory with the repos "Rt_estimate_reconstruction", "reproductive_numbers"
+# and inside a extra folder "ETH" the repo "covid-19-re-shiny-app"
+getwd()
 
 source("Rt_estimate_reconstruction/load_data.R")
 source("Rt_estimate_reconstruction/calculate_estimates.R")
@@ -29,17 +30,14 @@ plot_published_vs_calculated(RKI_data, RKI_EpiEstim_est, method_name="RKI with E
 ##############
 
 # load data
-ETH_data <- load_ETH_data()
+ETH_countryData <- load_ETH_deconvolvedCountryData()
+ETH_pub <- load_published_R_estimates("ETHZ_sliding_window", data.frame(date=unique(ETH_countryData$date)))
 
 # estimation
-#ETH_est <- estimate_ETH_R(ETH_data)
-ETH_est <- countryEstimates[countryEstimates$data_type=="Confirmed cases" &
-                              countryEstimates$estimate_type=="Cori_slidingWindow",]
-ETH_est <- data.frame(date=ETH_est$date,
-                      R_calc=ETH_est$median_R_mean)
+ETH_est <- estimate_ETH_R(ETH_countryData)
 
 # plots for comparison
-plot_published_vs_calculated(published=ETH_data[,c("date", "R_pub")],
+plot_published_vs_calculated(published=ETH_pub,
                              calculated=ETH_est,
                              method_name="ETH")
 
