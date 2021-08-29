@@ -136,3 +136,15 @@ estimates <- RKI_est3[, c("date", "R_calc")] %>%
 names(estimates) <- c("date", "RKI", "Ilmenau")
 
 plot_multiple_estimates(estimates)
+
+# use RKI method with mean of deconvoluted ETH data
+ETH_data <- ETH_countryData[, c("date", "value")]
+ETH_data <- aggregate(ETH_data$value, by=list(ETH_data$date), FUN=mean)
+names(ETH_data) <- c("date", "I")
+
+RKI_est3_ETH <- estimate_RKI_R(ETH_data, window = 3)
+estimates <- RKI_est3_ETH %>% full_join(ETH_est, by = "date")
+names(estimates) <- c("date", "RKI with ETH data", "ETH")
+
+plot_multiple_estimates(estimates)
+
