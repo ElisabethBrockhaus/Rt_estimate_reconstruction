@@ -46,7 +46,7 @@ load_incidence_data <- function(method, location="DE"){
       print("RKI incidence data only available for Germany, pass location = 'DE'.")
     }
     
-  } else if (method == "ETH") {
+  } else if (method == "ETHZ_sliding_window") {
     # pass country/region value pair
     if (location == "DE") {
       data <- load_ETH_deconvolvedCountryData()
@@ -73,7 +73,7 @@ load_incidence_data <- function(method, location="DE"){
     }
     
   } else {
-    print("Method unknown, choose from [RKI, ETH, ilmenau, AGES].")
+    print("Method unknown, choose from [RKI, ETHZ_sliding_window, ilmenau, AGES].")
   }
   
   return(data)
@@ -106,10 +106,10 @@ load_ETH_deconvolvedCountryData <- function(country="Germany", region="DEU",
   
   countryDataPath <- file.path("Rt_estimate_reconstruction/ETH/data/countryData",
                                str_c(region, "-DeconvolutedData.rds"))
-  
+
   # Deconvolution if necessary or wanted
   if (force_deconvolution | !file.exists(countryDataPath)){
-    ETH_deconvolution()
+    ETH_deconvolution(country=country, region=region)
   }
   
   # load deconvoluted data
