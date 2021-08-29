@@ -97,7 +97,7 @@ plot_published_vs_calculated(estimates_published, EpiNow2_est, method_name="EpiN
 ###################
 
 # compare estimates from different sources
-estimates <- ETH_data[, c("date", "R_pub")] %>%
+estimates <- ETH_pub %>%
   full_join(Ilmenau_data[, c("date", "R_pub")], by = "date") %>% 
   full_join(RKI_data[, c("date", "R_pub")], by = "date") %>%
   full_join(estimates_published[, c("date", "R_pub")], by = "date")
@@ -108,7 +108,7 @@ plot_multiple_estimates(estimates)
 # compare estimates from different methods with same window size
 # 7 day
 RKI_est7 <- estimate_RKI_R(RKI_data, window = 7)
-Ilmenau_est7 <- estimate_Ilmenau_R(Ilmenau_data, window = 7)
+Ilmenau_est7 <- estimate_Ilmenau_R(Ilmenau_data, window = 7, gt_type="org")
 
 estimates <- RKI_est7[, c("date", "R_calc")] %>%
   full_join(Ilmenau_est7[, c("date", "R_calc")], by = "date") %>%
@@ -123,13 +123,14 @@ Ilmenau_est3 <- estimate_Ilmenau_R(Ilmenau_data, window = 3)
 
 estimates <- RKI_est3[, c("date", "R_calc")] %>%
   full_join(Ilmenau_est3[, c("date", "R_calc")], by = "date") %>%
-  full_join(ETH_data[, c("date", "R_pub")], by = "date")
+  full_join(ETH_pub, by = "date")
 names(estimates) <- c("date", "RKI", "Ilmenau", "ETH")
 
 plot_multiple_estimates(estimates)
 
-Ilmenau_est3_shifted <- estimate_Ilmenau_R(Ilmenau_data, gt_type = "gamma")
-Ilmenau_est3_shifted$date <- Ilmenau_est3_shifted$date+5
+# use Ilmenau method with data and parameters from RKI
+Ilmenau_est3_shifted <- estimate_Ilmenau_R(RKI_data, window = 3, gt_type = "gamma", gt_mean=4, gt_sd=0.0001)
+Ilmenau_est3_shifted$date <- Ilmenau_est3_shifted$date+6
 estimates <- RKI_est3[, c("date", "R_calc")] %>%
   full_join(Ilmenau_est3_shifted[, c("date", "R_calc")], by = "date")
 names(estimates) <- c("date", "RKI", "Ilmenau")
