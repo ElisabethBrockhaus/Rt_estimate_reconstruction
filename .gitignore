@@ -16,3 +16,4 @@ ETH/temp/*
 ETH/data/all_delays.csv
 ETH/data/DEU/DEU_data_delays.csv
 ETH/data/countryData/DEU-Estimates.rds
+ETH/data/countryData/AUT-Estimates.rds
