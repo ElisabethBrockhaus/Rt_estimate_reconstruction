@@ -31,7 +31,7 @@ plot_published_vs_calculated(RKI_R_pub, RKI_R_calc_EpiEstim, method_name="RKI (g
 ##############
 
 # load data
-ETH_countryData <- load_ETH_deconvolvedCountryData()
+ETH_countryData <-  load_incidence_data(method = "ETHZ_sliding_window")
 ETH_R_pub <- load_published_R_estimates("ETHZ_sliding_window")
 
 # estimation
@@ -40,6 +40,17 @@ ETH_R_calc <- estimate_ETH_R(ETH_countryData)
 # plots for comparison
 plot_published_vs_calculated(published=ETH_R_pub, calculated=ETH_R_calc, method_name="ETH")
 
+###
+# for Austria
+# load data
+ETH_countryData_AUT <-  load_incidence_data(method = "ETHZ_sliding_window", location = "AT")
+ETH_R_pub_AUT <- load_published_R_estimates("ETHZ_sliding_window", location = "AU")
+
+# estimation
+ETH_R_calc_AUT <- estimate_ETH_R(ETH_countryData_AUT)
+
+# plots for comparison
+plot_published_vs_calculated(published=ETH_R_pub_AUT, calculated=ETH_R_calc_AUT, method_name="ETH (Austria)")
 
 
 ##############
