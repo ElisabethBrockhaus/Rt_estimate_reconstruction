@@ -6,26 +6,8 @@ library(fitdistrplus)
 library(qs)
 library(lubridate)
 
-download_OWID_data <- function(){
-  
-  # path to OWID incidence data
-  repo_incid <- "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv"
-  
-  # load data
-  data_raw <- read_csv(repo_incid)
-  
-  # extract relevant countries
-  owid_austria <- data_raw[data_raw$location=="Austria",]
-  owid_germany <- data_raw[data_raw$location=="Germany",]
-  owid_switzerland <- data_raw[data_raw$location=="Switzerland",]
-  
-  # write data as csv
-  write.csv(owid_austria, "Rt_estimate_reconstruction/incidence_data/OWID_Austria.csv")
-  write.csv(owid_germany, "Rt_estimate_reconstruction/incidence_data/OWID_Germany.csv")
-  write.csv(owid_switzerland, "Rt_estimate_reconstruction/incidence_data/OWID_Switzerland.csv")
-}
 
-
+# load R estimates from git repo "reproductive_numbers"
 load_published_R_estimates <- function(source, start=as.Date("2019-12-28"), end=Sys.Date(), location="DE"){
   
   # define path where Rt estimates are located
@@ -53,6 +35,7 @@ load_published_R_estimates <- function(source, start=as.Date("2019-12-28"), end=
 }
 
 
+# call function to load incidence data depending on method/source/paper
 load_incidence_data <- function(method, location="DE"){
   
   # depending on method call functions
@@ -97,6 +80,11 @@ load_incidence_data <- function(method, location="DE"){
 }
 
 
+
+#########
+# incidence data from different sources (incl. preprocessing from different papers)
+#########
+
 load_RKI_data <- function(){
   
   # path to RKI incidence data
@@ -130,6 +118,73 @@ load_ETH_deconvolvedCountryData <- function(country="Germany", region="DEU",
   return(deconvolvedCountryData)
 }
 
+
+load_Ilmenau_data <- function(){
+  
+  # path to preprocessed RKI incidence data
+  path_incid <- "Rt_estimate_reconstruction/incidence_data/data_ger_tot.qs"
+  
+  # load incidence data
+  data <- qread(path_incid)
+  data <- data.frame(date=data$date, I=data$new.cases)
+  data$date <- as_date(data$date)
+  
+  return(data)
+}
+
+
+load_AGES_data <- function(){
+  
+  # path to EMS incidence data
+  link_incid <- "https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv"
+
+  # load data
+  data_raw <- read.csv(link_incid, sep = ";", dec = ",")
+  
+  # sum over days
+  data <- aggregate(data_raw$AnzahlFaelle, by=list(data_raw$Time), FUN=sum)
+  names(data) <- c("date", "I")
+  
+  # convert date column
+  data <- mutate(data, date = as.Date(date, format = "%d.%m.%Y"))
+  
+  # sort values by date
+  data <- data[order(data$date),]
+  rownames(data) <- 1:nrow(data)
+  
+  return(data)
+}
+
+
+
+#########
+# additional data
+#########
+
+download_OWID_data <- function(){
+  
+  # path to OWID incidence data
+  repo_incid <- "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv"
+  
+  # load data
+  data_raw <- read_csv(repo_incid)
+  
+  # extract relevant countries
+  owid_austria <- data_raw[data_raw$location=="Austria",]
+  owid_germany <- data_raw[data_raw$location=="Germany",]
+  owid_switzerland <- data_raw[data_raw$location=="Switzerland",]
+  
+  # write data as csv
+  write.csv(owid_austria, "Rt_estimate_reconstruction/incidence_data/OWID_Austria.csv")
+  write.csv(owid_germany, "Rt_estimate_reconstruction/incidence_data/OWID_Germany.csv")
+  write.csv(owid_switzerland, "Rt_estimate_reconstruction/incidence_data/OWID_Switzerland.csv")
+}
+
+
+
+#########
+# functions for preprocessing
+#########
 
 ETH_deconvolution <- function(country="Germany", region="DEU"){
   
@@ -225,7 +280,7 @@ ETH_deconvolution <- function(country="Germany", region="DEU"){
                                       onset_date = col_date(format = ""),
                                       count_date = col_date(format = ""),
                                       delay = col_number()))
-
+  
   # constant delay distribution
   constant_delay_distributions <- list()
   for (type_i in unique(names(shape_onset_to_count))) {
@@ -252,7 +307,7 @@ ETH_deconvolution <- function(country="Germany", region="DEU"){
   names(constant_delay_symptom_to_report_distributions) <- paste0('Onset to ',  unique(names(shape_onset_to_count)))
   
   constant_delay_distributions <- c(constant_delay_distributions, constant_delay_symptom_to_report_distributions)
-
+  
   # filter out regions with too few cases for estimation
   countryData <- countryData %>%
     filterRegions(thresholdConfirmedCases = 500)
@@ -312,7 +367,7 @@ ETH_deconvolution <- function(country="Germany", region="DEU"){
     onset_to_count_empirical_delays = delays_onset_to_count,
     data_types = c("Confirmed cases",
                    "Hospitalized patients"),
-                   #"Deaths"),
+    #"Deaths"),
     n_bootstrap = 100,
     verbose = FALSE)
   
@@ -337,41 +392,3 @@ ETH_deconvolution <- function(country="Germany", region="DEU"){
     saveRDS(deconvolvedCountryData, file = countryDataPath)
   }
 }
-
-
-load_Ilmenau_data <- function(){
-  
-  # path to preprocessed RKI incidence data
-  path_incid <- "Rt_estimate_reconstruction/incidence_data/data_ger_tot.qs"
-  
-  # load incidence data
-  data <- qread(path_incid)
-  data <- data.frame(date=data$date, I=data$new.cases)
-  data$date <- as_date(data$date)
-  
-  return(data)
-}
-
-
-load_AGES_data <- function(){
-  
-  # path to EMS incidence data
-  link_incid <- "https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv"
-
-  # load data
-  data_raw <- read.csv(link_incid, sep = ";", dec = ",")
-  
-  # sum over days
-  data <- aggregate(data_raw$AnzahlFaelle, by=list(data_raw$Time), FUN=sum)
-  names(data) <- c("date", "I")
-  
-  # convert date column
-  data <- mutate(data, date = as.Date(date, format = "%d.%m.%Y"))
-  
-  # sort values by date
-  data <- data[order(data$date),]
-  rownames(data) <- 1:nrow(data)
-  
-  return(data)
-}
-
