@@ -14,13 +14,14 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 RKI_data <- load_RKI_data()
 
 # estimation
-RKI_est <- estimate_RKI_R(RKI_data) # only allows gt_sd = 0
-RKI_EpiEstim_est <- estimate_RKI_R_EpiEstim(RKI_data, window = 7,
-                                            gt_mean = 4, gt_sd = 0) # gt_sd > 0 possible
+RKI_est <- estimate_RKI_R(RKI_data)
 
 # plots for comparison
 plot_published_vs_calculated(RKI_data, RKI_est, method_name="RKI")
-plot_published_vs_calculated(RKI_data, RKI_EpiEstim_est, method_name="RKI with EpiEstim")
+
+# with slightly higher gt_sd
+RKI_est_EpiEstim <- estimate_RKI_R(RKI_data, gt_sd = 1)
+plot_published_vs_calculated(RKI_data, RKI_est_EpiEstim, method_name="RKI (gt_sd > 0)")
 
 
 

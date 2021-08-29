@@ -1,51 +1,35 @@
 library(EpiEstim)
 
 ### estimate as in RKI2020
-estimate_RKI_R <- function(incid, window=7, gt_mean=4){
+estimate_RKI_R <- function(incid, window=7, gt_mean=4, gt_sd=0){
   
-  # calculate estimates
   estimate <- data.frame(date=incid$date, R_calc=rep(NA, nrow(incid)))
-  for (t in (gt_mean+window):nrow(incid)){
-    estimate[t-1, "R_calc"] <- round(sum(incid$I[t-0:(window-1)])
-                                     / sum(incid$I[t-gt_mean:(gt_mean+window-1)]),
-                                     digits = 2)
-  }
   
-  return(estimate)
-}
-
-
-
-### estimate as in RKI2020 but using EpiEstim (Bayes)
-estimate_RKI_R_EpiEstim <- function(incid, window=7, gt_mean=4, gt_sd=0){
-
-  # start and end for estimations at each time point (window size = 7)
-  start <- 2:(nrow(incid) + 1 - window)
-  end <- start - 1 + window
-  
-  # estimation with EpiEstim function
-  if(gt_sd==0){
-    # deterministic serial interval (default 4 days)
-    serial_interval <- c(rep(0, gt_mean), 1)
-    
-    r_EpiEstim <- estimate_R(incid$I,
-                             method = "non_parametric_si",
-                             config = make_config(list(t_start=start, t_end=end,
-                                                       si_distr=serial_interval)))
+  if (gt_sd==0){
+    # calculate estimates as in RKI2020
+    for (t in (gt_mean+window):nrow(incid)){
+      estimate[t-1, "R_calc"] <- round(sum(incid$I[t-0:(window-1)])
+                                       / sum(incid$I[t-gt_mean:(gt_mean+window-1)]),
+                                       digits = 2)
+    }
   } else {
+    # use package EpiEstim to deal with serial interval distribution
+    
+    # start and end for estimations at each time point (window size = 7)
+    start <- 2:(nrow(incid) + 1 - window)
+    end <- start - 1 + window
+    
+    # estimation with EpiEstim function
     r_EpiEstim <- estimate_R(incid$I,
                              method = "parametric_si",
                              config = make_config(list(t_start=start, t_end=end,
                                                        mean_si=gt_mean, std_si=gt_sd)))
+    len_est <- length(r_EpiEstim$R$`Mean(R)`)
+    
+    # assign estimates to time points properly
+    estimate[window+0:(len_est-1), "R_calc"] <- round(r_EpiEstim$R$`Mean(R)`, digits = 2)
   }
-
-  len_est <- length(r_EpiEstim$R$`Mean(R)`)
   
-  # assign estimates to time points properly
-  estimate <- data.frame(date=incid$date, R_calc=c(rep(NA, (window-1)),
-                                                   round(r_EpiEstim$R$`Mean(R)`, digits = 2),
-                                                   rep(NA, nrow(incid)+1-window-len_est)))
-
   return(estimate)
 }
 
@@ -189,7 +173,7 @@ get_parameters_ETH <- function(deconvolvedCountryData, region){
 ### estimate as in Hotz2020
 estimate_Ilmenau_R <- function(incid, window = 1,
                                gt_type=c("org", "gamma"),
-                               gt_mean=5.611111, gt_sd=4.237654){
+                               gt_mean=5.61, gt_sd=4.24){
   
   # infectivity profile
   if (gt_type == "org"){
