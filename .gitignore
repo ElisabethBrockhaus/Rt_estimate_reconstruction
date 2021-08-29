@@ -12,7 +12,7 @@ rtlive_summary_validation.ipynb
 example_epiforecasts.R
 
 # ETH data that is calculated in every estimation process
-ETH/temp/*
+ETH/data/temp/*
 ETH/data/all_delays.csv
 ETH/data/DEU/DEU_data_delays.csv
 ETH/data/countryData/DEU-Estimates.rds
