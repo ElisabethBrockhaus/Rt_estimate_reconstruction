@@ -26,26 +26,78 @@ download_OWID_data <- function(){
 }
 
 
-load_published_R_estimates <- function(source, incid, location="DE"){
+load_published_R_estimates <- function(source, start=as.Date("2019-12-28"), end=Sys.Date(), location="DE"){
+  
   # define path where Rt estimates are located
   path <- paste0("reproductive_numbers/data-processed/", source, "/")
   
-  # find most recent estimates
-  file <- max(list.files(path, pattern = paste0("\\d{4}-\\d{2}-\\d{2}-", source, ".csv")))
+  tryCatch({
+    # find most recent estimates
+    file <- max(list.files(path, pattern = paste0("\\d{4}-\\d{2}-\\d{2}-", source, ".csv")))
+    
+    # load estimates
+    R_est <- read_csv(paste0(path, file), col_types = list(date = col_date()))
+    
+  }, error=function(e) {
+    print("Unmatched source, choose from:")
+    print(list.dirs("reproductive_numbers/data-processed/", full.names = F))
+  })
   
-  # load estimates
-  R_est <- read_csv(paste0(path, file), col_types = list(date = col_date()))
   R_est <- R_est[(R_est$type=="point") & (R_est$location==location), ][c("date", "value")]
   names(R_est) <- c("date", "R_pub")
   
-  # merge incidence data and published R estimates
-  data <- full_join(incid, R_est, by="date")
+  # return available R estimates for time between start and end
+  dates <- data.frame(date=seq(start, end, by ="day"))
+  data <- merge(R_est, dates, by.x = 'date', by.y = 'date', all.x = FALSE, all.y = TRUE)
+  return(data)
+}
+
+
+load_incidence_data <- function(method, location="DE"){
+  
+  # depending on method call functions
+  if (method == "RKI") {
+    if (location == "DE") {
+      data <- load_RKI_data()
+    } else {
+      print("RKI incidence data only available for Germany, pass location = 'DE'.")
+    }
+    
+  } else if (method == "ETH") {
+    # pass country/region value pair
+    if (location == "DE") {
+      data <- load_ETH_deconvolvedCountryData()
+    } else if (location == "AT") {
+      data <- load_ETH_deconvolvedCountryData(country="Austria", region="AUT")
+    } else if (location == "CH") {
+      data <- load_ETH_deconvolvedCountryData(country="Switzerland", region="CHE")
+    } else {
+      print("Location not included in analysis, choose from [DE, AT, CH].")
+    }
+    
+  } else if (method == "ilmenau") {
+    if (location == "DE") {
+      data <- load_Ilmenau_data()
+    } else {
+      print("Ilmenau incidence data not yet processed for locations other than Germany, pass location = 'DE'.")
+    }
+    
+  } else if (method == "AGES") {
+    if (location == "AT") {
+      data <- load_AGES_data()
+    } else {
+      print("AGES incidence data only available for Austria, pass location = 'AT'.")
+    }
+    
+  } else {
+    print("Method unknown, choose from [RKI, ETH, ilmenau, AGES].")
+  }
   
   return(data)
 }
 
 
-load_RKI_data <- function(include_R = TRUE){
+load_RKI_data <- function(){
   
   # path to RKI incidence data
   repo_incid <- "https://raw.githubusercontent.com/robert-koch-institut/SARS-CoV-2-Nowcasting_und_-R-Schaetzung/main/Nowcast_R_aktuell.csv"
@@ -57,17 +109,11 @@ load_RKI_data <- function(include_R = TRUE){
                    "R_7Tage", "lb_R_7Tage", "ub_R_7Tage")
   data <- data.frame(date=data$Datum, I=data$NeuErkr)
   
-  # load Rt estimates
-  if (include_R){
-    data <- load_published_R_estimates("RKI_7day", data)
-  }
-  
   return(data)
 }
 
 
-load_ETH_deconvolvedCountryData <- function(include_R = TRUE,
-                                            country="Germany", region="DEU",
+load_ETH_deconvolvedCountryData <- function(country="Germany", region="DEU",
                                             force_deconvolution = FALSE){
   
   countryDataPath <- file.path("Rt_estimate_reconstruction/ETH/data/countryData",
@@ -293,7 +339,7 @@ ETH_deconvolution <- function(country="Germany", region="DEU"){
 }
 
 
-load_Ilmenau_data <- function(include_R = TRUE){
+load_Ilmenau_data <- function(){
   
   # path to preprocessed RKI incidence data
   path_incid <- "Rt_estimate_reconstruction/incidence_data/data_ger_tot.qs"
@@ -303,34 +349,29 @@ load_Ilmenau_data <- function(include_R = TRUE){
   data <- data.frame(date=data$date, I=data$new.cases)
   data$date <- as_date(data$date)
   
-  # load Rt estimates
-  if(include_R){
-    data <- load_published_R_estimates("ilmenau", data)
-  }
-  
   return(data)
 }
 
 
-load_AGES_data <- function(include_R = TRUE){
+load_AGES_data <- function(){
   
   # path to EMS incidence data
   link_incid <- "https://covid19-dashboard.ages.at/data/CovidFaelle_Timeline.csv"
 
   # load data
   data_raw <- read.csv(link_incid, sep = ";", dec = ",")
-
+  
+  # sum over days
   data <- aggregate(data_raw$AnzahlFaelle, by=list(data_raw$Time), FUN=sum)
   names(data) <- c("date", "I")
+  
+  # convert date column
   data <- mutate(data, date = as.Date(date, format = "%d.%m.%Y"))
   
-  # load Rt estimates
-  if (include_R){
-    data <- load_published_R_estimates("AGES", data, location="AT")
-  }
-
+  # sort values by date
   data <- data[order(data$date),]
   rownames(data) <- 1:nrow(data)
+  
   return(data)
 }
 
