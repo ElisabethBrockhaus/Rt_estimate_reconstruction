@@ -1,5 +1,5 @@
-# incidence data that is not needed for estimation
-incidence_data/*.csv
+# data that is not needed for estimation
+incidence_data/*
 
 # checkpoints
 .ipynb_checkpoints
