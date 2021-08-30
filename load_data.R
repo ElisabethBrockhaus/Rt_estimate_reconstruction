@@ -122,7 +122,7 @@ load_ETH_deconvolvedCountryData <- function(country="Germany", region="DEU",
 load_Ilmenau_data <- function(){
   
   # path to preprocessed RKI incidence data
-  path_incid <- "Rt_estimate_reconstruction/incidence_data/data_ger_tot.qs"
+  path_incid <- "Rt_estimate_reconstruction/Ilmenau/data_ger_tot.qs"
   
   # load incidence data
   data <- qread(path_incid)

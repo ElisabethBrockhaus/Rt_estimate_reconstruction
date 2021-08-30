@@ -98,7 +98,7 @@ names(estimates_published) <- c("date", "R_pub")
 
 # estimation
 #EpiNow2_R_calc <- estimate_EpiNow2_R(epiforecasts_data)
-EpiNow2_R_calc <- qread("Rt_estimate_reconstruction/epiforecast_estimates/EpiNow2_est_horizon14.qs")
+EpiNow2_R_calc <- qread("Rt_estimate_reconstruction/epiforecast/estimates/EpiNow2_est_horizon14.qs")
 names(EpiNow2_R_calc) <- c("date", "R_calc")
 
 # plots for comparison
