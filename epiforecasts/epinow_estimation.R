@@ -6,29 +6,35 @@ library(lubridate)
 library(qs)
 library(readr)
 
-wd <- "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code"
+wd <- "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/epiforecasts"
 setwd(wd)
 
 country <- "Germany"
 
-# load reported cases from github
-reported_cases <- read_csv("https://raw.githubusercontent.com/epiforecasts/covid-rt-estimates/master/national/cases/summary/reported_cases.csv")
-reported_cases <- reported_cases[reported_cases$region==country,]
-reported_cases <- na.omit(reported_cases)
+# load reported cases from github (last 16 weeks)
+#reported_cases <- read_csv("https://raw.githubusercontent.com/epiforecasts/covid-rt-estimates/master/national/cases/summary/reported_cases.csv")
+#reported_cases <- reported_cases[reported_cases$region==country,]
+#reported_cases <- na.omit(reported_cases)
+# load reported cases with function from covidregionaldata (complete history)
+national_data <- get_national_data(countries = country)
+reported_cases <- national_data[, c("date", "cases_new")]
+names(reported_cases) <- c("date", "confirm")
 
-# load distributions that were published at Github (https://github.com/seabbs/covid-climate-rt/tree/master/delays/data)
-generation_time <- readRDS("Rt_estimate_reconstruction/distributions/generation_time.rds")
-incubation_period <- readRDS("Rt_estimate_reconstruction/distributions/incubation_period.rds")
-reporting_delay <- readRDS("Rt_estimate_reconstruction/distributions/onset_to_admission_delay.rds")
+start_16weeks <- max(reported_cases$date) - (16 * 7)
+
+# load distributions that were published at Github (https://github.com/epiforecasts/covid-rt-estimates/tree/master/data)
+generation_time <- readRDS("distributions/generation_time.rds")
+incubation_period <- readRDS("distributions/incubation_period.rds")
+reporting_delay <- readRDS("distributions/onset_to_admission_delay.rds")
 
 # do estimation
-estimates <- regional_epinow(reported_cases = reported_cases,
-                             generation_time = generation_time,
-                             delays = delay_opts(incubation_period, reporting_delay),
-                             rt = rt_opts(prior = list(mean = 1, sd = 0.2)),
-                             stan = stan_opts(cores = 4),
-                             horizon = 14,
-                             verbose = TRUE)
+estimates <- epinow(reported_cases = reported_cases[reported_cases$date >= start_16weeks, ],
+                    generation_time = generation_time,
+                    delays = delay_opts(incubation_period, reporting_delay),
+                    rt = rt_opts(prior = list(mean = 1, sd = 0.2)),
+                    stan = stan_opts(cores = 4),
+                    horizon = 14,
+                    verbose = TRUE)
 
 # plot estimates
 plot(estimates$regional[[country]])
