@@ -1,5 +1,6 @@
 setwd("..")
-# needs to be the directory with the repos "Rt_estimate_reconstruction", "reproductive_numbers"
+# needs to be the directory with the repos "Rt_estimate_reconstruction", "reproductive_numbers" 
+# and for SDSC method "covid-19-forecast" (https://renkulab.io/gitlab/covid-19/covid-19-forecast/-/tree/master)
 getwd()
 
 source("Rt_estimate_reconstruction/load_data.R")
@@ -98,7 +99,7 @@ names(estimates_published) <- c("date", "R_pub")
 
 # estimation
 #EpiNow2_R_calc <- estimate_EpiNow2_R(epiforecasts_data)
-EpiNow2_R_calc <- qread("Rt_estimate_reconstruction/epiforecast/estimates/EpiNow2_est_horizon14.qs")
+EpiNow2_R_calc <- qread("Rt_estimate_reconstruction/epiforecasts/estimates/EpiNow2_est_horizon14.qs")
 names(EpiNow2_R_calc) <- c("date", "R_calc")
 
 # plots for comparison
@@ -110,20 +111,16 @@ plot_published_vs_calculated(estimates_published, EpiNow2_R_calc, method_name="E
 # SDSC
 ##############
 
-source("Rt_estimate_reconstruction/load_data.R")
-source("Rt_estimate_reconstruction/calculate_estimates.R")
-
 # load data
 SDSC_R_pub <- load_published_R_estimates("sdsc")
+# set data_status to one day after publication day of R_pub
 SDSC_incid <- load_incidence_data("sdsc", data_status = "2021-08-29")
 
 # estimation
-SDSC_R_calc <- estimate_SDSC_R(dates = SDSC_incid$date, incidenceData = SDSC_incid$I,
-                               estimateOffsetting = 7)
+SDSC_R_calc <- estimate_SDSC_R(SDSC_incid, estimateOffsetting = 7)
 
 # plots for comparison
 plot_published_vs_calculated(SDSC_R_pub, SDSC_R_calc, method_name="SDSC")
-
 
 
 
@@ -133,8 +130,9 @@ plot_published_vs_calculated(SDSC_R_pub, SDSC_R_calc, method_name="SDSC")
 estimates <- ETH_R_pub %>%
   full_join(Ilmenau_R_pub, by = "date") %>% 
   full_join(RKI_R_pub, by = "date") %>%
-  full_join(estimates_published, by = "date")
-names(estimates) <- c("date", "ETH", "Ilmenau", "RKI", "epiforecasts")
+  full_join(estimates_published, by = "date") %>%
+  full_join(SDSC_R_pub, by = "date")
+names(estimates) <- c("date", "ETH", "Ilmenau", "RKI", "epiforecasts", "SDSC")
 
 plot_multiple_estimates(estimates)
 
@@ -142,24 +140,28 @@ plot_multiple_estimates(estimates)
 # 7 day
 RKI_est7 <- estimate_RKI_R(RKI_incid, window = 7)
 Ilmenau_est7 <- estimate_Ilmenau_R(Ilmenau_incid, window = 7, gt_type="org")
+SDSC_est7 <- estimate_SDSC_R(SDSC_incid, estimateOffsetting = 7, window=7)
 
 estimates <- RKI_est7 %>%
   full_join(Ilmenau_est7, by = "date") %>%
-  full_join(EpiNow2_R_calc, by = "date")
-names(estimates) <- c("date", "RKI", "Ilmenau", "epiforecasts")
+  full_join(EpiNow2_R_calc, by = "date") %>%
+  full_join(SDSC_est7, by = "date")
+names(estimates) <- c("date", "RKI", "Ilmenau", "epiforecasts", "SDSC")
 
-plot_multiple_estimates(estimates)
+plot_multiple_estimates(estimates[estimates$date > "2020-03-08",])
 
 # 3 day
 RKI_est3 <- estimate_RKI_R(RKI_incid, window = 3)
 Ilmenau_est3 <- estimate_Ilmenau_R(Ilmenau_incid, window = 3, gt_type = "org")
+SDSC_est3 <- estimate_SDSC_R(SDSC_incid, estimateOffsetting = 7, window=3)
 
 estimates <- RKI_est3 %>%
   full_join(Ilmenau_est3, by = "date") %>%
-  full_join(ETH_R_pub, by = "date")
-names(estimates) <- c("date", "RKI", "Ilmenau", "ETH")
+  full_join(ETH_R_pub, by = "date") %>%
+  full_join(SDSC_est3, by = "date")
+names(estimates) <- c("date", "RKI", "Ilmenau", "ETH", "SDSC")
 
-plot_multiple_estimates(estimates)
+plot_multiple_estimates(estimates[estimates$date > "2020-03-08",])
 
 # use Ilmenau method with data and parameters from RKI
 Ilmenau_est3_shifted <- estimate_Ilmenau_R(RKI_incid, window = 3, gt_type = "gamma", gt_mean=4, gt_sd=0.0001)
