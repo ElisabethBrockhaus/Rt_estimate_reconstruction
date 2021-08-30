@@ -45,7 +45,7 @@ plot_published_vs_calculated(published=ETH_R_pub, calculated=ETH_R_calc, method_
 # for Austria
 # load data
 ETH_countryData_AUT <-  load_incidence_data(method = "ETHZ_sliding_window", location = "AT")
-ETH_R_pub_AUT <- load_published_R_estimates("ETHZ_sliding_window", location = "AU")
+ETH_R_pub_AUT <- load_published_R_estimates("ETHZ_sliding_window", location = "AT")
 
 # estimation
 ETH_R_calc_AUT <- estimate_ETH_R(ETH_countryData_AUT)
