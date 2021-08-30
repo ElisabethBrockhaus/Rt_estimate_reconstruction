@@ -163,6 +163,15 @@ names(estimates) <- c("date", "RKI", "Ilmenau", "ETH", "SDSC")
 
 plot_multiple_estimates(estimates[estimates$date > "2020-03-08",])
 
+# 3 day Austria
+AGES_est3 <- estimate_AGES_R(AGES_incid, window=3)
+
+estimates <- AGES_est3 %>%
+  full_join(ETH_R_calc_AUT, by = "date")
+names(estimates) <- c("date", "AGES", "ETH (Austria)")
+
+plot_multiple_estimates(estimates)
+
 # use Ilmenau method with data and parameters from RKI
 Ilmenau_est3_shifted <- estimate_Ilmenau_R(RKI_incid, window = 3, gt_type = "gamma", gt_mean=4, gt_sd=0.0001)
 Ilmenau_est3_shifted$date <- Ilmenau_est3_shifted$date+6
