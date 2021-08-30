@@ -13,6 +13,7 @@ rtlive/.ipynb_checkpoints
 
 # summaries of traces
 rtlive/DE/*
+!rtlive/DE/*.zip
 rtlive/rtlive_summary_validation.ipynb
 
 # RScripts with irrelevant code, just for getting started
