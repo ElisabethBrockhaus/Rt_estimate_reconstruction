@@ -8,7 +8,8 @@ incidence_data/*.csv
 rtlive_summaries
 rtlive_summary_validation.ipynb
 
-# example RScripts from authors
+# RScripts with irrelevant code, just for getting started
+data_preprocessing_epiforecasts.R
 example_epiforecasts.R
 
 # ETH data that is calculated in every estimation process
