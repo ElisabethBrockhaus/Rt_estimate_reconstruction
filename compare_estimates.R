@@ -106,6 +106,26 @@ plot_published_vs_calculated(estimates_published, EpiNow2_R_calc, method_name="E
 
 
 
+##############
+# SDSC
+##############
+
+source("Rt_estimate_reconstruction/load_data.R")
+source("Rt_estimate_reconstruction/calculate_estimates.R")
+
+# load data
+SDSC_R_pub <- load_published_R_estimates("sdsc")
+SDSC_incid <- load_incidence_data("sdsc", data_status = "2021-08-29")
+
+# estimation
+SDSC_R_calc <- estimate_SDSC_R(dates = SDSC_incid$date, incidenceData = SDSC_incid$I,
+                               estimateOffsetting = 7)
+
+# plots for comparison
+plot_published_vs_calculated(SDSC_R_pub, SDSC_R_calc, method_name="SDSC")
+
+
+
 
 ###################
 

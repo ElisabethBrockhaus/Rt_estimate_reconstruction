@@ -16,12 +16,14 @@ load_published_R_estimates <- function(source, start=as.Date("2019-12-28"), end=
   tryCatch({
     # find most recent estimates
     file <- max(list.files(path, pattern = paste0("\\d{4}-\\d{2}-\\d{2}-", source, ".csv")))
+    print(paste("Loading estimates from file", file))
     
     # load estimates
     R_est <- read_csv(paste0(path, file), col_types = list(date = col_date()))
     
   }, error=function(e) {
     print("Unmatched source, choose from:")
+    # TODO resolve: directories sometimes have different names than files
     print(list.dirs("reproductive_numbers/data-processed/", full.names = F))
   })
   
@@ -36,7 +38,7 @@ load_published_R_estimates <- function(source, start=as.Date("2019-12-28"), end=
 
 
 # call function to load incidence data depending on method/source/paper
-load_incidence_data <- function(method, location="DE"){
+load_incidence_data <- function(method, location="DE", ...){
   
   # depending on method call functions
   if (method == "RKI") {
@@ -72,8 +74,19 @@ load_incidence_data <- function(method, location="DE"){
       print("AGES incidence data only available for Austria, pass location = 'AT'.")
     }
     
+  } else if (method == "sdsc") {
+    if (location == "DE") {
+      data <- load_SDSC_data(...)
+    } else if (location == "AT") {
+      data <- load_SDSC_data(country="Austria", ...)
+    } else if (location == "CH") {
+      data <- load_SDSC_data(country="Switzerland", ...)
+    } else {
+      print("Location not included in analysis, choose from [DE, AT, CH].")
+    }
+
   } else {
-    print("Method unknown, choose from [RKI, ETHZ_sliding_window, ilmenau, AGES].")
+    print("Method unknown, choose from [RKI, ETHZ_sliding_window, ilmenau, AGES, SDSC].")
   }
   
   return(data)
@@ -151,6 +164,27 @@ load_AGES_data <- function(){
   # sort values by date
   data <- data[order(data$date),]
   rownames(data) <- 1:nrow(data)
+  
+  return(data)
+}
+
+
+load_SDSC_data <- function(country="Germany", data_status="2021-08-29"){
+  
+  # define path where JHU case data is located
+  path <- "covid-19-forecast/data/JHU/prediction/"
+
+  # find most recent data
+  #file <- max(list.files(path, pattern = "JHU_cases_\\d{4}-\\d{2}-\\d{2}.csv"))
+  
+  file <- paste0("JHU_cases_", data_status, ".csv")
+  
+  # load case data
+  data <- read_csv(paste0(path, file), col_types = list(date = col_date()))
+  
+  # select cases for location
+  data <- data[data$country==country, c("date", "daily_smoothed")]
+  names(data) <- c("date", "I")
   
   return(data)
 }

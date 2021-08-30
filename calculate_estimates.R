@@ -283,7 +283,140 @@ estimate_AGES_R <- function(incid, window = 13, mean_si = 4.46, std_si = 2.63){
 }
 
 
+### estimate as in SDSC2020
+estimate_SDSC_R <- function(dates, incidenceData,
+                            estimateOffsetting = 0, rightTruncation=0, leftTruncation = 5,
+                            method="Cori", minimumCumul = 5,
+                            window= 4, mean_si = 4.8, std_si  =2.3){
+  ################## CREDITS ################################
+  ####### https://github.com/jscire/Swiss_covid_Re ##########
+  ###########################################################
+  
+  ### Apply EpiEstim R estimation method to 'incidenceData' timeseries with 'dates' the dates associated
+  ##
+  ## 'estimateOffsetting' is the number of days the estimates are to be shifted towards the past (to account for delay between infection and testing/hospitalization/death..)
+  ## 'ledtTruncation' is the number of days of estimates that should be ignored at the start of the time series
+  ## 'method' takes value either 'Cori' or  'WallingaTeunis'. 'Cori' is the classic EpiEstim R(t) method, 'WallingaTeunis' is the method by Wallinga and Teunis (also implemented in EpiEstim)
+  ## 'minimumCumul' is the minimum cumulative count the incidence data needs to reach before the first Re estimate is attempted (if too low, EpiEstim can crash)
+  ## 'window' is the size of the sliding window used in EpiEstim
+  ## 'mean_si' and 'std_si' are the mean and SD of the serial interval distribution used by EpiEstim
 
+  ## First, remove missing data at beginning of series
+  while(length(incidenceData) > 0 & is.na(incidenceData[1])) {
+    incidenceData <- incidenceData[-1]
+    dates <- dates[-1]
+    if(length(incidenceData) == 0) {
+      return(data.frame(date=c(), variable=c(), value=c(), estimate_type=c()))
+    }
+  }
+  
+  ## Then, remove missing data at the end of the series
+  while(length(incidenceData) > 0 & is.na(incidenceData[length(incidenceData)])) {
+    incidenceData <- incidenceData[-length(incidenceData)]
+    dates <- dates[-length(dates)]
+    if(length(incidenceData) == 0) {
+      return(data.frame(date=c(), variable=c(), value=c(), estimate_type=c()))
+    }
+    
+  }
+  
+  ## Replace missing data in rest of series by zeroes (required for using EpiEstim)
+  incidenceData[is.na(incidenceData)] <- 0
+  
+  offset <- 1
+  cumulativeIncidence <- 0
+  while(cumulativeIncidence < minimumCumul) {
+    if(offset > length(incidenceData)) {
+      return(data.frame(date=c(), variable=c(), value=c(), estimate_type=c()))
+    }
+    cumulativeIncidence <- cumulativeIncidence + incidenceData[offset]
+    offset <- offset + 1
+  }
+  
+  ## offset needs to be at least two for EpiEstim
+  offset <- max(2, offset)
+  
+  rightBound <- length(incidenceData)- (window -1)
+  
+  if(rightBound < offset) { ## no valid data point, return empty estimate
+    return(data.frame(date=c(), variable=c(), value=c(), estimate_type=c()))
+  }
+  
+  ## generate start and end bounds for Re estimates
+  t_start <- seq(offset, rightBound)
+  t_end <- t_start + window -1
+  
+  if(method == "Cori") {
+    
+    R_instantaneous <- estimate_R(incidenceData, 
+                                  method="parametric_si", 
+                                  config = make_config(list(
+                                    mean_si = mean_si, std_si = std_si,
+                                    t_start = t_start,
+                                    t_end = t_end)))
+    
+  } else if(method == "WallingaTeunis") {
+    
+    R_instantaneous <- wallinga_teunis(incidenceData,
+                                       method="parametric_si",
+                                       config = list(
+                                         mean_si = mean_si, std_si = std_si,
+                                         t_start = t_start,
+                                         t_end = t_end,
+                                         n_sim = 10))
+  } else {
+    print("Unknown estimation method")
+    return(data.frame(date=c(), variable=c(), value=c(), estimate_type=c()))
+  }
+  
+  outputDates <- dates[t_end]
+  ## offset dates to account for delay between infection and recorded event (testing, hospitalization, death...)
+  outputDates <- outputDates - estimateOffsetting
+  
+  R_mean <- R_instantaneous$R$`Mean(R)`
+  R_highHPD <- R_instantaneous$R$`Quantile.0.975(R)`
+  R_lowHPD <- R_instantaneous$R$`Quantile.0.025(R)`
+  
+  if(rightTruncation > 0) {
+    
+    if(rightTruncation >= length(outputDates)) {
+      return(data.frame(date=c(), variable=c(), value=c(), estimate_type=c()))
+    }
+    
+    originalLength <- length(outputDates)
+    outputDates <- outputDates[-seq(originalLength, by=-1, length.out=rightTruncation)]
+    R_mean <- R_mean[-seq(originalLength, by=-1, length.out=rightTruncation)]
+    R_highHPD <- R_highHPD[-seq(originalLength, by=-1, length.out=rightTruncation)]
+    R_lowHPD <- R_lowHPD[-seq(originalLength, by=-1, length.out=rightTruncation)]
+    
+  }
+  
+  if (leftTruncation > 0) {
+    
+    if(leftTruncation >= length(outputDates)) {
+      return(data.frame(date=c(), variable=c(), value=c(), estimate_type=c()))
+    }
+    originalLength <- length(outputDates)
+    outputDates <- outputDates[-seq(1, leftTruncation)]
+    R_mean <- R_mean[-seq(1, leftTruncation)]
+    R_highHPD <- R_highHPD[-seq(1, leftTruncation)]
+    R_lowHPD <- R_lowHPD[-seq(1, leftTruncation)]
+  }
+  
+  result <- data.frame(date=outputDates,
+                       R_mean=R_mean, 
+                       R_highHPD=R_highHPD,
+                       R_lowHPD=R_lowHPD)
+  
+  result <- melt(result, id.vars="date")
+  colnames(result) <- c("date", "variable", "value")
+  result$estimate_type <- method
+  
+  result <- result[result$variable=="R_mean", c("date", "value")]
+  names(result) <- c("date", "R_calc")
+  
+  return(result)
+}
 
 
 
