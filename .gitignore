@@ -1,20 +1,20 @@
 # data that is not needed for estimation
 incidence_data/*
 
-# checkpoints
-.ipynb_checkpoints
-
-# summaries of traces
-rtlive_summaries
-rtlive_summary_validation.ipynb
-
-# RScripts with irrelevant code, just for getting started
-data_preprocessing_epiforecasts.R
-example_epiforecasts.R
-
 # ETH data that is calculated in every estimation process
 ETH/data/temp/*
 ETH/data/all_delays.csv
 ETH/data/DEU/DEU_data_delays.csv
 ETH/data/countryData/DEU-Estimates.rds
 ETH/data/countryData/AUT-Estimates.rds
+
+# checkpoints
+rtlive/.ipynb_checkpoints
+
+# summaries of traces
+rtlive/rtlive_summaries
+rtlive/rtlive_summary_validation.ipynb
+
+# RScripts with irrelevant code, just for getting started
+epiforecasts/data_preprocessing_epiforecasts.R
+epiforecasts/example_epiforecasts.R
