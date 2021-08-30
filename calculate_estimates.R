@@ -284,10 +284,12 @@ estimate_AGES_R <- function(incid, window = 13, mean_si = 4.46, std_si = 2.63){
 
 
 ### estimate as in SDSC2020
-estimate_SDSC_R <- function(dates, incidenceData,
-                            estimateOffsetting = 0, rightTruncation=0, leftTruncation = 5,
+estimate_SDSC_R <- function(incid, estimateOffsetting = 0,
+                            rightTruncation=0, leftTruncation = 5,
                             method="Cori", minimumCumul = 5,
                             window= 4, mean_si = 4.8, std_si  =2.3){
+  dates <- incid$date
+  incidenceData <- incid$I
   ################## CREDITS ################################
   ####### https://github.com/jscire/Swiss_covid_Re ##########
   ###########################################################
