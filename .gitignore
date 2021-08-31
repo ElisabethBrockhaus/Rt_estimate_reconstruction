@@ -1,3 +1,10 @@
+# environment
+*.Rhistory
+*.RData
+
+# checkpoints
+rtlive/.ipynb_checkpoints
+
 # data that is not needed for estimation
 incidence_data/*
 
@@ -7,9 +14,6 @@ ETH/data/all_delays.csv
 ETH/data/DEU/DEU_data_delays.csv
 ETH/data/countryData/DEU-Estimates.rds
 ETH/data/countryData/AUT-Estimates.rds
-
-# checkpoints
-rtlive/.ipynb_checkpoints
 
 # summaries of traces
 rtlive/DE/*
