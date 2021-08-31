@@ -90,20 +90,24 @@ plot_published_vs_calculated(AGES_R_pub, AGES_R_calc, method_name="AGES")
 # epiforecasts (Abbot2020)
 ##############
 
-# load data
-#epiforecasts_data <- load_published_R_estimates("epiforecasts",
-#                                                incid=data.frame(date=seq(as.Date("2021-04-06"), as.Date("2021-07-27"), by="day")))
+# save new published estimates
 estimates_published <- read_csv("https://raw.githubusercontent.com/epiforecasts/covid-rt-estimates/master/national/cases/summary/rt.csv")
 estimates_published <- estimates_published[estimates_published$country=="Germany", c("date", "median")]
-names(estimates_published) <- c("date", "R_pub")
+qsave(estimates_published, paste0("Rt_estimate_reconstruction/epiforecasts/estimates/estimates_published_",
+                                  Sys.Date(), ".qs"))
 
-# estimation
-#EpiNow2_R_calc <- estimate_EpiNow2_R(epiforecasts_data)
-EpiNow2_R_calc <- qread("Rt_estimate_reconstruction/epiforecasts/estimates/EpiNow2_est_horizon14.qs")
-names(EpiNow2_R_calc) <- c("date", "R_calc")
+# load estimates published and calculated from same date
+data_status <- "2021-08-31"
+epiforecasts_R_pub <- qread(paste0("Rt_estimate_reconstruction/epiforecasts/estimates/R_pub_",
+                                   data_status, ".qs"))
+epiforecasts_R_calc  <- qread(paste0("Rt_estimate_reconstruction/epiforecasts/estimates/R_calc_",
+                                     data_status, ".qs"))
+
+names(epiforecasts_R_pub) <- c("date", "R_pub")
+names(epiforecasts_R_calc) <- c("date", "R_calc")
 
 # plots for comparison
-plot_published_vs_calculated(estimates_published, EpiNow2_R_calc, method_name="EpiNow2")
+plot_published_vs_calculated(epiforecasts_R_pub, epiforecasts_R_calc, method_name="epiforecasts")
 
 
 
@@ -144,7 +148,7 @@ SDSC_est7 <- estimate_SDSC_R(SDSC_incid, estimateOffsetting = 7, window=7)
 
 estimates <- RKI_est7 %>%
   full_join(Ilmenau_est7, by = "date") %>%
-  full_join(EpiNow2_R_calc, by = "date") %>%
+  full_join(epiforecasts_R_calc, by = "date") %>%
   full_join(SDSC_est7, by = "date")
 names(estimates) <- c("date", "RKI", "Ilmenau", "epiforecasts", "SDSC")
 
