@@ -82,7 +82,7 @@ AGES_R_pub <- load_published_R_estimates("AGES", location = "AT")
 AGES_R_calc <- estimate_AGES_R(AGES_incid, mean_si = 3.37, std_si = 1.83)
 
 # plots for comparison
-plot_published_vs_calculated(AGES_R_pub, AGES_R_calc, method_name="AGES")
+plot_published_vs_calculated(AGES_R_pub, AGES_R_calc, method_name="AGES (Austria)")
 
 
 
@@ -92,8 +92,8 @@ plot_published_vs_calculated(AGES_R_pub, AGES_R_calc, method_name="AGES")
 
 # save new published estimates
 estimates_published <- read_csv("https://raw.githubusercontent.com/epiforecasts/covid-rt-estimates/master/national/cases/summary/rt.csv")
-estimates_published <- estimates_published[estimates_published$country=="Germany", c("date", "median")]
-qsave(estimates_published, paste0("Rt_estimate_reconstruction/epiforecasts/estimates/estimates_published_",
+estimates_published <- estimates_published[estimates_published$country=="Germany", c("date", "type","median")]
+qsave(estimates_published, paste0("Rt_estimate_reconstruction/epiforecasts/estimates/R_pub_",
                                   Sys.Date(), ".qs"))
 
 # load estimates published and calculated from same date
@@ -103,8 +103,8 @@ epiforecasts_R_pub <- qread(paste0("Rt_estimate_reconstruction/epiforecasts/esti
 epiforecasts_R_calc  <- qread(paste0("Rt_estimate_reconstruction/epiforecasts/estimates/R_calc_",
                                      data_status, ".qs"))
 
-names(epiforecasts_R_pub) <- c("date", "R_pub")
-names(epiforecasts_R_calc) <- c("date", "R_calc")
+names(epiforecasts_R_pub) <- c("date", "type", "R_pub")
+names(epiforecasts_R_calc) <- c("date", "type", "R_calc")
 
 # plots for comparison
 plot_published_vs_calculated(epiforecasts_R_pub, epiforecasts_R_calc, method_name="epiforecasts")
