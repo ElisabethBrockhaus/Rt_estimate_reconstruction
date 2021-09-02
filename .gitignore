@@ -20,6 +20,9 @@ rtlive/DE/*
 !rtlive/DE/*.zip
 rtlive/rtlive_summary_validation.ipynb
 
+# ArroyoMarioli data
+ArroyoMarioli/data_all_countries
+
 # RScripts with irrelevant code, just for getting started
 epiforecasts/data_preprocessing_epiforecasts.R
 epiforecasts/example_epiforecasts.R
