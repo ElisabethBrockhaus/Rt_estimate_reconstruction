@@ -15,7 +15,7 @@ estimate_RKI_R <- function(incid, window=7, gt_mean=4, gt_sd=0){
   } else {
     # use package EpiEstim to deal with serial interval distribution
     
-    # start and end for estimations at each time point (window size = 7)
+    # start and end for estimations at each time point
     start <- 2:(nrow(incid) + 1 - window)
     end <- start - 1 + window
     
@@ -253,7 +253,7 @@ repronum <- function(
 
 
 ### estimate as in Richter2020
-estimate_AGES_R <- function(incid, window = 13, mean_si = 4.46, std_si = 2.63){
+estimate_AGES_R <- function(incid, window = 13, gt_mean = 4.46, gt_sd = 2.63){
   
   # filter incid to dates where incidence data is available
   start_i <- min(which(!is.na(incid$I)))
@@ -272,7 +272,7 @@ estimate_AGES_R <- function(incid, window = 13, mean_si = 4.46, std_si = 2.63){
                            method = "parametric_si",
                            #method = "non_parametric_si",
                            config = make_config(list(t_start=start, t_end=end,
-                                                     mean_si=mean_si, std_si=std_si)))
+                                                     mean_si=gt_mean, std_si=gt_sd)))
                                                      #si_distr=serial_interval)))
   len_est <- length(r_EpiEstim$R$`Mean(R)`)
   
@@ -284,10 +284,10 @@ estimate_AGES_R <- function(incid, window = 13, mean_si = 4.46, std_si = 2.63){
 
 
 ### estimate as in SDSC2020
-estimate_SDSC_R <- function(incid, estimateOffsetting = 0,
-                            rightTruncation=0, leftTruncation = 5,
-                            method="Cori", minimumCumul = 5,
-                            window= 4, mean_si = 4.8, std_si  =2.3){
+estimate_SDSC_R <- function(incid, estimateOffsetting=0,
+                            rightTruncation=0, leftTruncation=5,
+                            method="Cori", minimumCumul=5,
+                            window=4, gt_mean=4.8, gt_sd=2.3){
   dates <- incid$date
   incidenceData <- incid$I
   ################## CREDITS ################################
@@ -301,7 +301,7 @@ estimate_SDSC_R <- function(incid, estimateOffsetting = 0,
   ## 'method' takes value either 'Cori' or  'WallingaTeunis'. 'Cori' is the classic EpiEstim R(t) method, 'WallingaTeunis' is the method by Wallinga and Teunis (also implemented in EpiEstim)
   ## 'minimumCumul' is the minimum cumulative count the incidence data needs to reach before the first Re estimate is attempted (if too low, EpiEstim can crash)
   ## 'window' is the size of the sliding window used in EpiEstim
-  ## 'mean_si' and 'std_si' are the mean and SD of the serial interval distribution used by EpiEstim
+  ## 'gt_mean' and 'gt_sd' are the mean and SD of the serial interval distribution used by EpiEstim
 
   ## First, remove missing data at beginning of series
   while(length(incidenceData) > 0 & is.na(incidenceData[1])) {
@@ -353,7 +353,7 @@ estimate_SDSC_R <- function(incid, estimateOffsetting = 0,
     R_instantaneous <- estimate_R(incidenceData, 
                                   method="parametric_si", 
                                   config = make_config(list(
-                                    mean_si = mean_si, std_si = std_si,
+                                    mean_si = gt_mean, std_si = gt_sd,
                                     t_start = t_start,
                                     t_end = t_end)))
     
@@ -362,7 +362,7 @@ estimate_SDSC_R <- function(incid, estimateOffsetting = 0,
     R_instantaneous <- wallinga_teunis(incidenceData,
                                        method="parametric_si",
                                        config = list(
-                                         mean_si = mean_si, std_si = std_si,
+                                         mean_si = gt_mean, std_si = gt_sd,
                                          t_start = t_start,
                                          t_end = t_end,
                                          n_sim = 10))
