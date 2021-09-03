@@ -7,9 +7,9 @@ source("Rt_estimate_reconstruction/load_data.R")
 source("Rt_estimate_reconstruction/calculate_estimates.R")
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
-##############
-# RKI (AnDerHeiden2020)
-##############
+##########################
+# RKI (AnDerHeiden2020) #
+#########################
 
 # load data
 RKI_incid <- load_incidence_data(method = "RKI")
@@ -27,9 +27,9 @@ plot_published_vs_calculated(RKI_R_pub, RKI_R_calc_EpiEstim, method_name="RKI (g
 
 
 
-##############
-# ETH (Huisman2021)
-##############
+#####################
+# ETH (Huisman2021) #
+#####################
 
 # load data
 ETH_countryData <-  load_incidence_data(method = "ETHZ_sliding_window")
@@ -54,9 +54,9 @@ ETH_R_calc_AUT <- estimate_ETH_R(ETH_countryData_AUT)
 plot_published_vs_calculated(published=ETH_R_pub_AUT, calculated=ETH_R_calc_AUT, method_name="ETH (Austria)")
 
 
-##############
-# Ilmenau (Hotz2020)
-##############
+######################
+# Ilmenau (Hotz2020) #
+######################
 
 # load data
 Ilmenau_incid <- load_incidence_data("ilmenau")
@@ -70,9 +70,9 @@ plot_published_vs_calculated(Ilmenau_R_pub, Ilmenau_R_calc, method_name="Ilmenau
 
 
 
-##############
-# AGES (Richter2020)
-##############
+######################
+# AGES (Richter2020) #
+######################
 
 # load data (Austria only)
 AGES_incid <- load_incidence_data("AGES", location = "AT")
@@ -86,9 +86,9 @@ plot_published_vs_calculated(AGES_R_pub, AGES_R_calc, method_name="AGES (Austria
 
 
 
-##############
-# epiforecasts (Abbot2020)
-##############
+############################
+# epiforecasts (Abbot2020) #
+############################
 
 # save new published estimates
 estimates_published <- read_csv("https://raw.githubusercontent.com/epiforecasts/covid-rt-estimates/master/national/cases/summary/rt.csv")
@@ -111,9 +111,9 @@ plot_published_vs_calculated(epiforecasts_R_pub, epiforecasts_R_calc, method_nam
 
 
 
-##############
-# SDSC
-##############
+#########
+# SDSC #
+########
 
 # load data
 SDSC_R_pub <- load_published_R_estimates("sdsc")
@@ -125,6 +125,30 @@ SDSC_R_calc <- estimate_SDSC_R(SDSC_incid, estimateOffsetting = 7)
 
 # plots for comparison
 plot_published_vs_calculated(SDSC_R_pub, SDSC_R_calc, method_name="SDSC")
+
+
+
+############################
+# globalrt (ArroyoMarioli) #
+############################
+
+# load published estimates
+globalrt_R_pub <- load_published_R_estimates("globalrt_7d")
+globalrt_R_pub <- read_csv("https://raw.githubusercontent.com/crondonm/TrackingR/main/Estimates-Database/database.csv")
+globalrt_R_pub <- globalrt_R_pub[globalrt_R_pub$`Country/Region` == "Germany" &
+                                   globalrt_R_pub$days_infectious == 7, c("Date", "R")]
+names(globalrt_R_pub) <- c("date", "R_pub")
+
+# load and filter calculated estimates
+globalrt_R_calc  <- read_csv("Rt_estimate_reconstruction/ArroyoMarioli/estimates/estimated_R_STAN.csv")
+globalrt_R_calc <- read_csv("Rt_estimate_reconstruction/ArroyoMarioli/estimates/R_countries(get_graphs).csv")
+globalrt_R_calc <- globalrt_R_calc[globalrt_R_calc$`Country/Region` == "Germany" &
+                                     globalrt_R_calc$days_infectious == 7, c("Date", "R")]
+names(globalrt_R_calc) <- c("date", "R_calc")
+
+
+# plots for comparison
+plot_published_vs_calculated(globalrt_R_pub, globalrt_R_calc, method_name="globalrt")
 
 
 
