@@ -3,7 +3,7 @@
 *.RData
 
 # checkpoints
-rtlive/.ipynb_checkpoints
+*/.ipynb_checkpoints
 
 # data that is not needed for estimation
 incidence_data/*
@@ -22,6 +22,7 @@ rtlive/rtlive_summary_validation.ipynb
 
 # ArroyoMarioli data
 ArroyoMarioli/data_all_countries
+ArroyoMarioli/mismeasurements
 
 # RScripts with irrelevant code, just for getting started
 epiforecasts/data_preprocessing_epiforecasts.R
