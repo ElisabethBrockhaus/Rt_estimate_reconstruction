@@ -389,14 +389,23 @@ estimate_SDSC_R <- function(incid, estimateOffsetting=7,
   
   if(method == "Cori") {
     
-    R_instantaneous <- estimate_R(incidenceData, 
-                                  #method="parametric_si", 
-                                  method = "non_parametric_si",
-                                  config = make_config(list(
-                                    #mean_si = gt_mean, std_si = gt_sd,
-                                    si_distr=get_infectivity_profile(gt_type, gt_mean, gt_sd),
-                                    t_start = t_start,
-                                    t_end = t_end)))
+    # estimation with EpiEstim function
+    if (gt_type != "gamma"){
+      # non parametric estimation if generation time distribution not gamma
+      R_instantaneous <- estimate_R(incidenceData,
+                                    method = "non_parametric_si",
+                                    config = make_config(list(
+                                      t_start=t_start, t_end=t_end,
+                                      si_distr=get_infectivity_profile(gt_type, gt_mean, gt_sd))))
+    } else {
+      # parametric estimation (assumes gamma distributed serial interval)
+      R_instantaneous <- estimate_R(incidenceData, 
+                                    method="parametric_si", 
+                                    config = make_config(list(
+                                      mean_si = gt_mean, std_si = gt_sd,
+                                      t_start = t_start,
+                                      t_end = t_end)))
+    }
     
   } else if(method == "WallingaTeunis") {
     
