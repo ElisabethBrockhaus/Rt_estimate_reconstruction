@@ -180,19 +180,12 @@ get_parameters_ETH <- function(deconvolvedCountryData, region, shift){
 
 ### estimate as in Hotz2020
 estimate_Ilmenau_R <- function(incid, window=1,
-                               gt_type=c("org", "gamma"),
+                               gt_type=c("ad hoc", "gamma"),
                                gt_mean=5.61, gt_sd=4.24,
                                shift=0){
   
   # infectivity profile
-  if (gt_type == "org"){
-    infectivity <- c((0:3)/3, 1, (5:0)/5)
-    names(infectivity) <- seq_along(infectivity)
-    infectivity <- infectivity / sum(infectivity)
-  } else {
-    infectivity <- dgamma(1:11, shape = (gt_mean^2)/gt_sd, scale = gt_sd/gt_mean)
-    infectivity <- infectivity / sum(infectivity)
-  }
+  gt_dist <- get_infectivity_profile(gt_type, gt_mean, gt_sd)
 
   # other parameters
   report.delay <- 7
@@ -201,7 +194,7 @@ estimate_Ilmenau_R <- function(incid, window=1,
   # calculate estimates
   estimate <- repronum(
     new.cases = incid$I,
-    profile = infectivity,
+    profile = gt_dist,
     window = window,
     delay = report.delay,
     conf.level = 1 - alpha,
@@ -212,6 +205,25 @@ estimate_Ilmenau_R <- function(incid, window=1,
   estimate$date <- estimate$date + shift
 
   return(estimate)
+}
+
+
+get_infectivity_profile <- function(gt_type=c("ad hoc", "gamma"), gt_mean, gt_sd){
+  
+  if (gt_type == "ad hoc"){
+    gt_dist <- c((0:3)/3, 1, (5:0)/5)
+    names(gt_dist) <- seq_along(gt_dist)
+    gt_dist <- gt_dist / sum(gt_dist)
+    
+  } else if (gt_type=="gamma"){
+    gt_dist <- dgamma(1:11, shape = (gt_mean^2)/gt_sd, scale = gt_sd/gt_mean)
+    gt_dist <- gt_dist / sum(gt_dist)
+    
+  } else {
+    print("Type of generation time distribution not known. Choose from ['ad hoc', 'gamma']")
+  }
+  
+  return(gt_dist)
 }
 
 
