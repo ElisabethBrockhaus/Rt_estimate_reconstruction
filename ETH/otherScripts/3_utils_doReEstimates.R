@@ -21,7 +21,9 @@ estimateRe <- function(
   minimumCumul = 5,
   windowLength= 4,
   mean_si = 4.8,
-  std_si  = 2.3) {
+  std_si  = 2.3,
+  # EB: added parameter: serial interval distribution
+  si_distr=c()) {
 
   offset <- 1
   cumulativeIncidence <- 0
@@ -91,20 +93,33 @@ estimateRe <- function(
 
   ## offset dates to account for delay between infection and recorded event (testing, hospitalization, death...)
   outputDates <- outputDates - estimateOffsetting
-
+  
   if (method == "Cori") {
-    R_instantaneous <- estimate_R(
-      incidenceData,
-      method = "parametric_si",
-      config = make_config(
-        list(
-          mean_si = mean_si,
-          std_si = std_si,
-          t_start = t_start,
-          t_end = t_end,
-          mean_prior = 1)
+    # EB: enabled use of different serial interval distributions
+    if (length(si_distr) > 0){
+      R_instantaneous <- estimate_R(
+        incidenceData,
+        method = "non_parametric_si",
+        config = make_config(
+          list(
+            si_distr = si_distr,
+            t_start = t_start, t_end = t_end,
+            mean_prior = 1)
+        )
       )
-    )
+    } else {
+      R_instantaneous <- estimate_R(
+        incidenceData,
+        method = "parametric_si",
+        config = make_config(
+          list(
+            mean_si = mean_si, std_si = std_si,
+            t_start = t_start, t_end = t_end,
+            mean_prior = 1)
+        )
+      )
+    }
+
   } else if (method == "WallingaTeunis") {
     R_instantaneous <- wallinga_teunis(
       incidenceData,
@@ -185,9 +200,10 @@ doReEstimation <- function(
   interval_ends = c("2020-04-01"),
   delays,
   truncations,
-  # EB: added parameters of serial interval
+  # EB: added parameters of serial interval distribution
   mean_si = 4.8,
-  std_si  = 2.3) {
+  std_si = 2.3,
+  si_distr = c()) {
 
   end_result <-  data.frame()
 
@@ -221,9 +237,10 @@ doReEstimation <- function(
         method = method_i,
         variationType = variation_i,
         interval_ends = interval_ends,
-        # EB: added parameters of serial interval
+        # EB: added parameters of serial interval distribution
         mean_si = mean_si,
-        std_si  = std_si)
+        std_si = std_si,
+        si_distr = si_distr)
       if (nrow(result) > 0) {
         result$region <- unique(data_subset$region)[1]
         result$country <- unique(data_subset$country)[1]
@@ -312,9 +329,10 @@ doAllReEstimations <- function(
   all_delays,
   truncations,
   interval_ends = list(default = c("2020-04-01")),
-  # EB: added parameters of serial interval
+  # EB: added parameters of serial interval distribution
   mean_si = 4.8,
-  std_si  = 2.3,
+  std_si = 2.3,
+  si_distr = c(),
   ...) {
   
   results_list <- list()
@@ -365,9 +383,10 @@ doAllReEstimations <- function(
                                 interval_ends = region_interval_ends,
                                 delays = delay_i,
                                 truncations = truncations,
-                                # EB: added parameters of serial interval
+                                # EB: added parameters of serial interval distribution
                                 mean_si = mean_si,
-                                std_si  = std_si
+                                std_si = std_si,
+                                si_distr = si_distr
                               )
                             )
           )

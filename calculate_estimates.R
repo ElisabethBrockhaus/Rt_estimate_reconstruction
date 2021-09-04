@@ -59,9 +59,8 @@ estimate_RKI_R <- function(incid, window=7, gt_type="constant", gt_mean=4, gt_sd
 }
 
 
-
 ### estimate as in Huisman2021
-estimate_ETH_R <- function(incid, window=3, gt_mean=4.8, gt_sd=2.3, shift=0){
+estimate_ETH_R <- function(incid, window=3, gt_type="gamma", gt_mean=4.8, gt_sd=2.3, shift=0){
   
   region <- unique(incid$region)
   
@@ -69,6 +68,11 @@ estimate_ETH_R <- function(incid, window=3, gt_mean=4.8, gt_sd=2.3, shift=0){
   
   # load functions for estimation
   source("Rt_estimate_reconstruction/ETH/otherScripts/3_utils_doReEstimates.R")
+  
+  # EB: enable use of generation time distributions other than gamma
+  if (gt_type != "gamma"){
+    gt_dist <- get_infectivity_profile(gt_type, gt_mean, gt_sd)
+  } else {gt_dist <- c()}
   
   # Run EpiEstim
   countryEstimatesRaw <- doAllReEstimations(
@@ -80,9 +84,11 @@ estimate_ETH_R <- function(incid, window=3, gt_mean=4.8, gt_sd=2.3, shift=0){
     truncations =  parameter_list[["truncations"]],
     interval_ends =  parameter_list[["interval_ends"]],
     swissRegions = parameter_list[["swissRegions"]],
-    # EB: added parameters of serial interval
+    # EB: added parameters of serial interval distribution
     mean_si = gt_mean,
-    std_si  = gt_sd
+    std_si = gt_sd,
+    # EB: if serial interval distribution is not gamma use non-parametric estimation method
+    si_distr = gt_dist
   )
   
   gc()
@@ -198,7 +204,6 @@ get_parameters_ETH <- function(deconvolvedCountryData, region, shift){
   
   return(parameter_list)
 }
-
 
 
 ### estimate as in Hotz2020
@@ -457,12 +462,12 @@ estimate_SDSC_R <- function(incid, estimateOffsetting=7,
 get_infectivity_profile <- function(gt_type=c("ad hoc", "gamma"), gt_mean, gt_sd){
   
   if (gt_type == "ad hoc"){
-    gt_dist <- c(0, (0:3)/3, 1, (5:0)/5, rep(0, 588))
+    gt_dist <- c(0, (0:3)/3, 1, (5:0)/5, rep(0, 988))
     names(gt_dist) <- seq_along(gt_dist)
     gt_dist <- gt_dist / sum(gt_dist)
     
-  } else if (gt_type=="gamma"){
-    gt_dist <- c(0, dgamma(1:600, shape = (gt_mean^2)/gt_sd, scale = gt_sd/gt_mean))
+  } else if (gt_type == "gamma"){
+    gt_dist <- c(0, dgamma(1:1000, shape = (gt_mean^2)/gt_sd, scale = gt_sd/gt_mean))
     gt_dist <- gt_dist / sum(gt_dist)
     
   } else {
