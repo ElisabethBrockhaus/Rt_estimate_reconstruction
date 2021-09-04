@@ -1,7 +1,7 @@
 library(EpiEstim)
 
 ### estimate as in RKI2020
-estimate_RKI_R <- function(incid, window=7, gt_mean=4, gt_sd=0){
+estimate_RKI_R <- function(incid, window=7, gt_mean=4, gt_sd=0, shift=0){
   
   estimate <- data.frame(date=incid$date, R_calc=rep(NA, nrow(incid)))
   
@@ -29,6 +29,8 @@ estimate_RKI_R <- function(incid, window=7, gt_mean=4, gt_sd=0){
     # assign estimates to time points properly
     estimate[window+0:(len_est-1), "R_calc"] <- round(r_EpiEstim$R$`Mean(R)`, digits = 2)
   }
+  
+  estimate$date <- estimate$date + shift
   
   return(estimate)
 }
@@ -171,9 +173,10 @@ get_parameters_ETH <- function(deconvolvedCountryData, region){
 
 
 ### estimate as in Hotz2020
-estimate_Ilmenau_R <- function(incid, window = 1,
+estimate_Ilmenau_R <- function(incid, window=1,
                                gt_type=c("org", "gamma"),
-                               gt_mean=5.61, gt_sd=4.24){
+                               gt_mean=5.61, gt_sd=4.24,
+                               shift=0){
   
   # infectivity profile
   if (gt_type == "org"){
@@ -200,6 +203,7 @@ estimate_Ilmenau_R <- function(incid, window = 1,
   )$repronum
   
   estimate <- data.frame(date=incid$date, R_calc=estimate)
+  estimate$date <- estimate$date + shift
 
   return(estimate)
 }
@@ -253,7 +257,7 @@ repronum <- function(
 
 
 ### estimate as in Richter2020
-estimate_AGES_R <- function(incid, window = 13, gt_mean = 4.46, gt_sd = 2.63){
+estimate_AGES_R <- function(incid, window = 13, gt_mean = 4.46, gt_sd = 2.63, shift=0){
   
   # filter incid to dates where incidence data is available
   start_i <- min(which(!is.na(incid$I)))
@@ -279,12 +283,14 @@ estimate_AGES_R <- function(incid, window = 13, gt_mean = 4.46, gt_sd = 2.63){
   # assign estimates to time points properly
   estimate <- data.frame(date=incid$date, R_calc=c(rep(NA, (start_i+window-1)),
                                                    r_EpiEstim$R$`Mean(R)`))
+  estimate$date <- estimate$date + shift
+  
   return(estimate)
 }
 
 
 ### estimate as in SDSC2020
-estimate_SDSC_R <- function(incid, estimateOffsetting=0,
+estimate_SDSC_R <- function(incid, shift=0,
                             rightTruncation=0, leftTruncation=5,
                             method="Cori", minimumCumul=5,
                             window=4, gt_mean=4.8, gt_sd=2.3){
@@ -296,7 +302,7 @@ estimate_SDSC_R <- function(incid, estimateOffsetting=0,
   
   ### Apply EpiEstim R estimation method to 'incidenceData' timeseries with 'dates' the dates associated
   ##
-  ## 'estimateOffsetting' is the number of days the estimates are to be shifted towards the past (to account for delay between infection and testing/hospitalization/death..)
+  ## 'shift' is the number of days the estimates are to be shifted towards the past (to account for delay between infection and testing/hospitalization/death..)
   ## 'ledtTruncation' is the number of days of estimates that should be ignored at the start of the time series
   ## 'method' takes value either 'Cori' or  'WallingaTeunis'. 'Cori' is the classic EpiEstim R(t) method, 'WallingaTeunis' is the method by Wallinga and Teunis (also implemented in EpiEstim)
   ## 'minimumCumul' is the minimum cumulative count the incidence data needs to reach before the first Re estimate is attempted (if too low, EpiEstim can crash)
@@ -373,7 +379,7 @@ estimate_SDSC_R <- function(incid, estimateOffsetting=0,
   
   outputDates <- dates[t_end]
   ## offset dates to account for delay between infection and recorded event (testing, hospitalization, death...)
-  outputDates <- outputDates - estimateOffsetting
+  outputDates <- outputDates - shift
   
   R_mean <- R_instantaneous$R$`Mean(R)`
   R_highHPD <- R_instantaneous$R$`Quantile.0.975(R)`
@@ -419,12 +425,5 @@ estimate_SDSC_R <- function(incid, estimateOffsetting=0,
   
   return(result)
 }
-
-
-
-
-
-
-
 
 

@@ -12,7 +12,7 @@ window_size <- c(3, 7, 1, 4, 13, 1, 1, 1)
 gt_dist <- c("gamma", "constant", "ad hoc", "gamma", "gamma", "?", "log-normal", "exponential")
 mean_gt <- c(4.8, 4.0, 5.6, 4.8, 3.4, 3.6, 4.7, 7)
 sd_gt <- c(2.3, 0.0, 4.2, 2.3, 1.8, 3.1, 2.9, 7)
-shift <- c(0, 0, 7, 7, 0, 2, 5, 0)
+shift <- c(0, 4, 7, 7, 0, 2, 5, 0)
 
 params <- data.frame(window=window_size, gtd=gt_dist, gt_mean=mean_gt, gt_sd=sd_gt, shift=shift)
 rownames(params) <- c("ETH", "RKI", "Ilmenau", "SDSC", "AGES", "epiforecasts", "rtlive", "globalrt")
@@ -30,8 +30,8 @@ names(simple_incid) <- c("date", "I")
 RKI_R <- estimate_RKI_R(simple_incid,
                         window=params[method, "window"],
                         gt_mean=params[method, "gt_mean"],
-                        gt_sd=params[method, "gt_sd"])
-RKI_R$date <- RKI_R$date + 1#params["RKI", "shift"]
+                        gt_sd=params[method, "gt_sd"],
+                        shift=1) #params["RKI", "shift"]
 
 ETH_R <- estimate_ETH_R(incid)#,
                         #window=params[method, "window"],
@@ -42,20 +42,20 @@ ETH_R$date <- ETH_R$date + params["ETH", "shift"]
 Ilmenau_R <- estimate_Ilmenau_R(simple_incid, gt_type = "gamma",
                                 window=params[method, "window"],
                                 gt_mean=params[method, "gt_mean"],
-                                gt_sd=params[method, "gt_sd"])
-Ilmenau_R$date <- Ilmenau_R$date + params["Ilmenau", "shift"]
+                                gt_sd=params[method, "gt_sd"],
+                                shift=params["Ilmenau", "shift"])
 
 AGES_R <- estimate_AGES_R(simple_incid,
                           window=params[method, "window"],
                           gt_mean=params[method, "gt_mean"],
-                          gt_sd=params[method, "gt_sd"])
-AGES_R$date <- AGES_R$date + params["AGES", "shift"]
+                          gt_sd=params[method, "gt_sd"],
+                          shift=params["AGES", "shift"])
 
 SDSC_R <- estimate_SDSC_R(simple_incid, estimateOffsetting = 7,
                           window=params[method, "window"],
                           gt_mean=params[method, "gt_mean"],
-                          gt_sd=params[method, "gt_sd"])
-SDSC_R$date <- SDSC_R$date + params["SDSC", "shift"]
+                          gt_sd=params[method, "gt_sd"],
+                          params["SDSC", "shift"])
 
 # merge estimates and plot for comparison
 estimates <- RKI_R %>%
