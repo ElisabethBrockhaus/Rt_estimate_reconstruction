@@ -1,11 +1,11 @@
 library(EpiEstim)
 
 ### estimate as in RKI2020
-estimate_RKI_R <- function(incid, window=7, gt_mean=4, gt_sd=0, shift=0){
+estimate_RKI_R <- function(incid, window=7, gt_type="constant", gt_mean=4, gt_sd=0, shift=0){
   
   estimate <- data.frame(date=incid$date, R_calc=rep(NA, nrow(incid)))
   
-  if (gt_sd==0){
+  if (gt_sd==0 & gt_type=="constant"){
     # calculate estimates as in RKI2020
     for (t in (gt_mean+window):nrow(incid)){
       estimate[t-1, "R_calc"] <- round(sum(incid$I[t-0:(window-1)])
@@ -13,21 +13,44 @@ estimate_RKI_R <- function(incid, window=7, gt_mean=4, gt_sd=0, shift=0){
                                        digits = 2)
     }
   } else {
+    # use non-simplified formula from RKI2020 for estimation
+    
+    # w_s
+    gt_dist <- get_infectivity_profile(gt_type, gt_mean, gt_sd)
+    
+    for (t in (gt_mean+window):nrow(incid)){
+      
+      # numerator
+      new_infect <- sum(incid$I[t - 0:(window-1)])
+      
+      # nominator
+      total_infect <- 0
+      for (i in t - 0:(window-1)) {
+        total_infect <- total_infect + (incid$I[i - 1 : i] %*% gt_dist[2:i])
+      }
+      
+      # R_t
+      estimate[t-1, "R_calc"] <- round(new_infect / total_infect,
+                                       digits = 2)
+    }
+    
+    
     # use package EpiEstim to deal with serial interval distribution
     
     # start and end for estimations at each time point
-    start <- 2:(nrow(incid) + 1 - window)
-    end <- start - 1 + window
+    #start <- 2:(nrow(incid) + 1 - window)
+    #end <- start - 1 + window
     
     # estimation with EpiEstim function
-    r_EpiEstim <- estimate_R(incid$I,
-                             method = "parametric_si",
-                             config = make_config(list(t_start=start, t_end=end,
-                                                       mean_si=gt_mean, std_si=gt_sd)))
-    len_est <- length(r_EpiEstim$R$`Mean(R)`)
+    #r_EpiEstim <- estimate_R(incid$I,
+    #                         method = "non_parametric_si",
+    #                         config = make_config(list(
+    #                           t_start=start, t_end=end,
+    #                           si_distr=get_infectivity_profile(gt_type, gt_mean, gt_sd))))
+    #len_est <- length(r_EpiEstim$R$`Mean(R)`)
     
     # assign estimates to time points properly
-    estimate[window+0:(len_est-1), "R_calc"] <- round(r_EpiEstim$R$`Mean(R)`, digits = 2)
+    #estimate[window+0:(len_est-1), "R_calc"] <- round(r_EpiEstim$R$`Mean(R)`, digits = 2)
   }
   
   estimate$date <- estimate$date + shift
@@ -179,13 +202,13 @@ get_parameters_ETH <- function(deconvolvedCountryData, region, shift){
 
 
 ### estimate as in Hotz2020
-estimate_Ilmenau_R <- function(incid, window=1,
-                               gt_type=c("ad hoc", "gamma"),
-                               gt_mean=5.61, gt_sd=4.24,
-                               shift=0){
+estimate_Ilmenau_R <- function(incid, window=1, gt_type="ad hoc",
+                               gt_mean=5.61, gt_sd=4.24, shift=0){
   
   # infectivity profile
   gt_dist <- get_infectivity_profile(gt_type, gt_mean, gt_sd)
+  # trunctate day 0, not expected in estimation function
+  gt_dist <- gt_dist[2:length(gt_dist)]
 
   # other parameters
   report.delay <- 7
@@ -205,25 +228,6 @@ estimate_Ilmenau_R <- function(incid, window=1,
   estimate$date <- estimate$date + shift
 
   return(estimate)
-}
-
-
-get_infectivity_profile <- function(gt_type=c("ad hoc", "gamma"), gt_mean, gt_sd){
-  
-  if (gt_type == "ad hoc"){
-    gt_dist <- c((0:3)/3, 1, (5:0)/5)
-    names(gt_dist) <- seq_along(gt_dist)
-    gt_dist <- gt_dist / sum(gt_dist)
-    
-  } else if (gt_type=="gamma"){
-    gt_dist <- dgamma(1:11, shape = (gt_mean^2)/gt_sd, scale = gt_sd/gt_mean)
-    gt_dist <- gt_dist / sum(gt_dist)
-    
-  } else {
-    print("Type of generation time distribution not known. Choose from ['ad hoc', 'gamma']")
-  }
-  
-  return(gt_dist)
 }
 
 
@@ -275,27 +279,27 @@ repronum <- function(
 
 
 ### estimate as in Richter2020
-estimate_AGES_R <- function(incid, window = 13, gt_mean = 4.46, gt_sd = 2.63, shift=0){
+estimate_AGES_R <- function(incid, window = 13, gt_type="gamma", gt_mean = 4.46, gt_sd = 2.63, shift=0){
   
   # filter incid to dates where incidence data is available
   start_i <- min(which(!is.na(incid$I)))
   end_i <- max(which(!is.na(incid$I)))
   incid_wo_na <- incid[start_i:end_i,]
   
-  # deterministic serial interval
-  #serial_interval <- c(0, dgamma(1:16, shape = 2.88, scale = 1.55))
-  
+  # non parametric serial interval
+  gt_dist <- get_infectivity_profile(gt_type, gt_mean, gt_sd)
+
   # start and end for estimations at each time point
   start <- 2:(nrow(incid_wo_na) + 1 - window)
   end <- start - 1 + window
   
   # estimation with EpiEstim function
   r_EpiEstim <- estimate_R(incid_wo_na$I,
-                           method = "parametric_si",
-                           #method = "non_parametric_si",
+                           #method = "parametric_si",
+                           method = "non_parametric_si",
                            config = make_config(list(t_start=start, t_end=end,
-                                                     mean_si=gt_mean, std_si=gt_sd)))
-                                                     #si_distr=serial_interval)))
+                                                     #mean_si=gt_mean, std_si=gt_sd)))
+                                                     si_distr=gt_dist)))
   len_est <- length(r_EpiEstim$R$`Mean(R)`)
   
   # assign estimates to time points properly
@@ -311,7 +315,7 @@ estimate_AGES_R <- function(incid, window = 13, gt_mean = 4.46, gt_sd = 2.63, sh
 estimate_SDSC_R <- function(incid, estimateOffsetting=7,
                             rightTruncation=0, leftTruncation=5,
                             method="Cori", minimumCumul=5,
-                            window=4, gt_mean=4.8, gt_sd=2.3, shift=0){
+                            window=4, gt_type="gamma", gt_mean=4.8, gt_sd=2.3, shift=0){
   dates <- incid$date
   incidenceData <- incid$I
   ################## CREDITS ################################
@@ -375,18 +379,22 @@ estimate_SDSC_R <- function(incid, estimateOffsetting=7,
   if(method == "Cori") {
     
     R_instantaneous <- estimate_R(incidenceData, 
-                                  method="parametric_si", 
+                                  #method="parametric_si", 
+                                  method = "non_parametric_si",
                                   config = make_config(list(
-                                    mean_si = gt_mean, std_si = gt_sd,
+                                    #mean_si = gt_mean, std_si = gt_sd,
+                                    si_distr=get_infectivity_profile(gt_type, gt_mean, gt_sd),
                                     t_start = t_start,
                                     t_end = t_end)))
     
   } else if(method == "WallingaTeunis") {
     
     R_instantaneous <- wallinga_teunis(incidenceData,
-                                       method="parametric_si",
+                                       #method="parametric_si", 
+                                       method = "non_parametric_si",
                                        config = list(
-                                         mean_si = gt_mean, std_si = gt_sd,
+                                         #mean_si = gt_mean, std_si = gt_sd,
+                                         si_distr=get_infectivity_profile(gt_type, gt_mean, gt_sd),
                                          t_start = t_start,
                                          t_end = t_end,
                                          n_sim = 10))
@@ -442,6 +450,26 @@ estimate_SDSC_R <- function(incid, estimateOffsetting=7,
   names(result) <- c("date", "R_calc")
   
   return(result)
+}
+
+
+
+get_infectivity_profile <- function(gt_type=c("ad hoc", "gamma"), gt_mean, gt_sd){
+  
+  if (gt_type == "ad hoc"){
+    gt_dist <- c(0, (0:3)/3, 1, (5:0)/5, rep(0, 588))
+    names(gt_dist) <- seq_along(gt_dist)
+    gt_dist <- gt_dist / sum(gt_dist)
+    
+  } else if (gt_type=="gamma"){
+    gt_dist <- c(0, dgamma(1:600, shape = (gt_mean^2)/gt_sd, scale = gt_sd/gt_mean))
+    gt_dist <- gt_dist / sum(gt_dist)
+    
+  } else {
+    print("Type of generation time distribution not known. Choose from ['ad hoc', 'gamma']")
+  }
+  
+  return(gt_dist)
 }
 
 
