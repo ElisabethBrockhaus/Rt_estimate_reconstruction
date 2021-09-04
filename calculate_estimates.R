@@ -38,11 +38,11 @@ estimate_RKI_R <- function(incid, window=7, gt_mean=4, gt_sd=0, shift=0){
 
 
 ### estimate as in Huisman2021
-estimate_ETH_R <- function(incid, window=3){
+estimate_ETH_R <- function(incid, window=3, gt_mean=4.8, gt_sd=2.3, shift=0){
   
   region <- unique(incid$region)
   
-  parameter_list <- get_parameters_ETH(incid, region)
+  parameter_list <- get_parameters_ETH(incid, region, shift)
   
   # load functions for estimation
   source("Rt_estimate_reconstruction/ETH/otherScripts/3_utils_doReEstimates.R")
@@ -56,7 +56,10 @@ estimate_ETH_R <- function(incid, window=3){
     all_delays =  parameter_list[["all_delays"]],
     truncations =  parameter_list[["truncations"]],
     interval_ends =  parameter_list[["interval_ends"]],
-    swissRegions = parameter_list[["swissRegions"]]
+    swissRegions = parameter_list[["swissRegions"]],
+    # EB: added parameters of serial interval
+    mean_si = gt_mean,
+    std_si  = gt_sd
   )
   
   gc()
@@ -102,7 +105,7 @@ estimate_ETH_R <- function(incid, window=3){
 }
 
 
-get_parameters_ETH <- function(deconvolvedCountryData, region){
+get_parameters_ETH <- function(deconvolvedCountryData, region, shift){
   
   stringencyDataPath <- file.path("Rt_estimate_reconstruction/ETH/data/countryData",
                                   str_c(region, "-OxCGRT.rds"))
@@ -159,6 +162,9 @@ get_parameters_ETH <- function(deconvolvedCountryData, region){
     "Hospitalized patients" = c(Cori = 8, WallingaTeunis = 3),
     "infection_Excess deaths" = c(Cori = 0, WallingaTeunis = -5),
     "Excess deaths" = c(Cori = 20, WallingaTeunis = 15))
+  for (type in names(all_delays)) {
+    all_delays[[type]][["Cori"]] <- all_delays[[type]][["Cori"]] - shift
+  }
   
   truncations <- list(
     left = c(Cori = 5, WallingaTeunis = 0),
@@ -290,10 +296,10 @@ estimate_AGES_R <- function(incid, window = 13, gt_mean = 4.46, gt_sd = 2.63, sh
 
 
 ### estimate as in SDSC2020
-estimate_SDSC_R <- function(incid, shift=0,
+estimate_SDSC_R <- function(incid, estimateOffsetting=7,
                             rightTruncation=0, leftTruncation=5,
                             method="Cori", minimumCumul=5,
-                            window=4, gt_mean=4.8, gt_sd=2.3){
+                            window=4, gt_mean=4.8, gt_sd=2.3, shift=0){
   dates <- incid$date
   incidenceData <- incid$I
   ################## CREDITS ################################
@@ -302,7 +308,7 @@ estimate_SDSC_R <- function(incid, shift=0,
   
   ### Apply EpiEstim R estimation method to 'incidenceData' timeseries with 'dates' the dates associated
   ##
-  ## 'shift' is the number of days the estimates are to be shifted towards the past (to account for delay between infection and testing/hospitalization/death..)
+  ## 'estimateOffsetting' is the number of days the estimates are to be shifted towards the past (to account for delay between infection and testing/hospitalization/death..)
   ## 'ledtTruncation' is the number of days of estimates that should be ignored at the start of the time series
   ## 'method' takes value either 'Cori' or  'WallingaTeunis'. 'Cori' is the classic EpiEstim R(t) method, 'WallingaTeunis' is the method by Wallinga and Teunis (also implemented in EpiEstim)
   ## 'minimumCumul' is the minimum cumulative count the incidence data needs to reach before the first Re estimate is attempted (if too low, EpiEstim can crash)
@@ -379,7 +385,7 @@ estimate_SDSC_R <- function(incid, shift=0,
   
   outputDates <- dates[t_end]
   ## offset dates to account for delay between infection and recorded event (testing, hospitalization, death...)
-  outputDates <- outputDates - shift
+  outputDates <- outputDates - estimateOffsetting + shift
   
   R_mean <- R_instantaneous$R$`Mean(R)`
   R_highHPD <- R_instantaneous$R$`Quantile.0.975(R)`
