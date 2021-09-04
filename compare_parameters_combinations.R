@@ -23,35 +23,40 @@ simple_incid <- incid[, c("date", "value")]
 simple_incid <- aggregate(simple_incid$value, by=list(simple_incid$date), FUN=median)
 names(simple_incid) <- c("date", "I")
 
-method <- "AGES"
+method <- "ETH"
 
 # estimations
 RKI_R <- estimate_RKI_R(simple_incid,
                         window=params[method, "window"],
+                        gt_type = params[method, "gtd"],
                         gt_mean=params[method, "gt_mean"],
                         gt_sd=params[method, "gt_sd"],
-                        shift=1) #params["RKI", "shift"]
+                        shift=1) #params["RKI", "shift"])
 
 ETH_R <- estimate_ETH_R(incid,
                         window=params[method, "window"],
+                        gt_type = params[method, "gtd"],
                         gt_mean=params[method, "gt_mean"],
                         gt_sd=params[method, "gt_sd"],
                         shift=params["ETH", "shift"])
 
-Ilmenau_R <- estimate_Ilmenau_R(simple_incid, gt_type = "gamma",
+Ilmenau_R <- estimate_Ilmenau_R(simple_incid,
                                 window=params[method, "window"],
+                                gt_type = params[method, "gtd"],
                                 gt_mean=params[method, "gt_mean"],
                                 gt_sd=params[method, "gt_sd"],
                                 shift=params["Ilmenau", "shift"])
 
 AGES_R <- estimate_AGES_R(simple_incid,
                           window=params[method, "window"],
+                          gt_type = params[method, "gtd"],
                           gt_mean=params[method, "gt_mean"],
                           gt_sd=params[method, "gt_sd"],
                           shift=params["AGES", "shift"])
 
 SDSC_R <- estimate_SDSC_R(simple_incid,
                           window=params[method, "window"],
+                          gt_type = params[method, "gtd"],
                           gt_mean=params[method, "gt_mean"],
                           gt_sd=params[method, "gt_sd"],
                           shift=params["SDSC", "shift"])
