@@ -291,20 +291,26 @@ estimate_AGES_R <- function(incid, window = 13, gt_type="gamma", gt_mean = 4.46,
   end_i <- max(which(!is.na(incid$I)))
   incid_wo_na <- incid[start_i:end_i,]
   
-  # non parametric serial interval
-  gt_dist <- get_infectivity_profile(gt_type, gt_mean, gt_sd)
-
   # start and end for estimations at each time point
   start <- 2:(nrow(incid_wo_na) + 1 - window)
   end <- start - 1 + window
   
   # estimation with EpiEstim function
-  r_EpiEstim <- estimate_R(incid_wo_na$I,
-                           #method = "parametric_si",
-                           method = "non_parametric_si",
-                           config = make_config(list(t_start=start, t_end=end,
-                                                     #mean_si=gt_mean, std_si=gt_sd)))
-                                                     si_distr=gt_dist)))
+  if (gt_type != "gamma"){
+    # non parametric estimation if generation time distribution not gamma
+    r_EpiEstim <- estimate_R(incid_wo_na$I,
+                             method = "non_parametric_si",
+                             config = make_config(list(
+                               t_start=start, t_end=end,
+                               si_distr=get_infectivity_profile(gt_type, gt_mean, gt_sd))))
+  } else {
+    # parametric estimation (assumes gamma distributed serial interval)
+    r_EpiEstim <- estimate_R(incid_wo_na$I,
+                             method = "parametric_si",
+                             config = make_config(list(t_start=start, t_end=end,
+                                                       mean_si=gt_mean, std_si=gt_sd)))
+  }
+
   len_est <- length(r_EpiEstim$R$`Mean(R)`)
   
   # assign estimates to time points properly
