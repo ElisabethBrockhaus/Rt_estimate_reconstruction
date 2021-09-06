@@ -55,7 +55,9 @@ plot_published_vs_calculated(published=ETH_R_pub_AUT, calculated=ETH_R_calc_AUT,
 
 
 # with JHU data
-ETH_countryDataJHU <-  load_incidence_data(method = "ETHZ_sliding_window", source="JHU")
+ETH_countryDataJHU <-  load_incidence_data(method = "ETHZ_sliding_window",
+                                           #force_deconvolution=T,
+                                           source="JHU")
 ETH_R_calc_JHU <- estimate_ETH_R(ETH_countryDataJHU)
 plot_published_vs_calculated(published=ETH_R_pub, calculated=ETH_R_calc_JHU, method_name="ETH with JHU data")
 

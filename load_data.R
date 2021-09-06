@@ -277,15 +277,19 @@ ETH_deconvolution <- function(country="Germany", region="DEU", data_source = "")
     confirmed_national <- confirmed_global %>%
       filter(`Country/Region` == country) %>%
       unlist(., use.names=TRUE)
-    confirmed_national <- confirmed_national[5:dim(confirmed_global)[2]]
+    confirmed_national <- as.numeric(confirmed_national[5:dim(confirmed_global)[2]])
+    confirmed_national <- diff(confirmed_national, lag=1)
     
     # format data
     # assuming all infections are local and reported at the day of symptom onset
     countryData <- data.table(date = c(seq(as.Date("2020-01-02"), as.Date("2020-01-21"), by = "days"),
-                                       as.Date(names(confirmed_national), format = "%m/%d/%y")),
-                              region = region, countryIso3 = region, source = "JHU",
-                              data_type = as.factor("Confirmed cases"), date_type = "onset",
-                              value = c(rep(0, 20), as.numeric(confirmed_national)),
+                                       as.Date(names(confirmed_global)[5:dim(confirmed_global)[2]], format = "%m/%d/%y")),
+                              region = region,
+                              countryIso3 = region,
+                              source = "JHU",
+                              data_type = as.factor("Confirmed cases"),
+                              date_type = "onset",
+                              value = c(rep(0, 21), confirmed_national),
                               local_infection = TRUE)
   }
   
