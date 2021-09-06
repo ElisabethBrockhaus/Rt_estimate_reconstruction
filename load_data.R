@@ -264,7 +264,7 @@ ETH_deconvolution <- function(country="Germany", region="DEU", data_source = "")
   
   # EB: enabled use of different data sources
   # Fetch Country Data
-  if (data_source == "original") {
+  if (data_source == "") {
     countryData <- getCountryData(
       region,
       #tempFile = "Rt_estimate_reconstruction/ETH/data/temp/ECDCdata.csv",
