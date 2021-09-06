@@ -55,11 +55,11 @@ load_incidence_data <- function(method, location="DE", ...){
   } else if (method == "ETHZ_sliding_window") {
     # pass country/region value pair
     if (location == "DE") {
-      data <- load_ETH_deconvolvedCountryData()
+      data <- load_ETH_deconvolvedCountryData(...)
     } else if (location == "AT") {
-      data <- load_ETH_deconvolvedCountryData(country="Austria", region="AUT")
+      data <- load_ETH_deconvolvedCountryData(country="Austria", region="AUT", ...)
     } else if (location == "CH") {
-      data <- load_ETH_deconvolvedCountryData(country="Switzerland", region="CHE")
+      data <- load_ETH_deconvolvedCountryData(country="Switzerland", region="CHE", ...)
     } else {
       print("Location not included in analysis, choose from [DE, AT, CH].")
     }
@@ -119,14 +119,14 @@ load_RKI_data <- function(){
 
 
 load_ETH_deconvolvedCountryData <- function(country="Germany", region="DEU",
-                                            force_deconvolution = FALSE){
+                                            force_deconvolution = FALSE, source = ""){
   
   countryDataPath <- file.path("Rt_estimate_reconstruction/ETH/data/countryData",
-                               str_c(region, "-DeconvolutedData.rds"))
+                               str_c(region, "-DeconvolutedData", source, ".rds"))
 
   # Deconvolution if necessary or wanted
   if (force_deconvolution | !file.exists(countryDataPath)){
-    ETH_deconvolution(country=country, region=region)
+    ETH_deconvolution(country=country, region=region, data_source = source)
   }
   
   # load deconvoluted data
@@ -199,7 +199,7 @@ load_SDSC_data <- function(country="Germany", data_status="2021-08-29"){
 # functions for preprocessing #
 ###############################
 
-ETH_deconvolution <- function(country="Germany", region="DEU"){
+ETH_deconvolution <- function(country="Germany", region="DEU", data_source = ""){
   
   source("Rt_estimate_reconstruction/ETH/otherScripts/1_utils_getRawData.R")
   source("Rt_estimate_reconstruction/ETH/otherScripts/utils.R")
@@ -262,12 +262,32 @@ ETH_deconvolution <- function(country="Germany", region="DEU"){
     filter(!is.na(value)) %>%
     arrange(countryIso3, region, date)
   
+  # EB: enabled use of different data sources
   # Fetch Country Data
-  countryData <- getCountryData(
-    region,
-    #tempFile = "Rt_estimate_reconstruction/ETH/data/temp/ECDCdata.csv",
-    HMDtemp = "Rt_estimate_reconstruction/ETH/data/temp/HMDdata.csv",
-    tReload = 300)
+  if (data_source == "original") {
+    countryData <- getCountryData(
+      region,
+      #tempFile = "Rt_estimate_reconstruction/ETH/data/temp/ECDCdata.csv",
+      HMDtemp = "Rt_estimate_reconstruction/ETH/data/temp/HMDdata.csv",
+      tReload = 300)
+    
+  } else if (data_source == "JHU") {
+    # load time series of confirmed cases publihsed by JHU
+    confirmed_global <- read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")
+    confirmed_national <- confirmed_global %>%
+      filter(`Country/Region` == country) %>%
+      unlist(., use.names=TRUE)
+    confirmed_national <- confirmed_national[5:dim(confirmed_global)[2]]
+    
+    # format data
+    # assuming all infections are local and reported at the day of symptom onset
+    countryData <- data.table(date = c(seq(as.Date("2020-01-02"), as.Date("2020-01-21"), by = "days"),
+                                       as.Date(names(confirmed_national), format = "%m/%d/%y")),
+                              region = region, countryIso3 = region, source = "JHU",
+                              data_type = as.factor("Confirmed cases"), date_type = "onset",
+                              value = c(rep(0, 20), as.numeric(confirmed_national)),
+                              local_infection = TRUE)
+  }
   
   countryData <- countryData %>%
     bind_rows(
@@ -277,8 +297,10 @@ ETH_deconvolution <- function(country="Germany", region="DEU"){
     )
   
   # save updated data
-  countryDataPath <- file.path(basePath, str_c(region, "-Data.rds"))
-  saveRDS(countryData, file = countryDataPath)
+  if (data_source == "") {
+    countryDataPath <- file.path(basePath, str_c(region, "-Data.rds"))
+    saveRDS(countryData, file = countryDataPath)
+  }
   
   # get Infection Incidence
   # load functions
@@ -401,8 +423,10 @@ ETH_deconvolution <- function(country="Germany", region="DEU"){
   countryDataPath <- file.path(basePath, str_c(region, "-DeconvolutedData.rds"))
   if (dim(deconvolvedCountryData)[1] == 0) {
     print("no data remaining")
-  } else {
+  } else if (data_source == "") {
     saveRDS(deconvolvedCountryData, file = countryDataPath)
+  } else {
+    saveRDS(deconvolvedCountryData, file = file.path(basePath, str_c(region, "-DeconvolutedData", data_source, ".rds")))
   }
 }
 

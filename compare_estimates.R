@@ -54,6 +54,13 @@ ETH_R_calc_AUT <- estimate_ETH_R(ETH_countryData_AUT)
 plot_published_vs_calculated(published=ETH_R_pub_AUT, calculated=ETH_R_calc_AUT, method_name="ETH (Austria)")
 
 
+# with JHU data
+ETH_countryDataJHU <-  load_incidence_data(method = "ETHZ_sliding_window", source="JHU")
+ETH_R_calc_JHU <- estimate_ETH_R(ETH_countryDataJHU)
+plot_published_vs_calculated(published=ETH_R_pub, calculated=ETH_R_calc_JHU, method_name="ETH with JHU data")
+
+
+
 ######################
 # Ilmenau (Hotz2020) #
 ######################
@@ -220,4 +227,6 @@ estimates <- RKI_est3_ETH %>% full_join(ETH_R_calc, by = "date")
 names(estimates) <- c("date", "RKI with ETH data", "ETH")
 
 plot_multiple_estimates(estimates)
+
+
 
