@@ -6,8 +6,9 @@ library(fitdistrplus)
 library(qs)
 library(lubridate)
 
-
-# load R estimates from git repo "reproductive_numbers"
+##################################################
+# load estimates from git (reproductive_numbers) #
+##################################################
 load_published_R_estimates <- function(source, start=as.Date("2019-12-28"), end=Sys.Date(), location="DE"){
   
   # define path where Rt estimates are located
@@ -37,7 +38,10 @@ load_published_R_estimates <- function(source, start=as.Date("2019-12-28"), end=
 }
 
 
-# call function to load incidence data depending on method/source/paper
+
+####################################################
+# load incidence data depending on source/preproc. #
+####################################################
 load_incidence_data <- function(method, location="DE", ...){
   
   # depending on method call functions
@@ -94,9 +98,9 @@ load_incidence_data <- function(method, location="DE", ...){
 
 
 
-#########
-# incidence data from different sources (incl. preprocessing from different papers)
-#########
+##################################################
+# incidence data (individual function per paper) #
+##################################################
 
 load_RKI_data <- function(){
   
@@ -191,34 +195,9 @@ load_SDSC_data <- function(country="Germany", data_status="2021-08-29"){
 
 
 
-#########
-# additional data
-#########
-
-download_OWID_data <- function(){
-  
-  # path to OWID incidence data
-  repo_incid <- "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv"
-  
-  # load data
-  data_raw <- read_csv(repo_incid)
-  
-  # extract relevant countries
-  owid_austria <- data_raw[data_raw$location=="Austria",]
-  owid_germany <- data_raw[data_raw$location=="Germany",]
-  owid_switzerland <- data_raw[data_raw$location=="Switzerland",]
-  
-  # write data as csv
-  write.csv(owid_austria, "Rt_estimate_reconstruction/incidence_data/OWID_Austria.csv")
-  write.csv(owid_germany, "Rt_estimate_reconstruction/incidence_data/OWID_Germany.csv")
-  write.csv(owid_switzerland, "Rt_estimate_reconstruction/incidence_data/OWID_Switzerland.csv")
-}
-
-
-
-#########
-# functions for preprocessing
-#########
+###############################
+# functions for preprocessing #
+###############################
 
 ETH_deconvolution <- function(country="Germany", region="DEU"){
   
@@ -426,3 +405,30 @@ ETH_deconvolution <- function(country="Germany", region="DEU"){
     saveRDS(deconvolvedCountryData, file = countryDataPath)
   }
 }
+
+
+
+
+###################
+# additional data #
+###################
+
+download_OWID_data <- function(){
+  
+  # path to OWID incidence data
+  repo_incid <- "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv"
+  
+  # load data
+  data_raw <- read_csv(repo_incid)
+  
+  # extract relevant countries
+  owid_austria <- data_raw[data_raw$location=="Austria",]
+  owid_germany <- data_raw[data_raw$location=="Germany",]
+  owid_switzerland <- data_raw[data_raw$location=="Switzerland",]
+  
+  # write data as csv
+  write.csv(owid_austria, "Rt_estimate_reconstruction/incidence_data/OWID_Austria.csv")
+  write.csv(owid_germany, "Rt_estimate_reconstruction/incidence_data/OWID_Germany.csv")
+  write.csv(owid_switzerland, "Rt_estimate_reconstruction/incidence_data/OWID_Switzerland.csv")
+}
+

@@ -7,7 +7,7 @@ source("Rt_estimate_reconstruction/load_data.R")
 source("Rt_estimate_reconstruction/calculate_estimates.R")
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
-##########################
+#########################
 # RKI (AnDerHeiden2020) #
 #########################
 
@@ -111,7 +111,7 @@ plot_published_vs_calculated(epiforecasts_R_pub, epiforecasts_R_calc, method_nam
 
 
 
-#########
+########
 # SDSC #
 ########
 
@@ -152,9 +152,10 @@ plot_published_vs_calculated(globalrt_R_pub, globalrt_R_calc, method_name="globa
 
 
 
-###################
+############################################
+# compare estimates from different sources #
+############################################
 
-# compare estimates from different sources
 estimates <- ETH_R_pub %>%
   full_join(Ilmenau_R_pub, by = "date") %>% 
   full_join(RKI_R_pub, by = "date") %>%

@@ -1,6 +1,8 @@
 library(EpiEstim)
 
-### estimate as in RKI2020
+###########################
+# estimates as in RKI2020 #
+###########################
 estimate_RKI_R <- function(incid, window=7, gt_type="constant", gt_mean=4, gt_sd=0, shift=0){
   
   estimate <- data.frame(date=incid$date, R_calc=rep(NA, nrow(incid)))
@@ -59,7 +61,10 @@ estimate_RKI_R <- function(incid, window=7, gt_type="constant", gt_mean=4, gt_sd
 }
 
 
-### estimate as in Huisman2021
+
+###############################
+# estimates as in Huisman2021 #
+###############################
 estimate_ETH_R <- function(incid, window=3, gt_type="gamma", gt_mean=4.8, gt_sd=2.3, shift=0){
   
   region <- unique(incid$region)
@@ -134,79 +139,10 @@ estimate_ETH_R <- function(incid, window=3, gt_type="gamma", gt_mean=4.8, gt_sd=
 }
 
 
-get_parameters_ETH <- function(deconvolvedCountryData, region, shift){
-  
-  stringencyDataPath <- file.path("Rt_estimate_reconstruction/ETH/data/countryData",
-                                  str_c(region, "-OxCGRT.rds"))
-  stringencyIndex <- readRDS(stringencyDataPath)
-  
-  swissRegions <- deconvolvedCountryData %>%
-    filter(country %in% c("Switzerland", "Liechtenstein")) %>%
-    dplyr::select(region) %>%
-    distinct() %>%
-    .$region
-  
-  # in Re estimation, the interval starts on interval_end + 1
-  # so the intervention start dates need to be shifted to - 1
-  interval_ends_df <- stringencyIndex %>%
-    filter(c(0, diff(stringencyIndex$value, 1, 1)) != 0) %>%
-    mutate(interval_ends = date - 1) %>%
-    dplyr::select(region, interval_ends)
-  
-  interval_ends <- split(interval_ends_df$interval_ends, interval_ends_df$region)
-  interval_ends[["default"]] <- interval_ends[[region]]
-  
-  ### add additional interval 7 days before last Re estimate, for country level only
-  # discarding interval ends more recent than that.
-  lastIntervalEnd <- deconvolvedCountryData %>%
-    filter(data_type == "infection_Confirmed cases", region == region, replicate == 0) %>%
-    slice_max(date) %>%
-    pull(date)
-  lastIntervalStart <- lastIntervalEnd - 7
-  
-  if (length(interval_ends) == 0) {
-    interval_ends[[region]] <- lastIntervalStart
-  } else {
-    interval_ends[[region]] <- c(
-      interval_ends[[region]][interval_ends[[region]] < lastIntervalStart],
-      lastIntervalStart)
-  }
-  
-  if (region == "CHE") {
-    additionalRegions <- setdiff(swissRegions, names(interval_ends))
-    for (iregion in additionalRegions) {
-      interval_ends[[iregion]] <- interval_ends[[region]]
-    }
-  }
-  
-  ### Delays applied
-  all_delays <- list(
-    "infection_Confirmed cases" = c(Cori = 0, WallingaTeunis = -5),
-    "infection_Confirmed cases / tests" = c(Cori = 0, WallingaTeunis = -5),
-    "infection_Deaths" = c(Cori = 0, WallingaTeunis = -5),
-    "infection_Hospitalized patients" = c(Cori = 0, WallingaTeunis = -5),
-    "Confirmed cases" = c(Cori = 10, WallingaTeunis = 5),
-    "Confirmed cases / tests" = c(Cori = 10, WallingaTeunis = 5),
-    "Deaths" = c(Cori = 20, WallingaTeunis = 15),
-    "Hospitalized patients" = c(Cori = 8, WallingaTeunis = 3),
-    "infection_Excess deaths" = c(Cori = 0, WallingaTeunis = -5),
-    "Excess deaths" = c(Cori = 20, WallingaTeunis = 15))
-  for (type in names(all_delays)) {
-    all_delays[[type]][["Cori"]] <- all_delays[[type]][["Cori"]] - shift
-  }
-  
-  truncations <- list(
-    left = c(Cori = 5, WallingaTeunis = 0),
-    right = c(Cori = 0, WallingaTeunis = 8))
-  
-  parameter_list <- list(swissRegions, interval_ends, all_delays, truncations)
-  names(parameter_list) <- c("swissRegions", "interval_ends", "all_delays", "truncations")
-  
-  return(parameter_list)
-}
 
-
-### estimate as in Hotz2020
+###########################
+# estimate as in Hotz2020 #
+###########################
 estimate_Ilmenau_R <- function(incid, window=1, gt_type="ad hoc",
                                gt_mean=5.61, gt_sd=4.24, shift=0){
   
@@ -236,54 +172,10 @@ estimate_Ilmenau_R <- function(incid, window=1, gt_type="ad hoc",
 }
 
 
-### function from Ilmenau repo for their Rt estimation
-repronum <- function(
-  new.cases, # I
-  profile, # w
-  window = 1, # H
-  delay = 0, # Delta
-  conf.level = 0.95, # 1-alpha
-  pad.zeros = FALSE,
-  min.denominator = 5,
-  min.numerator = 5
-) {
-  # pad zeros if desired
-  if(pad.zeros) new.cases <- c(rep(0, length(profile) - 1), new.cases)
-  
-  # compute convolutions over h, tau and both, respectively
-  sum.h.I <- as.numeric(stats::filter(new.cases, rep(1, window),
-                                      method = "convolution", sides = 1))
-  sum.tau.wI <- as.numeric(stats::filter(new.cases, c(0, profile),
-                                         method = "convolution", sides = 1))
-  sum.htau.wI <- as.numeric(stats::filter(sum.tau.wI, rep(1, window),
-                                          method = "convolution", sides = 1))
-  
-  # estimators
-  repronum <- ifelse(sum.h.I < min.numerator, NA, sum.h.I) / ifelse(sum.htau.wI < min.denominator, NA, sum.htau.wI)
-  
-  # standard errors
-  repronum.se <- sqrt(repronum / sum.htau.wI)
-  
-  # shift by delay
-  repronum <- c(repronum, rep(NA, delay))[(1:length(repronum)) + delay]
-  repronum.se <- c(repronum.se,
-                   rep(NA, delay))[(1:length(repronum.se)) + delay]
-  
-  # standard normal quantile
-  q <- qnorm(1 - (1-conf.level) / 2)
-  
-  # return data.frame with as many rows as new.cases
-  ret <- data.frame(
-    repronum = repronum,
-    repronum.se = repronum.se,
-    ci.lower = repronum - q * repronum.se,
-    ci.upper = repronum + q * repronum.se
-  )
-  if(pad.zeros) ret[-(1:(length(profile)-1)),] else ret
-}
 
-
-### estimate as in Richter2020
+##############################
+# estimate as in Richter2020 #
+##############################
 estimate_AGES_R <- function(incid, window = 13, gt_type="gamma", gt_mean = 4.46, gt_sd = 2.63, shift=0){
   
   # filter incid to dates where incidence data is available
@@ -322,7 +214,10 @@ estimate_AGES_R <- function(incid, window = 13, gt_type="gamma", gt_mean = 4.46,
 }
 
 
-### estimate as in SDSC2020
+
+###########################
+# estimate as in SDSC2020 #
+###########################
 estimate_SDSC_R <- function(incid, estimateOffsetting=7,
                             rightTruncation=0, leftTruncation=5,
                             method="Cori", minimumCumul=5,
@@ -474,6 +369,133 @@ estimate_SDSC_R <- function(incid, estimateOffsetting=7,
 
 
 
+########################
+# additional functions #
+########################
+
+### parts from ETH script ReCountry.R that calculates parameters for estimation
+get_parameters_ETH <- function(deconvolvedCountryData, region, shift){
+  
+  stringencyDataPath <- file.path("Rt_estimate_reconstruction/ETH/data/countryData",
+                                  str_c(region, "-OxCGRT.rds"))
+  stringencyIndex <- readRDS(stringencyDataPath)
+  
+  swissRegions <- deconvolvedCountryData %>%
+    filter(country %in% c("Switzerland", "Liechtenstein")) %>%
+    dplyr::select(region) %>%
+    distinct() %>%
+    .$region
+  
+  # in Re estimation, the interval starts on interval_end + 1
+  # so the intervention start dates need to be shifted to - 1
+  interval_ends_df <- stringencyIndex %>%
+    filter(c(0, diff(stringencyIndex$value, 1, 1)) != 0) %>%
+    mutate(interval_ends = date - 1) %>%
+    dplyr::select(region, interval_ends)
+  
+  interval_ends <- split(interval_ends_df$interval_ends, interval_ends_df$region)
+  interval_ends[["default"]] <- interval_ends[[region]]
+  
+  ### add additional interval 7 days before last Re estimate, for country level only
+  # discarding interval ends more recent than that.
+  lastIntervalEnd <- deconvolvedCountryData %>%
+    filter(data_type == "infection_Confirmed cases", region == region, replicate == 0) %>%
+    slice_max(date) %>%
+    pull(date)
+  lastIntervalStart <- lastIntervalEnd - 7
+  
+  if (length(interval_ends) == 0) {
+    interval_ends[[region]] <- lastIntervalStart
+  } else {
+    interval_ends[[region]] <- c(
+      interval_ends[[region]][interval_ends[[region]] < lastIntervalStart],
+      lastIntervalStart)
+  }
+  
+  if (region == "CHE") {
+    additionalRegions <- setdiff(swissRegions, names(interval_ends))
+    for (iregion in additionalRegions) {
+      interval_ends[[iregion]] <- interval_ends[[region]]
+    }
+  }
+  
+  ### Delays applied
+  all_delays <- list(
+    "infection_Confirmed cases" = c(Cori = 0, WallingaTeunis = -5),
+    "infection_Confirmed cases / tests" = c(Cori = 0, WallingaTeunis = -5),
+    "infection_Deaths" = c(Cori = 0, WallingaTeunis = -5),
+    "infection_Hospitalized patients" = c(Cori = 0, WallingaTeunis = -5),
+    "Confirmed cases" = c(Cori = 10, WallingaTeunis = 5),
+    "Confirmed cases / tests" = c(Cori = 10, WallingaTeunis = 5),
+    "Deaths" = c(Cori = 20, WallingaTeunis = 15),
+    "Hospitalized patients" = c(Cori = 8, WallingaTeunis = 3),
+    "infection_Excess deaths" = c(Cori = 0, WallingaTeunis = -5),
+    "Excess deaths" = c(Cori = 20, WallingaTeunis = 15))
+  for (type in names(all_delays)) {
+    all_delays[[type]][["Cori"]] <- all_delays[[type]][["Cori"]] - shift
+  }
+  
+  truncations <- list(
+    left = c(Cori = 5, WallingaTeunis = 0),
+    right = c(Cori = 0, WallingaTeunis = 8))
+  
+  parameter_list <- list(swissRegions, interval_ends, all_delays, truncations)
+  names(parameter_list) <- c("swissRegions", "interval_ends", "all_delays", "truncations")
+  
+  return(parameter_list)
+}
+
+
+
+### function from Ilmenau repo for their Rt estimation
+repronum <- function(
+  new.cases, # I
+  profile, # w
+  window = 1, # H
+  delay = 0, # Delta
+  conf.level = 0.95, # 1-alpha
+  pad.zeros = FALSE,
+  min.denominator = 5,
+  min.numerator = 5
+) {
+  # pad zeros if desired
+  if(pad.zeros) new.cases <- c(rep(0, length(profile) - 1), new.cases)
+  
+  # compute convolutions over h, tau and both, respectively
+  sum.h.I <- as.numeric(stats::filter(new.cases, rep(1, window),
+                                      method = "convolution", sides = 1))
+  sum.tau.wI <- as.numeric(stats::filter(new.cases, c(0, profile),
+                                         method = "convolution", sides = 1))
+  sum.htau.wI <- as.numeric(stats::filter(sum.tau.wI, rep(1, window),
+                                          method = "convolution", sides = 1))
+  
+  # estimators
+  repronum <- ifelse(sum.h.I < min.numerator, NA, sum.h.I) / ifelse(sum.htau.wI < min.denominator, NA, sum.htau.wI)
+  
+  # standard errors
+  repronum.se <- sqrt(repronum / sum.htau.wI)
+  
+  # shift by delay
+  repronum <- c(repronum, rep(NA, delay))[(1:length(repronum)) + delay]
+  repronum.se <- c(repronum.se,
+                   rep(NA, delay))[(1:length(repronum.se)) + delay]
+  
+  # standard normal quantile
+  q <- qnorm(1 - (1-conf.level) / 2)
+  
+  # return data.frame with as many rows as new.cases
+  ret <- data.frame(
+    repronum = repronum,
+    repronum.se = repronum.se,
+    ci.lower = repronum - q * repronum.se,
+    ci.upper = repronum + q * repronum.se
+  )
+  if(pad.zeros) ret[-(1:(length(profile)-1)),] else ret
+}
+
+
+
+### function to calculate infectivity profile given distribution type, mean and sd
 get_infectivity_profile <- function(gt_type=c("ad hoc", "gamma"), gt_mean, gt_sd){
   
   if (gt_type == "ad hoc"){
