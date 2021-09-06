@@ -156,13 +156,16 @@ globalrt_R_pub <- read_csv("https://raw.githubusercontent.com/crondonm/TrackingR
 globalrt_R_pub <- globalrt_R_pub[globalrt_R_pub$`Country/Region` == "Germany" &
                                    globalrt_R_pub$days_infectious == 7, c("Date", "R", "ci_95_u", "ci_95_l")]
 names(globalrt_R_pub) <- c("date", "0.5", "0.025", "0.975")
+#names(globalrt_R_pub) <- c("date", "R_pub", "0.025", "0.975")
 
 # load and filter calculated estimates
-globalrt_R_calc  <- read_csv("Rt_estimate_reconstruction/ArroyoMarioli/estimates/estimated_R.csv")
-globalrt_R_calc <- globalrt_R_calc[globalrt_R_calc$`Country/Region` == "Germany" &
-                                     globalrt_R_calc$days_infectious == 7, c("Date", "R", "ci_95_u", "ci_95_l")]
+#globalrt_R_calc  <- read_csv("Rt_estimate_reconstruction/ArroyoMarioli/estimates/estimated_R.csv")
+#globalrt_R_calc <- globalrt_R_calc[globalrt_R_calc$`Country/Region` == "Germany" &
+#                                     globalrt_R_calc$days_infectious == 7, c("Date", "R", "ci_95_u", "ci_95_l")]
+globalrt_R_calc  <- read_csv("Rt_estimate_reconstruction/ArroyoMarioli/estimates/bayesian_smoother.csv")
 names(globalrt_R_calc) <- c("date", "0.5", "0.025", "0.975")
-
+#globalrt_R_calc  <- read_csv("Rt_estimate_reconstruction/ArroyoMarioli/estimates/frequentist_estimates.csv")
+#names(globalrt_R_calc) <- c("date", "R_filtered", "R_calc")
 
 # plots for comparison
 plot_published_vs_calculated_95CI(globalrt_R_pub, globalrt_R_calc, method_name="globalrt")
