@@ -1,6 +1,7 @@
 library(reshape2)
 library(ggplot2)
 library(cowplot)
+library(viridis)
 
 
 plot_published_vs_calculated <- function(published, calculated, method_name, diff_bounds=c(-0.1, 0.1)){
