@@ -18,8 +18,12 @@ RKI_R_pub <- load_published_R_estimates(source = "RKI_7day")
 # estimation
 RKI_R_calc <- estimate_RKI_R(RKI_incid)
 
+RKI_R_calc_EpiEstim <- estimate_RKI_R(RKI_incid, method="EpiEstim")
+names(RKI_R_calc_EpiEstim) <- c("date", "0.5", "0.025", "0.975")
+
 # plots for comparison
 plot_published_vs_calculated(RKI_R_pub, RKI_R_calc, method_name="RKI")
+plot_published_vs_calculated_95CI(RKI_R_pub, RKI_R_calc_EpiEstim, method_name="RKI")
 
 # with slightly higher gt_sd
 RKI_R_calc_gamma <- estimate_RKI_R(RKI_incid, gt_type="gamma", gt_sd = 1)
@@ -32,7 +36,7 @@ plot_published_vs_calculated(RKI_R_pub, RKI_R_calc_gamma, method_name="RKI (gt_s
 #####################
 
 # load data
-ETH_countryData <-  load_incidence_data(method = "ETHZ_sliding_window")
+ETH_countryData <-  load_incidence_data(method = "ETHZ_sliding_window")#, force_deconvolution=T)
 ETH_R_pub <- load_published_R_estimates("ETHZ_sliding_window")
 
 # estimation
@@ -75,8 +79,13 @@ Ilmenau_R_pub <- load_published_R_estimates("ilmenau")
 Ilmenau_R_calc <- estimate_Ilmenau_R(Ilmenau_incid, gt_type = "ad hoc")
 
 # plots for comparison
-plot_published_vs_calculated(Ilmenau_R_pub, Ilmenau_R_calc, method_name="Ilmenau")
+plot_published_vs_calculated_95CI(Ilmenau_R_pub, Ilmenau_R_calc, method_name="Ilmenau")
 
+# compare confidence intervals to the ones from EpiEstim
+Ilmenau_R_calc_EpiEstim <- estimate_RKI_R(Ilmenau_incid, method="EpiEstim", gt_type="ad hoc", window = 1, shift=-6)
+names(Ilmenau_R_calc_EpiEstim) <- names(Ilmenau_R_pub)
+Ilmenau_R_calc_EpiEstim <- Ilmenau_R_calc_EpiEstim[Ilmenau_R_calc_EpiEstim$date >= "2020-02-23",]
+plot_published_vs_calculated_95CI(Ilmenau_R_calc_EpiEstim, Ilmenau_R_calc, method_name = "EpiEstim vs. Ilmenau confidence intervals")
 
 
 ######################
@@ -106,7 +115,7 @@ qsave(estimates_published, paste0("Rt_estimate_reconstruction/epiforecasts/estim
                                   Sys.Date(), ".qs"))
 
 # load estimates published and calculated from same date
-data_status <- "2021-08-31"
+data_status <- "2021-09-06"
 epiforecasts_R_pub <- qread(paste0("Rt_estimate_reconstruction/epiforecasts/estimates/R_pub_",
                                    data_status, ".qs"))
 epiforecasts_R_calc  <- qread(paste0("Rt_estimate_reconstruction/epiforecasts/estimates/R_calc_",
@@ -133,7 +142,7 @@ SDSC_incid <- load_incidence_data("sdsc", data_status = "2021-08-29")
 SDSC_R_calc <- estimate_SDSC_R(SDSC_incid, estimateOffsetting = 7)
 
 # plots for comparison
-plot_published_vs_calculated(SDSC_R_pub, SDSC_R_calc, method_name="SDSC")
+plot_published_vs_calculated_95CI(SDSC_R_pub, SDSC_R_calc, method_name="SDSC")
 
 
 
@@ -142,22 +151,23 @@ plot_published_vs_calculated(SDSC_R_pub, SDSC_R_calc, method_name="SDSC")
 ############################
 
 # load published estimates
-globalrt_R_pub <- load_published_R_estimates("globalrt_7d")
+#globalrt_R_pub <- load_published_R_estimates("globalrt_7d")
 globalrt_R_pub <- read_csv("https://raw.githubusercontent.com/crondonm/TrackingR/main/Estimates-Database/database.csv")
 globalrt_R_pub <- globalrt_R_pub[globalrt_R_pub$`Country/Region` == "Germany" &
-                                   globalrt_R_pub$days_infectious == 7, c("Date", "R")]
-names(globalrt_R_pub) <- c("date", "R_pub")
+                                   globalrt_R_pub$days_infectious == 7, c("Date", "R", "ci_95_u", "ci_95_l")]
+names(globalrt_R_pub) <- c("date", "0.5", "0.025", "0.975")
 
 # load and filter calculated estimates
-globalrt_R_calc  <- read_csv("Rt_estimate_reconstruction/ArroyoMarioli/estimates/estimated_R_STAN.csv")
-globalrt_R_calc <- read_csv("Rt_estimate_reconstruction/ArroyoMarioli/estimates/R_countries(get_graphs).csv")
+globalrt_R_calc  <- read_csv("Rt_estimate_reconstruction/ArroyoMarioli/estimates/estimated_R.csv")
 globalrt_R_calc <- globalrt_R_calc[globalrt_R_calc$`Country/Region` == "Germany" &
-                                     globalrt_R_calc$days_infectious == 7, c("Date", "R")]
-names(globalrt_R_calc) <- c("date", "R_calc")
+                                     globalrt_R_calc$days_infectious == 7, c("Date", "R", "ci_95_u", "ci_95_l")]
+names(globalrt_R_calc) <- c("date", "0.5", "0.025", "0.975")
 
 
 # plots for comparison
-plot_published_vs_calculated(globalrt_R_pub, globalrt_R_calc, method_name="globalrt")
+plot_published_vs_calculated_95CI(globalrt_R_pub, globalrt_R_calc, method_name="globalrt")
+
+
 
 
 
@@ -165,20 +175,20 @@ plot_published_vs_calculated(globalrt_R_pub, globalrt_R_calc, method_name="globa
 # compare estimates from different sources #
 ############################################
 
-estimates <- ETH_R_pub %>%
-  full_join(Ilmenau_R_pub, by = "date") %>% 
-  full_join(RKI_R_pub, by = "date") %>%
+estimates <- ETH_R_pub[, c("date", "R_pub")] %>%
+  full_join(Ilmenau_R_pub[, c("date", "R_pub")], by = "date") %>% 
+  full_join(RKI_R_pub[, c("date", "R_pub")], by = "date") %>%
   full_join(estimates_published[, c("date", "median")], by = "date") %>%
-  full_join(SDSC_R_pub, by = "date")
+  full_join(SDSC_R_pub[, c("date", "R_pub")], by = "date")
 names(estimates) <- c("date", "ETH", "Ilmenau", "RKI", "epiforecasts", "SDSC")
 
 plot_multiple_estimates(estimates)
 
 # compare estimates from different methods with same window size
 # 7 day
-RKI_est7 <- estimate_RKI_R(RKI_incid, window = 7)
-Ilmenau_est7 <- estimate_Ilmenau_R(Ilmenau_incid, window = 7, gt_type="ad hoc")
-SDSC_est7 <- estimate_SDSC_R(SDSC_incid, estimateOffsetting = 7, window=7)
+RKI_est7 <- estimate_RKI_R(RKI_incid, window = 7)[, c("date", "R_calc")]
+Ilmenau_est7 <- estimate_Ilmenau_R(Ilmenau_incid, window = 7, gt_type="ad hoc")[, c("date", "0.5")]
+SDSC_est7 <- estimate_SDSC_R(SDSC_incid, estimateOffsetting = 7, window=7)[, c("date", "0.5")]
 
 estimates <- RKI_est7 %>%
   full_join(Ilmenau_est7, by = "date") %>%
@@ -189,13 +199,13 @@ names(estimates) <- c("date", "RKI", "Ilmenau", "epiforecasts", "SDSC")
 plot_multiple_estimates(estimates[estimates$date > "2020-03-08",])
 
 # 3 day
-RKI_est3 <- estimate_RKI_R(RKI_incid, window = 3)
-Ilmenau_est3 <- estimate_Ilmenau_R(Ilmenau_incid, window = 3, gt_type = "ad hoc")
-SDSC_est3 <- estimate_SDSC_R(SDSC_incid, estimateOffsetting = 7, window=3)
+RKI_est3 <- estimate_RKI_R(RKI_incid, window = 3)[, c("date", "R_calc")]
+Ilmenau_est3 <- estimate_Ilmenau_R(Ilmenau_incid, window = 3, gt_type = "ad hoc")[, c("date", "0.5")]
+SDSC_est3 <- estimate_SDSC_R(SDSC_incid, estimateOffsetting = 7, window=3)[, c("date", "0.5")]
 
 estimates <- RKI_est3 %>%
   full_join(Ilmenau_est3, by = "date") %>%
-  full_join(ETH_R_pub, by = "date") %>%
+  full_join(ETH_R_pub[, c("date", "R_pub")], by = "date") %>%
   full_join(SDSC_est3, by = "date")
 names(estimates) <- c("date", "RKI", "Ilmenau", "ETH", "SDSC")
 
@@ -211,7 +221,7 @@ names(estimates) <- c("date", "AGES", "ETH (Austria)")
 plot_multiple_estimates(estimates)
 
 # use Ilmenau method with data and parameters from RKI
-Ilmenau_est3_shifted <- estimate_Ilmenau_R(RKI_incid, window = 3, gt_type = "gamma", gt_mean=4, gt_sd=0.0001)
+Ilmenau_est3_shifted <- estimate_Ilmenau_R(RKI_incid, window = 3, gt_type = "gamma", gt_mean=4, gt_sd=0.0001)[, c("date", "0.5")]
 Ilmenau_est3_shifted$date <- Ilmenau_est3_shifted$date+6
 estimates <- RKI_est3 %>%
   full_join(Ilmenau_est3_shifted, by = "date")
@@ -224,7 +234,7 @@ ETH_incid <- ETH_countryData[, c("date", "value")]
 ETH_incid <- aggregate(ETH_incid$value, by=list(ETH_incid$date), FUN=mean)
 names(ETH_incid) <- c("date", "I")
 
-RKI_est3_ETH <- estimate_RKI_R(ETH_incid, window = 3)
+RKI_est3_ETH <- estimate_RKI_R(ETH_incid, window = 3)[, c("date", "R_calc")]
 estimates <- RKI_est3_ETH %>% full_join(ETH_R_calc, by = "date")
 names(estimates) <- c("date", "RKI with ETH data", "ETH")
 

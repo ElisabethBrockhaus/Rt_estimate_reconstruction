@@ -28,8 +28,10 @@ load_published_R_estimates <- function(source, start=as.Date("2019-12-28"), end=
     print(list.dirs("reproductive_numbers/data-processed/", full.names = F))
   })
   
-  R_est <- R_est[(R_est$type=="point") & (R_est$location==location), ][c("date", "value")]
-  names(R_est) <- c("date", "R_pub")
+  R_est <- R_est[R_est$location==location, c("date", "quantile", "type", "value")]
+  R_est[R_est$type == "point", "quantile"] <- 0.5
+  R_est <- pivot_wider(R_est[,c("date", "quantile", "value")], names_from = c(quantile))
+  names(R_est)[2] <- "R_pub"
   
   # return available R estimates for time between start and end
   dates <- data.frame(date=seq(start, end, by ="day"))

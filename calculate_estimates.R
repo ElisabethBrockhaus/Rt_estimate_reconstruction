@@ -3,56 +3,72 @@ library(EpiEstim)
 ###########################
 # estimates as in RKI2020 #
 ###########################
-estimate_RKI_R <- function(incid, window=7, gt_type="constant", gt_mean=4, gt_sd=0, shift=0){
+estimate_RKI_R <- function(incid, window=7, gt_type="constant", gt_mean=4, gt_sd=0, shift=0,
+                           method="RKI"){
   
-  estimate <- data.frame(date=incid$date, R_calc=rep(NA, nrow(incid)))
+  estimate <- data.frame(date=incid$date,
+                         R_calc=rep(NA, nrow(incid)),
+                         lower=rep(NA, nrow(incid)),
+                         upper=rep(NA, nrow(incid)))
   
-  if (gt_sd==0 & gt_type=="constant"){
-    # calculate estimates as in RKI2020
-    for (t in (gt_mean+window):nrow(incid)){
-      estimate[t-1, "R_calc"] <- round(sum(incid$I[t-0:(window-1)])
-                                       / sum(incid$I[t-gt_mean:(gt_mean+window-1)]),
-                                       digits = 2)
-    }
-  } else {
-    # use non-simplified formula from RKI2020 for estimation
-    
-    # w_s
-    gt_dist <- get_infectivity_profile(gt_type, gt_mean, gt_sd)
-    
-    for (t in (gt_mean+window):nrow(incid)){
-      
-      # numerator
-      new_infect <- sum(incid$I[t - 0:(window-1)])
-      
-      # nominator
-      total_infect <- 0
-      for (i in t - 0:(window-1)) {
-        total_infect <- total_infect + (incid$I[i - 1 : i] %*% gt_dist[2:i])
-      }
-      
-      # R_t
-      estimate[t-1, "R_calc"] <- round(new_infect / total_infect,
-                                       digits = 2)
-    }
-    
-    
+  if (method == "EpiEstim") {
     # use package EpiEstim to deal with serial interval distribution
     
     # start and end for estimations at each time point
-    #start <- 2:(nrow(incid) + 1 - window)
-    #end <- start - 1 + window
+    start <- 2:(nrow(incid) + 1 - window)
+    end <- start - 1 + window
     
     # estimation with EpiEstim function
-    #r_EpiEstim <- estimate_R(incid$I,
-    #                         method = "non_parametric_si",
-    #                         config = make_config(list(
-    #                           t_start=start, t_end=end,
-    #                           si_distr=get_infectivity_profile(gt_type, gt_mean, gt_sd))))
-    #len_est <- length(r_EpiEstim$R$`Mean(R)`)
+    if (gt_type=="constant") {
+      gt_dist <- c(0,0,0,0,1)
+    } else {
+      gt_dist <- get_infectivity_profile(gt_type, gt_mean, gt_sd)
+    }
+    r_EpiEstim <- estimate_R(incid$I,
+                             method = "non_parametric_si",
+                             config = make_config(list(
+                               t_start=start, t_end=end,
+                               si_distr=gt_dist)))
+    len_est <- length(r_EpiEstim$R$`Mean(R)`)
     
     # assign estimates to time points properly
-    #estimate[window+0:(len_est-1), "R_calc"] <- round(r_EpiEstim$R$`Mean(R)`, digits = 2)
+    estimate[window+0:(len_est-1), "R_calc"] <- round(r_EpiEstim$R$`Mean(R)`, digits = 2)
+    estimate[window+0:(len_est-1), "lower"] <- round(r_EpiEstim$R$`Quantile.0.025(R)`, digits = 2)
+    estimate[window+0:(len_est-1), "upper"] <- round(r_EpiEstim$R$`Quantile.0.975(R)`, digits = 2)
+    
+
+  } else { 
+  
+    if (gt_sd==0 & gt_type=="constant"){
+      # calculate estimates as in RKI2020
+      for (t in (gt_mean+window):nrow(incid)){
+        estimate[t-1, "R_calc"] <- round(sum(incid$I[t-0:(window-1)])
+                                         / sum(incid$I[t-gt_mean:(gt_mean+window-1)]),
+                                         digits = 2)
+      }
+      
+    } else {
+      # use non-simplified formula from RKI2020 for estimation
+      
+      # w_s
+      gt_dist <- get_infectivity_profile(gt_type, gt_mean, gt_sd)
+      
+      for (t in (gt_mean+window):nrow(incid)){
+        
+        # numerator
+        new_infect <- sum(incid$I[t - 0:(window-1)])
+        
+        # nominator
+        total_infect <- 0
+        for (i in t - 0:(window-1)) {
+          total_infect <- total_infect + (incid$I[i - 1 : i] %*% gt_dist[2:i])
+        }
+        
+        # R_t
+        estimate[t-1, "R_calc"] <- round(new_infect / total_infect,
+                                         digits = 2)
+      }
+    }
   }
   
   estimate$date <- estimate$date + shift
@@ -144,7 +160,7 @@ estimate_ETH_R <- function(incid, window=3, gt_type="gamma", gt_mean=4.8, gt_sd=
 # estimate as in Hotz2020 #
 ###########################
 estimate_Ilmenau_R <- function(incid, window=1, gt_type="ad hoc",
-                               gt_mean=5.61, gt_sd=4.24, shift=0){
+                               gt_mean=5.61, gt_sd=4.24, shift=0, alpha = 0.05){
   
   # infectivity profile
   gt_dist <- get_infectivity_profile(gt_type, gt_mean, gt_sd)
@@ -153,8 +169,7 @@ estimate_Ilmenau_R <- function(incid, window=1, gt_type="ad hoc",
 
   # other parameters
   report.delay <- 7
-  alpha <- 0.05
-  
+
   # calculate estimates
   estimate <- repronum(
     new.cases = incid$I,
@@ -163,9 +178,11 @@ estimate_Ilmenau_R <- function(incid, window=1, gt_type="ad hoc",
     delay = report.delay,
     conf.level = 1 - alpha,
     pad.zeros = TRUE
-  )$repronum
+  )
   
-  estimate <- data.frame(date=incid$date, R_calc=estimate)
+  estimate <- data.frame(date=incid$date, R_calc=estimate$repronum,
+                         lower=estimate$ci.lower, upper=estimate$ci.upper)
+  names(estimate) <- c("date", 0.5, alpha/2, 1 - alpha/2)
   estimate$date <- estimate$date + shift
 
   return(estimate)
@@ -357,12 +374,14 @@ estimate_SDSC_R <- function(incid, estimateOffsetting=7,
                        R_highHPD=R_highHPD,
                        R_lowHPD=R_lowHPD)
   
-  result <- melt(result, id.vars="date")
-  colnames(result) <- c("date", "variable", "value")
-  result$estimate_type <- method
+  names(result) <- c("date", "0.5", "0.025", "0.975")
   
-  result <- result[result$variable=="R_mean", c("date", "value")]
-  names(result) <- c("date", "R_calc")
+  #result <- melt(result, id.vars="date")
+  #colnames(result) <- c("date", "variable", "value")
+  #result$estimate_type <- method
+  
+  #result <- result[result$variable=="R_mean", c("date", "value")]
+  #names(result) <- c("date", "R_calc")
   
   return(result)
 }
