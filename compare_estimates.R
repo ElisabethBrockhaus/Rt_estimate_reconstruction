@@ -177,7 +177,7 @@ plot_published_vs_calculated_95CI(globalrt_R_pub, globalrt_R_calc, method_name="
 ############################################
 # compare estimates from different sources #
 ############################################
-source("Rt_estimate_reconstruction/prepared_plots.R")
+
 estimates <- ETH_R_pub %>%
   full_join(Ilmenau_R_pub, by = "date") %>% 
   full_join(RKI_R_pub, by = "date") %>%
@@ -232,6 +232,7 @@ estimates <- RKI_est3 %>%
 plot_multiple_estimates(estimates, methods = c("RKI", "Ilmenau"))
 
 # use RKI method with (mean of) deconvoluted ETH data and ETH parameters
+
 ETH_incid <- ETH_countryData[, c("date", "value")]
 ETH_incid <- aggregate(ETH_incid$value, by=list(ETH_incid$date), FUN=mean)
 names(ETH_incid) <- c("date", "I")
@@ -243,4 +244,11 @@ estimates <- RKI_est3_ETH %>% full_join(ETH_R_calc, by = "date")
 plot_multiple_estimates(estimates, methods = c("RKI (ETH data and parameters)", "ETH"))
 
 
+# compare EpiEstim CI to ETH CI
+EpiEstim_est3_ETH <- estimate_RKI_R(ETH_incid, window = 3, method = "EpiEstim",
+                                    gt_type = "gamma", gt_mean = 4.8, gt_sd = 2.3)
+estimates <- EpiEstim_est3_ETH %>% full_join(ETH_R_pub, by = "date")
 
+plot_multiple_estimates(estimates[estimates$date > "2020-01-27",],
+                        methods = c("EpiEstim.ETHpars", "ETH"),
+                        include_CI = TRUE)
