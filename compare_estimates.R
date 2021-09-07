@@ -109,10 +109,10 @@ plot_published_vs_calculated(AGES_R_pub, AGES_R_calc, method_name="AGES (Austria
 ############################
 
 # save new published estimates
-estimates_published <- read_csv("https://raw.githubusercontent.com/epiforecasts/covid-rt-estimates/master/national/cases/summary/rt.csv")
-estimates_published <- estimates_published[estimates_published$country=="Germany", c("date", "type","median")]
-qsave(estimates_published, paste0("Rt_estimate_reconstruction/epiforecasts/estimates/R_pub_",
-                                  Sys.Date(), ".qs"))
+#estimates_published <- read_csv("https://raw.githubusercontent.com/epiforecasts/covid-rt-estimates/master/national/cases/summary/rt.csv")
+#estimates_published <- estimates_published[estimates_published$country=="Germany", c("date", "type","median")]
+#qsave(estimates_published, paste0("Rt_estimate_reconstruction/epiforecasts/estimates/R_pub_",
+#                                  Sys.Date(), ".qs"))
 
 # load estimates published and calculated from same date
 data_status <- "2021-09-06"
@@ -181,9 +181,10 @@ plot_published_vs_calculated_95CI(globalrt_R_pub, globalrt_R_calc, method_name="
 estimates <- ETH_R_pub[, c("date", "R_pub")] %>%
   full_join(Ilmenau_R_pub[, c("date", "R_pub")], by = "date") %>% 
   full_join(RKI_R_pub[, c("date", "R_pub")], by = "date") %>%
-  full_join(estimates_published[, c("date", "median")], by = "date") %>%
-  full_join(SDSC_R_pub[, c("date", "R_pub")], by = "date")
-names(estimates) <- c("date", "ETH", "Ilmenau", "RKI", "epiforecasts", "SDSC")
+  full_join(epiforecasts_R_pub[, c("date", "R_pub")], by = "date") %>%
+  full_join(SDSC_R_pub[, c("date", "R_pub")], by = "date") %>%
+  full_join(globalrt_R_pub[, c("date", "0.5")], by = "date")
+names(estimates) <- c("date", "ETH", "Ilmenau", "RKI", "epiforecasts", "SDSC", "globalrt")
 
 plot_multiple_estimates(estimates)
 
@@ -191,13 +192,14 @@ plot_multiple_estimates(estimates)
 # 7 day
 RKI_est7 <- estimate_RKI_R(RKI_incid, window = 7)[, c("date", "R_calc")]
 Ilmenau_est7 <- estimate_Ilmenau_R(Ilmenau_incid, window = 7, gt_type="ad hoc")[, c("date", "0.5")]
+ETH_est7 <- estimate_ETH_R(ETH_countryData, window = 7)
 SDSC_est7 <- estimate_SDSC_R(SDSC_incid, estimateOffsetting = 7, window=7)[, c("date", "0.5")]
 
 estimates <- RKI_est7 %>%
   full_join(Ilmenau_est7, by = "date") %>%
-  full_join(epiforecasts_R_calc[, c("date", "R_calc")], by = "date") %>%
+  full_join(ETH_est7, by = "date") %>%
   full_join(SDSC_est7, by = "date")
-names(estimates) <- c("date", "RKI", "Ilmenau", "epiforecasts", "SDSC")
+names(estimates) <- c("date", "RKI", "Ilmenau", "ETH", "SDSC")
 
 plot_multiple_estimates(estimates[estimates$date > "2020-03-08",])
 
@@ -232,14 +234,15 @@ names(estimates) <- c("date", "RKI", "Ilmenau")
 
 plot_multiple_estimates(estimates)
 
-# use RKI method with mean of deconvoluted ETH data
+# use RKI method with (mean of) deconvoluted ETH data and ETH parameters
 ETH_incid <- ETH_countryData[, c("date", "value")]
 ETH_incid <- aggregate(ETH_incid$value, by=list(ETH_incid$date), FUN=mean)
 names(ETH_incid) <- c("date", "I")
 
-RKI_est3_ETH <- estimate_RKI_R(ETH_incid, window = 3)[, c("date", "R_calc")]
+RKI_est3_ETH <- estimate_RKI_R(ETH_incid, window = 3, gt_type = "gamma",
+                               gt_mean = 4.8, gt_sd = 2.3)[, c("date", "R_calc")]
 estimates <- RKI_est3_ETH %>% full_join(ETH_R_calc, by = "date")
-names(estimates) <- c("date", "RKI with ETH data", "ETH")
+names(estimates) <- c("date", "RKI (ETH data and parameters)", "ETH")
 
 plot_multiple_estimates(estimates)
 
