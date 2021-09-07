@@ -39,19 +39,20 @@ plot_published_vs_calculated <- function(published, calculated, method_name, dif
 
 
 
-plot_multiple_estimates <- function(estimates) {
+plot_multiple_estimates <- function(estimates, methods) {
   
+  R_est <- estimates %>% dplyr::select(starts_with(c("date", "R_pub", "R_calc", "0.5")))
+
   legend_name <- "method"
-  legend_labels <- colnames(estimates)[-1]
 
   # reshape data
-  estimates <- melt(estimates, id.var='date')
-  estimates <- na.omit(estimates)
+  R_est <- melt(R_est, id.var='date')
+  R_est <- na.omit(R_est)
 
-  ggplot(data=estimates, aes(x=date, y=value, color=variable)) +
+  ggplot(data=R_est, aes(x=date, y=value, color=variable)) +
     geom_hline(aes(yintercept = 1)) +
     geom_line() +
-    scale_colour_viridis_d(end=0.8, name=legend_name, labels=legend_labels) +
+    scale_colour_viridis_d(end=0.8, name=legend_name, labels=methods) +
     labs(x = "date", y = "Rt estimate") +
     theme(legend.position = "top")
 }
@@ -60,8 +61,9 @@ plot_multiple_estimates <- function(estimates) {
 
 
 
-#########
-# preparing new version of first plot
+########################################
+# first plot plus confidence intervals #
+########################################
 
 plot_published_vs_calculated_95CI <- function(published, calculated, method_name, diff_bounds=c(-0.1, 0.1)){
   

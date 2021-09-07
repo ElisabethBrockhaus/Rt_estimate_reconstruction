@@ -177,62 +177,59 @@ plot_published_vs_calculated_95CI(globalrt_R_pub, globalrt_R_calc, method_name="
 ############################################
 # compare estimates from different sources #
 ############################################
+source("Rt_estimate_reconstruction/prepared_plots.R")
+estimates <- ETH_R_pub %>%
+  full_join(Ilmenau_R_pub, by = "date") %>% 
+  full_join(RKI_R_pub, by = "date") %>%
+  full_join(epiforecasts_R_pub, by = "date") %>%
+  full_join(SDSC_R_pub, by = "date") %>%
+  full_join(globalrt_R_pub, by = "date")
 
-estimates <- ETH_R_pub[, c("date", "R_pub")] %>%
-  full_join(Ilmenau_R_pub[, c("date", "R_pub")], by = "date") %>% 
-  full_join(RKI_R_pub[, c("date", "R_pub")], by = "date") %>%
-  full_join(epiforecasts_R_pub[, c("date", "R_pub")], by = "date") %>%
-  full_join(SDSC_R_pub[, c("date", "R_pub")], by = "date") %>%
-  full_join(globalrt_R_pub[, c("date", "0.5")], by = "date")
-names(estimates) <- c("date", "ETH", "Ilmenau", "RKI", "epiforecasts", "SDSC", "globalrt")
-
-plot_multiple_estimates(estimates)
+plot_multiple_estimates(estimates, methods = c("ETH", "Ilmenau", "RKI", "epiforecasts", "SDSC", "globalrt"))
 
 # compare estimates from different methods with same window size
 # 7 day
-RKI_est7 <- estimate_RKI_R(RKI_incid, window = 7)[, c("date", "R_calc")]
-Ilmenau_est7 <- estimate_Ilmenau_R(Ilmenau_incid, window = 7, gt_type="ad hoc")[, c("date", "0.5")]
+RKI_est7 <- estimate_RKI_R(RKI_incid, window = 7)
+Ilmenau_est7 <- estimate_Ilmenau_R(Ilmenau_incid, window = 7, gt_type="ad hoc")
 ETH_est7 <- estimate_ETH_R(ETH_countryData, window = 7)
-SDSC_est7 <- estimate_SDSC_R(SDSC_incid, estimateOffsetting = 7, window=7)[, c("date", "0.5")]
+SDSC_est7 <- estimate_SDSC_R(SDSC_incid, estimateOffsetting = 7, window=7)
 
 estimates <- RKI_est7 %>%
   full_join(Ilmenau_est7, by = "date") %>%
   full_join(ETH_est7, by = "date") %>%
   full_join(SDSC_est7, by = "date")
-names(estimates) <- c("date", "RKI", "Ilmenau", "ETH", "SDSC")
 
-plot_multiple_estimates(estimates[estimates$date > "2020-03-08",])
+plot_multiple_estimates(estimates[estimates$date > "2020-03-08",],
+                        methods = c("date", "RKI", "Ilmenau", "ETH", "SDSC"))
 
 # 3 day
-RKI_est3 <- estimate_RKI_R(RKI_incid, window = 3)[, c("date", "R_calc")]
-Ilmenau_est3 <- estimate_Ilmenau_R(Ilmenau_incid, window = 3, gt_type = "ad hoc")[, c("date", "0.5")]
-SDSC_est3 <- estimate_SDSC_R(SDSC_incid, estimateOffsetting = 7, window=3)[, c("date", "0.5")]
+RKI_est3 <- estimate_RKI_R(RKI_incid, window = 3)
+Ilmenau_est3 <- estimate_Ilmenau_R(Ilmenau_incid, window = 3, gt_type = "ad hoc")
+SDSC_est3 <- estimate_SDSC_R(SDSC_incid, estimateOffsetting = 7, window=3)
 
 estimates <- RKI_est3 %>%
   full_join(Ilmenau_est3, by = "date") %>%
   full_join(ETH_R_pub[, c("date", "R_pub")], by = "date") %>%
   full_join(SDSC_est3, by = "date")
-names(estimates) <- c("date", "RKI", "Ilmenau", "ETH", "SDSC")
 
-plot_multiple_estimates(estimates[estimates$date > "2020-03-08",])
+plot_multiple_estimates(estimates[estimates$date > "2020-03-08",],
+                        methods = c("RKI", "Ilmenau", "ETH", "SDSC"))
 
 # 3 day Austria
 AGES_est3 <- estimate_AGES_R(AGES_incid, window=3)
 
 estimates <- AGES_est3 %>%
   full_join(ETH_R_calc_AUT, by = "date")
-names(estimates) <- c("date", "AGES", "ETH (Austria)")
 
-plot_multiple_estimates(estimates)
+plot_multiple_estimates(estimates, methods = c("AGES", "ETH (Austria)"))
 
 # use Ilmenau method with data and parameters from RKI
-Ilmenau_est3_shifted <- estimate_Ilmenau_R(RKI_incid, window = 3, gt_type = "gamma", gt_mean=4, gt_sd=0.0001)[, c("date", "0.5")]
+Ilmenau_est3_shifted <- estimate_Ilmenau_R(RKI_incid, window = 3, gt_type = "gamma", gt_mean=4, gt_sd=0.0001)
 Ilmenau_est3_shifted$date <- Ilmenau_est3_shifted$date+6
 estimates <- RKI_est3 %>%
   full_join(Ilmenau_est3_shifted, by = "date")
-names(estimates) <- c("date", "RKI", "Ilmenau")
 
-plot_multiple_estimates(estimates)
+plot_multiple_estimates(estimates, methods = c("RKI", "Ilmenau"))
 
 # use RKI method with (mean of) deconvoluted ETH data and ETH parameters
 ETH_incid <- ETH_countryData[, c("date", "value")]
@@ -240,11 +237,10 @@ ETH_incid <- aggregate(ETH_incid$value, by=list(ETH_incid$date), FUN=mean)
 names(ETH_incid) <- c("date", "I")
 
 RKI_est3_ETH <- estimate_RKI_R(ETH_incid, window = 3, gt_type = "gamma",
-                               gt_mean = 4.8, gt_sd = 2.3)[, c("date", "R_calc")]
+                               gt_mean = 4.8, gt_sd = 2.3)
 estimates <- RKI_est3_ETH %>% full_join(ETH_R_calc, by = "date")
-names(estimates) <- c("date", "RKI (ETH data and parameters)", "ETH")
 
-plot_multiple_estimates(estimates)
+plot_multiple_estimates(estimates, methods = c("RKI (ETH data and parameters)", "ETH"))
 
 
 
