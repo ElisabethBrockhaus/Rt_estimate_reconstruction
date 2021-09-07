@@ -39,20 +39,60 @@ plot_published_vs_calculated <- function(published, calculated, method_name, dif
 
 
 
-plot_multiple_estimates <- function(estimates, methods) {
+plot_multiple_estimates <- function(estimates, methods, include_CI=F) {
   
-  R_est <- estimates %>% dplyr::select(starts_with(c("date", "R_pub", "R_calc", "0.5")))
-
-  legend_name <- "method"
-
+  # pull first mean/median of estimates
+  R_est <- estimates[, 1:2]
+  names(R_est)[2] <- paste0("R.", methods[1])
+  
+  # add median/mean of further estimates in correct order for coloring
+  for (i in 2:length(methods)) {
+    name <- paste0("R.", methods[i])
+    
+    if (dim(estimates)[2] == (1 + 3*length(methods))){
+      R_est[[name]] <- estimates[, 2 + (i-1)*3]
+    } else if (dim(estimates)[2] == (1 + length(methods))){
+      R_est[[name]] <- estimates[, 1 + i]
+    } else {
+      print("Make sure to pass 1 or 3 columns per method (R, (lb_ci, ub_ci))")
+    } 
+  }
+  
   # reshape data
   R_est <- melt(R_est, id.var='date')
   R_est <- na.omit(R_est)
-
-  ggplot(data=R_est, aes(x=date, y=value, color=variable)) +
+  
+  R_plot <- ggplot()
+  
+  if(include_CI){
+    
+    if (dim(estimates)[2] != (1 + 3*length(methods))){
+      print("Make sure to pass 3 columns per method (R, lb_ci, ub_ci)")
+      
+    } else{
+      # select CI's of estimates
+      R_CI <- estimates %>%
+        dplyr::select(starts_with(c("date", "lower", "upper", "0.025", "0.975")))
+      
+      for (i in 1:length(methods)) {
+        lower <- paste0("lower.", methods[i])
+        upper <-paste0("upper.", methods[i])
+        names(R_CI)[i*2] <- lower
+        names(R_CI)[i*2+1] <- upper
+        
+        color <- viridis(1, begin = (i - 1) * 0.8 / (length(methods) - 1))
+        
+        # add shades to plot
+        R_plot <- R_plot +
+          geom_ribbon(data=R_CI ,aes(x=date, ymax=.data[[upper]], ymin=.data[[lower]]), fill=color, alpha=.3)
+      }
+    }
+  }
+  
+  R_plot +
     geom_hline(aes(yintercept = 1)) +
-    geom_line() +
-    scale_colour_viridis_d(end=0.8, name=legend_name, labels=methods) +
+    geom_line(data=R_est, aes(x=date, y=value, color=variable)) +
+    scale_colour_viridis_d(end=0.8, name="method", labels=methods) +
     labs(x = "date", y = "Rt estimate") +
     theme(legend.position = "top")
 }
