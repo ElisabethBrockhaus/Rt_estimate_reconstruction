@@ -95,6 +95,8 @@ estimate_ETH_R <- function(incid, window=3, gt_type="gamma", gt_mean=4.8, gt_sd=
     gt_dist <- get_infectivity_profile(gt_type, gt_mean, gt_sd)
   } else {gt_dist <- c()}
   
+  View(incid)
+  
   # Run EpiEstim
   countryEstimatesRaw <- doAllReEstimations(
     incid,
@@ -217,7 +219,8 @@ estimate_AGES_R <- function(incid, window = 13, gt_type="gamma", gt_mean = 4.46,
     r_EpiEstim <- estimate_R(incid_wo_na$I,
                              method = "parametric_si",
                              config = make_config(list(t_start=start, t_end=end,
-                                                       mean_si=gt_mean, std_si=gt_sd)))
+                                                       mean_si=gt_mean, std_si=gt_sd,
+                                                       mean_prior=1, std_prior=5)))
   }
 
   len_est <- length(r_EpiEstim$R$`Mean(R)`)

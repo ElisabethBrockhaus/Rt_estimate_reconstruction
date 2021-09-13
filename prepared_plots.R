@@ -58,6 +58,8 @@ plot_multiple_estimates <- function(estimates, methods, include_CI=F) {
     } 
   }
   
+  View(R_est)
+  
   # reshape data
   R_est <- melt(R_est, id.var='date')
   R_est <- na.omit(R_est)
@@ -74,6 +76,8 @@ plot_multiple_estimates <- function(estimates, methods, include_CI=F) {
       R_CI <- estimates %>%
         dplyr::select(starts_with(c("date", "lower", "upper", "0.025", "0.975")))
       
+      View(R_CI)
+      
       for (i in 1:length(methods)) {
         lower <- paste0("lower.", methods[i])
         upper <-paste0("upper.", methods[i])
@@ -86,6 +90,8 @@ plot_multiple_estimates <- function(estimates, methods, include_CI=F) {
         R_plot <- R_plot +
           geom_ribbon(data=R_CI ,aes(x=date, ymax=.data[[upper]], ymin=.data[[lower]]), fill=color, alpha=.3)
       }
+      
+      View(R_CI)
     }
   }
   
@@ -144,5 +150,5 @@ plot_published_vs_calculated_95CI <- function(published, calculated, method_name
     labs(x = "date", y = "published - calculated")
   
   # align plots
-  plot_grid(est_plot, diff_plot, ncol = 1, align = "v", rel_heights = c(2, 1))
+  plot_grid(est_plot, diff_plot, ncol = 1, align = "v", rel_heights = c(5, 1))
 }

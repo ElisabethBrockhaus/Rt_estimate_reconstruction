@@ -21,9 +21,17 @@ RKI_R_calc <- estimate_RKI_R(RKI_incid)
 RKI_R_calc_EpiEstim <- estimate_RKI_R(RKI_incid, method="EpiEstim")
 names(RKI_R_calc_EpiEstim) <- c("date", "0.5", "0.025", "0.975")
 
+RKI_R_calc_Ilmenau <- estimate_Ilmenau_R(RKI_incid, window = 7, shift = 6,
+                                         gt_type = "gamma", gt_mean = 4, gt_sd = 0.0001)
+
 # plots for comparison
 plot_published_vs_calculated(RKI_R_pub, RKI_R_calc, method_name="RKI")
-plot_published_vs_calculated_95CI(RKI_R_pub, RKI_R_calc_EpiEstim, method_name="RKI")
+plot_published_vs_calculated_95CI(RKI_R_pub[RKI_R_pub$date > "2020-03-12",],
+                                  RKI_R_calc_EpiEstim[RKI_R_calc_EpiEstim$date > "2020-03-12",],
+                                  method_name="RKI")
+plot_published_vs_calculated_95CI(RKI_R_pub[RKI_R_pub$date > "2020-03-12",],
+                                  RKI_R_calc_Ilmenau[RKI_R_calc_Ilmenau$date > "2020-03-12",],
+                                  method_name="RKI")
 
 # with slightly higher gt_sd
 RKI_R_calc_gamma <- estimate_RKI_R(RKI_incid, gt_type="gamma", gt_sd = 1)
