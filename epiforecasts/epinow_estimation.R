@@ -141,7 +141,7 @@ estimates_eth_params <- epinow(reported_cases = reported_cases_latest_eth,
                                verbose = TRUE)
 
 # compare published and calculated in plot
-epiforecasts_R_calc_eth <- estimates_eth_params$estimates$summarised[variable=="R", c("date", "type", "median")]
+epiforecasts_R_calc_eth <- estimates_eth_params$estimates$summarised[variable=="R", c("date", "type", "mean")]
 qsave(epiforecasts_R_calc_eth, paste0("R_calc_", Sys.Date(), "_ETHParams.qs"))
 
 # compare epiforecast estimates to the ones obtained when using JHU data and globalrt parameters
