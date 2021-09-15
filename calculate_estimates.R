@@ -71,9 +71,11 @@ estimate_RKI_R <- function(incid, window=7, gt_type="constant", gt_mean=4, gt_sd
     }
   }
   
+  # shift estimates
   estimate$date <- estimate$date + shift
   
-  return(estimate)
+  # return only columns containg non-NA values (omit "lower" and "upper" if method == "RKI")
+  return(estimate[colSums(!is.na(estimate)) > 0])
 }
 
 
@@ -94,8 +96,6 @@ estimate_ETH_R <- function(incid, window=3, gt_type="gamma", gt_mean=4.8, gt_sd=
   if (gt_type != "gamma"){
     gt_dist <- get_infectivity_profile(gt_type, gt_mean, gt_sd)
   } else {gt_dist <- c()}
-  
-  View(incid)
   
   # Run EpiEstim
   countryEstimatesRaw <- doAllReEstimations(
@@ -150,8 +150,8 @@ estimate_ETH_R <- function(incid, window=3, gt_type="gamma", gt_mean=4.8, gt_sd=
   
   estimate <- full_join(unique(incid[, c("date")]),
                         countryEstimates,
-                        by="date")[, c("date", "median_R_mean")]
-  names(estimate) <- c("date", "R_calc")
+                        by="date")[, c("date", "median_R_mean", "median_R_lowHPD", "median_R_highHPD")]
+  names(estimate) <- c("date", "R_calc", "lower", "upper")
   
   return(estimate)
 }
@@ -226,8 +226,10 @@ estimate_AGES_R <- function(incid, window = 13, gt_type="gamma", gt_mean = 4.46,
   len_est <- length(r_EpiEstim$R$`Mean(R)`)
   
   # assign estimates to time points properly
-  estimate <- data.frame(date=incid$date, R_calc=c(rep(NA, (start_i+window-1)),
-                                                   r_EpiEstim$R$`Mean(R)`))
+  estimate <- data.frame(date = incid$date,
+                         R_calc = c(rep(NA, (start_i+window-1)), r_EpiEstim$R$`Mean(R)`),
+                         lower = c(rep(NA, (start_i+window-1)), r_EpiEstim$R$`Quantile.0.025(R)`),
+                         upper = c(rep(NA, (start_i+window-1)), r_EpiEstim$R$`Quantile.0.975(R)`))
   estimate$date <- estimate$date + shift
   
   return(estimate)
@@ -377,14 +379,11 @@ estimate_SDSC_R <- function(incid, estimateOffsetting=7,
                        R_highHPD=R_highHPD,
                        R_lowHPD=R_lowHPD)
   
-  names(result) <- c("date", "0.5", "0.025", "0.975")
-  
   #result <- melt(result, id.vars="date")
   #colnames(result) <- c("date", "variable", "value")
   #result$estimate_type <- method
   
-  #result <- result[result$variable=="R_mean", c("date", "value")]
-  #names(result) <- c("date", "R_calc")
+  names(result) <- c("date", "R_calc", "upper", "lower")
   
   return(result)
 }
@@ -518,20 +517,27 @@ repronum <- function(
 
 
 ### function to calculate infectivity profile given distribution type, mean and sd
-get_infectivity_profile <- function(gt_type=c("ad hoc", "gamma"), gt_mean, gt_sd){
+get_infectivity_profile <- function(gt_type=c("ad hoc", "gamma", "exponential", "uniform"), gt_mean, gt_sd){
   
   if (gt_type == "ad hoc"){
     gt_dist <- c(0, (0:3)/3, 1, (5:0)/5, rep(0, 988))
     names(gt_dist) <- seq_along(gt_dist)
-    gt_dist <- gt_dist / sum(gt_dist)
-    
+
   } else if (gt_type == "gamma"){
     gt_dist <- c(0, dgamma(1:1000, shape = (gt_mean^2)/gt_sd, scale = gt_sd/gt_mean))
-    gt_dist <- gt_dist / sum(gt_dist)
     
+  } else if (gt_type == "exponential"){
+    print("Ignoring 'gt_sd'! A exponential distribution implies sd = mean.")
+    gt_dist <- c(0, dexp(1:1000, rate = 1/gt_mean))
+    
+  } else if (gt_type == "uniform"){
+    print("Ignoring 'gt_sd'! A uniform distribution is assumed with min = gt_mean - 1 and max = gt_mean + 1.")
+    gt_dist <- c(0, dunif(1:1000, min = gt_mean - 1, max = gt_mean + 1))
+
   } else {
-    print("Type of generation time distribution not known. Choose from ['ad hoc', 'gamma']")
+    print("Type of generation time distribution not known. Choose from ['ad hoc', 'gamma', 'exponential', 'uniform]")
   }
+  gt_dist <- gt_dist / sum(gt_dist)
   
   return(gt_dist)
 }
