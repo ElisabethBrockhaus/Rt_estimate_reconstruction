@@ -9,7 +9,7 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 
 # parameter combinations used in papers
 window_size <- c(3, 7, 1, 4, 13, 1, 1, 1)
-gt_dist <- c("gamma", "constant", "ad hoc", "gamma", "gamma", "?", "log-normal", "exponential")
+gt_dist <- c("gamma", "constant", "ad hoc", "gamma", "gamma", "gamma", "log-normal", "exponential")
 mean_gt <- c(4.8, 4.0, 5.6, 4.8, 3.4, 3.6, 4.7, 7)
 sd_gt <- c(2.3, 0.0, 4.2, 2.3, 1.8, 3.1, 2.9, 7)
 shift <- c(0, 4, 7, 7, 0, 2, 5, 0)
@@ -23,7 +23,42 @@ simple_incid <- incid[, c("date", "value")]
 simple_incid <- aggregate(simple_incid$value, by=list(simple_incid$date), FUN=median)
 names(simple_incid) <- c("date", "I")
 
-method <- "ETH"
+method <- "globalrt"
+
+# for comparison of methods use window = 7
+R_raw_EpiEstim <- estimate_RKI_R(simple_incid, method = "EpiEstim",
+                                 window = 7,
+                                 gt_type = params[method, "gtd"],
+                                 gt_mean=params[method, "gt_mean"],
+                                 gt_sd=params[method, "gt_sd"])
+
+R_ETH_EpiEstim <- estimate_ETH_R(incid,
+                                 window = 7,
+                                 gt_type = params[method, "gtd"],
+                                 gt_mean=params[method, "gt_mean"],
+                                 gt_sd=params[method, "gt_sd"])
+
+R_epiforecasts <- qread("Rt_estimate_reconstruction/epiforecasts/estimates/R_calc_2021-09-15_globalrtParams.qs")
+names(R_epiforecasts) <- c("date", "type", "R_calc")
+
+R_globalrt <- read_csv("Rt_estimate_reconstruction/ArroyoMarioli/estimates/estimated_R_STAN.csv")
+R_globalrt <- R_globalrt[R_globalrt$`Country/Region` == "Germany", c("Date", "R")]
+names(R_globalrt) <- c("date", "R_calc")
+
+# merge estimates and plot for comparison
+estimates <- R_raw_EpiEstim[,c("date", "R_calc")] %>%
+  full_join(R_ETH_EpiEstim[,c("date", "R_calc")], by = "date") %>% 
+  full_join(R_epiforecasts[,c("date", "R_calc")], by = "date") %>%
+  full_join(R_globalrt[,c("date", "R_calc")], by = "date")
+
+plot_multiple_estimates(estimates, methods = c("raw EpiEstim", "ETH EpiEstim", "epiforecasts", "globalrt"))
+
+
+
+
+###########################################
+# compare estimates of Cori-based methods #
+###########################################
 
 # estimations
 RKI_R <- estimate_RKI_R(simple_incid,
@@ -70,4 +105,9 @@ estimates <- RKI_R %>%
 names(estimates) <- c("date", "RKI", "ETH", "Ilmenau", "AGES", "SDSC")
 
 plot_multiple_estimates(estimates)
+
+
+
+
+
 
