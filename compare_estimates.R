@@ -38,7 +38,6 @@ RKI_R_calc_gamma <- estimate_RKI_R(RKI_incid, gt_type="gamma", gt_sd = 1)
 plot_published_vs_calculated(RKI_R_pub, RKI_R_calc_gamma, method_name="RKI (gt_sd = 1)")
 
 
-
 #####################
 # ETH (Huisman2021) #
 #####################
@@ -64,15 +63,6 @@ ETH_R_calc_AUT <- estimate_ETH_R(ETH_countryData_AUT)
 
 # plots for comparison
 plot_published_vs_calculated(published=ETH_R_pub_AUT, calculated=ETH_R_calc_AUT, method_name="ETH (Austria)")
-
-
-# with JHU data
-ETH_countryDataJHU <-  load_incidence_data(method = "ETHZ_sliding_window",
-                                           #force_deconvolution=T,
-                                           source="JHU")
-ETH_R_calc_JHU <- estimate_ETH_R(ETH_countryDataJHU)
-plot_published_vs_calculated(published=ETH_R_pub, calculated=ETH_R_calc_JHU, method_name="ETH with JHU data")
-
 
 
 ######################
@@ -105,10 +95,58 @@ AGES_incid <- load_incidence_data("AGES", location = "AT")
 AGES_R_pub <- load_published_R_estimates("AGES", location = "AT")
 
 # estimation with mean/sd used since 18th June 2021
-AGES_R_calc <- estimate_AGES_R(AGES_incid, gt_mean = 3.37, gt_sd = 1.83)
+AGES_R_calc <- estimate_AGES_R(AGES_incid,
+                               gt_mean = 3.37, gt_sd = 1.83,
+                               shape = 3.38, scale = 1.00)
+
+a <- 3.38
+b <- 1.00
+window <- 13 
+gt_dist <- c(0, dgamma(1:1000, shape = a, scale = b))
+
+for (t in window:nrow(AGES_incid)){
+  
+  # numerator
+  new_infect <- a + sum(AGES_incid$I[t - 0:(window-1)])
+  
+  # nominator
+  total_infect <- 1/b
+  for (i in t - 0:(window-1)) {
+    total_infect <- total_infect + (AGES_incid$I[i:1] %*% gt_dist[1:i])
+  }
+  
+  # R_t
+  AGES_R_calc[t, "R_calc"] <- new_infect / total_infect
+}
+
+plot_published_vs_calculated(AGES_R_pub, AGES_R_calc, method_name="AGES (Austria)")
+
+incid <- AGES_incid
+start_i <- min(which(!is.na(incid$I)))
+end_i <- max(which(!is.na(incid$I)))
+incid_wo_na <- incid[start_i:end_i,]
+
+# start and end for estimations at each time point
+start <- 2:(nrow(incid_wo_na) + 1 - window)
+end <- start - 1 + window
+
+# estimation with EpiEstim function
+r_EpiEstim <- estimate_R(incid_wo_na$I,
+                         method = "non_parametric_si",
+                         config = make_config(list(
+                           t_start=start, t_end=end,
+                           si_distr=gt_dist,
+                           mean_prior = 1,
+                           std_prior = 5)))
+
+len_est <- length(r_EpiEstim$R$`Mean(R)`)
+
+# assign estimates to time points properly
+estimate <- data.frame(date=incid$date, R_calc=c(rep(NA, (start_i+window-1)),
+                                                 r_EpiEstim$R$`Mean(R)`))
 
 # plots for comparison
-plot_published_vs_calculated(AGES_R_pub, AGES_R_calc, method_name="AGES (Austria)")
+plot_published_vs_calculated(AGES_R_pub, estimate, method_name="AGES (Austria)")
 
 
 
@@ -251,6 +289,16 @@ estimates <- RKI_est3_ETH %>% full_join(ETH_R_calc, by = "date")
 
 plot_multiple_estimates(estimates, methods = c("RKI (ETH data and parameters)", "ETH"))
 
+# use ETH method with JHU data
+ETH_countryDataJHU <-  load_incidence_data(method = "ETHZ_sliding_window",
+                                           #force_deconvolution=T,
+                                           source="JHU")
+ETH_R_calc_JHU <- estimate_ETH_R(ETH_countryDataJHU)
+estimates <- ETH_R_calc %>% full_join(ETH_R_calc_JHU, by = "date")
+
+plot_multiple_estimates(as.data.frame(estimates), methods = c("ETH", "ETH with JHU data"))
+
+
 
 # compare EpiEstim CI to ETH CI
 EpiEstim_est3_ETH <- estimate_RKI_R(ETH_incid, window = 3, method = "EpiEstim",
@@ -260,3 +308,11 @@ estimates <- EpiEstim_est3_ETH %>% full_join(ETH_R_pub, by = "date")
 plot_multiple_estimates(estimates[estimates$date > "2020-01-27",],
                         methods = c("EpiEstim.ETHpars", "ETH"),
                         include_CI = TRUE)
+
+# compare RKI estimate to estimate when using unif[3,5] for generation time
+RKI_R_calc_unif <- estimate_RKI_R(RKI_incid, gt_type = "uniform")
+estimates <- RKI_R_calc %>% full_join(RKI_R_calc_unif, by = "date")
+
+plot_multiple_estimates(estimates[estimates$date > "2020-01-27",],
+                        methods = c("RKI", "RKI with unif[3,5]"),
+                        include_CI = FALSE)
