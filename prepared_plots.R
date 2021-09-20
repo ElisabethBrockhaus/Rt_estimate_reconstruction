@@ -40,6 +40,8 @@ plot_published_vs_calculated <- function(published, calculated, method_name, dif
 
 
 plot_multiple_estimates <- function(estimates, methods, include_CI=F) {
+  # TODO: estimates einzeln übergeben und abhängig von Anzahl trotzdem richtig joinen.
+  #estimates <- as.data.frame(estimates)
   
   # pull first mean/median of estimates
   R_est <- estimates[, 1:2]
@@ -48,9 +50,10 @@ plot_multiple_estimates <- function(estimates, methods, include_CI=F) {
   # add median/mean of further estimates in correct order for coloring
   for (i in 2:length(methods)) {
     name <- paste0("R.", methods[i])
-    
+
     if (dim(estimates)[2] == (1 + 3*length(methods))){
-      R_est[[name]] <- estimates[, 2 + (i-1)*3]
+      #view(estimates)
+      R_est[[name]] <- estimates[, (2 + (i-1)*3)]
     } else if (dim(estimates)[2] == (1 + length(methods))){
       R_est[[name]] <- estimates[, 1 + i]
     } else {
@@ -58,7 +61,7 @@ plot_multiple_estimates <- function(estimates, methods, include_CI=F) {
     } 
   }
   
-  View(R_est)
+  #View(R_est)
   
   # reshape data
   R_est <- melt(R_est, id.var='date')

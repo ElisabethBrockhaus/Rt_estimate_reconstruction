@@ -93,7 +93,7 @@ load_incidence_data <- function(method, location="DE", ...){
     }
 
   } else {
-    print("Method unknown, choose from [RKI, ETHZ_sliding_window, ilmenau, AGES, SDSC].")
+    print("Method unknown, choose from [RKI, ETHZ_sliding_window, ilmenau, AGES, sdsc].")
   }
   
   return(data)
@@ -291,7 +291,7 @@ ETH_deconvolution <- function(country="Germany", region="DEU", data_source = "")
                               countryIso3 = region,
                               source = "JHU",
                               data_type = as.factor("Confirmed cases"),
-                              date_type = "onset",
+                              date_type = "report",
                               value = c(rep(0, 21), confirmed_national),
                               local_infection = TRUE)
   }
