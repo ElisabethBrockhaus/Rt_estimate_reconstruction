@@ -58,11 +58,11 @@ load_incidence_data <- function(method, location="DE", ...){
   } else if (method == "ETHZ_sliding_window") {
     # pass country/region value pair
     if (location == "DE") {
-      data <- load_ETH_deconvolvedCountryData(...)
+      data <- load_ETH_data(...)
     } else if (location == "AT") {
-      data <- load_ETH_deconvolvedCountryData(country="Austria", region="AUT", ...)
+      data <- load_ETH_data(country="Austria", region="AUT", ...)
     } else if (location == "CH") {
-      data <- load_ETH_deconvolvedCountryData(country="Switzerland", region="CHE", ...)
+      data <- load_ETH_data(country="Switzerland", region="CHE", ...)
     } else {
       print("Location not included in analysis, choose from [DE, AT, CH].")
     }
@@ -121,21 +121,31 @@ load_RKI_data <- function(){
 }
 
 
-load_ETH_deconvolvedCountryData <- function(country="Germany", region="DEU",
-                                            force_deconvolution = FALSE, source = ""){
+load_ETH_data <- function(country = "Germany", region = "DEU", source = "",
+                          deconvolved = TRUE, new_deconvolution = FALSE){
+  
+  data_type <- if(deconvolved) "-DeconvolutedData" else "-Data"
   
   countryDataPath <- file.path("Rt_estimate_reconstruction/ETH/data/countryData",
-                               str_c(region, "-DeconvolutedData", source, ".rds"))
+                               str_c(region, data_type, source, ".rds"))
+  
+  ETH_load_countryData(country=country, region=region, data_source = source)
 
   # Deconvolution if necessary or wanted
-  if (force_deconvolution | !file.exists(countryDataPath)){
+  if (new_deconvolution | !file.exists(countryDataPath)){
     ETH_deconvolution(country=country, region=region, data_source = source)
   }
   
-  # load deconvoluted data
-  deconvolvedCountryData <- readRDS(countryDataPath)
+  # load (deconvolved) data
+  data <- readRDS(countryDataPath)
   
-  return(deconvolvedCountryData)
+  # filter for confirmed cases with date type "report_plotting"
+  if (!deconvolved){
+    data <- data[data$data_type == "Confirmed cases" & data$date_type == "report_plotting",]
+    data <- data.frame(date=data$date, I=data$value)
+  }
+  
+  return(data)
 }
 
 
@@ -202,8 +212,7 @@ load_SDSC_data <- function(country="Germany", data_status="2021-08-29"){
 # functions for preprocessing #
 ###############################
 
-ETH_deconvolution <- function(country="Germany", region="DEU", data_source = ""){
-  
+ETH_load_countryData <- function(country="Germany", region="DEU", data_source = ""){
   source("Rt_estimate_reconstruction/ETH/otherScripts/1_utils_getRawData.R")
   source("Rt_estimate_reconstruction/ETH/otherScripts/utils.R")
   
@@ -309,6 +318,14 @@ ETH_deconvolution <- function(country="Germany", region="DEU", data_source = "")
     saveRDS(countryData, file = countryDataPath)
   }
   
+  
+}
+
+ETH_deconvolution <- function(country="Germany", region="DEU", data_source = ""){
+  
+  countryData <- readRDS(file.path("Rt_estimate_reconstruction/ETH/data/countryData",
+                                   str_c(region, "-Data", data_source, ".rds")))
+  
   # get Infection Incidence
   # load functions
   source("Rt_estimate_reconstruction/ETH/otherScripts/2_utils_getInfectionIncidence.R")
@@ -392,6 +409,7 @@ ETH_deconvolution <- function(country="Germany", region="DEU", data_source = "")
     dplyr::filter(df, date <= (max(date) - right_truncation[[unique(data_type)]]))
   }
   
+  # EB: added country column which is else missing
   countryData$country <- country
   
   countryData <- countryData %>%
