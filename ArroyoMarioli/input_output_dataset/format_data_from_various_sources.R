@@ -15,19 +15,31 @@ names(locations) <- all
 load_data_for_globalrt <- function(method, countries=c("Germany")){
   
   # load data for given countries
-  data <- as.tibble(load_incidence_data(method = method, location = locations[countries[1]]))[,c("date")]
-
-  for (country in countries){
-    data[,c(country)] <- cumsum(load_incidence_data(method = method, location = locations[country])[,c("I")])
+  if (method == "ETHZ_sliding_window"){
+    # ask for non-deconvolved data
+    for (country in countries){
+      country_data <- load_incidence_data(method = method, location = locations[country], deconvolved = FALSE)
+      names(country_data)[2] <- country
+      joined_data <- if (!exists("joined_data")) country_data else full_join(joined_data, country_data, by = "date")
+    }
+  } else {
+    for (country in countries){
+      country_data <- load_incidence_data(method = method, location = locations[country])
+      names(country_data)[2] <- country
+      joined_data <- if (!exists("joined_data")) country_data else full_join(joined_data, country_data, by = "date")
+    }
   }
   
   # make date column the index
-  data <- column_to_rownames(data, var = "date")
+  data <- column_to_rownames(joined_data, var = "date")
   
   # bring date into same format as in JHU data
   rownames(data) <- format(as_date(rownames(data)), "%m/%d/%y")
   rownames(data) <- gsub("(0(?=[0-9]+))", "", rownames(data), perl=TRUE)
   
+  # new cases to total cases
+  data <- apply(data, MARGIN = 2, FUN = cumsum)
+
   # transpose data
   data <- t(data)
   
@@ -42,7 +54,7 @@ load_data_for_globalrt <- function(method, countries=c("Germany")){
 
 # load data from RKI, ETHZ_sliding_window, ilmenau, AGES, SDSC
 data_rki <- load_data_for_globalrt(method = "RKI", countries=c("Germany"))
-#data_eth <- load_data_for_globalrt(method = "ETHZ_sliding_window", countries=all)
+data_eth <- load_data_for_globalrt(method = "ETHZ_sliding_window", countries=c("Germany")) # TODO: make usable for Austria
 data_ilmenau <- load_data_for_globalrt(method = "ilmenau", countries=c("Germany"))
 data_ages <- load_data_for_globalrt(method = "AGES", countries=c("Austria"))
 data_scsc <- load_data_for_globalrt(method = "sdsc", countries=all)
