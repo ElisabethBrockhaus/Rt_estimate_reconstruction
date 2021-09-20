@@ -5,6 +5,7 @@ import pandas as pd
 import statsmodels.api as sm
 import scipy
 import warnings
+import math
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/" + "../.."))
 
@@ -85,6 +86,7 @@ def estimate_R(y, gamma, n_start_values_grid=0, maxiter=200):
         res_ll = mod_ll.fit(maxiter=maxiter, disp=False)
     R = 1 + 1 / (gamma) * res_ll.smoothed_state[0]
     se_R = (1 / gamma * (res_ll.smoothed_state_cov[0] ** 0.5))[0]
+    print("Converged:", res_ll.mle_retvals["converged"])
     return {
         "R": R,
         "se_R": se_R,
@@ -100,120 +102,135 @@ def estimate_R(y, gamma, n_start_values_grid=0, maxiter=200):
 # Parameters #
 ##############
 
+methods = ["", "_ETH", "_ilmenau", "_RKI", "_sdsc", "_epiforecasts"]
+gammas = np.reciprocal(np.array([7, 4.8, 5.6, 4, 4.8, 3.6]))
+parameters = pd.DataFrame({"gamma": gammas}, index=methods)
 input_folder = "./relevant_scripts_adjusted/"
 output_folder = "./relevant_scripts_adjusted/"
 min_T = 20
-gamma = 1 / 7.0
-# gamma = 1 / 4.8
-min_signal_to_noise = 1e-3
-max_signal_to_noise = 1e2
-days_infectious = 7  # Baseline for of duration of infectiousness
+# gamma = 1 / 7.0
+# min_signal_to_noise = 1e-3
+min_signal_to_noise = 1e-15
+# max_signal_to_noise = 1e2
+max_signal_to_noise = 1e15
+# days_infectious = 7  # Baseline for of duration of infectiousness
 
-#############
-# Load data #
-#############
-
-df = pd.read_csv("{}/dataset.csv".format(input_folder))
-df["Date"] = pd.to_datetime(df["Date"])
-
-# Impose minimum time-series observations
-df_temp = (
-    df.groupby("Country/Region")
-    .count()["gr_infected_{}".format(days_infectious)]
-    .reset_index()
-)
-df_temp.rename(
-    columns={"gr_infected_{}".format(days_infectious): "no_obs"}, inplace=True
-)
-df = pd.merge(df, df_temp, how="left")
-mask = df["no_obs"] >= min_T
-df = df.loc[
-    mask,
-]
-
-##############
-# Estimate R #
-##############
-
-df["R"] = np.nan
-df["se_R"] = np.nan
-
-df_optim_res = []
-
-with warnings.catch_warnings():
-    # Ignore warnings from statsmodels
-    # Instead, check later
-    warnings.filterwarnings(
-        "ignore",
-        message="Maximum Likelihood optimization failed to converge. Check mle_retvals",
+for method in methods:
+    print(
+        "Estimation based on data from ",
+        method[1:] if method != "" else "original method",
     )
-    for country in df["Country/Region"].unique():
-        print("starting estimate_R_KF for:")
-        print(country)
-        mask = df["Country/Region"] == country
-        df_temp = df.loc[
-            mask,
-        ].copy()
-        y = df_temp["gr_infected_{}".format(days_infectious)].values
-        res = estimate_R(y, gamma=gamma)
-        df.loc[mask, "R"] = res["R"]
-        df.loc[mask, "se_R"] = res["se_R"]
-        df_optim_res.append(
-            {
-                "Country/Region": country,
-                "flag": res["flag"],
-                "sigma2_irregular": res["sigma2_irregular"],
-                "sigma2_level": res["sigma2_level"],
-                "signal_to_noise": res["signal_to_noise"],
-            }
+
+    # set parameters for method
+    gamma = parameters.loc[method, "gamma"]
+    days_infectious = max(5, math.ceil(1 / gamma))
+    print("Days infectious:", days_infectious)
+
+    #############
+    # Load data #
+    #############
+
+    df = pd.read_csv("{}/dataset{}.csv".format(input_folder, method))
+    df["Date"] = pd.to_datetime(df["Date"])
+
+    # Impose minimum time-series observations
+    df_temp = (
+        df.groupby("Country/Region")
+        .count()["gr_infected_{}".format(days_infectious)]
+        .reset_index()
+    )
+    df_temp.rename(
+        columns={"gr_infected_{}".format(days_infectious): "no_obs"}, inplace=True
+    )
+    df = pd.merge(df, df_temp, how="left")
+    mask = df["no_obs"] >= min_T
+    df = df.loc[
+        mask,
+    ]
+
+    ##############
+    # Estimate R #
+    ##############
+
+    df["R"] = np.nan
+    df["se_R"] = np.nan
+
+    df_optim_res = []
+
+    with warnings.catch_warnings():
+        # Ignore warnings from statsmodels
+        # Instead, check later
+        warnings.filterwarnings(
+            "ignore",
+            message="Maximum Likelihood optimization failed to converge. Check mle_retvals",
         )
-df_optim_res = pd.DataFrame(df_optim_res)
+        for country in df["Country/Region"].unique():
+            print("country:", country)
+            mask = df["Country/Region"] == country
+            df_temp = df.loc[
+                mask,
+            ].copy()
+            y = df_temp["gr_infected_{}".format(days_infectious)].values
+            res = estimate_R(y, gamma=gamma)
+            df.loc[mask, "R"] = res["R"]
+            df.loc[mask, "se_R"] = res["se_R"]
+            df_optim_res.append(
+                {
+                    "Country/Region": country,
+                    "flag": res["flag"],
+                    "sigma2_irregular": res["sigma2_irregular"],
+                    "sigma2_level": res["sigma2_level"],
+                    "signal_to_noise": res["signal_to_noise"],
+                }
+            )
+    df_optim_res = pd.DataFrame(df_optim_res)
 
-# Merge in optimization results
-df = pd.merge(df, df_optim_res, how="left")
+    # Merge in optimization results
+    df = pd.merge(df, df_optim_res, how="left")
 
-#################################
-# Filter out unreliable results #
-#################################
+    #################################
+    # Filter out unreliable results #
+    #################################
 
-# Unsuccessful optimization
-mask = df["flag"] != 0
-df = df.loc[
-    ~mask,
-]
+    # Unsuccessful optimization
+    mask = df["flag"] != 0
+    df = df.loc[
+        ~mask,
+    ]
 
-# Filter out implausible signal-to-noise ratios
-mask = (df["signal_to_noise"] <= min_signal_to_noise) | (
-    df["signal_to_noise"] >= max_signal_to_noise
-)
-df = df.loc[
-    ~mask,
-]
+    # Filter out implausible signal-to-noise ratios
+    mask = (df["signal_to_noise"] <= min_signal_to_noise) | (
+        df["signal_to_noise"] >= max_signal_to_noise
+    )
+    df = df.loc[
+        ~mask,
+    ]
+    # print(df)
 
-# Collect optimization results
-df_optim_res = (
-    df.groupby("Country/Region")
-    .first()[["flag", "sigma2_irregular", "sigma2_level", "signal_to_noise"]]
-    .reset_index()
-)
-df_optim_res.to_csv("{}/optim_res.csv".format(output_folder), index=False)
+    # Collect optimization results
+    df_optim_res = (
+        df.groupby("Country/Region")
+        .first()[["flag", "sigma2_irregular", "sigma2_level", "signal_to_noise"]]
+        .reset_index()
+    )
+    df_optim_res.to_csv("{}/optim_res{}.csv".format(output_folder, method), index=False)
 
-##################
-# Export results #
-##################
+    ##################
+    # Export results #
+    ##################
 
-df = df[["Country/Region", "Date", "R", "se_R"]].copy()
-df.reset_index(inplace=True)
-del df["index"]
-df["days_infectious"] = 1 / gamma
+    df = df[["Country/Region", "Date", "R", "se_R"]].copy()
+    df.reset_index(inplace=True)
+    del df["index"]
+    df["days_infectious"] = 1 / gamma
 
-# Calculate confidence intervals
-alpha = [0.05, 0.35]
-names = ["95", "65"]
-for aa, name in zip(alpha, names):
-    t_crit = scipy.stats.norm.ppf(1 - aa / 2)
-    df["ci_{}_u".format(name)] = df["R"] + t_crit * df["se_R"]
-    df["ci_{}_l".format(name)] = df["R"] - t_crit * df["se_R"]
+    # Calculate confidence intervals
+    alpha = [0.05, 0.35]
+    names = ["95", "65"]
+    for aa, name in zip(alpha, names):
+        t_crit = scipy.stats.norm.ppf(1 - aa / 2)
+        df["ci_{}_u".format(name)] = df["R"] + t_crit * df["se_R"]
+        df["ci_{}_l".format(name)] = df["R"] - t_crit * df["se_R"]
 
-# Save estimates
-df.to_csv("{}/estimated_R.csv".format(output_folder), index=False)
+    # Save estimates
+    df.to_csv("{}/estimated_R{}.csv".format(output_folder, method), index=False)
