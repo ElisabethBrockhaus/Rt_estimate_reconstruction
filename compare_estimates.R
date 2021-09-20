@@ -65,6 +65,16 @@ ETH_R_calc_AUT <- estimate_ETH_R(ETH_countryData_AUT)
 plot_published_vs_calculated(published=ETH_R_pub_AUT, calculated=ETH_R_calc_AUT, method_name="ETH (Austria)")
 
 
+data_DEU <- readRDS("Rt_estimate_reconstruction/ETH/data/countryData/DEU-data.rds")
+
+
+case_data <- data_DEU[data_DEU$data_type=="Confirmed cases",]
+plot(case_data[case_data$date_type=="report_plotting", c("date", "value")], type="l")
+lines(aggregate(case_data[case_data$date_type %in% c("report", "onset"), c("value")],
+                by=case_data[case_data$date_type %in% c("report", "onset"), c("date")], sum), col="red")
+sum(case_data[case_data$date_type=="report_plotting", c("value")]) - sum(aggregate(case_data[case_data$date_type %in% c("report", "onset"), c("value")],
+              by=case_data[case_data$date_type %in% c("report", "onset"), c("date")], sum)$value)
+
 ######################
 # Ilmenau (Hotz2020) #
 ######################
@@ -295,8 +305,8 @@ ETH_countryDataJHU <-  load_incidence_data(method = "ETHZ_sliding_window",
                                            source="JHU")
 ETH_R_calc_JHU <- estimate_ETH_R(ETH_countryDataJHU)
 estimates <- ETH_R_calc %>% full_join(ETH_R_calc_JHU, by = "date")
-
-plot_multiple_estimates(as.data.frame(estimates), methods = c("ETH", "ETH with JHU data"))
+source("Rt_estimate_reconstruction/prepared_plots.R")
+plot_multiple_estimates(as.data.table(estimates), methods = c("ETH", "ETH with JHU data"))
 
 
 
