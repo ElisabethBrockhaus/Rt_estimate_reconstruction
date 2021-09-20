@@ -15,10 +15,12 @@ names(locations) <- all
 load_data_for_globalrt <- function(method, countries=c("Germany")){
   
   # load data for given countries
-  if (method == "ETHZ_sliding_window"){
-    # ask for non-deconvolved data
+  if (method == "ETH"){
+    # get non-deconvolved data
     for (country in countries){
-      country_data <- load_incidence_data(method = method, location = locations[country], deconvolved = FALSE)
+      country_data <- load_incidence_data(method = "ETHZ_sliding_window",
+                                          location = locations[country],
+                                          deconvolved = FALSE)
       names(country_data)[2] <- country
       joined_data <- if (!exists("joined_data")) country_data else full_join(joined_data, country_data, by = "date")
     }
@@ -47,18 +49,23 @@ load_data_for_globalrt <- function(method, countries=c("Germany")){
   data <- cbind.data.frame(target_format[target_format$`Country/Region` %in% countries ,1:5], data)
   rownames(data) <- NULL
   
-  # save data as .csv
-  #write_csv(data, paste0("Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/time_series_covid19_confirmed_global_", method, ".csv"))
   return(data)
 }
 
 # load data from RKI, ETHZ_sliding_window, ilmenau, AGES, SDSC
 data_rki <- load_data_for_globalrt(method = "RKI", countries=c("Germany"))
-data_eth <- load_data_for_globalrt(method = "ETHZ_sliding_window", countries=c("Germany")) # TODO: make usable for Austria
+data_eth <- load_data_for_globalrt(method = "ETH", countries=c("Germany")) # TODO: make usable for Austria
 data_ilmenau <- load_data_for_globalrt(method = "ilmenau", countries=c("Germany"))
 data_ages <- load_data_for_globalrt(method = "AGES", countries=c("Austria"))
 data_scsc <- load_data_for_globalrt(method = "sdsc", countries=all)
+data_epiforecasts <- load_data_for_globalrt(method = "epiforecasts", countries=all)
 
+# save data for Germany as .csv
+for (method in c("RKI", "ETH", "ilmenau", "sdsc", "epiforecasts")) {
+  data <- load_data_for_globalrt(method = method)
+  write_csv(data, paste0("Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/time_series_covid19_confirmed_global_", method, ".csv"))
+  print(paste0("done for ", method))
+}
 
 
 #####################

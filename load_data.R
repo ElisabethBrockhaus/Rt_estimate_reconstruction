@@ -6,6 +6,7 @@ library(data.table)
 library(fitdistrplus)
 library(qs)
 library(lubridate)
+library(covidregionaldata)
 
 ##################################################
 # load estimates from git (reproductive_numbers) #
@@ -92,8 +93,19 @@ load_incidence_data <- function(method, location="DE", ...){
       print("Location not included in analysis, choose from [DE, AT, CH].")
     }
 
+  } else if (method == "epiforecasts") {
+    if (location == "DE") {
+      data <- load_epiforecasts_data()
+    } else if (location == "AT") {
+      data <- load_epiforecasts_data(country="Austria")
+    } else if (location == "CH") {
+      data <- load_epiforecasts_data(country="Switzerland")
+    } else {
+      print("Location not included in analysis, choose from [DE, AT, CH].")
+    }
+    
   } else {
-    print("Method unknown, choose from [RKI, ETHZ_sliding_window, ilmenau, AGES, sdsc].")
+    print("Method unknown, choose from [RKI, ETHZ_sliding_window, ilmenau, AGES, sdsc, epiforecasts].")
   }
   
   return(data)
@@ -207,6 +219,15 @@ load_SDSC_data <- function(country="Germany", data_status="2021-08-29"){
 }
 
 
+load_epiforecasts_data <- function(country = "Germany") {
+  
+  # load reported cases with function from covidregionaldata (complete history)
+  data <- get_national_data(countries = country)
+  data <- data[, c("date", "cases_new")]
+  names(data) <- c("date", "I")
+  
+  return(data)
+}
 
 ###############################
 # functions for preprocessing #
