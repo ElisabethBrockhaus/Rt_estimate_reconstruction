@@ -67,7 +67,6 @@ plot_published_vs_calculated(published=ETH_R_pub_AUT, calculated=ETH_R_calc_AUT,
 
 data_DEU <- readRDS("Rt_estimate_reconstruction/ETH/data/countryData/DEU-data.rds")
 
-
 case_data <- data_DEU[data_DEU$data_type=="Confirmed cases",]
 plot(case_data[case_data$date_type=="report_plotting", c("date", "value")], type="l")
 lines(aggregate(case_data[case_data$date_type %in% c("report", "onset"), c("value")],
