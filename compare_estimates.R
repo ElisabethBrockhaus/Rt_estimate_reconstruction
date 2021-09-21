@@ -325,3 +325,19 @@ estimates <- RKI_R_calc %>% full_join(RKI_R_calc_unif, by = "date")
 plot_multiple_estimates(estimates[estimates$date > "2020-01-27",],
                         methods = c("RKI", "RKI with unif[3,5]"),
                         include_CI = FALSE)
+
+# compare globalrt estimates with different input data
+estimates <- read_csv("Rt_estimate_reconstruction/ArroyoMarioli/estimates/estimated_R.csv")
+estimates <- estimates[estimates$`Country/Region` == "Germany", c("Date", "R")]
+names(estimates) <- c("date", "R_calc")
+
+for (method in c("_epiforecasts", "_ETH", "_RKI", "_sdsc")) {
+  globalrt_R  <- read_csv(paste0("Rt_estimate_reconstruction/ArroyoMarioli/estimates/estimated_R", method, ".csv"))[,c("Date", "R")]
+  names(globalrt_R) <- c("date", "R_calc")
+  estimates <- estimates %>% full_join(globalrt_R, by = "date")
+}
+
+plot_multiple_estimates(as.data.frame(estimates), methods = c("origial", "epiforecasts", "ETH", "RKI", "sdsc"))
+
+
+
