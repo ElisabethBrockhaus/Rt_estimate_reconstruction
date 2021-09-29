@@ -17,43 +17,83 @@ shift <- c(0, 4, 7, 7, 0, 2, 5, 0)
 params <- data.frame(window=window_size, gtd=gt_dist, gt_mean=mean_gt, gt_sd=sd_gt, shift=shift)
 rownames(params) <- c("ETH", "RKI", "Ilmenau", "SDSC", "AGES", "epiforecasts", "rtlive", "globalrt")
 
-# use same data for all methods
-incid <- load_incidence_data(method = "ETHZ_sliding_window")
-simple_incid <- incid[, c("date", "value")]
-simple_incid <- aggregate(simple_incid$value, by=list(simple_incid$date), FUN=median)
-names(simple_incid) <- c("date", "I")
+# use RKI data for all methods (not line list!)
+incid <- load_incidence_data(method = "RKI")
+incid_for_ETH <- load_incidence_data(method = "ETHZ_sliding_window", source = "simpleRKI")
 
-method <- "globalrt"
+# save incidence data for epiforecast estimation
+write_csv(incid, "Rt_estimate_reconstruction/incidence_data/RKI_incid.csv")
 
-# for comparison of methods use window = 7
-R_raw_EpiEstim <- estimate_RKI_R(simple_incid, method = "EpiEstim",
+method <- "ETH"
+
+# for comparison of methods use default window size of each method
+R_raw_EpiEstim <- estimate_RKI_R(incid, method = "EpiEstim",
                                  window = 7,
                                  gt_type = params[method, "gtd"],
                                  gt_mean=params[method, "gt_mean"],
                                  gt_sd=params[method, "gt_sd"])
 
-R_ETH_EpiEstim <- estimate_ETH_R(incid,
-                                 window = 7,
+R_ETH_EpiEstim <- estimate_ETH_R(incid_for_ETH,
                                  gt_type = params[method, "gtd"],
                                  gt_mean=params[method, "gt_mean"],
                                  gt_sd=params[method, "gt_sd"])
+# offset delays
+R_ETH_EpiEstim$date <- R_ETH_EpiEstim$date+10
+
+R_AGES_EpiEstim <- estimate_AGES_R(incid,
+                                   gt_type = params[method, "gtd"],
+                                   gt_mean=params[method, "gt_mean"],
+                                   gt_sd=params[method, "gt_sd"])
+
+R_Ilmenau <- estimate_Ilmenau_R(incid,
+                                gt_type = params[method, "gtd"],
+                                gt_mean=params[method, "gt_mean"],
+                                gt_sd=params[method, "gt_sd"])[,c("date", "0.5")]
+names(R_Ilmenau)[2] <- "R_calc"
+# offset delays
+R_Ilmenau$date <- R_Ilmenau$date+7
 
 R_epiforecasts <- qread("Rt_estimate_reconstruction/epiforecasts/estimates/R_calc_2021-09-15_globalrtParams.qs")
 names(R_epiforecasts) <- c("date", "type", "R_calc")
 
-R_globalrt <- read_csv("Rt_estimate_reconstruction/ArroyoMarioli/estimates/estimated_R_STAN.csv")
+R_globalrt <- read_csv(paste0("Rt_estimate_reconstruction/ArroyoMarioli/estimates/estimated_R_", method, ".csv"))
 R_globalrt <- R_globalrt[R_globalrt$`Country/Region` == "Germany", c("Date", "R")]
 names(R_globalrt) <- c("date", "R_calc")
 
 # merge estimates and plot for comparison
 estimates <- R_raw_EpiEstim[,c("date", "R_calc")] %>%
   full_join(R_ETH_EpiEstim[,c("date", "R_calc")], by = "date") %>% 
+  full_join(R_AGES_EpiEstim[,c("date", "R_calc")], by = "date") %>% 
+  full_join(R_Ilmenau[,c("date", "R_calc")], by = "date") %>% 
   full_join(R_epiforecasts[,c("date", "R_calc")], by = "date") %>%
   full_join(R_globalrt[,c("date", "R_calc")], by = "date")
 
-plot_multiple_estimates(estimates, methods = c("raw EpiEstim", "ETH EpiEstim", "epiforecasts", "globalrt"))
+plot_multiple_estimates(estimates[estimates$date > "2021-04-01",],
+                        methods = c("raw EpiEstim", "ETH EpiEstim", "AGES EpiEstim",
+                                    "Ilmenau", "epiforecasts", "globalrt"))
 
 
+####################################
+# in contrast: real-time estimates #
+####################################
+RKI_R_pub <- load_published_R_estimates(source = "RKI_7day")
+ETH_R_pub <- load_published_R_estimates("ETHZ_sliding_window")
+Ilmenau_R_pub <- load_published_R_estimates("ilmenau")
+SDSC_R_pub <- load_published_R_estimates("sdsc")
+globalrt_R_pub <- read_csv("https://raw.githubusercontent.com/crondonm/TrackingR/main/Estimates-Database/database.csv")
+globalrt_R_pub <- globalrt_R_pub[globalrt_R_pub$`Country/Region` == "Germany" &
+                                   globalrt_R_pub$days_infectious == 7, c("Date", "R")]
+names(globalrt_R_pub)[1] <- "date"
+
+# merge estimates and plot for comparison
+estimates <- RKI_R_pub[,c("date", "R_pub")] %>%
+  full_join(ETH_R_pub[,c("date", "R_pub")], by = "date") %>% 
+  full_join(Ilmenau_R_pub[,c("date", "R_pub")], by = "date") %>% 
+  full_join(SDSC_R_pub[,c("date", "R_pub")], by = "date") %>% 
+  full_join(globalrt_R_pub[,c("date", "R")], by = "date")
+
+plot_multiple_estimates(estimates[estimates$date > "2020-03-05",],
+                        methods = c("RKI", "ETH", "Ilmenau", "SDSC", "globalrt"))
 
 
 ###########################################
