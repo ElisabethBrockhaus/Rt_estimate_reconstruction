@@ -5,7 +5,8 @@ import pandas as pd
 import statsmodels.api as sm
 import scipy
 import warnings
-import math
+
+# import math
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/" + "../.."))
 
@@ -105,8 +106,9 @@ def estimate_R(y, gamma, n_start_values_grid=0, maxiter=200):
 methods = ["", "_ETH", "_ilmenau", "_RKI", "_sdsc", "_epiforecasts"]
 gammas = np.reciprocal(np.array([7, 4.8, 5.6, 4, 4.8, 3.6]))
 parameters = pd.DataFrame({"gamma": gammas}, index=methods)
-input_folder = "./relevant_scripts_adjusted/"
-output_folder = "./relevant_scripts_adjusted/"
+# input_folder = "./relevant_scripts_adjusted/"
+input_folder = "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/"
+output_folder = "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/ArroyoMarioli/estimates/"
 min_T = 20
 # gamma = 1 / 7.0
 # min_signal_to_noise = 1e-3
@@ -117,20 +119,19 @@ max_signal_to_noise = 1e15
 
 for method in methods:
     print(
-        "Estimation based on data from ",
+        "Estimation with parameters from ",
         method[1:] if method != "" else "original method",
     )
 
     # set parameters for method
     gamma = parameters.loc[method, "gamma"]
-    days_infectious = max(5, math.ceil(1 / gamma))
-    print("Days infectious:", days_infectious)
+    days_infectious = 7
 
     #############
     # Load data #
     #############
 
-    df = pd.read_csv("{}/dataset{}.csv".format(input_folder, method))
+    df = pd.read_csv("{}/dataset{}.csv".format(input_folder, "_RKI"))
     df["Date"] = pd.to_datetime(df["Date"])
 
     # Impose minimum time-series observations
@@ -222,7 +223,8 @@ for method in methods:
     df = df[["Country/Region", "Date", "R", "se_R"]].copy()
     df.reset_index(inplace=True)
     del df["index"]
-    df["days_infectious"] = 1 / gamma
+    # df["days_infectious"] = 1 / gamma
+    df["days_infectious"] = 7
 
     # Calculate confidence intervals
     alpha = [0.05, 0.35]

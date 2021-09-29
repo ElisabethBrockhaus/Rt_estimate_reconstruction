@@ -32,6 +32,9 @@ load_data_for_globalrt <- function(method, countries=c("Germany")){
     }
   }
   
+  # save data in format for epiforecast estimation
+  write_csv(joined_data, paste0("Rt_estimate_reconstruction/epiforecasts/input_data/incidence_data_", method, ".csv"))
+  
   # make date column the index
   data <- column_to_rownames(joined_data, var = "date")
   
@@ -52,16 +55,31 @@ load_data_for_globalrt <- function(method, countries=c("Germany")){
   return(data)
 }
 
-# load data from RKI, ETHZ_sliding_window, ilmenau, AGES, SDSC
+# load, format and save data from RKI (used for main analysis)
 data_rki <- load_data_for_globalrt(method = "RKI", countries=c("Germany"))
+write_csv(data_rki, "Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/time_series_covid19_confirmed_global_RKI.csv")
+
+
+#####################
+# different sources #
+#####################
+# load data from ETHZ_sliding_window, ilmenau, AGES, SDSC
 data_eth <- load_data_for_globalrt(method = "ETH", countries=c("Germany")) # TODO: make usable for Austria
 data_ilmenau <- load_data_for_globalrt(method = "ilmenau", countries=c("Germany"))
 data_ages <- load_data_for_globalrt(method = "AGES", countries=c("Austria"))
-data_scsc <- load_data_for_globalrt(method = "sdsc", countries=all)
+data_sdsc <- load_data_for_globalrt(method = "sdsc", countries=all)
 data_epiforecasts <- load_data_for_globalrt(method = "epiforecasts", countries=all)
 
+# compare input data
+plot(t(target_format[1, 46:595]), type="l", col="darkgreen")
+lines(t(data_rki[1, 6:555]))
+lines(t(data_eth[1,27:576]), col="darkblue")
+lines(t(data_sdsc[1,46:595]), col="blue")
+lines(t(data_epiforecasts[1,65:614]), col="lightblue")
+legend(x="topleft", legend=c("globalrt", "RKI", "ETH", "SDSC", "epiforecasts"), lty=1, col=c("darkgreen", "black", "darkblue", "blue", "lightblue"))
+
 # save data for Germany as .csv
-for (method in c("RKI", "ETH", "ilmenau", "sdsc", "epiforecasts")) {
+for (method in c("ETH", "ilmenau", "sdsc", "epiforecasts")) {
   data <- load_data_for_globalrt(method = method)
   write_csv(data, paste0("Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/time_series_covid19_confirmed_global_", method, ".csv"))
   print(paste0("done for ", method))

@@ -39,9 +39,11 @@ def construct_dataset(file_name, var_name):
 # Parameters #
 ##############
 
-methods = ["", "_ETH", "_ilmenau", "_RKI", "_sdsc", "_epiforecasts"]
-input_folder = "./relevant_scripts_adjusted/"
-output_folder = "./relevant_scripts_adjusted/"
+# methods = ["", "_ETH", "_ilmenau", "_RKI", "_sdsc", "_epiforecasts"]
+methods = ["", "_RKI"]
+# input_folder = "./relevant_scripts_adjusted/"
+input_folder = "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/"
+output_folder = input_folder
 min_cases = 100
 days_infectious_list = [5, 6, 7, 8, 9, 10]  # Values of (1 / gamma) used in constructing
 # time series of infected individuals
