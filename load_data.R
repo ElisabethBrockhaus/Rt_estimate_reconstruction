@@ -46,6 +46,7 @@ load_published_R_estimates <- function(source, start=as.Date("2019-12-28"), end=
 ####################################################
 # load incidence data depending on source/preproc. #
 ####################################################
+# TODO: add Zi, rtlive and globalrt
 load_incidence_data <- function(method, location="DE", ...){
   
   # depending on method call functions
@@ -324,6 +325,24 @@ ETH_load_countryData <- function(country="Germany", region="DEU", data_source = 
                               date_type = "report",
                               value = c(rep(0, 21), confirmed_national),
                               local_infection = TRUE)
+  } else if (data_source == "simpleRKI") {
+    # load data used in AnDerHeiden
+    if (region == "DEU") {
+      RKI_data <- load_RKI_data()
+    } else {
+      print("RKI incidence data only available for Germany, pass location = 'DE'.")
+    }
+    
+    # bring data into correct format assuming all cases are local
+    countryData <- data.table(date = c(seq(as.Date("2020-01-02"), as.Date("2020-03-01"), by = "days"),
+                                       RKI_data$date),
+                              region = region,
+                              countryIso3 = region,
+                              source = "RKI(non-linelist)",
+                              data_type = as.factor("Confirmed cases"),
+                              date_type = "report",
+                              value = c(rep(0, 60), RKI_data$I),
+                              local_infection = TRUE)
   }
   
   countryData <- countryData %>%
@@ -337,6 +356,8 @@ ETH_load_countryData <- function(country="Germany", region="DEU", data_source = 
   if (data_source == "") {
     countryDataPath <- file.path(basePath, str_c(region, "-Data.rds"))
     saveRDS(countryData, file = countryDataPath)
+  } else if (data_source == "simpleRKI"){
+    saveRDS(countryData, file = file.path(basePath, str_c(region, "-Data_simpleRKI.rds")))
   }
   
   
