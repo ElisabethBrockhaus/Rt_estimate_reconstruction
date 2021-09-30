@@ -72,7 +72,7 @@ estimate_RKI_R <- function(incid, window=7, gt_type="constant", gt_mean=4, gt_sd
   }
   
   # shift estimates by delay
-  estimate$date <- estimate$date + delay
+  estimate$date <- estimate$date - delay
   
   # return only columns containg non-NA values (omit "lower" and "upper" if method == "RKI")
   return(estimate[colSums(!is.na(estimate)) > 0])
@@ -230,7 +230,7 @@ estimate_AGES_R <- function(incid, window = 13, gt_type="gamma", gt_mean = 4.46,
                          lower = c(rep(NA, (start_i+window-1)), r_EpiEstim$R$`Quantile.0.025(R)`),
                          upper = c(rep(NA, (start_i+window-1)), r_EpiEstim$R$`Quantile.0.975(R)`))
   # shift estimate by delay
-  estimate$date <- estimate$date + delay
+  estimate$date <- estimate$date - delay
   
   return(estimate)
 }

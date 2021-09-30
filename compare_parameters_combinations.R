@@ -8,13 +8,13 @@ source("Rt_estimate_reconstruction/calculate_estimates.R")
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
 # parameter combinations used in papers
-gt_dist <- c("gamma", "constant", "ad hoc", "gamma", "gamma", "gamma", "log-normal", "exponential")
-mean_gt <- c(4.8, 4.0, 5.6, 4.8, 3.4, 3.6, 4.7, 7)
-sd_gt <- c(2.3, 0.0, 4.2, 2.3, 1.8, 3.1, 2.9, 7)
-delay <- c(4.3, 4, 7, 7, 0, 2, 7.1, 0)
+gt_dist <- c("gamma", "constant", "ad hoc", "gamma", "gamma", "gamma", "gamma", "log-normal", "exponential")
+mean_gt <- c(4.8, 4, 5.6, 4.8, 5, 3.4, 3.6, 4.7, 7)
+sd_gt <- c(2.3, 0, 4.2, 2.3, 4, 1.8, 3.1, 2.9, 7)
+delay <- c(10.8, 1, 7, 10, 0, 0, 2.4, 12.1, 0)
 
 params <- data.frame(gtd=gt_dist, gt_mean=mean_gt, gt_sd=sd_gt, delay=delay)
-rownames(params) <- c("ETH", "RKI", "Ilmenau", "SDSC", "AGES", "epiforecasts", "rtlive", "globalrt")
+rownames(params) <- c("ETH", "RKI", "Ilmenau", "SDSC", "Zi", "AGES", "epiforecasts", "rtlive", "globalrt")
 
 # use RKI data for all methods (not line list!)
 incid <- load_incidence_data(method = "RKI")
@@ -57,7 +57,6 @@ names(R_Ilmenau)[2] <- "R_calc"
 R_epiforecasts <- qread("Rt_estimate_reconstruction/epiforecasts/estimates/R_calc_2021-09-15_globalrtParams.qs")
 names(R_epiforecasts) <- c("date", "type", "R_calc")
 
-# TODO: incorporate delays
 R_globalrt <- read_csv(paste0("Rt_estimate_reconstruction/ArroyoMarioli/estimates/estimated_R_", method, ".csv"))
 R_globalrt <- R_globalrt[R_globalrt$`Country/Region` == "Germany", c("Date", "R")]
 names(R_globalrt) <- c("date", "R_calc")

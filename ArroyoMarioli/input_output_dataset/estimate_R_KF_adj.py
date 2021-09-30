@@ -103,9 +103,46 @@ def estimate_R(y, gamma, n_start_values_grid=0, maxiter=200):
 # Parameters #
 ##############
 
-methods = ["", "_ETH", "_ilmenau", "_RKI", "_sdsc", "_epiforecasts"]
-gammas = np.reciprocal(np.array([7, 4.8, 5.6, 4, 4.8, 3.6]))
-parameters = pd.DataFrame({"gamma": gammas}, index=methods)
+methods = [
+    "_ETH",
+    "_RKI",
+    "_Ilmenau",
+    "_SDSC",
+    "_Zi",
+    "_AGES",
+    "_epiforecasts",
+    "_rtlive",
+    "_globalrt",
+]
+gammas = np.reciprocal(
+    np.array(
+        [
+            4.8,
+            4,
+            5.6,
+            4.8,
+            5.0,
+            3.4,
+            3.6,
+            4.7,
+            7,
+        ]
+    )
+)
+mean_delays = np.array(
+    [
+        10.8,
+        1,
+        7,
+        10,
+        0,
+        0,
+        2.4,
+        12.1,
+        0,
+    ]
+)
+parameters = pd.DataFrame({"gamma": gammas, "delay": mean_delays}, index=methods)
 # input_folder = "./relevant_scripts_adjusted/"
 input_folder = "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/"
 output_folder = "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/ArroyoMarioli/estimates/"
@@ -115,7 +152,7 @@ min_T = 20
 min_signal_to_noise = 1e-15
 # max_signal_to_noise = 1e2
 max_signal_to_noise = 1e15
-# days_infectious = 7  # Baseline for of duration of infectiousness
+days_infectious = 7  # Baseline for of duration of infectiousness
 
 for method in methods:
     print(
@@ -125,7 +162,6 @@ for method in methods:
 
     # set parameters for method
     gamma = parameters.loc[method, "gamma"]
-    days_infectious = 7
 
     #############
     # Load data #
@@ -133,6 +169,7 @@ for method in methods:
 
     df = pd.read_csv("{}/dataset{}.csv".format(input_folder, "_RKI"))
     df["Date"] = pd.to_datetime(df["Date"])
+    df["Date"] = df["Date"] - pd.DateOffset(days=parameters.loc[method, "delay"])
 
     # Impose minimum time-series observations
     df_temp = (
@@ -235,4 +272,4 @@ for method in methods:
         df["ci_{}_l".format(name)] = df["R"] - t_crit * df["se_R"]
 
     # Save estimates
-    df.to_csv("{}/estimated_R{}.csv".format(output_folder, method), index=False)
+    df.to_csv("{}estimated_R{}.csv".format(output_folder, method), index=False)

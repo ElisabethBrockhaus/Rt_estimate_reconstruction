@@ -39,8 +39,8 @@ def construct_dataset(file_name, var_name):
 # Parameters #
 ##############
 
-# methods = ["", "_ETH", "_ilmenau", "_RKI", "_sdsc", "_epiforecasts"]
-methods = ["", "_RKI"]
+# data_sources = ["", "_ETH", "_ilmenau", "_RKI", "_sdsc", "_epiforecasts"]
+data_sources = ["_RKI"]
 # input_folder = "./relevant_scripts_adjusted/"
 input_folder = "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/"
 output_folder = input_folder
@@ -50,10 +50,10 @@ days_infectious_list = [5, 6, 7, 8, 9, 10]  # Values of (1 / gamma) used in cons
 # end_date             = '2020-05-06'        # End of sample
 restrict_end_sample = True
 
-for method in methods:
+for data_source in data_sources:
     print(
         "Construct dataset with data from ",
-        method[1:] if method != "" else "original method",
+        data_source[1:] if data_source != "" else "original method",
     )
 
     #####################
@@ -63,7 +63,7 @@ for method in methods:
     # Read in data on total cases
     df = construct_dataset(
         file_name="{}time_series_covid19_confirmed_global{}.csv".format(
-            input_folder, method
+            input_folder, data_source
         ),
         var_name="total_cases",
     )
@@ -211,4 +211,4 @@ for method in methods:
     del df["days_since_min_cases"]
 
     # Save final dataset
-    df.to_csv("{}/dataset{}.csv".format(output_folder, method), index=False)
+    df.to_csv("{}/dataset{}.csv".format(output_folder, data_source), index=False)
