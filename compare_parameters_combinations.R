@@ -53,7 +53,7 @@ delays_ETH <- list(list(), delay_RKI, delay_Ilmenau, delay_SDSC, delay_Zi, delay
 names(delays_ETH) <- methods
 
 incid_for_ETH <- load_incidence_data(method = "ETHZ_sliding_window", source = "_simpleRKI",
-                                     new_deconvolution = TRUE,
+                                     new_deconvolution = if (method == "ETH") FALSE else TRUE,
                                      delays = if (method == "ETH") list() else delays_ETH[method])
 
 # save incidence data for epiforecast estimation
