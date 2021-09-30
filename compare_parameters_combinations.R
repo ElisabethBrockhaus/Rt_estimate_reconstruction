@@ -8,13 +8,12 @@ source("Rt_estimate_reconstruction/calculate_estimates.R")
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
 # parameter combinations used in papers
-window_size <- c(3, 7, 1, 4, 13, 1, 1, 1)
 gt_dist <- c("gamma", "constant", "ad hoc", "gamma", "gamma", "gamma", "log-normal", "exponential")
 mean_gt <- c(4.8, 4.0, 5.6, 4.8, 3.4, 3.6, 4.7, 7)
 sd_gt <- c(2.3, 0.0, 4.2, 2.3, 1.8, 3.1, 2.9, 7)
-shift <- c(0, 4, 7, 7, 0, 2, 5, 0)
+delay <- c(4.3, 4, 7, 7, 0, 2, 7.1, 0)
 
-params <- data.frame(window=window_size, gtd=gt_dist, gt_mean=mean_gt, gt_sd=sd_gt, shift=shift)
+params <- data.frame(gtd=gt_dist, gt_mean=mean_gt, gt_sd=sd_gt, delay=delay)
 rownames(params) <- c("ETH", "RKI", "Ilmenau", "SDSC", "AGES", "epiforecasts", "rtlive", "globalrt")
 
 # use RKI data for all methods (not line list!)
@@ -30,32 +29,35 @@ method <- "ETH"
 R_raw_EpiEstim <- estimate_RKI_R(incid, method = "EpiEstim",
                                  window = 7,
                                  gt_type = params[method, "gtd"],
-                                 gt_mean=params[method, "gt_mean"],
-                                 gt_sd=params[method, "gt_sd"])
+                                 gt_mean = params[method, "gt_mean"],
+                                 gt_sd = params[method, "gt_sd"],
+                                 delay = params[method, "delay"])
 
+# TODO: incorporate different delays
 R_ETH_EpiEstim <- estimate_ETH_R(incid_for_ETH,
                                  gt_type = params[method, "gtd"],
-                                 gt_mean=params[method, "gt_mean"],
-                                 gt_sd=params[method, "gt_sd"])
+                                 gt_mean = params[method, "gt_mean"],
+                                 gt_sd = params[method, "gt_sd"])
 # offset delays
-R_ETH_EpiEstim$date <- R_ETH_EpiEstim$date+10
+#R_ETH_EpiEstim$date <- R_ETH_EpiEstim$date+10
 
 R_AGES_EpiEstim <- estimate_AGES_R(incid,
                                    gt_type = params[method, "gtd"],
                                    gt_mean=params[method, "gt_mean"],
-                                   gt_sd=params[method, "gt_sd"])
+                                   gt_sd=params[method, "gt_sd"],
+                                   delay = params[method, "delay"])
 
 R_Ilmenau <- estimate_Ilmenau_R(incid,
                                 gt_type = params[method, "gtd"],
                                 gt_mean=params[method, "gt_mean"],
-                                gt_sd=params[method, "gt_sd"])[,c("date", "0.5")]
+                                gt_sd=params[method, "gt_sd"],
+                                delay = params[method, "delay"])[,c("date", "0.5")]
 names(R_Ilmenau)[2] <- "R_calc"
-# offset delays
-R_Ilmenau$date <- R_Ilmenau$date+7
 
 R_epiforecasts <- qread("Rt_estimate_reconstruction/epiforecasts/estimates/R_calc_2021-09-15_globalrtParams.qs")
 names(R_epiforecasts) <- c("date", "type", "R_calc")
 
+# TODO: incorporate delays
 R_globalrt <- read_csv(paste0("Rt_estimate_reconstruction/ArroyoMarioli/estimates/estimated_R_", method, ".csv"))
 R_globalrt <- R_globalrt[R_globalrt$`Country/Region` == "Germany", c("Date", "R")]
 names(R_globalrt) <- c("date", "R_calc")
