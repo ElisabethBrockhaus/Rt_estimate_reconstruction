@@ -3,7 +3,7 @@ library(EpiEstim)
 ###########################
 # estimates as in RKI2020 #
 ###########################
-estimate_RKI_R <- function(incid, window=7, gt_type="constant", gt_mean=4, gt_sd=0, shift=0,
+estimate_RKI_R <- function(incid, window=7, gt_type="constant", gt_mean=4, gt_sd=0, delay=0,
                            method="RKI"){
   
   estimate <- data.frame(date=incid$date,
@@ -71,8 +71,8 @@ estimate_RKI_R <- function(incid, window=7, gt_type="constant", gt_mean=4, gt_sd
     }
   }
   
-  # shift estimates
-  estimate$date <- estimate$date + shift
+  # shift estimates by delay
+  estimate$date <- estimate$date + delay
   
   # return only columns containg non-NA values (omit "lower" and "upper" if method == "RKI")
   return(estimate[colSums(!is.na(estimate)) > 0])
@@ -162,7 +162,7 @@ estimate_ETH_R <- function(incid, window=3, gt_type="gamma", gt_mean=4.8, gt_sd=
 # estimate as in Hotz2020 #
 ###########################
 estimate_Ilmenau_R <- function(incid, window=1, gt_type="ad hoc",
-                               gt_mean=5.61, gt_sd=4.24, shift=0, alpha = 0.05){
+                               gt_mean=5.61, gt_sd=4.24, delay=7, alpha = 0.05){
   
   # infectivity profile
   gt_dist <- get_infectivity_profile(gt_type, gt_mean, gt_sd)
@@ -170,7 +170,7 @@ estimate_Ilmenau_R <- function(incid, window=1, gt_type="ad hoc",
   gt_dist <- gt_dist[2:length(gt_dist)]
 
   # other parameters
-  report.delay <- 7
+  report.delay <- delay
 
   # calculate estimates
   estimate <- repronum(
@@ -185,7 +185,6 @@ estimate_Ilmenau_R <- function(incid, window=1, gt_type="ad hoc",
   estimate <- data.frame(date=incid$date, R_calc=estimate$repronum,
                          lower=estimate$ci.lower, upper=estimate$ci.upper)
   names(estimate) <- c("date", 0.5, alpha/2, 1 - alpha/2)
-  estimate$date <- estimate$date + shift
 
   return(estimate)
 }
@@ -195,7 +194,7 @@ estimate_Ilmenau_R <- function(incid, window=1, gt_type="ad hoc",
 ##############################
 # estimate as in Richter2020 #
 ##############################
-estimate_AGES_R <- function(incid, window = 13, gt_type="gamma", gt_mean = 4.46, gt_sd = 2.63, shift=0){
+estimate_AGES_R <- function(incid, window = 13, gt_type="gamma", gt_mean = 4.46, gt_sd = 2.63, delay=0){
   
   # filter incid to dates where incidence data is available
   start_i <- min(which(!is.na(incid$I)))
@@ -230,7 +229,8 @@ estimate_AGES_R <- function(incid, window = 13, gt_type="gamma", gt_mean = 4.46,
                          R_calc = c(rep(NA, (start_i+window-1)), r_EpiEstim$R$`Mean(R)`),
                          lower = c(rep(NA, (start_i+window-1)), r_EpiEstim$R$`Quantile.0.025(R)`),
                          upper = c(rep(NA, (start_i+window-1)), r_EpiEstim$R$`Quantile.0.975(R)`))
-  estimate$date <- estimate$date + shift
+  # shift estimate by delay
+  estimate$date <- estimate$date + delay
   
   return(estimate)
 }
