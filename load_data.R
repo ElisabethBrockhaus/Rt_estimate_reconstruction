@@ -369,8 +369,12 @@ ETH_deconvolution <- function(country="Germany",
                               data_source = "",
                               constant_delay_distributions){
   
-  countryData <- readRDS(file.path("Rt_estimate_reconstruction/ETH/data/countryData",
-                                   str_c(region, "-Data", data_source, ".rds")))
+  basePath <- "Rt_estimate_reconstruction/ETH/data/countryData"
+  if (!dir.exists(basePath)) {
+    dir.create(basePath)
+  }
+  
+  countryData <- readRDS(file.path(basePath, str_c(region, "-Data", data_source, ".rds")))
   
   # get Infection Incidence
   # load functions
