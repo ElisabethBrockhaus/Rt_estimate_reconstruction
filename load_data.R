@@ -135,7 +135,7 @@ load_RKI_data <- function(){
 
 
 load_ETH_data <- function(country = "Germany", region = "DEU", source = "",
-                          deconvolved = TRUE, new_deconvolution = FALSE){
+                          deconvolved = TRUE, new_deconvolution = FALSE, delays= list()){
   
   data_type <- if(deconvolved) "-DeconvolutedData" else "-Data"
   
@@ -146,7 +146,8 @@ load_ETH_data <- function(country = "Germany", region = "DEU", source = "",
 
   # Deconvolution if necessary or wanted
   if (new_deconvolution | !file.exists(countryDataPath)){
-    ETH_deconvolution(country=country, region=region, data_source = source)
+    ETH_deconvolution(country=country, region=region, data_source = source,
+                      constant_delay_distributions=delays)
   }
   
   # load (deconvolved) data
@@ -325,7 +326,7 @@ ETH_load_countryData <- function(country="Germany", region="DEU", data_source = 
                               date_type = "report",
                               value = c(rep(0, 21), confirmed_national),
                               local_infection = TRUE)
-  } else if (data_source == "simpleRKI") {
+  } else if (data_source == "_simpleRKI") {
     # load data used in AnDerHeiden
     if (region == "DEU") {
       RKI_data <- load_RKI_data()
@@ -356,14 +357,17 @@ ETH_load_countryData <- function(country="Germany", region="DEU", data_source = 
   if (data_source == "") {
     countryDataPath <- file.path(basePath, str_c(region, "-Data.rds"))
     saveRDS(countryData, file = countryDataPath)
-  } else if (data_source == "simpleRKI"){
+  } else if (data_source == "_simpleRKI"){
     saveRDS(countryData, file = file.path(basePath, str_c(region, "-Data_simpleRKI.rds")))
   }
   
   
 }
 
-ETH_deconvolution <- function(country="Germany", region="DEU", data_source = ""){
+ETH_deconvolution <- function(country="Germany",
+                              region="DEU",
+                              data_source = "",
+                              constant_delay_distributions){
   
   countryData <- readRDS(file.path("Rt_estimate_reconstruction/ETH/data/countryData",
                                    str_c(region, "-Data", data_source, ".rds")))
@@ -373,42 +377,45 @@ ETH_deconvolution <- function(country="Germany", region="DEU", data_source = "")
   source("Rt_estimate_reconstruction/ETH/otherScripts/2_utils_getInfectionIncidence.R")
   # load parameter
   source("Rt_estimate_reconstruction/ETH/otherScripts/2_params_InfectionIncidencePars.R")
-  # load empirical delays
-  delays_data_path <- "Rt_estimate_reconstruction/ETH/data/all_delays.csv"
-  delays_onset_to_count <- read_csv(delays_data_path,
-                                    col_types = cols(
-                                      data_type = col_character(),
-                                      onset_date = col_date(format = ""),
-                                      count_date = col_date(format = ""),
-                                      delay = col_number()))
   
-  # constant delay distribution
-  constant_delay_distributions <- list()
-  for (type_i in unique(names(shape_onset_to_count))) {
-    m <- get_vector_constant_waiting_time_distr(
-      shape_incubation,
-      scale_incubation,
-      shape_onset_to_count[[type_i]],
-      scale_onset_to_count[[type_i]])
+  if (!(length(constant_delay_distributions) > 0)){
+    # load empirical delays
+    delays_data_path <- "Rt_estimate_reconstruction/ETH/data/all_delays.csv"
+    delays_onset_to_count <- read_csv(delays_data_path,
+                                      col_types = cols(
+                                        data_type = col_character(),
+                                        onset_date = col_date(format = ""),
+                                        count_date = col_date(format = ""),
+                                        delay = col_number()))
     
-    constant_delay_distributions <- c(constant_delay_distributions, list(m))
-  }
-  names(constant_delay_distributions) <- unique(names(shape_onset_to_count))
-  
-  constant_delay_symptom_to_report_distributions <- list()
-  for (type_i in unique(names(shape_onset_to_count))) {
-    m <- get_vector_constant_waiting_time_distr(
-      0,
-      0,
-      shape_onset_to_count[[type_i]],
-      scale_onset_to_count[[type_i]])
+    # constant delay distribution
+    constant_delay_distributions <- list()
+    for (type_i in unique(names(shape_onset_to_count))) {
+      m <- get_vector_constant_waiting_time_distr(
+        shape_incubation,
+        scale_incubation,
+        shape_onset_to_count[[type_i]],
+        scale_onset_to_count[[type_i]])
+      
+      constant_delay_distributions <- c(constant_delay_distributions, list(m))
+    }
+    names(constant_delay_distributions) <- unique(names(shape_onset_to_count))
     
-    constant_delay_symptom_to_report_distributions <- c(constant_delay_symptom_to_report_distributions, list(m))
-  }
-  names(constant_delay_symptom_to_report_distributions) <- paste0('Onset to ',  unique(names(shape_onset_to_count)))
-  
-  constant_delay_distributions <- c(constant_delay_distributions, constant_delay_symptom_to_report_distributions)
-  
+    constant_delay_symptom_to_report_distributions <- list()
+    for (type_i in unique(names(shape_onset_to_count))) {
+      m <- get_vector_constant_waiting_time_distr(
+        0,
+        0,
+        shape_onset_to_count[[type_i]],
+        scale_onset_to_count[[type_i]])
+      
+      constant_delay_symptom_to_report_distributions <- c(constant_delay_symptom_to_report_distributions, list(m))
+    }
+    names(constant_delay_symptom_to_report_distributions) <- paste0('Onset to ',  unique(names(shape_onset_to_count)))
+    
+    constant_delay_distributions <- c(constant_delay_distributions, constant_delay_symptom_to_report_distributions)
+  }  
+    
   # filter out regions with too few cases for estimation
   countryData <- countryData %>%
     filterRegions(thresholdConfirmedCases = 500)
@@ -483,7 +490,7 @@ ETH_deconvolution <- function(country="Germany", region="DEU", data_source = "")
       onset_to_count_empirical_delays = delays_onset_to_count,
       data_types = c("Confirmed cases / tests"),
       n_bootstrap = 100,
-      verbose = FALSE)
+      verbose = TRUE)
   }
   
   deconvolvedCountryData <- bind_rows(deconvolvedData)
