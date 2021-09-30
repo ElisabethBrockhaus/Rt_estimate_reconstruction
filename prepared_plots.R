@@ -101,7 +101,7 @@ plot_multiple_estimates <- function(estimates, methods, include_CI=F) {
   R_plot +
     geom_hline(aes(yintercept = 1)) +
     geom_line(data=R_est, aes(x=date, y=value, color=variable)) +
-    scale_colour_viridis_d(end=0.8, name="method", labels=methods) +
+    scale_colour_viridis_d(name="method", labels=methods) +
     labs(x = "date", y = "Rt estimate") +
     theme(legend.position = "top")
 }
