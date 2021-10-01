@@ -517,7 +517,7 @@ repronum <- function(
 
 
 ### function to calculate infectivity profile given distribution type, mean and sd
-get_infectivity_profile <- function(gt_type=c("ad hoc", "gamma", "exponential", "uniform"), gt_mean, gt_sd){
+get_infectivity_profile <- function(gt_type=c("ad hoc", "gamma", "exponential", "uniform", "constant", "lognorm"), gt_mean, gt_sd){
   
   if (gt_type == "ad hoc"){
     gt_dist <- c(0, (0:3)/3, 1, (5:0)/5, rep(0, 988))
@@ -534,8 +534,15 @@ get_infectivity_profile <- function(gt_type=c("ad hoc", "gamma", "exponential", 
     print("Ignoring 'gt_sd'! A uniform distribution is assumed with min = gt_mean - 1 and max = gt_mean + 1.")
     gt_dist <- c(0, dunif(1:1000, min = gt_mean - 1, max = gt_mean + 1))
 
+  } else if (gt_type == "constant"){
+    print("Ignoring 'gt_sd'! Return vector of zeros with an one at gt_mean")
+    gt_dist <- c(rep(0, gt_mean), 1, rep(0, 1000-gt_mean-1))
+    
+  } else if (gt_type == "lognorm"){
+    gt_dist <- c(0, dlnorm(1:1000, meanlog = gt_mean, sdlog = gt_sd))
   } else {
-    print("Type of generation time distribution not known. Choose from ['ad hoc', 'gamma', 'exponential', 'uniform]")
+    print("Type of generation time distribution not known.
+          Choose from ['ad hoc', 'gamma', 'exponential', 'uniform', 'constant', 'lognorm']")
   }
   gt_dist <- gt_dist / sum(gt_dist)
   
