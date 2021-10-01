@@ -486,7 +486,6 @@ ETH_deconvolution <- function(country="Germany",
     deconvolvedData[[1]] <- get_all_infection_incidence(
       countryData,
       constant_delay_distributions = delays,
-      #onset_to_count_empirical_delays = delays_onset_to_count,
       data_types = c("Confirmed cases"), #"Hospitalized patients", "Deaths"),
       n_bootstrap = 100,
       verbose = FALSE)
@@ -511,7 +510,8 @@ ETH_deconvolution <- function(country="Germany",
     print("no data remaining")
   } else if (data_source == "") {
     saveRDS(deconvolvedCountryData, file = countryDataPath)
-  } else {
+  } else if (!(length(delays) > 0)) {
+    # don't save if non-empirical delays from other research groups are used
     saveRDS(deconvolvedCountryData, file = file.path(basePath, str_c(region, "-DeconvolutedData", data_source, ".rds")))
   }
 }
