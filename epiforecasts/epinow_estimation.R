@@ -61,91 +61,84 @@ abline(h=0, col="grey", lty=2)
 # use different parameters #
 ############################
 
-### globalrt
+# load incidence data from RKI
+incid <- read_csv("RKI_incid.csv")
+incid_latest <- incid[incid$date >= as.Date("2021-06-05") &
+                        incid$date <= max(estimates_published[estimates_published$type != "forecast",]$date),]
+names(incid_latest) <- c("date", "confirm")
 
-# load reported cases with function from covidregionaldata (complete history)
-# use source = "jhu" to be in line with globalrt
-reported_cases_jhu <- get_national_data(countries = country, source = "jhu")
-reported_cases_jhu <- reported_cases_jhu[, c("date", "cases_new")]
-names(reported_cases_jhu) <- c("date", "confirm")
+# set ETH parameters
+generation_time_eth <- list(
+  mean = 4.8, mean_sd = 0.1,
+  sd = 2.3, sd_sd = 0.1,
+  max = 30
+)
 
-# estimate only on 16 weeks of data due to computing times
-reported_cases_latest_jhu <- reported_cases_jhu[reported_cases_jhu$date >= min(estimates_published$date) &
-                                                  reported_cases_jhu$date <= max(estimates_published[
-                                                    estimates_published$type != "forecast",]$date),]
+incubation_period_eth <- list(
+  mean = convert_to_logmean(5.3, 3.2), mean_sd = 0.1,
+  sd = convert_to_logsd(5.3, 3.2), sd_sd = 0.1,
+  max = 30
+)
 
-
-# compare case data visually
-plot(reported_cases_latest_jhu, type="l", col="red")
-lines(reported_cases_latest)
-legend(x="topleft", legend = c("JHU (globalrt)", "WHO (epiforecasts)"), lty=1, col = c("red", "black"))
-
-# adjust mean and sd of generation time to the values used in for the globart estimates
-generation_time_globalrt <- generation_time
-generation_time_globalrt$mean <- generation_time_globalrt$sd <- 7
-#generation_time_globalrt$mean_sd <- generation_time_globalrt$sd_sd <- 0
-
-# do estimation
-estimates_globalrt_params <- epinow(reported_cases = reported_cases_latest_jhu,
-                                    generation_time = generation_time_globalrt,
-                                    delays = delay_opts(incubation_period, reporting_delay),
-                                    rt = rt_opts(prior = list(mean = 1, sd = 0.2)),
-                                    stan = stan_opts(cores = 4),
-                                    horizon = 14,
-                                    CrIs = c(0.5, 0.95),
-                                    verbose = TRUE)
-
-# extract and save R estimates
-epiforecasts_R_calc_globalrt <- estimates_globalrt_params$estimates$summarised[variable=="R", c("date", "type", "mean")]
-qsave(epiforecasts_R_calc_globalrt, paste0("R_calc_", Sys.Date(), "_globalrtParams.qs"))
-
-# compare epiforecast estimates to the ones obtained when using JHU data and globalrt parameters
-plot(epiforecasts_R_calc_globalrt$date, epiforecasts_R_calc_globalrt$mean, type="l", col="red")
-lines(epiforecasts_R_calc$date, epiforecasts_R_calc$mean)
-legend(x="topleft", legend = c("globalrt parameters", "epiforecasts parameters"), lty=1, col = c("red", "black"))
-
-
-
-### ETH
-
-# load reported cases with function from covidregionaldata (complete history)
-# use source = "jhu" to be in line with globalrt
-reported_cases_eth <- get_national_data(countries = country, source = "covid19")
-reported_cases_eth <- reported_cases_eth[, c("date", "cases_new")]
-reported_cases_eth$cases_new <- c(0, diff(reported_cases_eth$cases_new, lag = 1))
-names(reported_cases_eth) <- c("date", "confirm")
-
-# estimate only on 16 weeks of data due to computing times
-reported_cases_latest_eth <- reported_cases_eth[reported_cases_eth$date >= min(estimates_published$date) &
-                                                  reported_cases_eth$date <= max(estimates_published[
-                                                    estimates_published$type != "forecast",]$date),]
-
-
-# compare case data visually
-plot(reported_cases_latest_eth, type="l", col="red")
-lines(reported_cases_latest)
-legend(x="topleft", legend = c("Covid19DataHub/RKI (ETH)", "WHO (epiforecasts)"), lty=1, col = c("red", "black"))
-
-generation_time_eth <- generation_time
-generation_time_eth$mean <- 4.8
-generation_time_eth$sd <- 2.3
+reporting_delay_eth <- list(
+  mean = convert_to_logmean(5.5, 3.8), mean_sd = 0.1,
+  sd = convert_to_logsd(5.5, 3.8), sd_sd = 0.1,
+  max = 30
+)
 
 # do estimation
-estimates_eth_params <- epinow(reported_cases = reported_cases_latest_eth,
+estimates_eth_params <- epinow(reported_cases = incid_latest,
                                generation_time = generation_time_eth,
-                               delays = delay_opts(incubation_period, reporting_delay),
+                               delays = delay_opts(incubation_period_eth, reporting_delay_eth),
                                rt = rt_opts(prior = list(mean = 1, sd = 0.2)),
                                stan = stan_opts(cores = 4),
                                horizon = 14,
                                CrIs = c(0.5, 0.95),
                                verbose = TRUE)
 
+plot(estimates_eth_params)
+
 # compare published and calculated in plot
 epiforecasts_R_calc_eth <- estimates_eth_params$estimates$summarised[variable=="R", c("date", "type", "mean")]
 qsave(epiforecasts_R_calc_eth, paste0("R_calc_", Sys.Date(), "_ETHParams.qs"))
 
-# compare epiforecast estimates to the ones obtained when using JHU data and globalrt parameters
-plot(epiforecasts_R_calc_eth$date, epiforecasts_R_calc_eth$mean, type="l", col="red")
-lines(epiforecasts_R_calc$date, epiforecasts_R_calc$mean)
-legend(x="topleft", legend = c("ETH parameters", "epiforecasts parameters"), lty=1, col = c("red", "black"))
+plot(epiforecasts_R_calc_eth$date, epiforecasts_R_calc_eth$mean, type="l")
 
+
+
+# set rtlive parameters
+generation_time_rtlive <- list(
+  mean = 4.7, mean_sd = 0.1,
+  sd = 2.9, sd_sd = 0.1,
+  max = 30
+)
+
+incubation_period_rtlive <- list(
+  mean = convert_to_logmean(5, 0), mean_sd = 0.1,
+  sd = convert_to_logsd(5, 0), sd_sd = 0.1,
+  max = 30
+)
+
+reporting_delay_rtlive <- list(
+  mean = convert_to_logmean(7.1, 5.9), mean_sd = 0.1,
+  sd = convert_to_logsd(7.1, 5.9), sd_sd = 0.1,
+  max = 30
+)
+
+# do estimation
+estimates_rtlive_params <- epinow(reported_cases = incid_latest,
+                                  generation_time = generation_time_rtlive,
+                                  delays = delay_opts(incubation_period_rtlive, reporting_delay_rtlive),
+                                  rt = rt_opts(prior = list(mean = 1, sd = 0.2)),
+                                  stan = stan_opts(cores = 4),
+                                  horizon = 14,
+                                  CrIs = c(0.5, 0.95),
+                                  verbose = TRUE)
+
+plot(estimates_rtlive_params)
+
+# compare published and calculated in plot
+epiforecasts_R_calc_rtlive <- estimates_rtlive_params$estimates$summarised[variable=="R", c("date", "type", "mean")]
+qsave(epiforecasts_R_calc_rtlive, paste0("R_calc_", Sys.Date(), "_rtliveParams.qs"))
+
+plot(epiforecasts_R_calc_rtlive$date, epiforecasts_R_calc_rtlive$mean, type="l")
