@@ -7,7 +7,7 @@ source("Rt_estimate_reconstruction/load_data.R")
 source("Rt_estimate_reconstruction/calculate_estimates.R")
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
-method <- "ETH"
+method <- "Ilmenau"
 
 # parameter combinations used in papers
 gt_dist <- c("gamma", "constant", "ad hoc", "gamma", "gamma", "gamma", "gamma", "log-normal", "exponential")
@@ -23,28 +23,24 @@ rownames(params) <- methods
 incid <- load_incidence_data(method = "RKI")
 
 # more complex for ETH estimation
-delay_RKI <- vector("list", 2)
-names(delay_RKI) <- c("Symptoms", "Onset to Confirmed cases")
-delay_RKI["Symptoms"] <- list(c(1, rep(0,199)))
-delay_RKI["Onset to Confirmed cases"] <- list(c(rep(0, params["RKI", "delay"]),
+delay_RKI <- vector("list", 1)
+names(delay_RKI) <- c("Confirmed cases")
+delay_RKI["Confirmed cases"] <- list(c(rep(0, params["RKI", "delay"]),
                                                 1,
                                                 rep(0, 199-params["RKI", "delay"])))
-delay_Ilmenau <- vector("list", 2)
-names(delay_Ilmenau) <- c("Symptoms", "Onset to Confirmed cases")
-delay_Ilmenau["Symptoms"] <- list(c(1, rep(0,199)))
-delay_Ilmenau["Onset to Confirmed cases"] <- list(c(rep(0, params["Ilmenau", "delay"]),
+delay_Ilmenau <- vector("list", 1)
+names(delay_Ilmenau) <- c("Confirmed cases")
+delay_Ilmenau["Confirmed cases"] <- list(c(rep(0, params["Ilmenau", "delay"]),
                                                 1,
                                                 rep(0, 199-params["Ilmenau", "delay"])))
-delay_SDSC <- vector("list", 2)
-names(delay_SDSC) <- c("Symptoms", "Onset to Confirmed cases")
-delay_SDSC["Symptoms"] <- list(c(1, rep(0,199)))
-delay_SDSC["Onset to Confirmed cases"] <- list(c(rep(0, params["SDSC", "delay"]),
+delay_SDSC <- vector("list", 1)
+names(delay_SDSC) <- c("Confirmed cases")
+delay_SDSC["Confirmed cases"] <- list(c(rep(0, params["SDSC", "delay"]),
                                                 1,
                                                 rep(0, 199-params["SDSC", "delay"])))
-delay_Zi <- vector("list", 2)
-names(delay_Zi) <- c("Symptoms", "Onset to Confirmed cases")
-delay_Zi["Symptoms"] <- list(c(1, rep(0,199)))
-delay_Zi["Onset to Confirmed cases"] <- list(c(1, rep(0,199)))
+delay_Zi <- vector("list", 1)
+names(delay_Zi) <- c("Confirmed cases")
+delay_Zi["Confirmed cases"] <- list(c(1, rep(0,199)))
 delay_AGES <- delay_globalrt <- delay_Zi
 
 # TODO: add correct delay distributions for epiforecasts and rtlive
@@ -52,9 +48,10 @@ delay_AGES <- delay_globalrt <- delay_Zi
 delays_ETH <- list(list(), delay_RKI, delay_Ilmenau, delay_SDSC, delay_Zi, delay_AGES, delay_globalrt, list(), list())
 names(delays_ETH) <- methods
 
+source("Rt_estimate_reconstruction/load_data.R")
 incid_for_ETH <- load_incidence_data(method = "ETHZ_sliding_window", source = "_simpleRKI",
                                      new_deconvolution = if (method == "ETH") FALSE else TRUE,
-                                     delays = if (method == "ETH") list() else delays_ETH[method])
+                                     delays = if (method == "ETH") list() else delays_ETH[[method]])
 
 # save incidence data for epiforecast estimation
 write_csv(incid, "Rt_estimate_reconstruction/incidence_data/RKI_incid.csv")
@@ -67,13 +64,10 @@ R_raw_EpiEstim <- estimate_RKI_R(incid, method = "EpiEstim",
                                  gt_sd = params[method, "gt_sd"],
                                  delay = params[method, "delay"])
 
-# TODO: incorporate different delays
 R_ETH_EpiEstim <- estimate_ETH_R(incid_for_ETH,
                                  gt_type = params[method, "gtd"],
                                  gt_mean = params[method, "gt_mean"],
                                  gt_sd = params[method, "gt_sd"])
-# offset delays
-#R_ETH_EpiEstim$date <- R_ETH_EpiEstim$date+10
 
 R_AGES_EpiEstim <- estimate_AGES_R(incid,
                                    gt_type = params[method, "gtd"],
@@ -119,16 +113,18 @@ globalrt_R_pub <- read_csv("https://raw.githubusercontent.com/crondonm/TrackingR
 globalrt_R_pub <- globalrt_R_pub[globalrt_R_pub$`Country/Region` == "Germany" &
                                    globalrt_R_pub$days_infectious == 7, c("Date", "R")]
 names(globalrt_R_pub)[1] <- "date"
+epinow_R_pub <- load_published_R_estimates("epiforecasts")
 
 # merge estimates and plot for comparison
 estimates <- RKI_R_pub[,c("date", "R_pub")] %>%
   full_join(ETH_R_pub[,c("date", "R_pub")], by = "date") %>% 
-  full_join(Ilmenau_R_pub[,c("date", "R_pub")], by = "date") %>% 
+  #full_join(Ilmenau_R_pub[,c("date", "R_pub")], by = "date") %>% 
   full_join(SDSC_R_pub[,c("date", "R_pub")], by = "date") %>% 
-  full_join(globalrt_R_pub[,c("date", "R")], by = "date")
+  full_join(globalrt_R_pub[,c("date", "R")], by = "date") %>%
+  full_join(epinow_R_pub[,c("date", "R_pub")], by = "date")
 
 plot_multiple_estimates(estimates[estimates$date > "2020-03-05",],
-                        methods = c("RKI", "ETH", "Ilmenau", "SDSC", "globalrt"))
+                        methods = c("RKI", "ETH", "SDSC", "globalrt", "epiforecasts"))
 
 
 ###########################################

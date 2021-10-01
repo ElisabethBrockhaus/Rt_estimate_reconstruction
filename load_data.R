@@ -146,8 +146,8 @@ load_ETH_data <- function(country = "Germany", region = "DEU", source = "",
 
   # Deconvolution if necessary or wanted
   if (new_deconvolution | !file.exists(countryDataPath)){
-    ETH_deconvolution(country=country, region=region, data_source = source,
-                      constant_delay_distributions=delays)
+    ETH_deconvolution(country=country, region=region,
+                      data_source = source, delays=delays)
   }
   
   # load (deconvolved) data
@@ -367,7 +367,7 @@ ETH_load_countryData <- function(country="Germany", region="DEU", data_source = 
 ETH_deconvolution <- function(country="Germany",
                               region="DEU",
                               data_source = "",
-                              constant_delay_distributions){
+                              delays = list()){
   
   basePath <- "Rt_estimate_reconstruction/ETH/data/countryData"
   if (!dir.exists(basePath)) {
@@ -382,7 +382,7 @@ ETH_deconvolution <- function(country="Germany",
   # load parameter
   source("Rt_estimate_reconstruction/ETH/otherScripts/2_params_InfectionIncidencePars.R")
   
-  if (!(length(constant_delay_distributions) > 0)){
+  if (!(length(delays) > 0)){
     # load empirical delays
     delays_data_path <- "Rt_estimate_reconstruction/ETH/data/all_delays.csv"
     delays_onset_to_count <- read_csv(delays_data_path,
@@ -474,15 +474,23 @@ ETH_deconvolution <- function(country="Germany",
   # Deconvolution
   deconvolvedData <- list()
   
-  deconvolvedData[[1]] <- get_all_infection_incidence(
-    countryData,
-    constant_delay_distributions = constant_delay_distributions,
-    onset_to_count_empirical_delays = delays_onset_to_count,
-    data_types = c("Confirmed cases",
-                   "Hospitalized patients"),
-    #"Deaths"),
-    n_bootstrap = 100,
-    verbose = FALSE)
+  if (!(length(delays) > 0)){
+    deconvolvedData[[1]] <- get_all_infection_incidence(
+      countryData,
+      constant_delay_distributions = constant_delay_distributions,
+      onset_to_count_empirical_delays = delays_onset_to_count,
+      data_types = c("Confirmed cases"), #"Hospitalized patients", "Deaths"),
+      n_bootstrap = 100,
+      verbose = FALSE)
+  } else {
+    deconvolvedData[[1]] <- get_all_infection_incidence(
+      countryData,
+      constant_delay_distributions = delays,
+      #onset_to_count_empirical_delays = delays_onset_to_count,
+      data_types = c("Confirmed cases"), #"Hospitalized patients", "Deaths"),
+      n_bootstrap = 100,
+      verbose = FALSE)
+  }
   
   if (region %in% c("CHE")) {
     countryDataTests <- countryData %>%
