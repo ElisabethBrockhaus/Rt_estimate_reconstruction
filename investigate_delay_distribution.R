@@ -6,6 +6,8 @@ getwd()
 # ETH #
 #######
 ########### start copied ###########
+# load functions
+source("Rt_estimate_reconstruction/ETH/otherScripts/2_utils_getInfectionIncidence.R")
 # load parameter
 source("Rt_estimate_reconstruction/ETH/otherScripts/2_params_InfectionIncidencePars.R")
 # load empirical delays
@@ -49,13 +51,17 @@ View(constant_delay_distributions)
 
 ETH_incubation <- constant_delay_distributions$Symptoms
 incubation_mean <- 0:199 %*% ETH_incubation
+incubation_mean/7
 incubation_var <- ETH_incubation %*% ((0:199) - c(incubation_mean))^2
+sqrt(incubation_var)/7
 incubation_shape <- (incubation_mean^2)/incubation_var
 incubation_scale <- incubation_var/incubation_mean
 
 ETH_report_delays <- constant_delay_distributions$`Onset to Confirmed cases`
 report_mean <- 0:199 %*% ETH_report_delays
+report_mean/7
 report_var <- ETH_report_delays %*% ((0:199) - c(report_mean))^2
+sqrt(report_var)/7
 report_shape <- (report_mean^2)/report_var
 report_scale <- report_var/report_mean
 
