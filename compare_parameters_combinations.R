@@ -24,7 +24,7 @@ rownames(params) <- methods
 incid <- load_incidence_data(method = "RKI")
 
 incid_for_ETH <- load_incidence_data(method = "ETHZ_sliding_window", source = "_simpleRKI",
-                                     new_deconvolution = TRUE,
+                                     new_deconvolution = if (method == "ETH") FALSE else TRUE,
                                      delays = if (method == "ETH") list() else delays_ETH[[method]])
 
 # save incidence data for epiforecast estimation
