@@ -7,13 +7,14 @@ source("Rt_estimate_reconstruction/load_data.R")
 source("Rt_estimate_reconstruction/calculate_estimates.R")
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
-method <- "Ilmenau"
+method <- "rtlive"
 
 # parameter combinations used in papers
-gt_dist <- c("gamma", "constant", "ad hoc", "gamma", "gamma", "gamma", "gamma", "log-normal", "exponential")
+gt_dist <- c("gamma", "constant", "ad hoc", "gamma", "gamma", "gamma", "gamma", "lognorm", "exponential")
 mean_gt <- c(4.8, 4, 5.6, 4.8, 5, 3.4, 3.6, 4.7, 7)
 sd_gt <- c(2.3, 0, 4.2, 2.3, 4, 1.8, 3.1, 2.9, 7)
 delay <- c(10.8, 1, 7, 10, 0, 0, 2.4, 12.1, 0)
+source("Rt_estimate_reconstruction/ETH/delays_for_ETH_estimation.R")
 
 params <- data.frame(gtd=gt_dist, gt_mean=mean_gt, gt_sd=sd_gt, delay=delay)
 methods <- c("ETH", "RKI", "Ilmenau", "SDSC", "Zi", "AGES", "epiforecasts", "rtlive", "globalrt")
@@ -22,33 +23,6 @@ rownames(params) <- methods
 # use RKI data for all methods (not line list!)
 incid <- load_incidence_data(method = "RKI")
 
-# more complex for ETH estimation
-delay_RKI <- vector("list", 1)
-names(delay_RKI) <- c("Confirmed cases")
-delay_RKI["Confirmed cases"] <- list(c(rep(0, params["RKI", "delay"]),
-                                                1,
-                                                rep(0, 199-params["RKI", "delay"])))
-delay_Ilmenau <- vector("list", 1)
-names(delay_Ilmenau) <- c("Confirmed cases")
-delay_Ilmenau["Confirmed cases"] <- list(c(rep(0, params["Ilmenau", "delay"]),
-                                                1,
-                                                rep(0, 199-params["Ilmenau", "delay"])))
-delay_SDSC <- vector("list", 1)
-names(delay_SDSC) <- c("Confirmed cases")
-delay_SDSC["Confirmed cases"] <- list(c(rep(0, params["SDSC", "delay"]),
-                                                1,
-                                                rep(0, 199-params["SDSC", "delay"])))
-delay_Zi <- vector("list", 1)
-names(delay_Zi) <- c("Confirmed cases")
-delay_Zi["Confirmed cases"] <- list(c(1, rep(0,199)))
-delay_AGES <- delay_globalrt <- delay_Zi
-
-# TODO: add correct delay distributions for epiforecasts and rtlive
-
-delays_ETH <- list(list(), delay_RKI, delay_Ilmenau, delay_SDSC, delay_Zi, delay_AGES, delay_globalrt, list(), list())
-names(delays_ETH) <- methods
-
-source("Rt_estimate_reconstruction/load_data.R")
 incid_for_ETH <- load_incidence_data(method = "ETHZ_sliding_window", source = "_simpleRKI",
                                      new_deconvolution = if (method == "ETH") FALSE else TRUE,
                                      delays = if (method == "ETH") list() else delays_ETH[[method]])
