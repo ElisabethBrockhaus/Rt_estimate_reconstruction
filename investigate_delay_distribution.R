@@ -120,32 +120,43 @@ sd
 ################
 # epiforecasts #
 ################
-incubation_mean <- 1.62
-incubation_var <- 0.418^2
-reporting_mean <- 0.832
-reporting_var <- 1.44^2
-inc_shape <- (incubation_mean^2)/incubation_var
-inc_scale <- incubation_var/incubation_mean
-report_shape <- (reporting_mean^2)/reporting_var
-report_scale <- reporting_var/reporting_mean
-
-incubation <- function(x) dgamma(x, shape = inc_shape, scale = inc_scale)
-reporting <- function(y) {
-  dist <- dgamma(y, shape = report_shape, scale = report_scale)
-  dist[dist==Inf] <- 1
-  return(dist)
+convert_to_mean <- function(logmean, logsd){
+  return(exp(logmean) * sqrt(exp(logsd^2)))
 }
+convert_to_sd <- function(logmean, logsd){
+  return(sqrt(exp(logsd^2)-1) * exp(logmean) * sqrt(exp(logsd^2)))
+}
+
+incubation_logmean <- 1.62
+incubation_logsd <- 0.418
+incubation_mean <- convert_to_mean(incubation_logmean, incubation_logsd)
+incubation_var <- convert_to_sd(incubation_logmean, incubation_logsd)^2
+
+report_delay_logmean <- 0.832
+report_delay_logsd <- 1.44
+report_delay_mean <- convert_to_mean(report_delay_logmean, report_delay_logsd)
+report_delay_var <- convert_to_sd(report_delay_logmean, report_delay_logsd)^2
+
+#inc_shape <- (incubation_mean^2)/incubation_var
+#inc_scale <- incubation_var/incubation_mean
+#report_shape <- (reporting_mean^2)/reporting_var
+#report_scale <- reporting_var/reporting_mean
+
+incubation <- function(x) dlnorm(x, meanlog = incubation_logmean, sdlog = incubation_logsd)
+report_delay <- function(y) dlnorm(y, meanlog = report_delay_logmean, sdlog = report_delay_logsd)
 # convolution integral
-delay <- function(z) integrate(function(x,z) reporting(z-x)*incubation(x),-Inf,Inf,z)$value
+delay <- function(z) integrate(function(x,z) report_delay(z-x)*incubation(x),-Inf,Inf,z)$value
 delay <- Vectorize(delay)
-z <- 0:60
-plot(z,delay(z), type="l", xlim=c(0,20))
+z <- 0:40
+plot(z,delay(z), type="l")
 
 # parameters of resulting convolution
+z <- 0:10e4
 mean <- z %*% delay(z)
 mean
-sd <- delay(z) %*% (z - c(mean))^2
+sd <- sqrt(delay(z) %*% (z - c(mean))^2)
 sd
+
 
 
 
