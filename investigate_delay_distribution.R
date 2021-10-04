@@ -150,11 +150,6 @@ report_delay_logsd <- 1.44
 report_delay_mean <- convert_to_mean(report_delay_logmean, report_delay_logsd)
 report_delay_var <- convert_to_sd(report_delay_logmean, report_delay_logsd)^2
 
-#inc_shape <- (incubation_mean^2)/incubation_var
-#inc_scale <- incubation_var/incubation_mean
-#report_shape <- (reporting_mean^2)/reporting_var
-#report_scale <- reporting_var/reporting_mean
-
 incubation <- function(x) dlnorm(x, meanlog = incubation_logmean, sdlog = incubation_logsd)
 report_delay <- function(y) dlnorm(y, meanlog = report_delay_logmean, sdlog = report_delay_logsd)
 # convolution integral
@@ -207,8 +202,9 @@ par(mfrow=c(3,3))
 for (method in methods){
   d <- delay(z)
   z_shifted <- z-params[method, "delay_shift"]
-  plot(z_shifted[1:31], d[1:31], type="l", col="blue",
-       main=method, xlab="days", ylab="p")
+  plot(z_shifted[1:31], d[1:31], type="l", col="red",
+       main=method, xlab="days", ylab="p", xlim=c(0,30))
+  lines(z[1:31], d[1:31], col="blue")
   mean <- z_shifted %*% d
   sd <- sqrt(d %*% (z_shifted - c(mean))^2)
   legend(x="topright", legend=c(paste("mean", round(mean, digits=2)), paste("sd     ", round(sd, digits=2))))
