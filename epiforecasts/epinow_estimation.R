@@ -83,7 +83,8 @@ mean_report_delay <- c(5.5, m,  m,  m,  m,  m,  6.5,  7.1, m)
 sd_report_delay <-   c(3.8, o,  o,  o,  o,  o,  17.1, 5.9, o)
 delay_shift <-       c(0,   3,  -3, -6, 4,  4,  0,    0,   4)
 
-params <- data.frame(incubation_mean=mean_incubation, incubation_sd=sd_incubation,
+params <- data.frame(gt_mean=mean_gt, gt_sd=sd_gt,
+                     incubation_mean=mean_incubation, incubation_sd=sd_incubation,
                      report_delay_mean=mean_report_delay, report_delay_sd=sd_report_delay,
                      delay_shift=delay_shift)
 methods <- c("ETH", "RKI", "Ilmenau", "SDSC", "Zi", "AGES", "epiforecasts", "rtlive", "globalrt")
@@ -147,5 +148,6 @@ for (method in c("ETH", "epiforecasts", "rtlive", "SDSC", "Ilmenau", "Zi", "AGES
   
   qsave(epiforecasts_R_calc, paste0("R_calc_", Sys.Date(), method, "Params.qs"))
   
-  plot(epiforecasts_R_calc$date, epiforecasts_R_calc$mean, type="l")
+  plot(epiforecasts_R_calc$date, epiforecasts_R_calc$mean, type="l",
+       main=method, xlab="date", ylab="Rt estimate")
 }
