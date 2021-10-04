@@ -116,7 +116,7 @@ methods = [
     "_globalrt",
 ]
 gammas = np.reciprocal(np.array([4.8, 4, 5.6, 4.8, 5.0, 3.4, 3.6, 4.7, 7]))
-mean_delays = np.array([11, 1, 7, 10, 0, 0, 2, 12, 0])
+mean_delays = np.array([11, 1, 7, 10, 0, 0, 12, 12, 0])
 parameters = pd.DataFrame({"gamma": gammas, "delay": mean_delays}, index=methods)
 # input_folder = "./relevant_scripts_adjusted/"
 input_folder = "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/"
