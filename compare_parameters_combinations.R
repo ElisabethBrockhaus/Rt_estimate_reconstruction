@@ -10,29 +10,30 @@ source("Rt_estimate_reconstruction/load_data.R")
 source("Rt_estimate_reconstruction/calculate_estimates.R")
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
-method <- "ETH"
-
 # parameter combinations used in papers
 gt_dist <- c("gamma", "constant", "ad hoc", "gamma", "gamma", "gamma", "gamma", "lognorm", "exponential")
-mean_gt <- c(4.8, 4, 5.6, 4.8, 5, 3.4, 3.6, 4.7, 7)
-sd_gt <- c(2.3, 0, 4.2, 2.3, 4, 1.8, 3.1, 2.9, 7)
-delay <- c(11, 1, 7, 10, 0, 0, 2, 12, 0)
-source("Rt_estimate_reconstruction/ETH/delays_for_ETH_estimation.R")
+mean_gt <- c(4.8,      4,          5.6,      4.8,     5,       3.4,     3.6,     4.7,       7)
+sd_gt <-   c(2.3,      0,          4.2,      2.3,     4,       1.8,     3.1,     2.9,       7)
+delay <-   c(11,       1,          7,        10,      0,       0,       12,      12,        0)
 
 params <- data.frame(gtd=gt_dist, gt_mean=mean_gt, gt_sd=sd_gt, delay=delay)
 methods <- c("ETH", "RKI", "Ilmenau", "SDSC", "Zi", "AGES", "epiforecasts", "rtlive", "globalrt")
 rownames(params) <- methods
 
+source("Rt_estimate_reconstruction/ETH/delays_for_ETH_estimation.R")
+
 # use RKI data for all methods (not line list!)
 incid <- load_incidence_data(method = "RKI")
 incid <- incid[incid$date < "2021-10-01",]
+# save incidence data for epiforecast estimation
+write_csv(incid, "Rt_estimate_reconstruction/incidence_data/RKI_incid.csv")
+
+# choose method for comparison
+method <- "rtlive"
 
 incid_for_ETH <- load_incidence_data(method = "ETHZ_sliding_window", source = "_simpleRKI",
                                      new_deconvolution = if (method == "ETH") FALSE else TRUE,
                                      delays = if (method == "ETH") list() else delays_ETH[[method]])
-
-# save incidence data for epiforecast estimation
-write_csv(incid, "Rt_estimate_reconstruction/incidence_data/RKI_incid.csv")
 
 # for comparison of methods use default window size of each method
 R_raw_EpiEstim <- estimate_RKI_R(incid, method = "EpiEstim",
@@ -103,16 +104,17 @@ for (method1 in comp_methods) {
     diff <- latest_estimates[,method1] - latest_estimates[,method2]
     plot(diff, type="l", ylab = "diff", ylim=c(-0.5, 0.5),
          main = paste(method1, "vs.", method2))
-    matr[method1, method2] <- sum(abs(diff))
+    matr[method1, method2] <- mean(abs(diff))
     
   }
 }
 par(mfrow=c(1,1))
 
-pheatmap(matr, color = viridis(1000), border_color = NA, display_numbers = TRUE,
+pheatmap(matr, color = viridis(100), breaks = seq(0,0.3,0.3/100),
+         border_color = NA, display_numbers = TRUE,
          fontsize = 12, fontsize_number=20, number_color = "white",
          angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
-         main = paste("Summed absolute differences between estimates over",
+         main = paste("Mean absolute differences between estimates over",
                       end_est - start_est, "days using", method, "parameters"))
 
 ####################################
@@ -131,13 +133,43 @@ epinow_R_pub <- load_published_R_estimates("epiforecasts")
 # merge estimates and plot for comparison
 estimates <- RKI_R_pub[,c("date", "R_pub")] %>%
   full_join(ETH_R_pub[,c("date", "R_pub")], by = "date") %>% 
-  #full_join(Ilmenau_R_pub[,c("date", "R_pub")], by = "date") %>% 
+  full_join(Ilmenau_R_pub[,c("date", "R_pub")], by = "date") %>% 
   full_join(SDSC_R_pub[,c("date", "R_pub")], by = "date") %>% 
   full_join(globalrt_R_pub[,c("date", "R")], by = "date") %>%
   full_join(epinow_R_pub[,c("date", "R_pub")], by = "date")
+names(estimates) <- c("date", "RKI", "ETH", "Ilmenau", "SDSC", "globalrt", "epiforecasts")
 
 plot_multiple_estimates(estimates[estimates$date > "2020-03-05",],
-                        methods = c("RKI", "ETH", "SDSC", "globalrt", "epiforecasts"))
+                        methods = c("RKI", "ETH", "Ilmenau", "SDSC", "globalrt", "epiforecasts"))
+
+start_est <- as.Date("2021-04-06")
+end_est <- as.Date("2021-05-30")
+latest_estimates <- estimates[estimates$date >= start_est &
+                                estimates$date <= end_est,]
+
+comp_methods <- c("RKI", "ETH", "Ilmenau", "SDSC", "globalrt", "epiforecasts")
+matr <- matrix(rep(rep(0,6), 6), ncol=6)
+colnames(matr) <- comp_methods
+rownames(matr) <- comp_methods
+
+par(mfrow=c(6,6))
+for (method1 in comp_methods) {
+  for (method2 in comp_methods){
+    diff <- latest_estimates[,method1] - latest_estimates[,method2]
+    plot(diff, type="l", ylab = "diff", ylim=c(-0.5, 0.5),
+         main = paste(method1, "vs.", method2))
+    matr[method1, method2] <- mean(abs(diff))
+    
+  }
+}
+par(mfrow=c(1,1))
+
+pheatmap(matr, color = viridis(100), breaks = seq(0,0.3,0.3/100),
+         border_color = NA, display_numbers = TRUE,
+         fontsize = 12, fontsize_number=20, number_color = "white",
+         angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
+         main = paste("Mean absolute differences between published estimates over",
+                      end_est - start_est, "days"))
 
 
 ###########################################
