@@ -200,14 +200,29 @@ z <- 0:1000
 
 par(mfrow=c(3,3))
 for (method in methods){
+  # calculate delay distributions as sum over two log-normal distributions
   d <- delay(z)
+  
+  # delays used originally in source of parameters
+  if (method == "ETH"){
+    d_org <- constant_delay_distributions$`Confirmed cases` # read at the top of this script
+  } else d_org <- delays_ETH[[method]]$`Confirmed cases`
+  plot(0:30, d_org[1:31], pch=4,
+       xlim=c(0,30), ylim=c(0, max(d_org, d)),
+       main=method, xlab="days", ylab="p")
+  
+  # resulting delays used for epiforecasts estimation after manual shift
   z_shifted <- z-params[method, "delay_shift"]
-  plot(z_shifted[1:31], d[1:31], type="l", col="red",
-       main=method, xlab="days", ylab="p", xlim=c(0,30))
+  lines(z_shifted[1:31], d[1:31], col="red")
+  
+  # delays used for epiforecasts estimation
   lines(z[1:31], d[1:31], col="blue")
+  
+  # add mean and sd as legend
   mean <- z_shifted %*% d
   sd <- sqrt(d %*% (z_shifted - c(mean))^2)
-  legend(x="topright", legend=c(paste("mean", round(mean, digits=2)), paste("sd     ", round(sd, digits=2))))
+  legend(x="topright", legend=c(paste("mean", round(mean, digits=1)),
+                                paste("sd     ", round(sd, digits=1))))
 }
 par(mfrow=c(1,1))
 
