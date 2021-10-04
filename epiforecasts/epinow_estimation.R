@@ -74,20 +74,22 @@ names(incid_latest) <- c("date", "confirm")
 # parameter combinations used in papers
 mean_gt <-           c(4.8, 4, 5.6, 4.8, 5, 3.4, 3.6,  4.7, 7)
 sd_gt <-             c(2.3, 0, 4.2, 2.3, 4, 1.8, 3.1,  2.9, 7)
-o <- 0.1 # replacement for zeros that would lead to mathematiccal issues
-m <- 4 # replacement for zeros in mean incubation period (shifted back manually after the estimation)
-mean_incubation <-   c(5.3, m, m,   m,   m, m,   5.5,  5,   m)
-sd_incubation <-     c(3.2, o, o,   o,   o, o,   2.4,  o,   o)
-mean_report_delay <- c(5.5, 1, 7,   10,  o, o,   6.5,  7.1, o)
-sd_report_delay <-   c(3.8, o, o,   o,   o, o,   17.1, 5.9, o)
+o <- 0.1 # replacement for zeros that would lead to mathematical issues
+oo <- 0.5
+m <- 2 # mean incubation period and reporting delay in case of constant delay distributions (shifted back manually after the estimation)
+mean_incubation <-   c(5.3, m,  m,  m,  m,  m,  5.5,  5,   m)
+sd_incubation <-     c(3.2, oo, oo, oo, oo, oo, 2.4,  oo,  oo)
+mean_report_delay <- c(5.5, m,  m,  m,  m,  m,  6.5,  7.1, m)
+sd_report_delay <-   c(3.8, o,  o,  o,  o,  o,  17.1, 5.9, o)
+delay_shift <-       c(0,   3,  -3, -6, 4,  4,  0,    0,   4)
 
-params <- data.frame(gt_mean=mean_gt, gt_sd=sd_gt,
-                     incubation_mean=mean_incubation, incubation_sd=sd_incubation,
-                     report_delay_mean=mean_report_delay, report_delay_sd=sd_report_delay)
+params <- data.frame(incubation_mean=mean_incubation, incubation_sd=sd_incubation,
+                     report_delay_mean=mean_report_delay, report_delay_sd=sd_report_delay,
+                     delay_shift=delay_shift)
 methods <- c("ETH", "RKI", "Ilmenau", "SDSC", "Zi", "AGES", "epiforecasts", "rtlive", "globalrt")
 rownames(params) <- methods
 
-for (method in methods){
+for (method in c("ETH", "epiforecasts", "rtlive", "SDSC", "Ilmenau", "Zi", "AGES", "globalrt", "RKI")){
   
   print(paste0("Start with estimation using parameters from ", method))
   
@@ -128,7 +130,7 @@ for (method in methods){
                              stan = stan_opts(cores = 4),
                              horizon = 14,
                              CrIs = c(0.5, 0.95),
-                             verbose = TRUE)
+                             verbose = FALSE)
   
   end_time <- Sys.time()
   print(paste0("Estimation took ", round(difftime(end_time, start_time, units='mins'), digits=2), " minutes."))
@@ -140,11 +142,8 @@ for (method in methods){
                                                                c("date", "type", "median", "mean", "sd",
                                                                  "lower_95", "lower_50", "upper_95", "upper_50")]
   
-  if (params[method, "incubation_mean"] == 4){
-    # included 4 days too much delay
-    # shift estimates forwar by 4 days
-    epiforecasts_R_calc$date <- epiforecasts_R_calc$date + 4
-  }
+  # for originally constant delays correct for different mean used in epiforecasts estimation
+  epiforecasts_R_calc$date <- epiforecasts_R_calc$date + params[method, "delay_shift"]
   
   qsave(epiforecasts_R_calc, paste0("R_calc_", Sys.Date(), method, "Params.qs"))
   

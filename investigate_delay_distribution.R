@@ -175,12 +175,12 @@ sd
 # plot distributions used for epiforecasts #
 ############################################
 
-o <- 0.1 # replacement for zeros that would lead to mathematiccal issues
-oo <- 0.5
-m <- 4 # replacement for zeros in mean incubation period (shifted back manually after the estimation)
+o <- 0.1 # replacement for zeros that would lead to mathematical issues
+oo <- 0.3
+m <- 2 # mean incubation period and reporting delay in case of constant delay distributions (shifted back manually after the estimation)
 mean_incubation <-   c(5.3, m,  m,  m,  m,  m,  5.5,  5,   m)
-sd_incubation <-     c(3.2, oo, oo, oo, oo, oo, 2.4,  oo,  oo)
-mean_report_delay <- c(5.5, o,  o,  o,  o,  o,  6.5,  7.1, o)
+sd_incubation <-     c(3.2, oo, oo, oo, oo, oo, 2.4,  0.5, oo)
+mean_report_delay <- c(5.5, m,  m,  m,  m,  m,  6.5,  7.1, m)
 sd_report_delay <-   c(3.8, o,  o,  o,  o,  o,  17.1, 5.9, o)
 delay_shift <-       c(0,   3,  -3, -6, 4,  4,  0,    0,   4)
 
