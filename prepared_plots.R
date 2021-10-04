@@ -41,7 +41,7 @@ plot_published_vs_calculated <- function(published, calculated, method_name, dif
 
 plot_multiple_estimates <- function(estimates, methods, include_CI=F) {
   # TODO: estimates einzeln übergeben und abhängig von Anzahl trotzdem richtig joinen.
-  #estimates <- as.data.frame(estimates)
+  estimates <- as.data.frame(estimates)
   
   # pull first mean/median of estimates
   R_est <- estimates[, 1:2]
