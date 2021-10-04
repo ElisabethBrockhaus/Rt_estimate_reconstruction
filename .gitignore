@@ -30,3 +30,6 @@ ArroyoMarioli/estimates/optim_res*
 epiforecasts/data_preprocessing_epiforecasts.R
 epiforecasts/example_epiforecasts.R
 epiforecasts/input_data/
+
+# open .xlsx files
+otherFiles/~$*.xlsx
