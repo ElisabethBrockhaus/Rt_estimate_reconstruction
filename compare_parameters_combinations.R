@@ -1,3 +1,6 @@
+library(pheatmap)
+library(viridis)
+
 setwd("..")
 # needs to be the directory with the repos "Rt_estimate_reconstruction", "reproductive_numbers" 
 # and for SDSC method "covid-19-forecast" (https://renkulab.io/gitlab/covid-19/covid-19-forecast/-/tree/master)
@@ -22,6 +25,7 @@ rownames(params) <- methods
 
 # use RKI data for all methods (not line list!)
 incid <- load_incidence_data(method = "RKI")
+incid <- incid[incid$date < "2021-10-01",]
 
 incid_for_ETH <- load_incidence_data(method = "ETHZ_sliding_window", source = "_simpleRKI",
                                      new_deconvolution = if (method == "ETH") FALSE else TRUE,
@@ -57,12 +61,16 @@ R_Ilmenau <- estimate_Ilmenau_R(incid,
 names(R_Ilmenau)[2] <- "R_calc"
 
 path <- "Rt_estimate_reconstruction/epiforecasts/estimates/"
-file <- max(list.files(path, pattern = paste0("R_calc_\\d{4}-\\d{2}-\\d{2}_", method, "Params.qs")))
-print(paste("Most recent epiforecasts estimates using matching parameters:", file))
-R_epiforecasts <- qread(file)
-names(R_epiforecasts) <- c("date", "type", "R_calc")
+file <- max(list.files(path, pattern = paste0("R_calc_\\d{4}-\\d{2}-\\d{2}", method, "Params.qs")))
+print(paste("Most recent epiforecasts estimates with matching parameters:", file))
+R_epiforecasts <- qread(paste0(path, file))
+R_epiforecasts <- R_epiforecasts[,c("date", "mean", "lower_95", "upper_95")]
+names(R_epiforecasts) <- c("date", "R_calc", "0.025", "0.975")
 
-R_globalrt <- read_csv(paste0("Rt_estimate_reconstruction/ArroyoMarioli/estimates/estimated_R_", method, ".csv"))
+path <- "Rt_estimate_reconstruction/ArroyoMarioli/estimates/"
+file <- max(list.files(path, pattern = paste0("estimated_R_\\d{4}-\\d{2}-\\d{2}_", method, ".csv")))
+print(paste("Most recent globalrt estimates with matching parameters:", file))
+R_globalrt <- read_csv(paste0(path, file))
 R_globalrt <- R_globalrt[R_globalrt$`Country/Region` == "Germany", c("Date", "R")]
 names(R_globalrt) <- c("date", "R_calc")
 
@@ -73,11 +81,39 @@ estimates <- R_raw_EpiEstim[,c("date", "R_calc")] %>%
   full_join(R_Ilmenau[,c("date", "R_calc")], by = "date") %>% 
   full_join(R_epiforecasts[,c("date", "R_calc")], by = "date") %>%
   full_join(R_globalrt[,c("date", "R_calc")], by = "date")
+names(estimates) <- c("date", "rawEpiEstim", "ETH", "AGES", "Ilmenau", "epiforecasts", "globalrt")
 
 plot_multiple_estimates(estimates[estimates$date > "2021-04-01",],
                         methods = c("raw EpiEstim", "ETH EpiEstim", "AGES EpiEstim",
-                                    "Ilmenau", "epiforecasts", "globalrt"))
+                                    "Ilmenau", "epiforecasts",
+                                    "globalrt"))
 
+start_est <- as.Date("2021-04-01")
+end_est <- as.Date("2021-08-19")
+latest_estimates <- estimates[estimates$date >= start_est &
+                                estimates$date <= end_est,]
+comp_methods <- c("rawEpiEstim", "ETH", "AGES", "Ilmenau", "epiforecasts", "globalrt")
+matr <- matrix(rep(rep(0,6), 6), ncol=6)
+colnames(matr) <- comp_methods
+rownames(matr) <- comp_methods
+
+par(mfrow=c(6,6))
+for (method1 in comp_methods) {
+  for (method2 in comp_methods){
+    diff <- latest_estimates[,method1] - latest_estimates[,method2]
+    plot(diff, type="l", ylab = "diff", ylim=c(-0.5, 0.5),
+         main = paste(method1, "vs.", method2))
+    matr[method1, method2] <- sum(abs(diff))
+    
+  }
+}
+par(mfrow=c(1,1))
+
+pheatmap(matr, color = viridis(1000), border_color = NA, display_numbers = TRUE,
+         fontsize = 12, fontsize_number=20, number_color = "white",
+         angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
+         main = paste("Summed absolute differences between estimates over",
+                      end_est - start_est, "days using", method, "parameters"))
 
 ####################################
 # in contrast: real-time estimates #
