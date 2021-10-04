@@ -1,4 +1,6 @@
 library(readr)
+library(EpiNow2)
+
 setwd("..")
 getwd()
 
@@ -51,25 +53,32 @@ View(constant_delay_distributions)
 
 ETH_incubation <- constant_delay_distributions$Symptoms
 incubation_mean <- 0:199 %*% ETH_incubation
-incubation_mean/7
+incubation_mean
 incubation_var <- ETH_incubation %*% ((0:199) - c(incubation_mean))^2
-sqrt(incubation_var)/7
+sqrt(incubation_var)
 incubation_shape <- (incubation_mean^2)/incubation_var
 incubation_scale <- incubation_var/incubation_mean
 
 ETH_report_delays <- constant_delay_distributions$`Onset to Confirmed cases`
 report_mean <- 0:199 %*% ETH_report_delays
-report_mean/7
+report_mean
 report_var <- ETH_report_delays %*% ((0:199) - c(report_mean))^2
-sqrt(report_var)/7
+sqrt(report_var)
 report_shape <- (report_mean^2)/report_var
 report_scale <- report_var/report_mean
 
-plot(ETH_incubation[1:30], type="l")
+plot(ETH_incubation[1:30], type="l", ylim=c(0,0.2))
 lines(ETH_report_delays)
 
 lines(dgamma(0:199, shape = incubation_shape, scale = incubation_scale), lty=2, col="red")
 lines(dgamma(0:199, shape = report_shape, scale = report_scale), lty=2, col="red")
+
+lines(dlnorm(0:199, meanlog = convert_to_logmean(incubation_mean, sqrt(incubation_var)),
+             sdlog = convert_to_logsd(incubation_mean, sqrt(incubation_var))),
+      lty=2, col="blue")
+lines(dlnorm(0:199, meanlog = convert_to_logmean(report_mean, sqrt(report_var)),
+             sdlog = convert_to_logsd(report_mean, sqrt(report_var))),
+      lty=2, col="blue")
 
 incubation <- function(x) dgamma(x, shape = incubation_shape, scale = incubation_scale)
 reporting <- function(y) dgamma(y, shape = report_shape, scale = report_scale)
@@ -80,6 +89,7 @@ z <- 0:199
 lines(z,delay(z),lty=2,col="blue")
 
 # parameters of resulting convolution
+z <- 0:10e4
 mean <- z %*% delay(z)
 mean
 sd <- sqrt(delay(z) %*% (z - c(mean))^2)
@@ -93,28 +103,31 @@ rtlive_delay <- rtlive_delays$p_delay[7:66]
 delay_mean <- rtlive_delay %*% (1:60)
 delay_var <- rtlive_delay %*% ((1:60) - c(delay_mean))^2
 delay_sd <- sqrt(delay_var)
-#delay_var <- delay_var - 7
 shape <- ((delay_mean)^2)/delay_var
 scale <- delay_var/(delay_mean)
 
-plot(rtlive_delays$p_delay[2:31], type="l")
-#barplot(rtlive_delays$p_delay, ylim = c(0, 0.15), xlim = c(0,65), names.arg=0:65)
+plot(rtlive_delays$p_delay[2:31], type="l", ylim=c(0,0.14))
 lines(5:30, dgamma(0:25, shape = shape, scale = scale), lty=2, col="red")
+lines(0:30, dlnorm(0:30, meanlog = convert_to_logmean(5, 1),
+                   sdlog = convert_to_logsd(5, 1)), lty=2, col="blue")
+lines(5:30, dlnorm(0:25, meanlog = convert_to_logmean(delay_mean, delay_sd),
+                   sdlog = convert_to_logsd(delay_mean, delay_sd)), lty=2, col="blue")
 
-#lines(dgamma(0:65, shape = (5^2)/0.1, scale = 0.1/5), col="red")
-
-incubation <- function(x) dgamma(x, shape = (5^2)/0.1, scale = 0.1/5)
-reporting <- function(y) dgamma(y, shape = shape, scale = scale)
+incubation <- function(x) dlnorm(x, meanlog = convert_to_logmean(5,1),
+                                 sdlog = convert_to_logsd(5,1))
+reporting <- function(y) dlnorm(y, meanlog = convert_to_logmean(delay_mean, delay_sd),
+                                sdlog = convert_to_logsd(delay_mean, delay_sd))
 # convolution integral
 delay <- function(z) integrate(function(x,z) reporting(z-x)*incubation(x),-Inf,Inf,z)$value
 delay <- Vectorize(delay)
-z <- seq(0,65,1)
-lines(z,delay(z),lty=2,col="blue")
+z <- 0:30
+lines(z,delay(z),lty=2,col="darkgreen")
 
 # parameters of resulting convolution
-mean <- 0:65 %*% delay(z)
+z <- 0:10e4
+mean <- z %*% delay(z)
 mean
-sd <- sqrt(delay(z) %*% ((0:65) - c(mean))^2)
+sd <- sqrt(delay(z) %*% (z - c(mean))^2)
 sd
 
 ################
@@ -157,6 +170,50 @@ mean
 sd <- sqrt(delay(z) %*% (z - c(mean))^2)
 sd
 
+
+############################################
+# plot distributions used for epiforecasts #
+############################################
+
+o <- 0.1 # replacement for zeros that would lead to mathematiccal issues
+oo <- 0.5
+m <- 4 # replacement for zeros in mean incubation period (shifted back manually after the estimation)
+mean_incubation <-   c(5.3, m,  m,  m,  m,  m,  5.5,  5,   m)
+sd_incubation <-     c(3.2, oo, oo, oo, oo, oo, 2.4,  oo,  oo)
+mean_report_delay <- c(5.5, o,  o,  o,  o,  o,  6.5,  7.1, o)
+sd_report_delay <-   c(3.8, o,  o,  o,  o,  o,  17.1, 5.9, o)
+delay_shift <-       c(0,   3,  -3, -6, 4,  4,  0,    0,   4)
+
+params <- data.frame(incubation_mean=mean_incubation, incubation_sd=sd_incubation,
+                     report_delay_mean=mean_report_delay, report_delay_sd=sd_report_delay,
+                     delay_shift=delay_shift)
+methods <- c("ETH", "RKI", "Ilmenau", "SDSC", "Zi", "AGES", "epiforecasts", "rtlive", "globalrt")
+rownames(params) <- methods
+
+incubation <- function(x) dlnorm(x, meanlog = convert_to_logmean(params[method, "incubation_mean"],
+                                                                 params[method, "incubation_sd"]),
+                                 sdlog = convert_to_logsd(params[method, "incubation_mean"],
+                                                          params[method, "incubation_sd"]))
+reporting <- function(y) dlnorm(y, meanlog = convert_to_logmean(params[method, "report_delay_mean"],
+                                                                params[method, "report_delay_sd"]),
+                                sdlog = convert_to_logsd(params[method, "report_delay_mean"],
+                                                         params[method, "report_delay_sd"]))
+# convolution integral
+delay <- function(z) integrate(function(x, z) reporting(z-x)*incubation(x),-Inf,Inf,z)$value
+delay <- Vectorize(delay)
+z <- 0:1000
+
+par(mfrow=c(3,3))
+for (method in methods){
+  d <- delay(z)
+  z_shifted <- z-params[method, "delay_shift"]
+  plot(z_shifted[1:31], d[1:31], type="l", col="blue",
+       main=method, xlab="days", ylab="p")
+  mean <- z_shifted %*% d
+  sd <- sqrt(d %*% (z_shifted - c(mean))^2)
+  legend(x="topright", legend=c(paste("mean", round(mean, digits=2)), paste("sd     ", round(sd, digits=2))))
+}
+par(mfrow=c(1,1))
 
 
 
