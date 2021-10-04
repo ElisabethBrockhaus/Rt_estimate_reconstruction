@@ -26,7 +26,22 @@ names(delay_rtlive) <- c("Confirmed cases")
 delay_rtlive["Confirmed cases"] <- list(c(read_csv("rtlive/p_delay.csv")$p_delay,
                                           rep(0, 200-66)))
 
-# TODO: add correct delay distributions for epiforecasts
+# delays used in epiforecasts estimation
+incubation_logmean <- 1.62
+incubation_logsd <- 0.418
+report_delay_logmean <- 0.832
+report_delay_logsd <- 1.44
+
+incubation <- function(x) dlnorm(x, meanlog = incubation_logmean, sdlog = incubation_logsd)
+report_delay <- function(y) dlnorm(y, meanlog = report_delay_logmean, sdlog = report_delay_logsd)
+# convolution integral
+delay <- function(z) integrate(function(x,z) report_delay(z-x)*incubation(x),-Inf,Inf,z)$value
+delay <- Vectorize(delay)
+
+delay_epiforecasts <- vector("list", 1)
+names(delay_epiforecasts) <- c("Confirmed cases")
+delay_epiforecasts["Confirmed cases"] <- list(delay(0:199))
+
 delays_ETH <- list(list(), delay_RKI, delay_Ilmenau, delay_SDSC, delay_Zi,
-                   delay_AGES, delay_globalrt, delay_rtlive, list())
+                   delay_AGES, delay_epiforecasts, delay_rtlive, delay_globalrt)
 names(delays_ETH) <- methods
