@@ -1,4 +1,5 @@
 library(EpiEstim)
+library(EpiNow2)
 
 ###########################
 # estimates as in RKI2020 #
@@ -539,7 +540,8 @@ get_infectivity_profile <- function(gt_type=c("ad hoc", "gamma", "exponential", 
     gt_dist <- c(rep(0, gt_mean), 1, rep(0, 1000-gt_mean-1))
     
   } else if (gt_type == "lognorm"){
-    gt_dist <- c(0, dlnorm(1:1000, meanlog = gt_mean, sdlog = gt_sd))
+    gt_dist <- c(0, dlnorm(1:1000, meanlog = convert_to_logmean(gt_mean, gt_sd),
+                           sdlog = convert_to_logsd(gt_mean, gt_sd)))
   } else {
     print("Type of generation time distribution not known.
           Choose from ['ad hoc', 'gamma', 'exponential', 'uniform', 'constant', 'lognorm']")
