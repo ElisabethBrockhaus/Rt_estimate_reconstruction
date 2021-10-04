@@ -32,6 +32,8 @@ load_data_for_globalrt <- function(method, countries=c("Germany")){
     }
   }
   
+  joined_data <- joined_data[joined_data$date < "2021-10-01",]
+  
   # save data in format for epiforecast estimation
   write_csv(joined_data, paste0("Rt_estimate_reconstruction/epiforecasts/input_data/incidence_data_", method, ".csv"))
   
