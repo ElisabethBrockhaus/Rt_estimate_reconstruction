@@ -330,6 +330,7 @@ ETH_load_countryData <- function(country="Germany", region="DEU", data_source = 
     # load data used in AnDerHeiden
     if (region == "DEU") {
       RKI_data <- load_RKI_data()
+      RKI_data <- RKI_data[RKI_data$date < "2021-10-01",]
     } else {
       print("RKI incidence data only available for Germany, pass location = 'DE'.")
     }
