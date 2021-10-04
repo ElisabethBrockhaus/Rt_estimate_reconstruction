@@ -56,7 +56,10 @@ R_Ilmenau <- estimate_Ilmenau_R(incid,
                                 delay = params[method, "delay"])[,c("date", "0.5")]
 names(R_Ilmenau)[2] <- "R_calc"
 
-R_epiforecasts <- qread("Rt_estimate_reconstruction/epiforecasts/estimates/R_calc_2021-10-01_ETHParams.qs")
+path <- "Rt_estimate_reconstruction/epiforecasts/estimates/"
+file <- max(list.files(path, pattern = paste0("R_calc_\\d{4}-\\d{2}-\\d{2}_", method, "Params.qs")))
+print(paste("Most recent epiforecasts estimates using matching parameters:", file))
+R_epiforecasts <- qread(file)
 names(R_epiforecasts) <- c("date", "type", "R_calc")
 
 R_globalrt <- read_csv(paste0("Rt_estimate_reconstruction/ArroyoMarioli/estimates/estimated_R_", method, ".csv"))
