@@ -135,19 +135,21 @@ load_RKI_data <- function(){
 
 
 load_ETH_data <- function(country = "Germany", region = "DEU", source = "",
-                          deconvolved = TRUE, new_deconvolution = FALSE, delays= list()){
+                          deconvolved = TRUE, new_deconvolution = FALSE,
+                          delays = list(), delay_source = ""){
   
   data_type <- if(deconvolved) "-DeconvolutedData" else "-Data"
   
   countryDataPath <- file.path("Rt_estimate_reconstruction/ETH/data/countryData",
-                               str_c(region, data_type, source, ".rds"))
+                               str_c(region, data_type, source, delay_source, ".rds"))
   
   ETH_load_countryData(country=country, region=region, data_source = source)
 
   # Deconvolution if necessary or wanted
   if (new_deconvolution | !file.exists(countryDataPath)){
     ETH_deconvolution(country=country, region=region,
-                      data_source = source, delays=delays)
+                      data_source = source,
+                      delays=delays, delay_source = delay_source)
   }
   
   # load (deconvolved) data
@@ -368,7 +370,8 @@ ETH_load_countryData <- function(country="Germany", region="DEU", data_source = 
 ETH_deconvolution <- function(country="Germany",
                               region="DEU",
                               data_source = "",
-                              delays = list()){
+                              delays = list(),
+                              delay_source = ""){
   
   basePath <- "Rt_estimate_reconstruction/ETH/data/countryData"
   if (!dir.exists(basePath)) {
@@ -383,7 +386,7 @@ ETH_deconvolution <- function(country="Germany",
   # load parameter
   source("Rt_estimate_reconstruction/ETH/otherScripts/2_params_InfectionIncidencePars.R")
   
-  if (!(length(delays) > 0)){
+  if (delay_source == ""){
     # load empirical delays
     delays_data_path <- "Rt_estimate_reconstruction/ETH/data/all_delays.csv"
     delays_onset_to_count <- read_csv(delays_data_path,
@@ -475,7 +478,7 @@ ETH_deconvolution <- function(country="Germany",
   # Deconvolution
   deconvolvedData <- list()
   
-  if (!(length(delays) > 0)){
+  if (delay_source == ""){
     deconvolvedData[[1]] <- get_all_infection_incidence(
       countryData,
       constant_delay_distributions = constant_delay_distributions,
@@ -511,9 +514,9 @@ ETH_deconvolution <- function(country="Germany",
     print("no data remaining")
   } else if (data_source == "") {
     saveRDS(deconvolvedCountryData, file = countryDataPath)
-  } else if (!(length(delays) > 0)) {
+  } else {
     # don't save if non-empirical delays from other research groups are used
-    saveRDS(deconvolvedCountryData, file = file.path(basePath, str_c(region, "-DeconvolutedData", data_source, ".rds")))
+    saveRDS(deconvolvedCountryData, file = file.path(basePath, str_c(region, "-DeconvolutedData", data_source, delay_source, ".rds")))
   }
 }
 
