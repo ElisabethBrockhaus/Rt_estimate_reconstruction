@@ -10,6 +10,9 @@ source("Rt_estimate_reconstruction/load_data.R")
 source("Rt_estimate_reconstruction/calculate_estimates.R")
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
+# decide what evaluation steps should be done
+plot_all_differences <- FALSE
+
 # parameter combinations used in papers
 gt_dist <- c("gamma", "constant", "ad hoc", "gamma", "gamma", "gamma", "gamma", "lognorm", "exponential")
 mean_gt <- c(4.8,      4,          5.6,      4.8,     5,       3.4,     3.6,     4.7,       7)
@@ -29,11 +32,12 @@ incid <- incid[incid$date < "2021-10-01",]
 write_csv(incid, "Rt_estimate_reconstruction/incidence_data/RKI_incid.csv")
 
 # choose method for comparison
-method <- "rtlive"
+method <- "globalrt"
 
 incid_for_ETH <- load_incidence_data(method = "ETHZ_sliding_window", source = "_simpleRKI",
                                      new_deconvolution = if (method == "ETH") FALSE else TRUE,
-                                     delays = if (method == "ETH") list() else delays_ETH[[method]])
+                                     delays = delays_ETH[[method]],
+                                     delay_source = paste0("_", method))
 
 # for comparison of methods use default window size of each method
 R_raw_EpiEstim <- estimate_RKI_R(incid, method = "EpiEstim",
@@ -84,38 +88,48 @@ estimates <- R_raw_EpiEstim[,c("date", "R_calc")] %>%
   full_join(R_globalrt[,c("date", "R_calc")], by = "date")
 names(estimates) <- c("date", "rawEpiEstim", "ETH", "AGES", "Ilmenau", "epiforecasts", "globalrt")
 
-plot_multiple_estimates(estimates[estimates$date > "2021-04-01",],
+plot_multiple_estimates(estimates[estimates$date > "2021-04-12" & estimates$date < "2021-10-01",],
                         methods = c("raw EpiEstim", "ETH EpiEstim", "AGES EpiEstim",
                                     "Ilmenau", "epiforecasts",
                                     "globalrt"))
 
-start_est <- as.Date("2021-04-01")
-end_est <- as.Date("2021-08-19")
-latest_estimates <- estimates[estimates$date >= start_est &
-                                estimates$date <= end_est,]
+latest_estimates <- estimates[rowSums(is.na(estimates)) == 0,]
+latest_estimates <- latest_estimates[latest_estimates$date > "2021-04-12",]
+
 comp_methods <- c("rawEpiEstim", "ETH", "AGES", "Ilmenau", "epiforecasts", "globalrt")
 matr <- matrix(rep(rep(0,6), 6), ncol=6)
-colnames(matr) <- comp_methods
-rownames(matr) <- comp_methods
+corr <- matrix(rep(rep(0,6), 6), ncol=6)
+colnames(matr) <- rownames(matr) <- colnames(corr) <- rownames(corr) <- comp_methods
 
 par(mfrow=c(6,6))
 for (method1 in comp_methods) {
   for (method2 in comp_methods){
     diff <- latest_estimates[,method1] - latest_estimates[,method2]
-    plot(diff, type="l", ylab = "diff", ylim=c(-0.5, 0.5),
-         main = paste(method1, "vs.", method2))
+    if (plot_all_differences){
+      plot(diff, type="l", ylab = "diff", ylim=c(-0.5, 0.5),
+           main = paste(method1, "vs.", method2))
+    }
     matr[method1, method2] <- mean(abs(diff))
-    
+    corr[method1, method2] <- cor(latest_estimates[,method1], latest_estimates[,method2])
   }
 }
 par(mfrow=c(1,1))
 
-pheatmap(matr, color = viridis(100), breaks = seq(0,0.3,0.3/100),
+pheatmap(matr, color = viridis(100), breaks = seq(0,0.5,0.5/100),
          border_color = NA, display_numbers = TRUE,
          fontsize = 12, fontsize_number=20, number_color = "white",
          angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
          main = paste("Mean absolute differences between estimates over",
-                      end_est - start_est, "days using", method, "parameters"))
+                      max(latest_estimates$date) - min(latest_estimates$date), "days using", method, "parameters"))
+
+pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0,1,1/100),
+         border_color = NA, display_numbers = TRUE,
+         fontsize = 12, fontsize_number=20, number_color = "white",
+         angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
+         main = paste("Correlations between estimates over",
+                      max(latest_estimates$date) - min(latest_estimates$date),
+                      "days using", method, "parameters"))
+
 
 ####################################
 # in contrast: real-time estimates #
@@ -139,38 +153,44 @@ estimates <- RKI_R_pub[,c("date", "R_pub")] %>%
   full_join(epinow_R_pub[,c("date", "R_pub")], by = "date")
 names(estimates) <- c("date", "RKI", "ETH", "Ilmenau", "SDSC", "globalrt", "epiforecasts")
 
-plot_multiple_estimates(estimates[estimates$date > "2020-03-05",],
+plot_multiple_estimates(estimates[estimates$date > "2021-04-01",],
                         methods = c("RKI", "ETH", "Ilmenau", "SDSC", "globalrt", "epiforecasts"))
 
-start_est <- as.Date("2021-04-06")
-end_est <- as.Date("2021-05-30")
-latest_estimates <- estimates[estimates$date >= start_est &
-                                estimates$date <= end_est,]
+latest_estimates <- estimates[rowSums(is.na(estimates)) == 0,]
 
 comp_methods <- c("RKI", "ETH", "Ilmenau", "SDSC", "globalrt", "epiforecasts")
 matr <- matrix(rep(rep(0,6), 6), ncol=6)
-colnames(matr) <- comp_methods
-rownames(matr) <- comp_methods
+corr <- matrix(rep(rep(0,6), 6), ncol=6)
+colnames(matr) <- rownames(matr) <- colnames(corr) <- rownames(corr) <- comp_methods
 
 par(mfrow=c(6,6))
 for (method1 in comp_methods) {
   for (method2 in comp_methods){
     diff <- latest_estimates[,method1] - latest_estimates[,method2]
-    plot(diff, type="l", ylab = "diff", ylim=c(-0.5, 0.5),
-         main = paste(method1, "vs.", method2))
+    if (plot_all_differences){
+      plot(diff, type="l", ylab = "diff", ylim=c(-0.5, 0.5),
+           main = paste(method1, "vs.", method2))
+    }
     matr[method1, method2] <- mean(abs(diff))
-    
+    corr[method1, method2] <- cor(latest_estimates[,method1], latest_estimates[,method2])
   }
 }
 par(mfrow=c(1,1))
 
-pheatmap(matr, color = viridis(100), breaks = seq(0,0.3,0.3/100),
+pheatmap(matr, color = viridis(100), breaks = seq(0,0.5,0.5/100),
          border_color = NA, display_numbers = TRUE,
          fontsize = 12, fontsize_number=20, number_color = "white",
          angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
          main = paste("Mean absolute differences between published estimates over",
-                      end_est - start_est, "days"))
+                      max(latest_estimates$date) - min(latest_estimates$date), "days"))
 
+pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0,1,1/100),
+         border_color = NA, display_numbers = TRUE,
+         fontsize = 12, fontsize_number=20, number_color = "white",
+         angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
+         main = paste("Correlations between published estimates over",
+                      max(latest_estimates$date) - min(latest_estimates$date),
+                      "days"))
 
 ###########################################
 # compare estimates of Cori-based methods #
