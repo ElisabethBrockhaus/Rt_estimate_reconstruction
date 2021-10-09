@@ -52,50 +52,52 @@ load_data_for_globalrt <- function(method, countries=c("Germany")){
   
   # add columns at the beginning
   data <- cbind.data.frame(target_format[target_format$`Country/Region` %in% countries ,1:5], data)
+  names(data)[1] <- NA
   rownames(data) <- NULL
   
   return(data)
 }
 
 # load, format and save data from RKI (used for main analysis)
-data_rki <- load_data_for_globalrt(method = "RKI", countries=c("Germany"))
-write_csv(data_rki, "Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/time_series_covid19_confirmed_global_RKI.csv")
+#data_rki <- load_data_for_globalrt(method = "RKI", countries=c("Germany"))
+write_csv(load_data_for_globalrt(method = "RKI", countries=c("Germany")),
+          "Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/time_series_covid19_confirmed_global_RKI.csv")
 
 
 #####################
 # different sources #
 #####################
 # load data from ETHZ_sliding_window, ilmenau, AGES, SDSC
-data_eth <- load_data_for_globalrt(method = "ETH", countries=c("Germany")) # TODO: make usable for Austria
-data_ilmenau <- load_data_for_globalrt(method = "ilmenau", countries=c("Germany"))
-data_ages <- load_data_for_globalrt(method = "AGES", countries=c("Austria"))
-data_sdsc <- load_data_for_globalrt(method = "sdsc", countries=all)
-data_epiforecasts <- load_data_for_globalrt(method = "epiforecasts", countries=all)
+#data_eth <- load_data_for_globalrt(method = "ETH", countries=c("Germany")) # TODO: make usable for Austria
+#data_ilmenau <- load_data_for_globalrt(method = "ilmenau", countries=c("Germany"))
+#data_ages <- load_data_for_globalrt(method = "AGES", countries=c("Austria"))
+#data_sdsc <- load_data_for_globalrt(method = "sdsc", countries=all)
+#data_epiforecasts <- load_data_for_globalrt(method = "epiforecasts", countries=all)
 
 # compare input data
-plot(t(target_format[1, 46:595]), type="l", col="darkgreen")
-lines(t(data_rki[1, 6:555]))
-lines(t(data_eth[1,27:576]), col="darkblue")
-lines(t(data_sdsc[1,46:595]), col="blue")
-lines(t(data_epiforecasts[1,65:614]), col="lightblue")
-legend(x="topleft", legend=c("globalrt", "RKI", "ETH", "SDSC", "epiforecasts"), lty=1, col=c("darkgreen", "black", "darkblue", "blue", "lightblue"))
+#plot(t(target_format[1, 46:595]), type="l", col="darkgreen")
+#lines(t(data_rki[1, 6:555]))
+#lines(t(data_eth[1,27:576]), col="darkblue")
+#lines(t(data_sdsc[1,46:595]), col="blue")
+#lines(t(data_epiforecasts[1,65:614]), col="lightblue")
+#legend(x="topleft", legend=c("globalrt", "RKI", "ETH", "SDSC", "epiforecasts"), lty=1, col=c("darkgreen", "black", "darkblue", "blue", "lightblue"))
 
 # save data for Germany as .csv
-for (method in c("ETH", "ilmenau", "sdsc", "epiforecasts")) {
-  data <- load_data_for_globalrt(method = method)
-  write_csv(data, paste0("Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/time_series_covid19_confirmed_global_", method, ".csv"))
-  print(paste0("done for ", method))
-}
+#for (method in c("ETH", "ilmenau", "sdsc", "epiforecasts")) {
+#  data <- load_data_for_globalrt(method = method)
+#  write_csv(data, paste0("Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/time_series_covid19_confirmed_global_", method, ".csv"))
+#  print(paste0("done for ", method))
+#}
 
 
 #####################
 # compare estimates #
 #####################
-estimated_R_org <- read_csv("Rt_estimate_reconstruction/ArroyoMarioli/estimates/estimated_R.csv")
-estimated_R_sdsc <- read_csv("Rt_estimate_reconstruction/ArroyoMarioli/estimates/estimated_R_sdsc.csv")
+#estimated_R_org <- read_csv("Rt_estimate_reconstruction/ArroyoMarioli/estimates/estimated_R.csv")
+#estimated_R_sdsc <- read_csv("Rt_estimate_reconstruction/ArroyoMarioli/estimates/estimated_R_sdsc.csv")
 
-estimate_org_DEU <- estimated_R_org[estimated_R_org$`Country/Region` == "Germany",]
-estimate_sdsc_DEU <- estimated_R_sdsc[estimated_R_sdsc$`Country/Region` == "Germany",]
+#estimate_org_DEU <- estimated_R_org[estimated_R_org$`Country/Region` == "Germany",]
+#estimate_sdsc_DEU <- estimated_R_sdsc[estimated_R_sdsc$`Country/Region` == "Germany",]
 
-plot(estimate_org_DEU$Date, estimate_org_DEU$R, type="l")
-lines(estimate_sdsc_DEU$Date, estimate_sdsc_DEU$R, col="red")
+#plot(estimate_org_DEU$Date, estimate_org_DEU$R, type="l")
+#lines(estimate_sdsc_DEU$Date, estimate_sdsc_DEU$R, col="red")

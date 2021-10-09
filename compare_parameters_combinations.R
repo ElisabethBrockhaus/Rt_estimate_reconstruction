@@ -266,7 +266,7 @@ R_epiforecasts_d <- R_epiforecasts_d[,c("date", "mean", "lower_95", "upper_95")]
 names(R_epiforecasts_d) <- c("date", "R_calc", "0.025", "0.975")
 
 path <- "Rt_estimate_reconstruction/ArroyoMarioli/estimates/"
-file <- max(list.files(path, pattern = paste0("estimated_R_\\d{4}-\\d{2}-\\d{2}_", method, "_Delays.csv")))
+file <- max(list.files(path, pattern = paste0("estimated_R_\\d{4}-\\d{2}-\\d{2}_", method, "_delays.csv")))
 print(paste("Most recent globalrt estimates with matching parameters:", file))
 R_globalrt_d <- read_csv(paste0(path, file))
 R_globalrt_d <- R_globalrt_d[R_globalrt_d$`Country/Region` == "Germany", c("Date", "R")]
