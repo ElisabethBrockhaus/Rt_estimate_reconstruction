@@ -3,7 +3,12 @@ import sys
 import numpy as np
 import pandas as pd
 
-sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/" + "../.."))
+# sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/" + "../.."))
+sys.path.append(
+    os.path.abspath(
+        "d:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction"
+    )
+)
 
 
 def construct_dataset(file_name, var_name):
@@ -26,7 +31,7 @@ def construct_dataset(file_name, var_name):
     df = pd.melt(
         df,
         id_vars=["Province/State", "Country/Region"],
-        value_vars=list(df.columns.values[2:]),
+        value_vars=list(df.columns.values[3:]),
     )
     df.rename(columns={"variable": "Date", "value": var_name}, inplace=True)
 

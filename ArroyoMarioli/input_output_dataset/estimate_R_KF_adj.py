@@ -9,7 +9,12 @@ from datetime import date
 
 # import math
 
-sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/" + "../.."))
+# sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/" + "../.."))
+sys.path.append(
+    os.path.abspath(
+        "d:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction"
+    )
+)
 
 
 def estimate_R(y, gamma, n_start_values_grid=0, maxiter=200):

@@ -6,6 +6,38 @@ setwd("..")
 # and for SDSC method "covid-19-forecast" (https://renkulab.io/gitlab/covid-19/covid-19-forecast/-/tree/master)
 getwd()
 
+# look at uncertainty of incidence time series
+data <- read_csv("https://raw.githubusercontent.com/robert-koch-institut/SARS-CoV-2-Nowcasting_und_-R-Schaetzung/main/Nowcast_R_aktuell.csv")
+plot(data$Datum, data$PS_COVID_Faelle, type="l", xlab="date", ylab="incidence",
+     xlim = c(data$Datum[551], data$Datum[583]), ylim = c(5000, 15000))
+axis(1, at = seq(data$Datum[551], data$Datum[583], by="weeks"),
+     labels = seq(data$Datum[551], data$Datum[583], by="weeks"))
+lines(data$Datum, data$UG_PI_COVID_Faelle, col = "blue")
+lines(data$Datum, data$OG_PI_COVID_Faelle, col = "blue")
+abline(v = as.Date("2021-10-01"), col = "red")
+
+
+###########################
+# run globalrt estimation #
+###########################
+
+library(reticulate)
+
+# refresh data for globalrt
+source("Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/format_data_from_various_sources.R")
+envVars <- ls(name = 1)
+keepObjects <- c()
+rm(list = setdiff(envVars, keepObjects), pos = 1)
+
+py_run_file("Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/construct_dataset_adj.py")
+py_run_file("Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/estimate_R_KF_adj.py")
+
+
+
+################################
+# get functions and parameters #
+################################
+
 source("Rt_estimate_reconstruction/load_data.R")
 source("Rt_estimate_reconstruction/calculate_estimates.R")
 source("Rt_estimate_reconstruction/prepared_plots.R")
@@ -28,6 +60,15 @@ source("Rt_estimate_reconstruction/ETH/delays_for_ETH_estimation.R")
 # use RKI data for all methods (not line list!)
 incid <- load_incidence_data(method = "RKI")
 incid <- incid[incid$date < "2021-10-01",]
+
+rtlive_incid <- read_csv("Rt_estimate_reconstruction/rtlive/rtlive-global/data/rtlive_data.csv")
+rtlive_region_incid <- rtlive_incid[rtlive_incid$region!="all",]
+rtlive_incid_agg <- aggregate(rtlive_region_incid$new_cases, by = list(rtlive_region_incid$date), FUN = sum)
+names(rtlive_incid_agg) <- c("date", "I")
+plot(incid, type="l")
+lines(rtlive_incid_agg, col="red")
+lines(rtlive_incid[rtlive_incid$region=="all", c("date", "new_cases")], col="blue")
+
 # save incidence data for epiforecast estimation
 write_csv(incid, "Rt_estimate_reconstruction/incidence_data/RKI_incid.csv")
 
@@ -116,7 +157,7 @@ for (method1 in comp_methods) {
 }
 par(mfrow=c(1,1))
 
-pheatmap(matr, color = viridis(100), breaks = seq(0,0.5,0.5/100),
+pheatmap(matr, color = viridis(100), breaks = seq(0,0.4,0.4/100),
          border_color = NA, display_numbers = TRUE,
          fontsize = 12, fontsize_number=20, number_color = "white",
          angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
@@ -124,7 +165,7 @@ pheatmap(matr, color = viridis(100), breaks = seq(0,0.5,0.5/100),
                       max(latest_estimates$date) - min(latest_estimates$date),
                       "days using", method, "parameters"))
 
-pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0,1,1/100),
+pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0.5,1,0.5/100),
          border_color = NA, display_numbers = TRUE,
          fontsize = 12, fontsize_number=20, number_color = "white",
          angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
@@ -140,23 +181,26 @@ RKI_R_pub <- load_published_R_estimates(source = "RKI_7day")
 ETH_R_pub <- load_published_R_estimates("ETHZ_sliding_window")
 Ilmenau_R_pub <- load_published_R_estimates("ilmenau")
 SDSC_R_pub <- load_published_R_estimates("sdsc")
-globalrt_R_pub <- read_csv("https://raw.githubusercontent.com/crondonm/TrackingR/main/Estimates-Database/database.csv")
-globalrt_R_pub <- globalrt_R_pub[globalrt_R_pub$`Country/Region` == "Germany" &
-                                   globalrt_R_pub$days_infectious == 7, c("Date", "R")]
-names(globalrt_R_pub)[1] <- "date"
-epinow_R_pub <- load_published_R_estimates("epiforecasts")
+globalrt_R_pub <- load_published_R_estimates("globalrt_7d")
+#epinow_R_pub <- load_published_R_estimates("epiforecasts")
+rtlive_R_pub <- load_published_R_estimates("rtlive")
 
 # merge estimates and plot for comparison
 estimates <- RKI_R_pub[,c("date", "R_pub")] %>%
   full_join(ETH_R_pub[,c("date", "R_pub")], by = "date") %>% 
   full_join(Ilmenau_R_pub[,c("date", "R_pub")], by = "date") %>% 
   full_join(SDSC_R_pub[,c("date", "R_pub")], by = "date") %>% 
-  full_join(globalrt_R_pub[,c("date", "R")], by = "date") %>%
-  full_join(epinow_R_pub[,c("date", "R_pub")], by = "date")
-names(estimates) <- c("date", "RKI", "ETH", "Ilmenau", "SDSC", "globalrt", "epiforecasts")
+  full_join(globalrt_R_pub[,c("date", "R_pub")], by = "date") %>%
+  #full_join(epinow_R_pub[,c("date", "R_pub")], by = "date") %>%
+  full_join(rtlive_R_pub[,c("date", "R_pub")], by = "date")
+names(estimates) <- c("date", "RKI", "ETH", "Ilmenau", "SDSC", "globalrt",
+                      #"epiforecasts",
+                      "rtlive")
 
 plot_multiple_estimates(estimates[estimates$date > "2021-04-01",],
-                        methods = c("RKI", "ETH", "Ilmenau", "SDSC", "globalrt", "epiforecasts"))
+                        methods = c("RKI", "ETH", "Ilmenau", "SDSC", "globalrt",
+                                    #"epiforecasts",
+                                    "rtlive"))
 
 latest_estimates <- estimates[rowSums(is.na(estimates)) == 0,]
 
@@ -180,14 +224,14 @@ for (method1 in comp_methods) {
 }
 par(mfrow=c(1,1))
 
-pheatmap(matr, color = viridis(100), breaks = seq(0,0.5,0.5/100),
+pheatmap(matr, color = viridis(100), breaks = seq(0,0.4,0.4/100),
          border_color = NA, display_numbers = TRUE,
          fontsize = 12, fontsize_number=20, number_color = "white",
          angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
          main = paste("Mean absolute differences between published estimates over",
                       max(latest_estimates$date) - min(latest_estimates$date), "days"))
 
-pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0,1,1/100),
+pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0.5,1,0.5/100),
          border_color = NA, display_numbers = TRUE,
          fontsize = 12, fontsize_number=20, number_color = "white",
          angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
@@ -233,16 +277,16 @@ estimates <- R_raw_EpiEstim_d[,c("date", "R_calc")] %>%
   full_join(R_ETH_EpiEstim_d[,c("date", "R_calc")], by = "date") %>% 
   full_join(R_AGES_EpiEstim_d[,c("date", "R_calc")], by = "date") %>% 
   full_join(R_Ilmenau_d[,c("date", "R_calc")], by = "date") %>% 
-  #full_join(R_epiforecasts_d[,c("date", "R_calc")], by = "date") %>%
+  full_join(R_epiforecasts_d[,c("date", "R_calc")], by = "date") %>%
   full_join(R_globalrt_d[,c("date", "R_calc")], by = "date")
 names(estimates) <- c("date", "rawEpiEstim", "ETH", "AGES", "Ilmenau",
-                      #"epiforecasts",
+                      "epiforecasts",
                       "globalrt")
 
 plot_multiple_estimates(estimates[estimates$date > "2021-04-12" & estimates$date < "2021-10-01",],
                         methods = c("raw EpiEstim", "ETH EpiEstim", "AGES EpiEstim",
                                     "Ilmenau",
-                                    #"epiforecasts",
+                                    "epiforecasts",
                                     "globalrt"))
 
 latest_estimates <- estimates[rowSums(is.na(estimates)) == 0,]
@@ -268,7 +312,7 @@ for (method1 in comp_methods) {
 }
 par(mfrow=c(1,1))
 
-pheatmap(matr, color = viridis(100), breaks = seq(0,0.5,0.5/100),
+pheatmap(matr, color = viridis(100), breaks = seq(0,0.4,0.4/100),
          border_color = NA, display_numbers = TRUE,
          fontsize = 12, fontsize_number=20, number_color = "white",
          angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
@@ -276,7 +320,7 @@ pheatmap(matr, color = viridis(100), breaks = seq(0,0.5,0.5/100),
                       max(latest_estimates$date) - min(latest_estimates$date),
                       "days using", method, "delays"))
 
-pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0,1,1/100),
+pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0.5,1,0.5/100),
          border_color = NA, display_numbers = TRUE,
          fontsize = 12, fontsize_number=20, number_color = "white",
          angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
@@ -374,7 +418,7 @@ for (method1 in comp_methods) {
 }
 par(mfrow=c(1,1))
 
-pheatmap(matr, color = viridis(100), breaks = seq(0,0.5,0.5/100),
+pheatmap(matr, color = viridis(100), breaks = seq(0,0.4,0.4/100),
          border_color = NA, display_numbers = TRUE,
          fontsize = 12, fontsize_number=20, number_color = "white",
          angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
@@ -382,7 +426,7 @@ pheatmap(matr, color = viridis(100), breaks = seq(0,0.5,0.5/100),
                       max(latest_estimates$date) - min(latest_estimates$date),
                       "days using", method, "generation time"))
 
-pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0,1,1/100),
+pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0.5,1,0.5/100),
          border_color = NA, display_numbers = TRUE,
          fontsize = 12, fontsize_number=20, number_color = "white",
          angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
