@@ -5,9 +5,6 @@ import pandas as pd
 import statsmodels.api as sm
 import scipy
 import warnings
-from datetime import date
-
-# import math
 
 # sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/" + "../.."))
 sys.path.append(
