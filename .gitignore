@@ -20,6 +20,9 @@ rtlive/DE/*
 !rtlive/DE/*.zip
 rtlive/rtlive_summary_validation.ipynb
 
+# rtlive repo
+rtlive/rtlive-global/
+
 # ArroyoMarioli data
 ArroyoMarioli/data_all_countries
 ArroyoMarioli/mismeasurements
