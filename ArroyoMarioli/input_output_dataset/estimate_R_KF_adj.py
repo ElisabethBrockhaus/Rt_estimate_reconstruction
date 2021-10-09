@@ -267,6 +267,6 @@ for variation in variations:
 
         # Save estimates
         df.to_csv(
-            "{}estimated_R_{}{}.csv".format(output_folder, method, variation),
+            "{}estimated_R{}{}.csv".format(output_folder, method, variation),
             index=False,
         )
