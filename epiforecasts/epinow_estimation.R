@@ -60,28 +60,96 @@ plot(epiforecasts_R_calc$date,
 abline(h=0, col="grey", lty=2)
 
 
+###########################
+# function for estimation #
+###########################
+
+calculacte_and_save_estimates <- function(reported_cases,
+                                          generation_time,
+                                          incubation_period,
+                                          reporting_delay,
+                                          method,
+                                          variation){
+  
+  start_time <- Sys.time()
+  print(start_time)
+  
+  # do estimation
+  estimates <- epinow(reported_cases = reported_cases,
+                      generation_time = generation_time,
+                      delays = delay_opts(incubation_period, reporting_delay),
+                      rt = rt_opts(prior = list(mean = 1, sd = 0.2)),
+                      stan = stan_opts(cores = 4),
+                      horizon = 14,
+                      CrIs = c(0.5, 0.95),
+                      verbose = FALSE)
+  
+  end_time <- Sys.time()
+  print(paste0("Estimation took ", round(difftime(end_time, start_time, units='mins'), digits=2), " minutes."))
+  
+  # compare published and calculated in plot
+  result <- estimates$estimates$summarised[variable=="R",
+                                           c("date", "type", "median", "mean", "sd",
+                                             "lower_95", "lower_50", "upper_95", "upper_50")]
+  
+  # for originally constant delays correct for different mean used in epiforecasts estimation
+  result$date <- result$date + params[method, "delay_shift"]
+  
+  qsave(result, paste0("R_calc_", Sys.Date(), "_", method, variation, ".qs"))
+  
+  plot(result$date, result$mean, type="l", main=method, xlab="date", ylab="Rt estimate")
+  
+  # use result for other parameter sources if they differ only concerning a constant delay
+  if ((method == "globalrt") & (variation == "_delays")){
+    # reverse globalrt delay shift
+    result$date <- result$date - params[method, "delay_shift"]
+    
+    for (method in c("RKI", "Ilmenau", "SDSC", "Zi", "AGES")){
+      # shift as needed for this parameter sources
+      result$date <- result$date + params[method, "delay_shift"]
+      
+      # save result
+      qsave(result, paste0("R_calc_", Sys.Date(), "_", method, variation, ".qs"))
+      
+      # reverse previous shift for next method
+      result$date <- result$date - params[method, "delay_shift"]
+    }
+  }
+  
+  # save result under delays/gtd only names if inherent parameters are used
+  if (method == "epiforecasts"){
+    qsave(result, paste0("R_calc_", Sys.Date(), "_", method, "_delays", ".qs"))
+    qsave(result, paste0("R_calc_", Sys.Date(), "_", method, "_GTD", ".qs"))
+  }
+}
+
+
 
 ############################
 # use different parameters #
 ############################
 
 # load incidence data from RKI
-incid <- read_csv("RKI_incid.csv")
-incid_latest <- incid[incid$date >= as.Date("2021-04-01") &
-                        incid$date <= as.Date("2021-09-30"),]
-names(incid_latest) <- c("date", "confirm")
+repo_incid <- "https://raw.githubusercontent.com/robert-koch-institut/SARS-CoV-2-Nowcasting_und_-R-Schaetzung/main/Nowcast_R_aktuell.csv"
+data <- read_csv(repo_incid)
+names(data) <- c("Datum", "NeuErkr", "lb_NeuErkr", "ub_NeuErkr",
+                 "NeuErkr_ma4", "lb_NeuErkr_ma4", "ub_NeuErkr_ma4",
+                 "R_7Tage", "lb_R_7Tage", "ub_R_7Tage")
+incid <- data.frame(date=data$Datum, confirm=data$NeuErkr)
+incid <- incid[incid$date < "2021-10-01",]
+rm(data)
 
 # parameter combinations used in papers
-mean_gt <-           c(4.8, 4, 5.6, 4.8, 5, 3.4, 3.6,  4.7, 7)
-sd_gt <-             c(2.3, 0, 4.2, 2.3, 4, 1.8, 3.1,  2.9, 7)
 o <- 0.1 # replacement for zeros that would lead to mathematical issues
 oo <- 0.5
 m <- 2 # mean incubation period and reporting delay in case of constant delay distributions (shifted back manually after the estimation)
-mean_incubation <-   c(5.3, m,  m,  m,  m,  m,  5.5,  5,   m)
-sd_incubation <-     c(3.2, oo, oo, oo, oo, oo, 2.4,  oo,  oo)
-mean_report_delay <- c(5.5, m,  m,  m,  m,  m,  6.5,  7.1, m)
-sd_report_delay <-   c(3.8, o,  o,  o,  o,  o,  17.1, 5.9, o)
-delay_shift <-       c(0,   3,  -3, -6, 4,  4,  0,    0,   4)
+mean_gt <-           c(4.8, 4,  5.6, 4.8, 5,  3.4, 3.6,  4.7, 7)
+sd_gt <-             c(2.3, 0,  4.2, 2.3, 4,  1.8, 3.1,  2.9, 7)
+mean_incubation <-   c(5.3, m,  m,   m,   m,  m,   5.5,  5,   m)
+sd_incubation <-     c(3.2, oo, oo,  oo,  oo, oo,  2.4,  oo,  oo)
+mean_report_delay <- c(5.5, m,  m,   m,   m,  m,   6.5,  7.1, m)
+sd_report_delay <-   c(3.8, o,  o,   o,   o,  o,   17.1, 5.9, o)
+delay_shift <-       c(0,   3,  -3,  -6,  4,  4,   0,    0,   4)
 
 params <- data.frame(gt_mean=mean_gt, gt_sd=sd_gt,
                      incubation_mean=mean_incubation, incubation_sd=sd_incubation,
@@ -90,7 +158,8 @@ params <- data.frame(gt_mean=mean_gt, gt_sd=sd_gt,
 methods <- c("ETH", "RKI", "Ilmenau", "SDSC", "Zi", "AGES", "epiforecasts", "rtlive", "globalrt")
 rownames(params) <- methods
 
-for (method in c("ETH", "epiforecasts", "rtlive", "SDSC", "Ilmenau", "Zi", "AGES", "globalrt", "RKI")){
+# estimation with adjusted delays and generation time
+for (method in c("globalrt", "ETH", "epiforecasts", "rtlive", "SDSC", "Ilmenau", "Zi", "AGES")){
   
   print(paste0("Start with estimation using parameters from ", method))
   
@@ -121,33 +190,62 @@ for (method in c("ETH", "epiforecasts", "rtlive", "SDSC", "Ilmenau", "Zi", "AGES
     max = 30
   )
   
-  start_time <- Sys.time()
+  calculacte_and_save_estimates(incid, generation_time,
+                                incubation_period, reporting_delay,
+                                method, variation = "Params")
+}
+
+
+# estimation with adjusted delays only, using epiforecast generation time distribution
+generation_time <- readRDS("distributions/generation_time.rds")
+
+for (method in c("globalrt", "ETH", "rtlive")){
   
-  # do estimation
-  estimates_params <- epinow(reported_cases = incid_latest,
-                             generation_time = generation_time,
-                             delays = delay_opts(incubation_period, reporting_delay),
-                             rt = rt_opts(prior = list(mean = 1, sd = 0.2)),
-                             stan = stan_opts(cores = 4),
-                             horizon = 14,
-                             CrIs = c(0.5, 0.95),
-                             verbose = FALSE)
+  print(paste0("Start with estimation using delays from ", method))
   
-  end_time <- Sys.time()
-  print(paste0("Estimation took ", round(difftime(end_time, start_time, units='mins'), digits=2), " minutes."))
+  # set delay parameters
+  incubation_period <- list(
+    mean = convert_to_logmean(params[method, "incubation_mean"],
+                              params[method, "incubation_sd"]),
+    mean_sd = 0.1,
+    sd = convert_to_logsd(params[method, "incubation_mean"],
+                          params[method, "incubation_sd"]),
+    sd_sd = 0.1,
+    max = 30
+  )
   
-  plot(estimates_params)
+  reporting_delay <- list(
+    mean = convert_to_logmean(params[method, "report_delay_mean"],
+                              params[method, "report_delay_sd"]),
+    mean_sd = 0.1,
+    sd = convert_to_logsd(params[method, "report_delay_mean"],
+                          params[method, "report_delay_sd"]),
+    sd_sd = 0.1,
+    max = 30
+  )
   
-  # compare published and calculated in plot
-  epiforecasts_R_calc <- estimates_params$estimates$summarised[variable=="R",
-                                                               c("date", "type", "median", "mean", "sd",
-                                                                 "lower_95", "lower_50", "upper_95", "upper_50")]
+  calculacte_and_save_estimates(incid, generation_time,
+                                incubation_period, reporting_delay,
+                                method, variation = "_delays")
+}
+
+
+# estimation with adjusted generation time only, using epiforecast delay distributions
+incubation_period <- readRDS("distributions/incubation_period.rds")
+reporting_delay <- readRDS("distributions/onset_to_admission_delay.rds")
+
+for (method in c("globalrt", "ETH", "rtlive", "SDSC", "Ilmenau", "Zi", "AGES")){
   
-  # for originally constant delays correct for different mean used in epiforecasts estimation
-  epiforecasts_R_calc$date <- epiforecasts_R_calc$date + params[method, "delay_shift"]
+  print(paste0("Start with estimation using generation time from ", method))
   
-  qsave(epiforecasts_R_calc, paste0("R_calc_", Sys.Date(), method, "Params.qs"))
+  # set generation time
+  generation_time <- list(
+    mean = params[method, "gt_mean"], mean_sd = 0.1,
+    sd = params[method, "gt_sd"], sd_sd = 0.1,
+    max = 30
+  )
   
-  plot(epiforecasts_R_calc$date, epiforecasts_R_calc$mean, type="l",
-       main=method, xlab="date", ylab="Rt estimate")
+  calculacte_and_save_estimates(incid, generation_time,
+                                incubation_period, reporting_delay,
+                                method, variation = "_GTD")
 }

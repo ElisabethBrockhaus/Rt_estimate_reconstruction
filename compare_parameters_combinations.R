@@ -61,6 +61,7 @@ source("Rt_estimate_reconstruction/ETH/delays_for_ETH_estimation.R")
 incid <- load_incidence_data(method = "RKI")
 incid <- incid[incid$date < "2021-10-01",]
 
+#compare incidence time series used by RKI vs. rtlive
 rtlive_incid <- read_csv("Rt_estimate_reconstruction/rtlive/rtlive-global/data/rtlive_data.csv")
 rtlive_region_incid <- rtlive_incid[rtlive_incid$region!="all",]
 rtlive_incid_agg <- aggregate(rtlive_region_incid$new_cases, by = list(rtlive_region_incid$date), FUN = sum)
@@ -107,15 +108,14 @@ R_Ilmenau <- estimate_Ilmenau_R(incid,
 names(R_Ilmenau)[2] <- "R_calc"
 
 path <- "Rt_estimate_reconstruction/epiforecasts/estimates/"
-file <- max(list.files(path, pattern = paste0("R_calc_\\d{4}-\\d{2}-\\d{2}", method, "Params.qs")))
+file <- max(list.files(path, pattern = paste0("R_calc_\\d{4}-\\d{2}-\\d{2}_", method, "Params.qs")))
 print(paste("Most recent epiforecasts estimates with matching parameters:", file))
 R_epiforecasts <- qread(paste0(path, file))
 R_epiforecasts <- R_epiforecasts[,c("date", "mean", "lower_95", "upper_95")]
 names(R_epiforecasts) <- c("date", "R_calc", "0.025", "0.975")
 
 path <- "Rt_estimate_reconstruction/ArroyoMarioli/estimates/"
-file <- max(list.files(path, pattern = paste0("estimated_R_\\d{4}-\\d{2}-\\d{2}_", method, ".csv")))
-print(paste("Most recent globalrt estimates with matching parameters:", file))
+file <- paste0("estimated_R_", method, ".csv")
 R_globalrt <- read_csv(paste0(path, file))
 R_globalrt <- R_globalrt[R_globalrt$`Country/Region` == "Germany", c("Date", "R")]
 names(R_globalrt) <- c("date", "R_calc")
@@ -125,7 +125,7 @@ estimates <- R_raw_EpiEstim[,c("date", "R_calc")] %>%
   full_join(R_ETH_EpiEstim[,c("date", "R_calc")], by = "date") %>% 
   full_join(R_AGES_EpiEstim[,c("date", "R_calc")], by = "date") %>% 
   full_join(R_Ilmenau[,c("date", "R_calc")], by = "date") %>% 
-  full_join(R_epiforecasts[,c("date", "R_calc")], by = "date") %>%
+  #full_join(R_epiforecasts[,c("date", "R_calc")], by = "date") %>%
   full_join(R_globalrt[,c("date", "R_calc")], by = "date")
 names(estimates) <- c("date", "rawEpiEstim", "ETH", "AGES", "Ilmenau", "epiforecasts", "globalrt")
 
@@ -259,18 +259,17 @@ R_Ilmenau_d <- estimate_Ilmenau_R(incid,
 names(R_Ilmenau_d)[2] <- "R_calc"
 
 path <- "Rt_estimate_reconstruction/epiforecasts/estimates/"
-file <- max(list.files(path, pattern = paste0("R_calc_\\d{4}-\\d{2}-\\d{2}", method, "_Delays.qs")))
+file <- max(list.files(path, pattern = paste0("R_calc_\\d{4}-\\d{2}-\\d{2}_", method, "_delays.qs")))
 print(paste("Most recent epiforecasts estimates with matching parameters:", file))
 R_epiforecasts_d <- qread(paste0(path, file))
 R_epiforecasts_d <- R_epiforecasts_d[,c("date", "mean", "lower_95", "upper_95")]
 names(R_epiforecasts_d) <- c("date", "R_calc", "0.025", "0.975")
 
 path <- "Rt_estimate_reconstruction/ArroyoMarioli/estimates/"
-file <- max(list.files(path, pattern = paste0("estimated_R_\\d{4}-\\d{2}-\\d{2}_", method, "_delays.csv")))
-print(paste("Most recent globalrt estimates with matching parameters:", file))
-R_globalrt_d <- read_csv(paste0(path, file))
-R_globalrt_d <- R_globalrt_d[R_globalrt_d$`Country/Region` == "Germany", c("Date", "R")]
-names(R_globalrt_d) <- c("date", "R_calc")
+file <- paste0("estimated_R_", method, "_delays.csv")
+R_globalrt <- read_csv(paste0(path, file))
+R_globalrt <- R_globalrt[R_globalrt$`Country/Region` == "Germany", c("Date", "R")]
+names(R_globalrt) <- c("date", "R_calc")
 
 # merge estimates and plot for comparison
 estimates <- R_raw_EpiEstim_d[,c("date", "R_calc")] %>%
@@ -365,18 +364,17 @@ R_Ilmenau_gt <- estimate_Ilmenau_R(incid,
 names(R_Ilmenau_gt)[2] <- "R_calc"
 
 path <- "Rt_estimate_reconstruction/epiforecasts/estimates/"
-file <- max(list.files(path, pattern = paste0("R_calc_\\d{4}-\\d{2}-\\d{2}", method, "_GTD.qs")))
+file <- max(list.files(path, pattern = paste0("R_calc_\\d{4}-\\d{2}-\\d{2}_", method, "_GTD.qs")))
 print(paste("Most recent epiforecasts estimates with matching parameters:", file))
 R_epiforecasts_gt <- qread(paste0(path, file))
 R_epiforecasts_gt <- R_epiforecasts_gt[,c("date", "mean", "lower_95", "upper_95")]
 names(R_epiforecasts_gt) <- c("date", "R_calc", "0.025", "0.975")
 
 path <- "Rt_estimate_reconstruction/ArroyoMarioli/estimates/"
-file <- max(list.files(path, pattern = paste0("estimated_R_\\d{4}-\\d{2}-\\d{2}_", method, "_GTD.csv")))
-print(paste("Most recent globalrt estimates with matching parameters:", file))
-R_globalrt_gt <- read_csv(paste0(path, file))
-R_globalrt_gt <- R_globalrt_gt[R_globalrt_gt$`Country/Region` == "Germany", c("Date", "R")]
-names(R_globalrt_gt) <- c("date", "R_calc")
+file <- paste0("estimated_R_", method, "_GTD.csv")
+R_globalrt <- read_csv(paste0(path, file))
+R_globalrt <- R_globalrt[R_globalrt$`Country/Region` == "Germany", c("Date", "R")]
+names(R_globalrt) <- c("date", "R_calc")
 
 # merge estimates and plot for comparison
 estimates <- R_raw_EpiEstim_gt[,c("date", "R_calc")] %>%
