@@ -33,9 +33,9 @@ estimate_RKI_R <- function(incid, window=7, gt_type="constant", gt_mean=4, gt_sd
     len_est <- length(r_EpiEstim$R$`Mean(R)`)
     
     # assign estimates to time points properly
-    estimate[window+0:(len_est-1), "R_calc"] <- round(r_EpiEstim$R$`Mean(R)`, digits = 2)
-    estimate[window+0:(len_est-1), "lower"] <- round(r_EpiEstim$R$`Quantile.0.025(R)`, digits = 2)
-    estimate[window+0:(len_est-1), "upper"] <- round(r_EpiEstim$R$`Quantile.0.975(R)`, digits = 2)
+    estimate[window+0:(len_est-1), "R_calc"] <- r_EpiEstim$R$`Mean(R)`
+    estimate[window+0:(len_est-1), "lower"] <- r_EpiEstim$R$`Quantile.0.025(R)`
+    estimate[window+0:(len_est-1), "upper"] <- r_EpiEstim$R$`Quantile.0.975(R)`
     
 
   } else { 
@@ -43,9 +43,7 @@ estimate_RKI_R <- function(incid, window=7, gt_type="constant", gt_mean=4, gt_sd
     if (gt_sd==0 & gt_type=="constant"){
       # calculate estimates as in RKI2020
       for (t in (gt_mean+window):nrow(incid)){
-        estimate[t-1, "R_calc"] <- round(sum(incid$I[t-0:(window-1)])
-                                         / sum(incid$I[t-gt_mean:(gt_mean+window-1)]),
-                                         digits = 2)
+        estimate[t-1, "R_calc"] <- sum(incid$I[t-0:(window-1)]) / sum(incid$I[t-gt_mean:(gt_mean+window-1)])
       }
       
     } else {
@@ -66,8 +64,7 @@ estimate_RKI_R <- function(incid, window=7, gt_type="constant", gt_mean=4, gt_sd
         }
         
         # R_t
-        estimate[t-1, "R_calc"] <- round(new_infect / total_infect,
-                                         digits = 2)
+        estimate[t-1, "R_calc"] <- new_infect / total_infect
       }
     }
   }
