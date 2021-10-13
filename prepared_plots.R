@@ -2,6 +2,7 @@ library(reshape2)
 library(ggplot2)
 library(cowplot)
 library(viridis)
+library(pheatmap)
 
 
 plot_published_vs_calculated <- function(published, calculated, method_name, diff_bounds=c(-0.1, 0.1)){
@@ -98,12 +99,13 @@ plot_multiple_estimates <- function(estimates, methods, include_CI=F) {
     }
   }
   
-  R_plot +
+  R_plot <- R_plot +
     geom_hline(aes(yintercept = 1)) +
     geom_line(data=R_est, aes(x=date, y=value, color=variable)) +
     scale_colour_viridis_d(name="method", labels=methods) +
     labs(x = "date", y = "Rt estimate") +
     theme(legend.position = "top")
+  print(R_plot)
 }
 
 
@@ -154,4 +156,55 @@ plot_published_vs_calculated_95CI <- function(published, calculated, method_name
   
   # align plots
   plot_grid(est_plot, diff_plot, ncol = 1, align = "v", rel_heights = c(5, 1))
+}
+
+
+
+##############################
+# plots for final comparison #
+##############################
+
+plot_for_comparison <- function(estimates, comp_methods, method, variation){
+  names(estimates) <- c("date", comp_methods)
+  
+  estimates <- estimates[rowSums(is.na(estimates)) == 0,]
+  latest_estimates <- estimates[estimates$date >= "2021-04-01",]
+  
+  plot_multiple_estimates(estimates, methods = comp_methods)
+  plot_multiple_estimates(latest_estimates, methods = comp_methods)
+  
+  n <- dim(estimates)[2] - 1
+  matr <- matrix(rep(rep(0,n), n), ncol=n)
+  corr <- matrix(rep(rep(0,n), n), ncol=n)
+  colnames(matr) <- rownames(matr) <- colnames(corr) <- rownames(corr) <- comp_methods
+  
+  par(mfrow=c(6,6))
+  for (method1 in comp_methods) {
+    for (method2 in comp_methods){
+      diff <- estimates[,method1] - estimates[,method2]
+      if (plot_all_differences){
+        plot(diff, type="l", ylab = "diff", ylim=c(-0.5, 0.5),
+             main = paste(method1, "vs.", method2))
+      }
+      matr[method1, method2] <- mean(abs(diff))
+      corr[method1, method2] <- cor(estimates[,method1], estimates[,method2])
+    }
+  }
+  par(mfrow=c(1,1))
+  
+  pheatmap(matr, color = viridis(100), breaks = seq(0,0.4,0.4/100),
+           border_color = NA, display_numbers = TRUE,
+           fontsize = 12, fontsize_number=20, number_color = "white",
+           angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
+           main = paste("Mean absolute differences between estimates over",
+                        max(estimates$date) - min(estimates$date),
+                        "days using", method, variation))
+  
+  pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0.5,1,0.5/100),
+           border_color = NA, display_numbers = TRUE,
+           fontsize = 12, fontsize_number=20, number_color = "white",
+           angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
+           main = paste("Correlations between estimates over",
+                        max(estimates$date) - min(estimates$date),
+                        "days using", method, variation))
 }

@@ -1,5 +1,4 @@
-library(pheatmap)
-library(viridis)
+library(readr)
 
 setwd("..")
 # needs to be the directory with the repos "Rt_estimate_reconstruction", "reproductive_numbers" 
@@ -60,6 +59,7 @@ source("Rt_estimate_reconstruction/ETH/delays_for_ETH_estimation.R")
 # use RKI data for all methods (not line list!)
 incid <- load_incidence_data(method = "RKI")
 incid <- incid[incid$date < "2021-10-01",]
+#incid <- read_csv("Rt_estimate_reconstruction/incidence_data/RKI_incid_21_10_09.csv")
 
 #compare incidence time series used by RKI vs. rtlive
 rtlive_incid <- read_csv("Rt_estimate_reconstruction/rtlive/rtlive-global/data/rtlive_data.csv")
@@ -125,53 +125,13 @@ estimates <- R_raw_EpiEstim[,c("date", "R_calc")] %>%
   full_join(R_ETH_EpiEstim[,c("date", "R_calc")], by = "date") %>% 
   full_join(R_AGES_EpiEstim[,c("date", "R_calc")], by = "date") %>% 
   full_join(R_Ilmenau[,c("date", "R_calc")], by = "date") %>% 
-  #full_join(R_epiforecasts[,c("date", "R_calc")], by = "date") %>%
+  full_join(R_epiforecasts[,c("date", "R_calc")], by = "date") %>%
   full_join(R_globalrt[,c("date", "R_calc")], by = "date")
-names(estimates) <- c("date", "rawEpiEstim", "ETH", "AGES", "Ilmenau", "epiforecasts", "globalrt")
 
-plot_multiple_estimates(estimates[estimates$date > "2021-04-12" & estimates$date < "2021-10-01",],
-                        methods = c("raw EpiEstim", "ETH EpiEstim", "AGES EpiEstim",
-                                    "Ilmenau", "epiforecasts",
-                                    "globalrt"))
+comp_methods <- c("raw EpiEstim", "ETH EpiEstim", "AGES EpiEstim", "Ilmenau", "epiforecasts", "globalrt")
 
-latest_estimates <- estimates[rowSums(is.na(estimates)) == 0,]
-latest_estimates <- latest_estimates[latest_estimates$date > "2021-04-12",]
+plot_for_comparison(estimates, comp_methods, method = method, variation = "parameters")
 
-n <- dim(latest_estimates)[2] - 1
-comp_methods <- names(latest_estimates)[2:(n+1)]
-matr <- matrix(rep(rep(0,n), n), ncol=n)
-corr <- matrix(rep(rep(0,n), n), ncol=n)
-colnames(matr) <- rownames(matr) <- colnames(corr) <- rownames(corr) <- comp_methods
-
-par(mfrow=c(6,6))
-for (method1 in comp_methods) {
-  for (method2 in comp_methods){
-    diff <- latest_estimates[,method1] - latest_estimates[,method2]
-    if (plot_all_differences){
-      plot(diff, type="l", ylab = "diff", ylim=c(-0.5, 0.5),
-           main = paste(method1, "vs.", method2))
-    }
-    matr[method1, method2] <- mean(abs(diff))
-    corr[method1, method2] <- cor(latest_estimates[,method1], latest_estimates[,method2])
-  }
-}
-par(mfrow=c(1,1))
-
-pheatmap(matr, color = viridis(100), breaks = seq(0,0.4,0.4/100),
-         border_color = NA, display_numbers = TRUE,
-         fontsize = 12, fontsize_number=20, number_color = "white",
-         angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
-         main = paste("Mean absolute differences between estimates over",
-                      max(latest_estimates$date) - min(latest_estimates$date),
-                      "days using", method, "parameters"))
-
-pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0.5,1,0.5/100),
-         border_color = NA, display_numbers = TRUE,
-         fontsize = 12, fontsize_number=20, number_color = "white",
-         angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
-         main = paste("Correlations between estimates over",
-                      max(latest_estimates$date) - min(latest_estimates$date),
-                      "days using", method, "parameters"))
 
 
 ####################################
@@ -193,51 +153,14 @@ estimates <- RKI_R_pub[,c("date", "R_pub")] %>%
   full_join(globalrt_R_pub[,c("date", "R_pub")], by = "date") %>%
   #full_join(epinow_R_pub[,c("date", "R_pub")], by = "date") %>%
   full_join(rtlive_R_pub[,c("date", "R_pub")], by = "date")
-names(estimates) <- c("date", "RKI", "ETH", "Ilmenau", "SDSC", "globalrt",
-                      #"epiforecasts",
-                      "rtlive")
+org_methods <- c("RKI", "ETH", "Ilmenau", "SDSC", "globalrt",
+                 #"epiforecasts",
+                 "rtlive")
+names(estimates) <- c("date", org_methods)
 
-plot_multiple_estimates(estimates[estimates$date > "2021-04-01",],
-                        methods = c("RKI", "ETH", "Ilmenau", "SDSC", "globalrt",
-                                    #"epiforecasts",
-                                    "rtlive"))
+source("Rt_estimate_reconstruction/prepared_plots.R")
+plot_for_comparison(estimates, comp_methods, method = "original", variation = "parameters")
 
-latest_estimates <- estimates[rowSums(is.na(estimates)) == 0,]
-
-n <- dim(latest_estimates)[2] - 1
-comp_methods <- names(latest_estimates)[2:(n+1)]
-matr <- matrix(rep(rep(0,n), n), ncol=n)
-corr <- matrix(rep(rep(0,n), n), ncol=n)
-colnames(matr) <- rownames(matr) <- colnames(corr) <- rownames(corr) <- comp_methods
-
-par(mfrow=c(6,6))
-for (method1 in comp_methods) {
-  for (method2 in comp_methods){
-    diff <- latest_estimates[,method1] - latest_estimates[,method2]
-    if (plot_all_differences){
-      plot(diff, type="l", ylab = "diff", ylim=c(-0.5, 0.5),
-           main = paste(method1, "vs.", method2))
-    }
-    matr[method1, method2] <- mean(abs(diff))
-    corr[method1, method2] <- cor(latest_estimates[,method1], latest_estimates[,method2])
-  }
-}
-par(mfrow=c(1,1))
-
-pheatmap(matr, color = viridis(100), breaks = seq(0,0.4,0.4/100),
-         border_color = NA, display_numbers = TRUE,
-         fontsize = 12, fontsize_number=20, number_color = "white",
-         angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
-         main = paste("Mean absolute differences between published estimates over",
-                      max(latest_estimates$date) - min(latest_estimates$date), "days"))
-
-pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0.5,1,0.5/100),
-         border_color = NA, display_numbers = TRUE,
-         fontsize = 12, fontsize_number=20, number_color = "white",
-         angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
-         main = paste("Correlations between published estimates over",
-                      max(latest_estimates$date) - min(latest_estimates$date),
-                      "days"))
 
 
 ######################
@@ -267,9 +190,9 @@ names(R_epiforecasts_d) <- c("date", "R_calc", "0.025", "0.975")
 
 path <- "Rt_estimate_reconstruction/ArroyoMarioli/estimates/"
 file <- paste0("estimated_R_", method, "_delays.csv")
-R_globalrt <- read_csv(paste0(path, file))
-R_globalrt <- R_globalrt[R_globalrt$`Country/Region` == "Germany", c("Date", "R")]
-names(R_globalrt) <- c("date", "R_calc")
+R_globalrt_d <- read_csv(paste0(path, file))
+R_globalrt_d <- R_globalrt_d[R_globalrt_d$`Country/Region` == "Germany", c("Date", "R")]
+names(R_globalrt_d) <- c("date", "R_calc")
 
 # merge estimates and plot for comparison
 estimates <- R_raw_EpiEstim_d[,c("date", "R_calc")] %>%
@@ -278,54 +201,10 @@ estimates <- R_raw_EpiEstim_d[,c("date", "R_calc")] %>%
   full_join(R_Ilmenau_d[,c("date", "R_calc")], by = "date") %>% 
   full_join(R_epiforecasts_d[,c("date", "R_calc")], by = "date") %>%
   full_join(R_globalrt_d[,c("date", "R_calc")], by = "date")
-names(estimates) <- c("date", "rawEpiEstim", "ETH", "AGES", "Ilmenau",
-                      "epiforecasts",
-                      "globalrt")
 
-plot_multiple_estimates(estimates[estimates$date > "2021-04-12" & estimates$date < "2021-10-01",],
-                        methods = c("raw EpiEstim", "ETH EpiEstim", "AGES EpiEstim",
-                                    "Ilmenau",
-                                    "epiforecasts",
-                                    "globalrt"))
+comp_methods <- c("raw EpiEstim", "ETH EpiEstim", "AGES EpiEstim", "Ilmenau", "epiforecasts", "globalrt")
 
-latest_estimates <- estimates[rowSums(is.na(estimates)) == 0,]
-latest_estimates <- latest_estimates[latest_estimates$date > "2021-04-12",]
-
-n <- dim(latest_estimates)[2] - 1
-comp_methods <- names(latest_estimates)[2:(n+1)]
-matr <- matrix(rep(rep(0,n), n), ncol=n)
-corr <- matrix(rep(rep(0,n), n), ncol=n)
-colnames(matr) <- rownames(matr) <- colnames(corr) <- rownames(corr) <- comp_methods
-
-par(mfrow=c(6,6))
-for (method1 in comp_methods) {
-  for (method2 in comp_methods){
-    diff <- latest_estimates[,method1] - latest_estimates[,method2]
-    if (plot_all_differences){
-      plot(diff, type="l", ylab = "diff", ylim=c(-0.5, 0.5),
-           main = paste(method1, "vs.", method2))
-    }
-    matr[method1, method2] <- mean(abs(diff))
-    corr[method1, method2] <- cor(latest_estimates[,method1], latest_estimates[,method2])
-  }
-}
-par(mfrow=c(1,1))
-
-pheatmap(matr, color = viridis(100), breaks = seq(0,0.4,0.4/100),
-         border_color = NA, display_numbers = TRUE,
-         fontsize = 12, fontsize_number=20, number_color = "white",
-         angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
-         main = paste("Mean absolute differences between estimates over",
-                      max(latest_estimates$date) - min(latest_estimates$date),
-                      "days using", method, "delays"))
-
-pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0.5,1,0.5/100),
-         border_color = NA, display_numbers = TRUE,
-         fontsize = 12, fontsize_number=20, number_color = "white",
-         angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
-         main = paste("Correlations between estimates over",
-                      max(latest_estimates$date) - min(latest_estimates$date),
-                      "days using", method, "delays"))
+plot_for_comparison(estimates, comp_methods, method = method, variation = "delays")
 
 
 
@@ -372,9 +251,9 @@ names(R_epiforecasts_gt) <- c("date", "R_calc", "0.025", "0.975")
 
 path <- "Rt_estimate_reconstruction/ArroyoMarioli/estimates/"
 file <- paste0("estimated_R_", method, "_GTD.csv")
-R_globalrt <- read_csv(paste0(path, file))
-R_globalrt <- R_globalrt[R_globalrt$`Country/Region` == "Germany", c("Date", "R")]
-names(R_globalrt) <- c("date", "R_calc")
+R_globalrt_gt <- read_csv(paste0(path, file))
+R_globalrt_gt <- R_globalrt_gt[R_globalrt_gt$`Country/Region` == "Germany", c("Date", "R")]
+names(R_globalrt_gt) <- c("date", "R_calc")
 
 # merge estimates and plot for comparison
 estimates <- R_raw_EpiEstim_gt[,c("date", "R_calc")] %>%
@@ -383,54 +262,14 @@ estimates <- R_raw_EpiEstim_gt[,c("date", "R_calc")] %>%
   full_join(R_Ilmenau_gt[,c("date", "R_calc")], by = "date") %>% 
   #full_join(R_epiforecasts_gt[,c("date", "R_calc")], by = "date") %>%
   full_join(R_globalrt_gt[,c("date", "R_calc")], by = "date")
-names(estimates) <- c("date", "rawEpiEstim", "ETH", "AGES", "Ilmenau",
-                      #"epiforecasts",
-                      "globalrt")
 
-plot_multiple_estimates(estimates[estimates$date > "2021-04-12" & estimates$date < "2021-10-01",],
-                        methods = c("raw EpiEstim", "ETH EpiEstim", "AGES EpiEstim",
-                                    "Ilmenau",
-                                    #"epiforecasts",
-                                    "globalrt"))
+comp_methods <- c("raw EpiEstim", "ETH EpiEstim", "AGES EpiEstim", "Ilmenau",
+                  #"epiforecasts",
+                  "globalrt")
 
-latest_estimates <- estimates[rowSums(is.na(estimates)) == 0,]
-latest_estimates <- latest_estimates[latest_estimates$date > "2021-04-12",]
+plot_for_comparison(estimates, comp_methods, method = method, variation = "generation time")
 
-n <- dim(latest_estimates)[2] - 1
-comp_methods <- names(latest_estimates)[2:(n+1)]
-matr <- matrix(rep(rep(0,n), n), ncol=n)
-corr <- matrix(rep(rep(0,n), n), ncol=n)
-colnames(matr) <- rownames(matr) <- colnames(corr) <- rownames(corr) <- comp_methods
 
-par(mfrow=c(6,6))
-for (method1 in comp_methods) {
-  for (method2 in comp_methods){
-    diff <- latest_estimates[,method1] - latest_estimates[,method2]
-    if (plot_all_differences){
-      plot(diff, type="l", ylab = "diff", ylim=c(-0.5, 0.5),
-           main = paste(method1, "vs.", method2))
-    }
-    matr[method1, method2] <- mean(abs(diff))
-    corr[method1, method2] <- cor(latest_estimates[,method1], latest_estimates[,method2])
-  }
-}
-par(mfrow=c(1,1))
-
-pheatmap(matr, color = viridis(100), breaks = seq(0,0.4,0.4/100),
-         border_color = NA, display_numbers = TRUE,
-         fontsize = 12, fontsize_number=20, number_color = "white",
-         angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
-         main = paste("Mean absolute differences between estimates over",
-                      max(latest_estimates$date) - min(latest_estimates$date),
-                      "days using", method, "generation time"))
-
-pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0.5,1,0.5/100),
-         border_color = NA, display_numbers = TRUE,
-         fontsize = 12, fontsize_number=20, number_color = "white",
-         angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
-         main = paste("Correlations between estimates over",
-                      max(latest_estimates$date) - min(latest_estimates$date),
-                      "days using", method, "generation time"))
 
 
 
