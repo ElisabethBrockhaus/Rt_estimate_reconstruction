@@ -255,8 +255,8 @@ for variation in variations:
         df["days_infectious"] = 7
 
         # Calculate confidence intervals
-        alpha = [0.05, 0.35]
-        names = ["95", "65"]
+        alpha = [0.05, 0.5]
+        names = ["95", "50"]
         for aa, name in zip(alpha, names):
             t_crit = scipy.stats.norm.ppf(1 - aa / 2)
             df["ci_{}_u".format(name)] = df["R"] + t_crit * df["se_R"]
