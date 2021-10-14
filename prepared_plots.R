@@ -41,39 +41,30 @@ plot_published_vs_calculated <- function(published, calculated, method_name, dif
 
 
 
-plot_multiple_estimates <- function(estimates, methods, include_CI=F) {
-  estimates <- as.data.frame(estimates)
+plot_multiple_estimates <- function(estimates, include_CI=F) {
   
-  # select mean/median of estimates
-  R_est <- as_tibble(estimates) %>% dplyr::select(starts_with(c("date", "R")))
-
   # reshape data
-  R_est <- melt(R_est, id.var='date')
-  R_est <- na.omit(R_est)
+  R_est  <- estimates %>%
+    gather("variable", "value", 2:dim(estimates)[2]) %>%
+    separate(variable,
+             into = c("type", "model"),
+             sep = "[.]",
+             remove = TRUE) %>%
+    spread(type, value)
   
-  R_plot <- ggplot() +
+  # plot
+  R_plot <- ggplot(data = R_est, aes(x = date, y = R)) +
     geom_hline(aes(yintercept = 1)) +
-    scale_colour_viridis_d(name="method", labels=methods) +
+    geom_line(aes(group = model, color=model)) +
+    scale_colour_viridis_d(name="method") +
     labs(x = "date", y = "Rt estimate") +
     theme(legend.position = "top")
   
-  if(!include_CI){
-    R_plot <- R_plot + geom_line(data=R_est, aes(x=date, y=value, color=variable))
+  if (include_CI){
+    R_plot <-  R_plot + geom_ribbon(aes(ymin = lower, ymax = upper, fill = model), alpha = .3) +
+      scale_fill_viridis_d(name="method")
   }
   
-  if (include_CI){
-    for (i in 1:length(methods)) {
-      color <- viridis(1, begin = (i - 1) / (length(methods) - 1))
-
-      # add shades to plot
-      R_plot <- R_plot +
-        geom_ribbon(data=estimates[, c(1, (i-1)*3 + 2:4)],
-                    aes(x=date,
-                        ymax=.data[[paste0("upper.", methods[i])]],
-                        ymin=.data[[paste0("lower.", methods[i])]]),
-                    fill=color, alpha=.3)
-    }
-  }
   print(R_plot)
 }
 
@@ -134,7 +125,7 @@ plot_published_vs_calculated_95CI <- function(published, calculated, method_name
 ##############################
 
 plot_for_comparison <- function(estimates, comp_methods, include_CI=F, method, variation){
-  if (include_CI){
+  if (length(comp_methods)*3 == dim(estimates)[2]-1){
     names_ci <- rep(NA, length(comp_methods)*3)
     for (i in 1:length(comp_methods)){
       names_ci[(i-1)*3 + 1] <- paste0("R.", comp_methods[i])
@@ -154,13 +145,10 @@ plot_for_comparison <- function(estimates, comp_methods, include_CI=F, method, v
   estimates <- estimates[rowSums(is.na(estimates)) == 0,]
   latest_estimates <- estimates[estimates$date >= "2021-04-01",]
   
-  plot_multiple_estimates(estimates, methods = comp_methods, include_CI = include_CI)
-  plot_multiple_estimates(latest_estimates, methods = comp_methods, include_CI = include_CI)
+  plot_multiple_estimates(estimates, include_CI = include_CI)
+  plot_multiple_estimates(latest_estimates, include_CI = include_CI)
   
-  n <- dim(estimates)[2] - 1
-  if (include_CI){
-    n <- n/3
-  }
+  n <- length(comp_methods)
   matr <- matrix(rep(rep(0,n), n), ncol=n)
   corr <- matrix(rep(rep(0,n), n), ncol=n)
   colnames(matr) <- rownames(matr) <- colnames(corr) <- rownames(corr) <- comp_methods
@@ -168,7 +156,7 @@ plot_for_comparison <- function(estimates, comp_methods, include_CI=F, method, v
   for (method1 in comp_methods) {
     for (method2 in comp_methods){
       diff <- estimates[,paste0("R.", method1)] - estimates[,paste0("R.", method2)]
-      matr[method1, method2] <- mean(abs(diff))
+      matr[method1, method2] <- mean(as.vector(abs(diff)))
       corr[method1, method2] <- cor(estimates[,paste0("R.", method1)], estimates[,paste0("R.", method2)])
     }
   }
