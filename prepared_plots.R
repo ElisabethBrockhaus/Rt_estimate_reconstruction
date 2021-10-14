@@ -55,14 +55,17 @@ plot_multiple_estimates <- function(estimates, include_CI=F) {
   # plot
   R_plot <- ggplot(data = R_est, aes(x = date, y = R)) +
     geom_hline(aes(yintercept = 1)) +
-    geom_line(aes(group = model, color=model)) +
-    scale_colour_viridis_d(name="method") +
     labs(x = "date", y = "Rt estimate") +
     theme(legend.position = "top")
   
   if (include_CI){
-    R_plot <-  R_plot + geom_ribbon(aes(ymin = lower, ymax = upper, fill = model), alpha = .3) +
+    R_plot <-  R_plot +
+      geom_ribbon(aes(ymin = lower, ymax = upper, fill = model), alpha = .3) +
       scale_fill_viridis_d(name="method")
+  } else {
+    R_plot <-  R_plot +
+      geom_line(aes(group = model, color=model)) +
+      scale_colour_viridis_d(name="method")
   }
   
   print(R_plot)

@@ -59,7 +59,7 @@ source("Rt_estimate_reconstruction/ETH/delays_for_ETH_estimation.R")
 # use RKI data for all methods (not line list!)
 incid <- load_incidence_data(method = "RKI")
 incid <- incid[incid$date < "2021-10-01",]
-#incid <- read_csv("Rt_estimate_reconstruction/incidence_data/RKI_incid_21_10_09.csv")
+incid <- read_csv("Rt_estimate_reconstruction/incidence_data/RKI_incid_21_10_09.csv")
 
 #compare incidence time series used by RKI vs. rtlive
 rtlive_incid <- read_csv("Rt_estimate_reconstruction/rtlive/rtlive-global/data/rtlive_data.csv")
@@ -104,33 +104,44 @@ R_Ilmenau <- estimate_Ilmenau_R(incid,
                                 gt_type = params[method, "gtd"],
                                 gt_mean=params[method, "gt_mean"],
                                 gt_sd=params[method, "gt_sd"],
-                                delay = params[method, "delay"])[,c("date", "0.5")]
-names(R_Ilmenau)[2] <- "R_calc"
+                                delay = params[method, "delay"])
+names(R_Ilmenau) <- c("date", "R_calc", "lower", "upper")
 
 path <- "Rt_estimate_reconstruction/epiforecasts/estimates/"
 file <- max(list.files(path, pattern = paste0("R_calc_\\d{4}-\\d{2}-\\d{2}_", method, "Params.qs")))
 print(paste("Most recent epiforecasts estimates with matching parameters:", file))
 R_epiforecasts <- qread(paste0(path, file))
 R_epiforecasts <- R_epiforecasts[,c("date", "mean", "lower_95", "upper_95")]
-names(R_epiforecasts) <- c("date", "R_calc", "0.025", "0.975")
+names(R_epiforecasts) <- c("date", "R_calc", "lower", "upper")
 
 path <- "Rt_estimate_reconstruction/ArroyoMarioli/estimates/"
 file <- paste0("estimated_R_", method, ".csv")
 R_globalrt <- read_csv(paste0(path, file))
-R_globalrt <- R_globalrt[R_globalrt$`Country/Region` == "Germany", c("Date", "R")]
-names(R_globalrt) <- c("date", "R_calc")
+R_globalrt <- R_globalrt[R_globalrt$`Country/Region` == "Germany", c("Date", "R", "ci_95_l", "ci_95_u")]
+names(R_globalrt) <- c("date", "R_calc", "lower", "upper")
+
+R_globalrt_STAN <- read_csv(paste0(path, "estimated_R_STAN.csv"))
+R_globalrt_KF <- read_csv(paste0(path, "estimated_R_KF.csv"))
 
 # merge estimates and plot for comparison
-estimates <- R_raw_EpiEstim[,c("date", "R_calc")] %>%
-  full_join(R_ETH_EpiEstim[,c("date", "R_calc")], by = "date") %>% 
-  full_join(R_AGES_EpiEstim[,c("date", "R_calc")], by = "date") %>% 
-  full_join(R_Ilmenau[,c("date", "R_calc")], by = "date") %>% 
-  full_join(R_epiforecasts[,c("date", "R_calc")], by = "date") %>%
-  full_join(R_globalrt[,c("date", "R_calc")], by = "date")
+estimates_allPars <- R_raw_EpiEstim %>%
+  full_join(R_ETH_EpiEstim, by = "date") %>% 
+  full_join(R_AGES_EpiEstim, by = "date") %>% 
+  full_join(R_Ilmenau, by = "date") %>% 
+  full_join(R_epiforecasts, by = "date") %>%
+  full_join(R_globalrt, by = "date")
 
 comp_methods <- c("raw EpiEstim", "ETH EpiEstim", "AGES EpiEstim", "Ilmenau", "epiforecasts", "globalrt")
+plot_for_comparison(estimates_allPars, comp_methods, method = method, variation = "parameters")
 
-plot_for_comparison(estimates, comp_methods, method = method, variation = "parameters")
+estimates_allPars_CI <- as.data.frame(R_ETH_EpiEstim) %>% 
+  full_join(R_Ilmenau, by = "date") %>% 
+  full_join(R_epiforecasts, by = "date") %>%
+  full_join(R_globalrt, by = "date")
+
+comp_CI <- c("ETH EpiEstim", "Ilmenau", "epiforecasts", "globalrt")
+plot_for_comparison(estimates_allPars_CI, comp_CI, include_CI = T,
+                    method = method, variation = "parameters")
 
 
 
@@ -142,11 +153,11 @@ ETH_R_pub <- load_published_R_estimates("ETHZ_sliding_window")
 Ilmenau_R_pub <- load_published_R_estimates("ilmenau")
 SDSC_R_pub <- load_published_R_estimates("sdsc")
 globalrt_R_pub <- load_published_R_estimates("globalrt_7d")
-#epinow_R_pub <- load_published_R_estimates("epiforecasts")
+epinow_R_pub <- load_published_R_estimates("epiforecasts")
 rtlive_R_pub <- load_published_R_estimates("rtlive")
 
 # merge estimates and plot for comparison
-estimates <- RKI_R_pub[,c("date", "R_pub")] %>%
+estimates_pub <- RKI_R_pub[,c("date", "R_pub")] %>%
   full_join(ETH_R_pub[,c("date", "R_pub")], by = "date") %>% 
   full_join(Ilmenau_R_pub[,c("date", "R_pub")], by = "date") %>% 
   full_join(SDSC_R_pub[,c("date", "R_pub")], by = "date") %>% 
@@ -156,12 +167,19 @@ estimates <- RKI_R_pub[,c("date", "R_pub")] %>%
 org_methods <- c("RKI", "ETH", "Ilmenau", "SDSC", "globalrt",
                  #"epiforecasts",
                  "rtlive")
-names(estimates) <- c("date", org_methods)
+
+plot_for_comparison(estimates_pub, org_methods, method = "original", variation = "parameters")
+
+estimates_pub_ci <- ETH_R_pub %>% 
+  full_join(Ilmenau_R_pub, by = "date") %>% 
+  full_join(globalrt_R_pub, by = "date") %>%
+  full_join(epinow_R_pub, by = "date") #%>%
+#full_join(rtlive_R_pub, by = "date")
+org_methods <- c("ETH", "Ilmenau", "globalrt", "epiforecasts") #, "rtlive")
 
 source("Rt_estimate_reconstruction/prepared_plots.R")
-plot_for_comparison(estimates, comp_methods, method = "original", variation = "parameters")
-
-
+plot_for_comparison(estimates_pub_ci, org_methods, include_CI=T,
+                    method = "original", variation = "parameters")
 
 ######################
 # adjust delays only #
@@ -175,36 +193,44 @@ R_raw_EpiEstim_d <- estimate_RKI_R(incid, method = "EpiEstim",
 R_ETH_EpiEstim_d <- estimate_ETH_R(incid_for_ETH)
 
 R_AGES_EpiEstim_d <- estimate_AGES_R(incid,
-                                   delay = params[method, "delay"])
+                                     delay = params[method, "delay"])
 
 R_Ilmenau_d <- estimate_Ilmenau_R(incid,
-                                delay = params[method, "delay"])[,c("date", "0.5")]
-names(R_Ilmenau_d)[2] <- "R_calc"
+                                delay = params[method, "delay"])
+names(R_Ilmenau_d) <- c("date", "R_calc", "lower", "upper")
 
 path <- "Rt_estimate_reconstruction/epiforecasts/estimates/"
 file <- max(list.files(path, pattern = paste0("R_calc_\\d{4}-\\d{2}-\\d{2}_", method, "_delays.qs")))
 print(paste("Most recent epiforecasts estimates with matching parameters:", file))
 R_epiforecasts_d <- qread(paste0(path, file))
 R_epiforecasts_d <- R_epiforecasts_d[,c("date", "mean", "lower_95", "upper_95")]
-names(R_epiforecasts_d) <- c("date", "R_calc", "0.025", "0.975")
+names(R_epiforecasts_d) <- c("date", "R_calc", "lower", "upper")
 
 path <- "Rt_estimate_reconstruction/ArroyoMarioli/estimates/"
 file <- paste0("estimated_R_", method, "_delays.csv")
 R_globalrt_d <- read_csv(paste0(path, file))
-R_globalrt_d <- R_globalrt_d[R_globalrt_d$`Country/Region` == "Germany", c("Date", "R")]
-names(R_globalrt_d) <- c("date", "R_calc")
+R_globalrt_d <- R_globalrt_d[R_globalrt_d$`Country/Region` == "Germany", c("Date", "R", "ci_95_l", "ci_95_u")]
+names(R_globalrt_d) <- c("date", "R_calc", "lower", "upper")
 
 # merge estimates and plot for comparison
-estimates <- R_raw_EpiEstim_d[,c("date", "R_calc")] %>%
-  full_join(R_ETH_EpiEstim_d[,c("date", "R_calc")], by = "date") %>% 
-  full_join(R_AGES_EpiEstim_d[,c("date", "R_calc")], by = "date") %>% 
-  full_join(R_Ilmenau_d[,c("date", "R_calc")], by = "date") %>% 
-  full_join(R_epiforecasts_d[,c("date", "R_calc")], by = "date") %>%
-  full_join(R_globalrt_d[,c("date", "R_calc")], by = "date")
+estimates_delays <- R_raw_EpiEstim_d %>%
+  full_join(R_ETH_EpiEstim_d, by = "date") %>% 
+  full_join(R_AGES_EpiEstim_d, by = "date") %>% 
+  full_join(R_Ilmenau_d, by = "date") %>% 
+  full_join(R_epiforecasts_d, by = "date") %>%
+  full_join(R_globalrt_d, by = "date")
 
 comp_methods <- c("raw EpiEstim", "ETH EpiEstim", "AGES EpiEstim", "Ilmenau", "epiforecasts", "globalrt")
+plot_for_comparison(estimates_delays, comp_methods, method = method, variation = "delays")
 
-plot_for_comparison(estimates, comp_methods, method = method, variation = "delays")
+estimates_delays_CI <- as.data.frame(R_ETH_EpiEstim_d) %>% 
+  full_join(R_Ilmenau_d, by = "date") %>% 
+  full_join(R_epiforecasts_d, by = "date") %>%
+  full_join(R_globalrt_d, by = "date")
+
+comp_CI <- c("ETH EpiEstim", "Ilmenau", "epiforecasts", "globalrt")
+plot_for_comparison(estimates_delays_CI, comp_CI, include_CI = T,
+                    method = method, variation = "delays")
 
 
 
@@ -239,89 +265,43 @@ R_Ilmenau_gt <- estimate_Ilmenau_R(incid,
                                    gt_type = params[method, "gtd"],
                                    gt_mean=params[method, "gt_mean"],
                                    gt_sd=params[method, "gt_sd"],
-                                   delay = params["Ilmenau", "delay"])[,c("date", "0.5")]
-names(R_Ilmenau_gt)[2] <- "R_calc"
+                                   delay = params["Ilmenau", "delay"])
+names(R_Ilmenau_gt) <- c("date", "R_calc", "lower", "upper")
 
 path <- "Rt_estimate_reconstruction/epiforecasts/estimates/"
 file <- max(list.files(path, pattern = paste0("R_calc_\\d{4}-\\d{2}-\\d{2}_", method, "_GTD.qs")))
 print(paste("Most recent epiforecasts estimates with matching parameters:", file))
 R_epiforecasts_gt <- qread(paste0(path, file))
 R_epiforecasts_gt <- R_epiforecasts_gt[,c("date", "mean", "lower_95", "upper_95")]
-names(R_epiforecasts_gt) <- c("date", "R_calc", "0.025", "0.975")
+names(R_epiforecasts_gt) <- c("date", "R_calc", "lower", "upper")
 
 path <- "Rt_estimate_reconstruction/ArroyoMarioli/estimates/"
 file <- paste0("estimated_R_", method, "_GTD.csv")
 R_globalrt_gt <- read_csv(paste0(path, file))
-R_globalrt_gt <- R_globalrt_gt[R_globalrt_gt$`Country/Region` == "Germany", c("Date", "R")]
-names(R_globalrt_gt) <- c("date", "R_calc")
+R_globalrt_gt <- R_globalrt_gt[R_globalrt_gt$`Country/Region` == "Germany", c("Date", "R", "ci_95_l", "ci_95_u")]
+names(R_globalrt_gt) <- c("date", "R_calc", "lower", "upper")
 
 # merge estimates and plot for comparison
-estimates <- R_raw_EpiEstim_gt[,c("date", "R_calc")] %>%
-  full_join(R_ETH_EpiEstim_gt[,c("date", "R_calc")], by = "date") %>% 
-  full_join(R_AGES_EpiEstim_gt[,c("date", "R_calc")], by = "date") %>% 
-  full_join(R_Ilmenau_gt[,c("date", "R_calc")], by = "date") %>% 
-  #full_join(R_epiforecasts_gt[,c("date", "R_calc")], by = "date") %>%
-  full_join(R_globalrt_gt[,c("date", "R_calc")], by = "date")
+estimates_GTD <- R_raw_EpiEstim_gt %>%
+  full_join(R_ETH_EpiEstim_gt, by = "date") %>% 
+  full_join(R_AGES_EpiEstim_gt, by = "date") %>% 
+  full_join(R_Ilmenau_gt, by = "date") %>% 
+  full_join(R_epiforecasts_gt, by = "date") %>%
+  full_join(R_globalrt_gt, by = "date")
 
-comp_methods <- c("raw EpiEstim", "ETH EpiEstim", "AGES EpiEstim", "Ilmenau",
-                  #"epiforecasts",
-                  "globalrt")
+comp_methods <- c("raw EpiEstim", "ETH EpiEstim", "AGES EpiEstim", "Ilmenau", "epiforecasts", "globalrt")
+plot_for_comparison(estimates_GTD, comp_methods, method = method, variation = "generation time")
 
-plot_for_comparison(estimates, comp_methods, method = method, variation = "generation time")
+estimates_GTD_CI <- as.data.frame(R_ETH_EpiEstim_gt) %>% 
+  full_join(R_Ilmenau_gt, by = "date") %>% 
+  full_join(R_epiforecasts_gt, by = "date") %>%
+  full_join(R_globalrt_gt, by = "date")
+
+comp_CI <- c("ETH EpiEstim", "Ilmenau", "epiforecasts", "globalrt")
+plot_for_comparison(estimates_GTD_CI, comp_CI, include_CI = T,
+                    method = method, variation = "generation time")
 
 
-
-
-
-###########################################
-# compare estimates of Cori-based methods #
-###########################################
-
-# estimations
-RKI_R <- estimate_RKI_R(simple_incid,
-                        window=params[method, "window"],
-                        gt_type = params[method, "gtd"],
-                        gt_mean=params[method, "gt_mean"],
-                        gt_sd=params[method, "gt_sd"],
-                        shift=1) #params["RKI", "shift"])
-
-ETH_R <- estimate_ETH_R(incid,
-                        window=params[method, "window"],
-                        gt_type = params[method, "gtd"],
-                        gt_mean=params[method, "gt_mean"],
-                        gt_sd=params[method, "gt_sd"],
-                        shift=params["ETH", "shift"])
-
-Ilmenau_R <- estimate_Ilmenau_R(simple_incid,
-                                window=params[method, "window"],
-                                gt_type = params[method, "gtd"],
-                                gt_mean=params[method, "gt_mean"],
-                                gt_sd=params[method, "gt_sd"],
-                                shift=params["Ilmenau", "shift"])
-
-AGES_R <- estimate_AGES_R(simple_incid,
-                          window=params[method, "window"],
-                          gt_type = params[method, "gtd"],
-                          gt_mean=params[method, "gt_mean"],
-                          gt_sd=params[method, "gt_sd"],
-                          shift=params["AGES", "shift"])
-
-SDSC_R <- estimate_SDSC_R(simple_incid,
-                          window=params[method, "window"],
-                          gt_type = params[method, "gtd"],
-                          gt_mean=params[method, "gt_mean"],
-                          gt_sd=params[method, "gt_sd"],
-                          shift=params["SDSC", "shift"])
-
-# merge estimates and plot for comparison
-estimates <- RKI_R %>%
-  full_join(ETH_R, by = "date") %>% 
-  full_join(Ilmenau_R, by = "date") %>%
-  full_join(AGES_R, by = "date") %>%
-  full_join(SDSC_R, by = "date")
-names(estimates) <- c("date", "RKI", "ETH", "Ilmenau", "AGES", "SDSC")
-
-plot_multiple_estimates(estimates)
 
 
 
