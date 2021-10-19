@@ -156,7 +156,8 @@ for variation in variations:
         # Load data #
         #############
 
-        df = pd.read_csv("{}/dataset{}.csv".format(input_folder, "_RKI"))
+        # df = pd.read_csv("{}/dataset{}.csv".format(input_folder, "_RKI"))
+        df = pd.read_csv("{}/dataset{}.csv".format(input_folder, "_rtlive"))
         df["Date"] = pd.to_datetime(df["Date"])
         df["Date"] = df["Date"] - pd.DateOffset(
             days=parameters.loc["_globalrt" if variation == "_GTD" else method, "delay"]

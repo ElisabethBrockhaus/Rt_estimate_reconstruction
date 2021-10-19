@@ -45,7 +45,8 @@ def construct_dataset(file_name, var_name):
 ##############
 
 # data_sources = ["", "_ETH", "_ilmenau", "_RKI", "_sdsc", "_epiforecasts"]
-data_sources = ["_RKI"]
+# data_sources = ["_RKI"]
+data_sources = ["_rtlive"]
 # input_folder = "./relevant_scripts_adjusted/"
 input_folder = "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/"
 output_folder = input_folder

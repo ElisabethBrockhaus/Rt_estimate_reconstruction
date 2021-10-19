@@ -24,6 +24,10 @@ load_data_for_globalrt <- function(method, countries=c("Germany")){
       names(country_data)[2] <- country
       joined_data <- if (!exists("joined_data")) country_data else full_join(joined_data, country_data, by = "date")
     }
+  } else if ((method == "rtlive") & (countries == c("Germany"))) {
+    country_data <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid.csv")
+    names(country_data) <- c("date", "Germany")
+    joined_data <- if (!exists("joined_data")) country_data else full_join(joined_data, country_data, by = "date")
   } else {
     for (country in countries){
       country_data <- load_incidence_data(method = method, location = locations[country])
@@ -62,6 +66,9 @@ load_data_for_globalrt <- function(method, countries=c("Germany")){
 #data_rki <- load_data_for_globalrt(method = "RKI", countries=c("Germany"))
 write_csv(load_data_for_globalrt(method = "RKI", countries=c("Germany")),
           "Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/time_series_covid19_confirmed_global_RKI.csv")
+
+write_csv(load_data_for_globalrt(method = "rtlive", countries=c("Germany")),
+          "Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/time_series_covid19_confirmed_global_rtlive.csv")
 
 
 #####################
