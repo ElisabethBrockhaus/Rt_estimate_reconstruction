@@ -48,7 +48,7 @@ plot(estimates)
 
 # extract R estimates
 epiforecasts_R_calc <- estimates$estimates$summarised[variable=="R", c("date", "type", "mean")]
-qsave(epiforecasts_R_calc, paste0("R_calc_", Sys.Date(), ".qs"))
+qsave(epiforecasts_R_calc, paste0("R_calc_", date_of_data, ".qs"))
 
 # compare published and calculated in plot
 plot(epiforecasts_R_calc$date, epiforecasts_R_calc$mean, type="l")
@@ -58,6 +58,7 @@ plot(epiforecasts_R_calc$date,
      epiforecasts_R_calc$mean - estimates_published[estimates_published$date %in% epiforecasts_R_calc$date,]$mean,
      type="l")
 abline(h=0, col="grey", lty=2)
+
 
 
 ###########################
@@ -95,7 +96,7 @@ calculacte_and_save_estimates <- function(reported_cases,
   # for originally constant delays correct for different mean used in epiforecasts estimation
   result$date <- result$date + params[method, "delay_shift"]
   
-  qsave(result, paste0("R_calc_", Sys.Date(), "_", method, variation, ".qs"))
+  qsave(result, paste0("R_calc_", date_of_data, "_", method, variation, ".qs"))
   
   plot(result$date, result$mean, type="l", main=method, xlab="date", ylab="Rt estimate")
   
@@ -109,7 +110,7 @@ calculacte_and_save_estimates <- function(reported_cases,
       result$date <- result$date + params[method, "delay_shift"]
       
       # save result
-      qsave(result, paste0("R_calc_", Sys.Date(), "_", method, variation, ".qs"))
+      qsave(result, paste0("R_calc_", date_of_data, "_", method, variation, ".qs"))
       
       # reverse previous shift for next method
       result$date <- result$date - params[method, "delay_shift"]
@@ -118,8 +119,8 @@ calculacte_and_save_estimates <- function(reported_cases,
   
   # save result under delays/gtd only names if inherent parameters are used
   if (method == "epiforecasts"){
-    qsave(result, paste0("R_calc_", Sys.Date(), "_", method, "_delays", ".qs"))
-    qsave(result, paste0("R_calc_", Sys.Date(), "_", method, "_GTD", ".qs"))
+    qsave(result, paste0("R_calc_", date_of_data, "_", method, "_delays", ".qs"))
+    qsave(result, paste0("R_calc_", date_of_data, "_", method, "_GTD", ".qs"))
   }
 }
 
@@ -130,14 +131,22 @@ calculacte_and_save_estimates <- function(reported_cases,
 ############################
 
 # load incidence data from RKI
-repo_incid <- "https://raw.githubusercontent.com/robert-koch-institut/SARS-CoV-2-Nowcasting_und_-R-Schaetzung/main/Nowcast_R_aktuell.csv"
-data <- read_csv(repo_incid)
-names(data) <- c("Datum", "NeuErkr", "lb_NeuErkr", "ub_NeuErkr",
-                 "NeuErkr_ma4", "lb_NeuErkr_ma4", "ub_NeuErkr_ma4",
-                 "R_7Tage", "lb_R_7Tage", "ub_R_7Tage")
-incid <- data.frame(date=data$Datum, confirm=data$NeuErkr)
+#repo_incid <- "https://raw.githubusercontent.com/robert-koch-institut/SARS-CoV-2-Nowcasting_und_-R-Schaetzung/main/Nowcast_R_aktuell.csv"
+#data <- read_csv(repo_incid)
+#names(data) <- c("Datum", "NeuErkr", "lb_NeuErkr", "ub_NeuErkr",
+#                 "NeuErkr_ma4", "lb_NeuErkr_ma4", "ub_NeuErkr_ma4",
+#                 "R_7Tage", "lb_R_7Tage", "ub_R_7Tage")
+#incid <- data.frame(date=data$Datum, confirm=data$NeuErkr)
+#incid <- incid[incid$date < "2021-10-01",]
+#rm(data)
+
+# load incidence data as used by rtlive (RKI line list aggregated)
+incid <- read_csv("rtlive_incid.csv")
+names(incid) <- c("date", "confirm")
 incid <- incid[incid$date < "2021-10-01",]
-rm(data)
+
+# set date for file names to the date, when the data was loaded
+date_of_data <- "2021-10-19"
 
 # parameter combinations used in papers
 o <- 0.1 # replacement for zeros that would lead to mathematical issues
@@ -159,7 +168,7 @@ methods <- c("ETH", "RKI", "Ilmenau", "SDSC", "Zi", "AGES", "epiforecasts", "rtl
 rownames(params) <- methods
 
 # estimation with adjusted delays and generation time
-for (method in c("globalrt", "ETH", "epiforecasts", "rtlive", "SDSC", "Ilmenau", "Zi", "AGES")){
+for (method in c("globalrt")){ #, "ETH", "epiforecasts", "rtlive", "SDSC", "Ilmenau", "Zi", "AGES")){
   
   print(paste0("Start with estimation using parameters from ", method))
   
@@ -199,7 +208,7 @@ for (method in c("globalrt", "ETH", "epiforecasts", "rtlive", "SDSC", "Ilmenau",
 # estimation with adjusted delays only, using epiforecast generation time distribution
 generation_time <- readRDS("distributions/generation_time.rds")
 
-for (method in c("globalrt", "ETH", "rtlive")){
+for (method in c("globalrt")){ #, "ETH", "rtlive")){
   
   print(paste0("Start with estimation using delays from ", method))
   
@@ -234,7 +243,7 @@ for (method in c("globalrt", "ETH", "rtlive")){
 incubation_period <- readRDS("distributions/incubation_period.rds")
 reporting_delay <- readRDS("distributions/onset_to_admission_delay.rds")
 
-for (method in c("globalrt", "ETH", "rtlive", "SDSC", "Ilmenau", "Zi", "AGES")){
+for (method in c("globalrt")){ #, "ETH", "rtlive", "SDSC", "Ilmenau", "Zi", "AGES")){
   
   print(paste0("Start with estimation using generation time from ", method))
   
