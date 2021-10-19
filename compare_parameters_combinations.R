@@ -66,9 +66,16 @@ rtlive_incid <- read_csv("Rt_estimate_reconstruction/rtlive/rtlive-global/data/r
 rtlive_region_incid <- rtlive_incid[rtlive_incid$region!="all",]
 rtlive_incid_agg <- aggregate(rtlive_region_incid$new_cases, by = list(rtlive_region_incid$date), FUN = sum)
 names(rtlive_incid_agg) <- c("date", "I")
+rtlive_incid <- rtlive_incid[rtlive_incid$region=="all", c("date", "new_cases")]
+names(rtlive_incid) <- c("date", "I")
 plot(incid, type="l")
 lines(rtlive_incid_agg, col="red")
 lines(rtlive_incid[rtlive_incid$region=="all", c("date", "new_cases")], col="blue")
+
+##########
+# use RKI line-list data #
+
+incid <- rtlive_incid
 
 # save incidence data for epiforecast estimation
 write_csv(incid, "Rt_estimate_reconstruction/incidence_data/RKI_incid.csv")
@@ -88,6 +95,51 @@ R_raw_EpiEstim <- estimate_RKI_R(incid, method = "EpiEstim",
                                  gt_mean = params[method, "gt_mean"],
                                  gt_sd = params[method, "gt_sd"],
                                  delay = params[method, "delay"])
+
+incid_ma7 <- incid
+incid_ma7$I <- as.numeric(stats::filter(incid, rep(1/7, 7), method = "convolution", sides = 1)[,2])
+
+R_raw_EpiEstim_ma7 <- estimate_RKI_R(incid_ma7[7:583,], method = "EpiEstim",
+                                     window = 1,
+                                     gt_type = params[method, "gtd"],
+                                     gt_mean = params[method, "gt_mean"],
+                                     gt_sd = params[method, "gt_sd"],
+                                     delay = params[method, "delay"])
+
+plot(R_raw_EpiEstim$date, R_raw_EpiEstim$R_calc, type="l")
+lines(R_raw_EpiEstim_ma7$date, R_raw_EpiEstim_ma7$R_calc, col="red")
+
+R_ma7 <- estimate_RKI_R(incid, method = "EpiEstim",
+                        window = 1,
+                        gt_type = params[method, "gtd"],
+                        gt_mean = params[method, "gt_mean"],
+                        gt_sd = params[method, "gt_sd"],
+                        delay = params[method, "delay"])[,c("date", "R_calc")]
+R_ma7$R_calc <- as.numeric(stats::filter(R_ma7, rep(1/7, 7), method = "convolution", sides = 1)[,2])
+lines(R_ma7$date, R_ma7$R_calc, col="blue")
+
+
+lines(R_raw_EpiEstim$date, R_raw_EpiEstim$lower, alpha=.5)
+lines(R_raw_EpiEstim_ma7$date, R_raw_EpiEstim_ma7$lower, col="red")
+
+x <- rpois(100, 10)
+plot(x)
+# apply a kernel smoothing:
+smooth_kernel <- function(x, kernel){
+  y <- rep(NA, length(x))
+  for(i in length(kernel):length(x)){
+    y[i] <- sum(kernel*x[i - 0:(length(kernel) - 1)])
+  }
+  y
+}
+# kernel smoothing is commutative
+y1 <- smooth_kernel(x, kernel = c(0.4, 0.3, 0.2, 0.1))
+y2 <- smooth_kernel(x, kernel = rep(1/7, 7))
+z1 <- smooth_kernel(y2, kernel = c(0.4, 0.3, 0.2, 0.1))
+z2 <- smooth_kernel(y1, kernel = rep(1/7, 7))
+plot(z1, type = "l")
+lines(z2, type = "l", col = "red", lty = 2)
+plot(z1 - z2)
 
 R_ETH_EpiEstim <- estimate_ETH_R(incid_for_ETH,
                                  gt_type = params[method, "gtd"],
@@ -128,18 +180,20 @@ estimates_allPars <- R_raw_EpiEstim %>%
   full_join(R_ETH_EpiEstim, by = "date") %>% 
   full_join(R_AGES_EpiEstim, by = "date") %>% 
   full_join(R_Ilmenau, by = "date") %>% 
-  full_join(R_epiforecasts, by = "date") %>%
+  #full_join(R_epiforecasts, by = "date") %>%
   full_join(R_globalrt, by = "date")
 
-comp_methods <- c("raw EpiEstim", "ETH EpiEstim", "AGES EpiEstim", "Ilmenau", "epiforecasts", "globalrt")
+comp_methods <- c("raw EpiEstim", "ETH EpiEstim", "AGES EpiEstim", "Ilmenau", #"epiforecasts",
+                  "globalrt")
 plot_for_comparison(estimates_allPars, comp_methods, method = method, variation = "parameters")
 
 estimates_allPars_CI <- as.data.frame(R_ETH_EpiEstim) %>% 
   full_join(R_Ilmenau, by = "date") %>% 
-  full_join(R_epiforecasts, by = "date") %>%
+  #full_join(R_epiforecasts, by = "date") %>%
   full_join(R_globalrt, by = "date")
 
-comp_CI <- c("ETH EpiEstim", "Ilmenau", "epiforecasts", "globalrt")
+comp_CI <- c("ETH EpiEstim", "Ilmenau", #"epiforecasts",
+             "globalrt")
 plot_for_comparison(estimates_allPars_CI, comp_CI, include_CI = T,
                     method = method, variation = "parameters")
 
