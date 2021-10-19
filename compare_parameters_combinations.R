@@ -5,16 +5,6 @@ setwd("..")
 # and for SDSC method "covid-19-forecast" (https://renkulab.io/gitlab/covid-19/covid-19-forecast/-/tree/master)
 getwd()
 
-# look at uncertainty of incidence time series
-data <- read_csv("https://raw.githubusercontent.com/robert-koch-institut/SARS-CoV-2-Nowcasting_und_-R-Schaetzung/main/Nowcast_R_aktuell.csv")
-plot(data$Datum, data$PS_COVID_Faelle, type="l", xlab="date", ylab="incidence",
-     xlim = c(data$Datum[551], data$Datum[583]), ylim = c(5000, 15000))
-axis(1, at = seq(data$Datum[551], data$Datum[583], by="weeks"),
-     labels = seq(data$Datum[551], data$Datum[583], by="weeks"))
-lines(data$Datum, data$UG_PI_COVID_Faelle, col = "blue")
-lines(data$Datum, data$OG_PI_COVID_Faelle, col = "blue")
-abline(v = as.Date("2021-10-01"), col = "red")
-
 
 ###########################
 # run globalrt estimation #
@@ -56,29 +46,25 @@ rownames(params) <- methods
 
 source("Rt_estimate_reconstruction/ETH/delays_for_ETH_estimation.R")
 
-# use RKI data for all methods (not line list!)
-incid <- load_incidence_data(method = "RKI")
-incid <- incid[incid$date < "2021-10-01",]
-incid <- read_csv("Rt_estimate_reconstruction/incidence_data/RKI_incid_21_10_09.csv")
+# use RKI Nowcast data for all methods
+RKI_incid <- load_incidence_data(method = "RKI")
+RKI_incid <- RKI_incid[RKI_incid$date < "2021-10-01",]
 
-#compare incidence time series used by RKI vs. rtlive
-rtlive_incid <- read_csv("Rt_estimate_reconstruction/rtlive/rtlive-global/data/rtlive_data.csv")
-rtlive_region_incid <- rtlive_incid[rtlive_incid$region!="all",]
-rtlive_incid_agg <- aggregate(rtlive_region_incid$new_cases, by = list(rtlive_region_incid$date), FUN = sum)
-names(rtlive_incid_agg) <- c("date", "I")
+# use incidence data used by rtlive (sourced from RKI line-list data)
+rtlive_incid <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_data_21_10_19.csv")
 rtlive_incid <- rtlive_incid[rtlive_incid$region=="all", c("date", "new_cases")]
 names(rtlive_incid) <- c("date", "I")
-plot(incid, type="l")
-lines(rtlive_incid_agg, col="red")
-lines(rtlive_incid[rtlive_incid$region=="all", c("date", "new_cases")], col="blue")
 
-##########
-# use RKI line-list data #
-
-incid <- rtlive_incid
+# compare incidence time series used by RKI vs. rtlive
+plot(RKI_incid, type="l")
+lines(rtlive_incid, col="blue")
 
 # save incidence data for epiforecast estimation
-write_csv(incid, "Rt_estimate_reconstruction/incidence_data/RKI_incid.csv")
+write_csv(RKI_incid, "Rt_estimate_reconstruction/incidence_data/RKI_incid.csv")
+write_csv(rtlive_incid, "Rt_estimate_reconstruction/incidence_data/rtlive_incid.csv")
+
+# choose data for comparison
+incid <- rtlive_incid
 
 # choose method for comparison
 method <- "globalrt"
@@ -172,8 +158,8 @@ R_globalrt <- read_csv(paste0(path, file))
 R_globalrt <- R_globalrt[R_globalrt$`Country/Region` == "Germany", c("Date", "R", "ci_95_l", "ci_95_u")]
 names(R_globalrt) <- c("date", "R_calc", "lower", "upper")
 
-R_globalrt_STAN <- read_csv(paste0(path, "estimated_R_STAN.csv"))
-R_globalrt_KF <- read_csv(paste0(path, "estimated_R_KF.csv"))
+#R_globalrt_STAN <- read_csv(paste0(path, "estimated_R_STAN.csv"))
+#R_globalrt_KF <- read_csv(paste0(path, "estimated_R_KF.csv"))
 
 # merge estimates and plot for comparison
 estimates_allPars <- R_raw_EpiEstim %>%
