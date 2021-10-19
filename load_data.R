@@ -332,7 +332,12 @@ ETH_load_countryData <- function(country="Germany", region="DEU", data_source = 
   } else if (data_source == "_simpleRKI") {
     # load data used in AnDerHeiden
     if (region == "DEU") {
-      RKI_data <- load_RKI_data()
+      if (TRUE){
+        RKI_data <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid.csv")
+        print("Loading data used by rtlive")
+      } else {
+        RKI_data <- load_RKI_data()
+      }
       RKI_data <- RKI_data[RKI_data$date < "2021-10-01",]
     } else {
       print("RKI incidence data only available for Germany, pass location = 'DE'.")
@@ -343,7 +348,7 @@ ETH_load_countryData <- function(country="Germany", region="DEU", data_source = 
                                        RKI_data$date),
                               region = region,
                               countryIso3 = region,
-                              source = "RKI(non-linelist)",
+                              source = "RKI(rtlive)",
                               data_type = as.factor("Confirmed cases"),
                               date_type = "report",
                               value = c(rep(0, 60), RKI_data$I),
