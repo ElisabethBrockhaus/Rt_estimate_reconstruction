@@ -5,6 +5,8 @@ library(viridis)
 library(pheatmap)
 library(tidyverse)
 
+# set system locale time to English for correct labelling of x axes
+Sys.setlocale("LC_TIME", "English")
 
 plot_published_vs_calculated <- function(published, calculated, method_name, diff_bounds=c(-0.1, 0.1)){
   
@@ -41,7 +43,7 @@ plot_published_vs_calculated <- function(published, calculated, method_name, dif
 
 
 
-plot_multiple_estimates <- function(estimates, include_CI=F) {
+plot_multiple_estimates <- function(estimates, include_CI=F, comparing_parameters=F) {
   
   # reshape data
   R_est  <- estimates %>%
@@ -49,26 +51,43 @@ plot_multiple_estimates <- function(estimates, include_CI=F) {
     separate(variable,
              into = c("type", "model"),
              sep = "[.]",
+             extra = "merge",
              remove = TRUE) %>%
     spread(type, value)
+
+  if (comparing_parameters) {
+    R_est <- R_est %>%
+      mutate_at(vars("model"), as.numeric) %>%
+      arrange(date, model) %>%
+      mutate_at(vars("model"), as.factor)
+  }
   
   # plot
   R_plot <- ggplot(data = R_est, aes(x = date, y = R)) +
     geom_hline(aes(yintercept = 1)) +
-    labs(x = "date", y = "Rt estimate") +
-    theme(legend.position = "top")
+    labs(x = NULL, y = "Rt estimate") +
+    scale_x_date(limits = as.Date(c(min(estimates$date),max(estimates$date))),
+                 date_labels = "%B %d", expand = c(0,1)) +
+    theme_minimal() +
+    theme(
+      axis.line = element_line(),
+      axis.line.y.right = element_line(),
+      axis.line.x.top = element_line(),
+      legend.position = "bottom",
+      panel.background = element_rect(fill = "transparent")
+      )
   
   if (include_CI){
     R_plot <-  R_plot +
       geom_ribbon(aes(ymin = lower, ymax = upper, fill = model), alpha = .3) +
-      scale_fill_viridis_d(name="method")
+      scale_fill_viridis_d(end = 0.9)
   } else {
     R_plot <-  R_plot +
       geom_line(aes(group = model, color=model)) +
-      scale_colour_viridis_d(name="method")
+      scale_colour_viridis_d(end = 0.9)
   }
   
-  print(R_plot)
+  return(R_plot)
 }
 
 
@@ -127,7 +146,7 @@ plot_published_vs_calculated_95CI <- function(published, calculated, method_name
 # plots for final comparison #
 ##############################
 
-plot_for_comparison <- function(estimates, comp_methods, include_CI=F, method, variation){
+plot_for_comparison <- function(estimates, comp_methods, include_CI=F, method, variation, comparing_parameters=F){
   if (length(comp_methods)*3 == dim(estimates)[2]-1){
     names_ci <- rep(NA, length(comp_methods)*3)
     for (i in 1:length(comp_methods)){
@@ -148,35 +167,42 @@ plot_for_comparison <- function(estimates, comp_methods, include_CI=F, method, v
   estimates <- estimates[rowSums(is.na(estimates)) == 0,]
   latest_estimates <- estimates[estimates$date >= "2021-04-01",]
   
-  plot_multiple_estimates(estimates, include_CI = include_CI)
-  plot_multiple_estimates(latest_estimates, include_CI = include_CI)
+  R_plot <- plot_multiple_estimates(estimates, include_CI = include_CI, comparing_parameters = comparing_parameters)
+  R_plot_latest <- plot_multiple_estimates(latest_estimates, include_CI = include_CI, comparing_parameters = comparing_parameters)
   
-  n <- length(comp_methods)
-  matr <- matrix(rep(rep(0,n), n), ncol=n)
-  corr <- matrix(rep(rep(0,n), n), ncol=n)
-  colnames(matr) <- rownames(matr) <- colnames(corr) <- rownames(corr) <- comp_methods
+  ggsave(R_plot, filename = "estimates_plot.png",  bg = "transparent")
+  print(R_plot)
+  ggsave(R_plot_latest, filename = "latest_estimates_plot.png",  bg = "transparent")
+  print(R_plot_latest) 
   
-  for (method1 in comp_methods) {
-    for (method2 in comp_methods){
-      diff <- estimates[,paste0("R.", method1)] - estimates[,paste0("R.", method2)]
-      matr[method1, method2] <- mean(as.vector(abs(diff)))
-      corr[method1, method2] <- cor(estimates[,paste0("R.", method1)], estimates[,paste0("R.", method2)])
+  if(!comparing_parameters) {
+    n <- length(comp_methods)
+    matr <- matrix(rep(rep(0,n), n), ncol=n)
+    corr <- matrix(rep(rep(0,n), n), ncol=n)
+    colnames(matr) <- rownames(matr) <- colnames(corr) <- rownames(corr) <- comp_methods
+    
+    for (method1 in comp_methods) {
+      for (method2 in comp_methods){
+        diff <- estimates[,paste0("R.", method1)] - estimates[,paste0("R.", method2)]
+        matr[method1, method2] <- mean(as.vector(abs(diff)))
+        corr[method1, method2] <- cor(estimates[,paste0("R.", method1)], estimates[,paste0("R.", method2)])
+      }
     }
-  }
-
-  pheatmap(matr, color = viridis(100), breaks = seq(0,0.35,0.35/100),
-           border_color = NA, display_numbers = TRUE,
-           fontsize = 12, fontsize_number=20, number_color = "white",
-           angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
-           main = paste("Mean absolute differences between estimates over",
-                        max(estimates$date) - min(estimates$date),
-                        "days using", method, variation))
   
-  pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0.5,1,0.5/100),
-           border_color = NA, display_numbers = TRUE,
-           fontsize = 12, fontsize_number=20, number_color = "white",
-           angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
-           main = paste("Correlations between estimates over",
-                        max(estimates$date) - min(estimates$date),
-                        "days using", method, variation))
+    pheatmap(matr, color = viridis(100), breaks = seq(0,0.35,0.35/100),
+             border_color = NA, display_numbers = TRUE,
+             fontsize = 12, fontsize_number=20, number_color = "white",
+             angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
+             main = paste("Mean absolute differences between estimates over",
+                          max(estimates$date) - min(estimates$date),
+                          "days using", method, variation))
+    
+    pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0.5,1,0.5/100),
+             border_color = NA, display_numbers = TRUE,
+             fontsize = 12, fontsize_number=20, number_color = "white",
+             angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
+             main = paste("Correlations between estimates over",
+                          max(estimates$date) - min(estimates$date),
+                          "days using", method, variation))
+  }
 }
