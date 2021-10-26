@@ -11,30 +11,47 @@ library(covidregionaldata)
 ##################################################
 # load estimates from git (reproductive_numbers) #
 ##################################################
-load_published_R_estimates <- function(source, start=as.Date("2019-12-28"), end=Sys.Date(), location="DE"){
+load_published_R_estimates <- function(source,
+                                       start=as.Date("2019-12-28"), end=Sys.Date(),
+                                       location="DE"){
   
   # define path where Rt estimates are located
   path <- paste0("reproductive_numbers/data-processed/", source, "/")
   
-  tryCatch({
-    # find most recent estimates
-    file <- max(list.files(path, pattern = paste0("\\d{4}-\\d{2}-\\d{2}-", source, ".csv")))
-    print(paste("Loading estimates from file", file))
+  if (source == "epiforecasts"){
+    file <- "2021-05-31-epiforecasts.csv"
     
     # load estimates
+    print(paste("Loading estimates from file", file))
     R_est <- read_csv(paste0(path, file), col_types = list(date = col_date()))
     
-  }, error=function(e) {
-    print("Unmatched source, choose from:")
-    # TODO resolve: directories sometimes have different names than files
-    print(list.dirs("reproductive_numbers/data-processed/", full.names = F))
-  })
+  } else {
+    tryCatch({
+      # find most recent estimates
+      file <- max(list.files(path, pattern = paste0("\\d{4}-\\d{2}-\\d{2}-|_", source, ".csv")))
   
-  R_est <- R_est[R_est$location==location, c("date", "quantile", "type", "value")]
-  R_est[R_est$type == "point", "quantile"] <- 0.5
-  R_est <- pivot_wider(R_est[,c("date", "quantile", "value")], names_from = c(quantile))
-  R_est <- R_est[, c("date", "0.5", "0.025", "0.975")]
-  names(R_est) <- c("date", "R_pub", "lower", "upper")
+      # load estimates
+      print(paste("Loading estimates from file", file))
+      R_est <- read_csv(paste0(path, file), col_types = list(date = col_date()))
+    }, error=function(e) {
+      print("Unmatched source, choose from:")
+      # TODO resolve: directories sometimes have different names than files
+      print(list.dirs("reproductive_numbers/data-processed/", full.names = F))
+    })
+  }
+  
+  if (source != "zidatalab"){
+    R_est <- R_est[R_est$location==location, c("date", "quantile", "type", "value")]
+    R_est[R_est$type == "point", "quantile"] <- 0.5
+    R_est <- pivot_wider(R_est[,c("date", "quantile", "value")], names_from = c(quantile))
+    R_est <- R_est[, c("date", "0.5", "0.025", "0.975")]
+    names(R_est) <- c("date", "R_pub", "lower", "upper")
+  } else {
+    # no quantiles published by ZI
+    R_est <- R_est[R_est$location==location, c("date", "value")]
+    names(R_est) <- c("date", "R_pub")
+    R_est <- R_est %>% add_column(lower = NA, upper = NA)
+  }
   
   # return available R estimates for time between start and end
   dates <- data.frame(date=seq(start, end, by ="day"))
