@@ -197,7 +197,7 @@ plot_for_comparison <- function(estimates, comp_methods, include_CI=F, method, v
                           max(estimates$date) - min(estimates$date),
                           "days using", method, variation))
     
-    pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0.5,1,0.5/100),
+    pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0.25,1,0.75/100),
              border_color = NA, display_numbers = TRUE,
              fontsize = 12, fontsize_number=20, number_color = "white",
              angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
