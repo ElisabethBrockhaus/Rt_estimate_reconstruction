@@ -11,6 +11,16 @@ all <- c("Germany", "Austria", "Switzerland")
 names(locations) <- all
 
 
+dataset_org <- read_csv("D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/ArroyoMarioli/code/python/estimate_R/input/estimate_R_KF/dataset.csv")
+dataset_org <- dataset_org[dataset_org$`Country/Region`=="Germany", c("Date", "new_cases", "gr_infected_7")]
+dataset_my_code <- read_csv("Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/dataset.csv")
+dataset_my_code <- dataset_my_code[dataset_my_code$`Country/Region`=="Germany", c("Date", "new_cases", "gr_infected_7")]
+
+plot(dataset_my_code$Date, dataset_my_code$new_cases, type="l")
+lines(dataset_org$Date, dataset_org$new_cases, col="red")
+plot(dataset_my_code$Date, dataset_my_code$gr_infected_7, type="l")
+lines(dataset_org$Date, dataset_org$gr_infected_7, col="red")
+
 # function to load and reformat input data from different sources
 load_data_for_globalrt <- function(method, countries=c("Germany")){
   

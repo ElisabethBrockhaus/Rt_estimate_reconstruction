@@ -44,18 +44,18 @@ def construct_dataset(file_name, var_name):
 # Parameters #
 ##############
 
-# data_sources = ["", "_ETH", "_ilmenau", "_RKI", "_sdsc", "_epiforecasts"]
-# data_sources = ["_RKI"]
-data_sources = ["_rtlive"]
+data_sources = ["_rtlive", ""]
 # input_folder = "./relevant_scripts_adjusted/"
 input_folder = "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/"
 output_folder = input_folder
 min_cases = 100
 days_infectious_list = [5, 6, 7, 8, 9, 10]  # Values of (1 / gamma) used in constructing
 # time series of infected individuals
-# end_date             = '2020-05-06'        # End of sample
+# EB: chose later end_date
+end_date = "2021-09-30"  # End of sample
 restrict_end_sample = True
 
+# EB: incorporated into loop over different data sources
 for data_source in data_sources:
     print(
         "Construct dataset with data from ",
@@ -66,6 +66,8 @@ for data_source in data_sources:
     # Construct dataset #
     #####################
 
+    # EB: deleted clean_folder(output_folder)
+
     # Read in data on total cases
     df = construct_dataset(
         file_name="{}time_series_covid19_confirmed_global{}.csv".format(
@@ -74,6 +76,8 @@ for data_source in data_sources:
         var_name="total_cases",
     )
 
+    # EB: don't merge with time series of deaths
+
     # Only consider days after a minimum
     # number of total cases has been reached
     mask = df["total_cases"] >= min_cases
@@ -81,15 +85,20 @@ for data_source in data_sources:
         mask,
     ]
 
+    # EB: don't calculate world aggregates
+
     # Clean up the dataframe
     df["Date"] = pd.to_datetime(df["Date"])
     df.reset_index(inplace=True)
     del df["index"]
 
+    # EB: deleted adjustments of data regarding other countries than Germany
+
     # Sort by date
     df.sort_values(by=["Country/Region", "Date"], ascending=True, inplace=True)
 
     # Construct derived flow variables (only new cases, removed recoveries / deaths)
+    # EB: only do for cases, not for recovered and deaths
     for var_name in ["cases"]:
         df["new_{}".format(var_name)] = (
             df["total_{}".format(var_name)]
@@ -215,6 +224,13 @@ for data_source in data_sources:
         mask,
     ]
     del df["days_since_min_cases"]
+
+    # If requested, restrict sample period
+    if restrict_end_sample:
+        mask = df["Date"] <= end_date
+        df = df.loc[
+            mask,
+        ]
 
     # Save final dataset
     df.to_csv("{}/dataset{}.csv".format(output_folder, data_source), index=False)

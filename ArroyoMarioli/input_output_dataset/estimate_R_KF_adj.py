@@ -91,8 +91,10 @@ def estimate_R(y, gamma, n_start_values_grid=0, maxiter=200):
     R = 1 + 1 / (gamma) * res_ll.smoothed_state[0]
     se_R = (1 / gamma * (res_ll.smoothed_state_cov[0] ** 0.5))[0]
 
+    # EB: added conditional print command
     if res_ll.mle_retvals["converged"] is False:
         print("Estimation did not converge!")
+
     return {
         "R": R,
         "se_R": se_R,
@@ -108,10 +110,13 @@ def estimate_R(y, gamma, n_start_values_grid=0, maxiter=200):
 # Parameters #
 ##############
 
-# defines if delays, generation time distribution or both should be adjusted
-variations = ["", "_delays", "_GTD"]
+min_T = 20
+min_signal_to_noise = 1e-3
+# max_signal_to_noise = 1e2
+max_signal_to_noise = 1e15
+days_infectious = 7  # Baseline for of duration of infectiousness
 
-# sources of parameters
+# EB: added various parameter combinations sourced from other research groups
 methods = [
     "_ETH",
     "_RKI",
@@ -126,145 +131,147 @@ methods = [
 gammas = np.reciprocal(np.array([4.8, 4.0, 5.6, 4.8, 5.0, 3.4, 3.6, 4.7, 7.0]))
 mean_delays = np.array([11, 1, 7, 10, 0, 0, 12, 12, 0])
 parameters = pd.DataFrame({"gamma": gammas, "delay": mean_delays}, index=methods)
-# input_folder = "./relevant_scripts_adjusted/"
-input_folder = "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/"
-output_folder = "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/ArroyoMarioli/estimates/"
-min_T = 20
-# gamma = 1 / 7.0
-# min_signal_to_noise = 1e-3
-min_signal_to_noise = 1e-15
-# max_signal_to_noise = 1e2
-max_signal_to_noise = 1e15
-days_infectious = 7  # Baseline for of duration of infectiousness
 
-for variation in variations:
-    for method in methods:
-        print(
-            "globalrt estimation with "
-            + ("parameters" if variation == "" else variation[1:])
-            + " from ",
-            (method[1:] if method != "" else "original method"),
+
+# EB: embedded data loading, estimation and saving into a function callable from outside this script
+def parametrized_estimation(
+    variation, method, data_source, input_folder, output_folder
+):
+    print(
+        "globalrt estimation with "
+        + ("parameters" if variation == "" else variation[1:])
+        + " from "
+        + (method[1:] if method != "" else "original method")
+        + " and data used by "
+        + (data_source[1:] if data_source != "" else "original method"),
+    )
+
+    # set parameters for method
+    if variation == "_delays":
+        gamma = parameters.loc["_globalrt", "gamma"]
+    else:
+        gamma = parameters.loc[method, "gamma"]
+
+    #############
+    # Load data #
+    #############
+
+    # EB: deleted clean_folder(output_folder)
+
+    df = pd.read_csv("{}/dataset{}.csv".format(input_folder, data_source))
+    df["Date"] = pd.to_datetime(df["Date"])
+
+    # EB: added optional date shift to fit delays used by others researchers
+    df["Date"] = df["Date"] - pd.DateOffset(
+        days=parameters.loc["_globalrt" if variation == "_GTD" else method, "delay"]
+    )
+
+    # Impose minimum time-series observations
+    df_temp = (
+        df.groupby("Country/Region")
+        .count()["gr_infected_{}".format(days_infectious)]
+        .reset_index()
+    )
+    df_temp.rename(
+        columns={"gr_infected_{}".format(days_infectious): "no_obs"}, inplace=True
+    )
+    df = pd.merge(df, df_temp, how="left")
+    mask = df["no_obs"] >= min_T
+    df = df.loc[
+        mask,
+    ]
+
+    ##############
+    # Estimate R #
+    ##############
+
+    df["R"] = np.nan
+    df["se_R"] = np.nan
+
+    df_optim_res = []
+
+    with warnings.catch_warnings():
+        # Ignore warnings from statsmodels
+        # Instead, check later
+        warnings.filterwarnings(
+            "ignore",
+            message="Maximum Likelihood optimization failed to converge. Check mle_retvals",
         )
-
-        # set parameters for method
-        if variation == "_Delays":
-            gamma = parameters.loc["_globalrt", "gamma"]
-        else:
-            gamma = parameters.loc[method, "gamma"]
-
-        #############
-        # Load data #
-        #############
-
-        # df = pd.read_csv("{}/dataset{}.csv".format(input_folder, "_RKI"))
-        df = pd.read_csv("{}/dataset{}.csv".format(input_folder, "_rtlive"))
-        df["Date"] = pd.to_datetime(df["Date"])
-        df["Date"] = df["Date"] - pd.DateOffset(
-            days=parameters.loc["_globalrt" if variation == "_GTD" else method, "delay"]
-        )
-
-        # Impose minimum time-series observations
-        df_temp = (
-            df.groupby("Country/Region")
-            .count()["gr_infected_{}".format(days_infectious)]
-            .reset_index()
-        )
-        df_temp.rename(
-            columns={"gr_infected_{}".format(days_infectious): "no_obs"}, inplace=True
-        )
-        df = pd.merge(df, df_temp, how="left")
-        mask = df["no_obs"] >= min_T
-        df = df.loc[
-            mask,
-        ]
-
-        ##############
-        # Estimate R #
-        ##############
-
-        df["R"] = np.nan
-        df["se_R"] = np.nan
-
-        df_optim_res = []
-
-        with warnings.catch_warnings():
-            # Ignore warnings from statsmodels
-            # Instead, check later
-            warnings.filterwarnings(
-                "ignore",
-                message="Maximum Likelihood optimization failed to converge. Check mle_retvals",
+        for country in df["Country/Region"].unique():
+            mask = df["Country/Region"] == country
+            df_temp = df.loc[
+                mask,
+            ].copy()
+            y = df_temp["gr_infected_{}".format(days_infectious)].values
+            res = estimate_R(y, gamma=gamma)
+            df.loc[mask, "R"] = res["R"]
+            df.loc[mask, "se_R"] = res["se_R"]
+            df_optim_res.append(
+                {
+                    "Country/Region": country,
+                    "flag": res["flag"],
+                    "sigma2_irregular": res["sigma2_irregular"],
+                    "sigma2_level": res["sigma2_level"],
+                    "signal_to_noise": res["signal_to_noise"],
+                }
             )
-            for country in df["Country/Region"].unique():
-                mask = df["Country/Region"] == country
-                df_temp = df.loc[
-                    mask,
-                ].copy()
-                y = df_temp["gr_infected_{}".format(days_infectious)].values
-                res = estimate_R(y, gamma=gamma)
-                df.loc[mask, "R"] = res["R"]
-                df.loc[mask, "se_R"] = res["se_R"]
-                df_optim_res.append(
-                    {
-                        "Country/Region": country,
-                        "flag": res["flag"],
-                        "sigma2_irregular": res["sigma2_irregular"],
-                        "sigma2_level": res["sigma2_level"],
-                        "signal_to_noise": res["signal_to_noise"],
-                    }
-                )
-        df_optim_res = pd.DataFrame(df_optim_res)
+    df_optim_res = pd.DataFrame(df_optim_res)
 
-        # Merge in optimization results
-        df = pd.merge(df, df_optim_res, how="left")
+    # Merge in optimization results
+    df = pd.merge(df, df_optim_res, how="left")
 
-        #################################
-        # Filter out unreliable results #
-        #################################
+    #################################
+    # Filter out unreliable results #
+    #################################
 
-        # Unsuccessful optimization
-        mask = df["flag"] != 0
-        df = df.loc[
-            ~mask,
-        ]
+    # Unsuccessful optimization
+    mask = df["flag"] != 0
+    df = df.loc[
+        ~mask,
+    ]
 
-        # Filter out implausible signal-to-noise ratios
-        mask = (df["signal_to_noise"] <= min_signal_to_noise) | (
-            df["signal_to_noise"] >= max_signal_to_noise
-        )
-        df = df.loc[
-            ~mask,
-        ]
+    # Filter out implausible signal-to-noise ratios
+    mask = (df["signal_to_noise"] <= min_signal_to_noise) | (
+        df["signal_to_noise"] >= max_signal_to_noise
+    )
+    df = df.loc[
+        ~mask,
+    ]
 
-        # Collect optimization results
-        df_optim_res = (
-            df.groupby("Country/Region")
-            .first()[["flag", "sigma2_irregular", "sigma2_level", "signal_to_noise"]]
-            .reset_index()
-        )
-        df_optim_res.to_csv(
-            "{}/optim_res{}{}.csv".format(output_folder, method, variation), index=False
-        )
+    # Collect optimization results
+    df_optim_res = (
+        df.groupby("Country/Region")
+        .first()[["flag", "sigma2_irregular", "sigma2_level", "signal_to_noise"]]
+        .reset_index()
+    )
+    df_optim_res.to_csv(
+        "{}/optim_res{}{}.csv".format(output_folder, method, variation), index=False
+    )
 
-        ##################
-        # Export results #
-        ##################
+    ##################
+    # Export results #
+    ##################
 
-        df = df[["Country/Region", "Date", "R", "se_R"]].copy()
-        df.reset_index(inplace=True)
-        del df["index"]
-        # df["days_infectious"] = 1 / gamma
-        df["days_infectious"] = 7
+    df = df[["Country/Region", "Date", "R", "se_R"]].copy()
+    df.reset_index(inplace=True)
+    del df["index"]
 
-        # Calculate confidence intervals
-        alpha = [0.05, 0.5]
-        names = ["95", "50"]
-        for aa, name in zip(alpha, names):
-            t_crit = scipy.stats.norm.ppf(1 - aa / 2)
-            df["ci_{}_u".format(name)] = df["R"] + t_crit * df["se_R"]
-            df["ci_{}_l".format(name)] = df["R"] - t_crit * df["se_R"]
+    # EB: always using days_infectious = 7
+    df["days_infectious"] = 7
 
-        # Save estimates
-        df.to_csv(
-            "{}estimated_R{}{}.csv".format(output_folder, method, variation),
-            index=False,
-        )
+    # Calculate confidence intervals
+    # EB: changed confidence levels
+    alpha = [0.05, 0.5]
+    names = ["95", "50"]
+    for aa, name in zip(alpha, names):
+        t_crit = scipy.stats.norm.ppf(1 - aa / 2)
+        df["ci_{}_u".format(name)] = df["R"] + t_crit * df["se_R"]
+        df["ci_{}_l".format(name)] = df["R"] - t_crit * df["se_R"]
+
+    # Save estimates
+    df.to_csv(
+        "{}estimated_R{}{}_data_from{}.csv".format(
+            output_folder, method, variation, data_source
+        ),
+        index=False,
+    )
