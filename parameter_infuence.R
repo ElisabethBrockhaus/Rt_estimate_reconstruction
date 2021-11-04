@@ -29,6 +29,7 @@ for (window in windows){
   }
 }
 plot_for_comparison(estimates_window, comp_methods = windows,
+                    legend_name = "window size", filenames = "influence_window_m.pdf",
                     method = "EpiEstim", variation = "with different window sizes",
                     comparing_parameters = TRUE)
 
@@ -49,6 +50,7 @@ for (window in windows){
   }
 }
 plot_for_comparison(estimates_window, comp_methods = windows,
+                    legend_name = "window size", filename = "influence_window_c.png",
                     method = "EpiEstim", variation = "with different window sizes",
                     comparing_parameters = TRUE)
 
@@ -70,6 +72,7 @@ for (mean in means){
   }
 }
 plot_for_comparison(estimates_mean, comp_methods = means,
+                    legend_name = "mean GT", filename = "influence_meanGT_m.png",
                     method = "EpiEstim", variation = "with different mean generation times",
                     comparing_parameters = TRUE)
 
@@ -90,7 +93,51 @@ for (mean in means){
   }
 }
 plot_for_comparison(estimates_mean, comp_methods = means,
+                    legend_name = "mean GT", filename = "influence_meanGT_c.png",
                     method = "EpiEstim", variation = "with different mean generation times",
+                    comparing_parameters = TRUE)
+
+# vary sd generation time
+sds <- c(0.001, 1.8, 2.3, 2.9, 3.1, 4.0, 4.2, 7.0)
+if (exists("estimates_sd")) rm(estimates_sd)
+for (sd in sds){
+  R_est <- estimate_RKI_R(incid, method = "EpiEstim",
+                          window = 7,
+                          gt_type = "gamma",
+                          gt_mean = 5,
+                          gt_sd = sd,
+                          delay = 0)
+  names(R_est) <- c("date", sd, paste0(sd, ".lower"), paste0(sd, ".upper"))
+  if (!exists("estimates_sd")){
+    estimates_sd <- R_est
+  } else {
+    estimates_sd <- estimates_sd %>% full_join(R_est, by = "date")
+  }
+}
+plot_for_comparison(estimates_sd, comp_methods = sds,
+                    legend_name = "sd GT", filename = "influence_sdGT_m.png",
+                    method = "EpiEstim", variation = "with different sd of generation time",
+                    comparing_parameters = TRUE)
+
+sds <- 1:10
+if (exists("estimates_sd")) rm(estimates_sd)
+for (sd in sds){
+  R_est <- estimate_RKI_R(incid, method = "EpiEstim",
+                          window = 7,
+                          gt_type = "gamma",
+                          gt_mean = 5,
+                          gt_sd = sd,
+                          delay = 0)
+  names(R_est) <- c("date", sd, paste0(sd, ".lower"), paste0(sd, ".upper"))
+  if (!exists("estimates_sd")){
+    estimates_sd <- R_est
+  } else {
+    estimates_sd <- estimates_sd %>% full_join(R_est, by = "date")
+  }
+}
+plot_for_comparison(estimates_sd, comp_methods = sds,
+                    legend_name = "sd GT", filename = "influence_sdGT_c.png",
+                    method = "EpiEstim", variation = "with different sd of generation time",
                     comparing_parameters = TRUE)
 
 

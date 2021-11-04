@@ -89,6 +89,7 @@ def estimate_R(y, gamma, n_start_values_grid=0, maxiter=200):
     else:
         res_ll = mod_ll.fit(maxiter=maxiter, disp=False)
     R = 1 + 1 / (gamma) * res_ll.smoothed_state[0]
+    print((1 / gamma * (res_ll.smoothed_state_cov[0] ** 0.5))[0])
     se_R = (1 / gamma * (res_ll.smoothed_state_cov[0] ** 0.5))[0]
 
     # EB: added conditional print command
@@ -112,9 +113,10 @@ def estimate_R(y, gamma, n_start_values_grid=0, maxiter=200):
 
 min_T = 20
 min_signal_to_noise = 1e-3
-# max_signal_to_noise = 1e2
+max_signal_to_noise = 1e2
 max_signal_to_noise = 1e15
-days_infectious = 7  # Baseline for of duration of infectiousness
+# EB: changed from 7 to 4
+days_infectious = 4  # Baseline for of duration of infectiousness
 
 # EB: added various parameter combinations sourced from other research groups
 methods = [
@@ -128,7 +130,7 @@ methods = [
     "_rtlive",
     "_globalrt",
 ]
-gammas = np.reciprocal(np.array([4.8, 4.0, 5.6, 4.8, 5.0, 3.4, 3.6, 4.7, 7.0]))
+gammas = np.reciprocal(np.array([4.8, 4.0, 5.6, 4.8, 5.0, 3.4, 3.6, 4.7, 5.0]))
 mean_delays = np.array([11, 1, 7, 10, 0, 0, 12, 12, 0])
 parameters = pd.DataFrame({"gamma": gammas, "delay": mean_delays}, index=methods)
 
@@ -141,7 +143,11 @@ def parametrized_estimation(
         "globalrt estimation with "
         + ("parameters" if variation == "" else variation[1:])
         + " from "
-        + (method[1:] if method != "" else "original method")
+        + (
+            method[1:]
+            if method != ""
+            else ("original method" if method != "_window" else "RKI")
+        )
         + " and data used by "
         + (data_source[1:] if data_source != "" else "original method"),
     )
@@ -158,12 +164,20 @@ def parametrized_estimation(
 
     # EB: deleted clean_folder(output_folder)
 
-    df = pd.read_csv("{}/dataset{}.csv".format(input_folder, data_source))
+    df = pd.read_csv(
+        "{}/dataset{}.csv".format(
+            input_folder,
+            (data_source + "_preprocessed") if variation == "_window" else data_source,
+        )
+    )
     df["Date"] = pd.to_datetime(df["Date"])
 
     # EB: added optional date shift to fit delays used by others researchers
     df["Date"] = df["Date"] - pd.DateOffset(
-        days=parameters.loc["_globalrt" if variation == "_GTD" else method, "delay"]
+        days=parameters.loc[
+            "_globalrt" if variation == "_GTD" or variation == "_window" else method,
+            "delay",
+        ]
     )
 
     # Impose minimum time-series observations
@@ -256,8 +270,8 @@ def parametrized_estimation(
     df.reset_index(inplace=True)
     del df["index"]
 
-    # EB: always using days_infectious = 7
-    df["days_infectious"] = 7
+    # EB: always using days_infectious = 4
+    df["days_infectious"] = 4
 
     # Calculate confidence intervals
     # EB: changed confidence levels

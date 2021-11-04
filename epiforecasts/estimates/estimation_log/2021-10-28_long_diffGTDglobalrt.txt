@@ -1,0 +1,38 @@
+GTD 4 (4)
+[1] "Start with estimation using generation time with mean and sd equal to 4"
+[1] "2021-10-27 22:36:33 CEST"
+Logging threshold set at INFO for the EpiNow2 logger
+Writing EpiNow2 logs to the console and: /tmp/RtmpjNVayg/regional-epinow/2021-07-31.log
+Logging threshold set at INFO for the EpiNow2.epinow logger
+Writing EpiNow2.epinow logs to the console and: /tmp/RtmpjNVayg/epinow/2021-07-31.log
+error occurred during calling the sampler; sampling not done
+WARN [2021-10-28 06:38:16] epinow: some chains had errors; consider specifying chains = 1 to debug - .local, object, ...
+here are whatever error messages were returned
+[[1]]
+Stan model 'estimate_infections' does not contain samples.
+
+WARN [2021-10-28 06:38:16] epinow: There were 991 transitions after warmup that exceeded the maximum treedepth. Increase max_treedepth above 15. See
+http://mc-stan.org/misc/warnings.html#maximum-treedepth-exceeded - 
+WARN [2021-10-28 06:38:16] epinow: There were 1 chains where the estimated Bayesian Fraction of Missing Information was low. See
+http://mc-stan.org/misc/warnings.html#bfmi-low - 
+WARN [2021-10-28 06:38:16] epinow: Examine the pairs() plot to diagnose sampling problems
+ - 
+WARN [2021-10-28 06:38:21] epinow: The largest R-hat is 1.81, indicating chains have not mixed.
+Running the chains for more iterations may help. See
+http://mc-stan.org/misc/warnings.html#r-hat - 
+WARN [2021-10-28 06:38:29] epinow: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
+Running the chains for more iterations may help. See
+http://mc-stan.org/misc/warnings.html#bulk-ess - 
+WARN [2021-10-28 06:38:40] epinow: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
+Running the chains for more iterations may help. See
+http://mc-stan.org/misc/warnings.html#tail-ess - 
+[1] "Estimation took 482.54 minutes."
+
+
+GTD 4 (4)
+[1] "Start with estimation using generation time with mean and sd equal to 4 (mean_sd/sd_sd 0.5)"
+[1] "2021-10-28 09:39:02 CEST"
+Logging threshold set at INFO for the EpiNow2 logger
+Writing EpiNow2 logs to the console and: /tmp/Rtmpxz7Q1q/regional-epinow/2021-09-30.log
+Logging threshold set at INFO for the EpiNow2.epinow logger
+Writing EpiNow2.epinow logs to the console and: /tmp/Rtmpxz7Q1q/epinow/2021-09-30.log

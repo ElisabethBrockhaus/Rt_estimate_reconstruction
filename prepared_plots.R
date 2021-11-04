@@ -8,6 +8,16 @@ library(tidyverse)
 # set system locale time to English for correct labelling of x axes
 Sys.setlocale("LC_TIME", "English")
 
+# function for saving pheatmap
+save_pheatmap_pdf <- function(x, filename, width=9, height=4) {
+  stopifnot(!missing(x))
+  stopifnot(!missing(filename))
+  pdf(filename, width=width, height=height)
+  grid::grid.newpage()
+  grid::grid.draw(x$gtable)
+  dev.off()
+}
+
 plot_published_vs_calculated <- function(published, calculated, method_name, diff_bounds=c(-0.1, 0.1)){
   
   # combine data
@@ -43,7 +53,8 @@ plot_published_vs_calculated <- function(published, calculated, method_name, dif
 
 
 
-plot_multiple_estimates <- function(estimates, include_CI=F, comparing_parameters=F) {
+plot_multiple_estimates <- function(estimates, legend_name,
+                                    include_CI=F, comparing_parameters=F) {
   
   # reshape data
   R_est  <- estimates %>%
@@ -66,10 +77,14 @@ plot_multiple_estimates <- function(estimates, include_CI=F, comparing_parameter
   R_plot <- ggplot(data = R_est, aes(x = date, y = R)) +
     geom_hline(aes(yintercept = 1)) +
     labs(x = NULL, y = "Rt estimate") +
-    scale_x_date(limits = as.Date(c(min(estimates$date),max(estimates$date))),
-                 date_labels = "%B %d", expand = c(0,1)) +
+    scale_x_date(limits = as.Date(c(min(estimates$date),max(estimates$date)-1)),
+                 date_labels = "%b %d", expand = c(0,1)) +
     theme_minimal() +
     theme(
+      axis.text=element_text(size=16),
+      axis.title=element_text(size=18),
+      legend.text=element_text(size=16),
+      legend.title=element_text(size=18),
       axis.line = element_line(),
       axis.line.y.right = element_line(),
       axis.line.x.top = element_line(),
@@ -80,11 +95,11 @@ plot_multiple_estimates <- function(estimates, include_CI=F, comparing_parameter
   if (include_CI){
     R_plot <-  R_plot +
       geom_ribbon(aes(ymin = lower, ymax = upper, fill = model), alpha = .3) +
-      scale_fill_viridis_d(end = 0.9)
+      scale_fill_viridis_d(end = 0.9, name=legend_name)
   } else {
     R_plot <-  R_plot +
       geom_line(aes(group = model, color=model)) +
-      scale_colour_viridis_d(end = 0.9)
+      scale_colour_viridis_d(end = 0.9, name=legend_name)
   }
   
   return(R_plot)
@@ -146,7 +161,9 @@ plot_published_vs_calculated_95CI <- function(published, calculated, method_name
 # plots for final comparison #
 ##############################
 
-plot_for_comparison <- function(estimates, comp_methods, include_CI=F, method, variation, comparing_parameters=F){
+plot_for_comparison <- function(estimates, comp_methods,
+                                legend_name="model", filenames = "latest_plot.png",
+                                include_CI=F, method, variation, comparing_parameters=F){
   if (length(comp_methods)*3 == dim(estimates)[2]-1){
     names_ci <- rep(NA, length(comp_methods)*3)
     for (i in 1:length(comp_methods)){
@@ -163,16 +180,17 @@ plot_for_comparison <- function(estimates, comp_methods, include_CI=F, method, v
     names(estimates) <- c("date", names_R)
   }
   
-  estimates <- estimates[estimates$date < "2021-09-01",]
+  estimates <- estimates[estimates$date < "2021-05-31",]
   estimates <- estimates[rowSums(is.na(estimates)) == 0,]
-  latest_estimates <- estimates[estimates$date >= "2021-04-01",]
+  latest_estimates <- estimates[estimates$date >= "2021-02-07",]
   
-  R_plot <- plot_multiple_estimates(estimates, include_CI = include_CI, comparing_parameters = comparing_parameters)
-  R_plot_latest <- plot_multiple_estimates(latest_estimates, include_CI = include_CI, comparing_parameters = comparing_parameters)
+  R_plot <- plot_multiple_estimates(estimates, legend_name, include_CI = include_CI, comparing_parameters = comparing_parameters)
+  R_plot_latest <- plot_multiple_estimates(latest_estimates, legend_name, include_CI = include_CI, comparing_parameters = comparing_parameters)
   
-  ggsave(R_plot, filename = "estimates_plot.png",  bg = "transparent")
-  print(R_plot)
-  ggsave(R_plot_latest, filename = "latest_estimates_plot.png",  bg = "transparent")
+  #ggsave(R_plot, filename = "estimates_plot.png",  bg = "transparent")
+  #print(R_plot)
+  ggsave(R_plot_latest, filename = paste0("estimates", filenames),  bg = "transparent",
+         width = 13.1, height = 6.3)
   print(R_plot_latest) 
   
   if(!comparing_parameters) {
@@ -188,21 +206,24 @@ plot_for_comparison <- function(estimates, comp_methods, include_CI=F, method, v
         corr[method1, method2] <- cor(estimates[,paste0("R.", method1)], estimates[,paste0("R.", method2)])
       }
     }
-  
-    pheatmap(matr, color = viridis(100), breaks = seq(0,0.35,0.35/100),
-             border_color = NA, display_numbers = TRUE,
-             fontsize = 12, fontsize_number=20, number_color = "white",
-             angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
-             main = paste("Mean absolute differences between estimates over",
-                          max(estimates$date) - min(estimates$date),
-                          "days using", method, variation))
     
-    pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0.25,1,0.75/100),
-             border_color = NA, display_numbers = TRUE,
-             fontsize = 12, fontsize_number=20, number_color = "white",
-             angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE,
-             main = paste("Correlations between estimates over",
-                          max(estimates$date) - min(estimates$date),
-                          "days using", method, variation))
+    mean_abs_diff <- pheatmap(matr, color = viridis(100), breaks = seq(0,0.3,0.3/100),
+                              border_color = NA, display_numbers = TRUE,
+                              fontsize = 18, fontsize_number=22, number_color = "white",
+                              angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE)#,
+                              #main = paste("Mean absolute differences between estimates over",
+                              #             max(estimates$date) - min(estimates$date),
+                              #             "days using", method, variation))
+    save_pheatmap_pdf(mean_abs_diff, paste0("mean_abs_diff", filenames))
+    
+    
+    correlations <- pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0.25,1,0.75/100),
+                             border_color = NA, display_numbers = TRUE,
+                             fontsize = 18, fontsize_number=22, number_color = "white",
+                             angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE)#,
+                             #main = paste("Correlations between estimates over",
+                             #             max(estimates$date) - min(estimates$date),
+                             #             "days using", method, variation))
+    save_pheatmap_pdf(correlations, paste0("correlations", filenames))
   }
 }

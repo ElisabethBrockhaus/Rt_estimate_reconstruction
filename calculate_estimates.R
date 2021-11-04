@@ -4,7 +4,7 @@ library(EpiNow2)
 ###########################
 # estimates as in RKI2020 #
 ###########################
-estimate_RKI_R <- function(incid, window=7, gt_type="constant", gt_mean=4, gt_sd=0, delay=0,
+estimate_RKI_R <- function(incid, window=7, gt_type="constant", gt_mean=4, gt_sd=0, delay=1,
                            method="RKI"){
   
   estimate <- data.frame(date=incid$date,
@@ -70,7 +70,7 @@ estimate_RKI_R <- function(incid, window=7, gt_type="constant", gt_mean=4, gt_sd
   }
   
   # shift estimates by delay
-  estimate$date <- estimate$date - delay
+  estimate$date <- estimate$date - (delay - 1)
   
   # return only columns containg non-NA values (omit "lower" and "upper" if method == "RKI")
   return(estimate[colSums(!is.na(estimate)) > 0])

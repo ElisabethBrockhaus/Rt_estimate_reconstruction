@@ -1,26 +1,46 @@
-library(readr)
+R <- 1.07
+incidence <- data.frame(date=1:100, I=c(rep(1,10), rep(0,90)))
+for (t in 2:100) {
+  incidence$I[t] <- incidence$I[t-1] * R
+}
+plot(incidence, type="l")
 
-setwd("..")
-# needs to be the directory with the repos "Rt_estimate_reconstruction", "reproductive_numbers" 
-# and for SDSC method "covid-19-forecast" (https://renkulab.io/gitlab/covid-19/covid-19-forecast/-/tree/master)
-getwd()
+R <- 1.07
+incidence <- data.frame(date=1:100, I=c(rep(1,10), rep(0,90)))
+for (t in 3:100) {
+  incidence$I[t] <- incidence$I[t-2] * R
+}
+plot(incidence, type="l")
 
-source("Rt_estimate_reconstruction/load_data.R")
-source("Rt_estimate_reconstruction/prepared_plots.R")
+#incidence$I <- incid$I[1:100]
 
-RKI_incid <- load_incidence_data(method = "RKI")
-rtlive_incid <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid.csv")
-ETH_incid <- load_incidence_data(method = "ETHZ_sliding_window")[, c("date", "value")]
-ETH_incid_mean <- ETH_incid$value %>% aggregate(by = list(ETH_incid$date), FUN = mean)
-names(ETH_incid_mean) <- c("date", "I")
-ilmenau_incid <- load_incidence_data(method = "ilmenau")
-sdsc_incid <- load_incidence_data(method = "sdsc")
-epiforecasts_incid <- load_incidence_data(method = "epiforecasts")
-globalrt_data <- read_csv("Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/time_series_covid19_confirmed_global.csv")
-dates_globalrt <- as.Date(names(globalrt_data[,6:595]), format = "%m/%d/%y")
-globalrt_total <- data.frame(date = dates_globalrt, cases = t(globalrt_data[1,6:595]))
-globalrt_incid <- data.frame(date = dates_globalrt,
-                             I =t(globalrt_data[1,6:595]) - dplyr::lag(t(globalrt_data[1,6:595]), n = 1))
+incidence$gr <- c(NA, (incidence$I[2:100] - incidence$I[1:99]) / incidence$I[1:99])
+
+incidence$R_gt3 <- 1 + (incidence$gr / 3)
+incidence$R_gt4 <- 1 + (incidence$gr / 4)
+incidence$R_gt5 <- 1 + (incidence$gr / 5)
+incidence$R_gt6 <- 1 + (incidence$gr / 6)
+incidence$R_gt7 <- 1 + (incidence$gr / 7)
+
+gr <- 0.03
+incidence <- data.frame(date=1:100, I=c(1, rep(0,99)))
+for (t in 2:100) {
+  incidence$I[t] <- incidence$I[t-1] * (1+gr)
+}
+plot(incidence, type="l", xlab="day", ylab="new infections")
+
+for (gr in seq(0.04, 0.07, by=0.01)){
+  incidence <- data.frame(date=1:100, I=c(1, rep(0,99)))
+  for (t in 2:100) {
+    incidence$I[t] <- incidence$I[t-1] * (1+gr)
+  }
+  lines(incidence)
+}
+#text(locator(), labels = c("GT = 3", "GT = 4", "GT = 5", "GT = 6", "GT = 7"))
+text(x=c(35.5, 43, 52, 66, 90), y=rep(18,5), pos=4,
+     labels = c("GT = 3", "GT = 4", "GT = 5", "GT = 6", "GT = 7"))
+text(x=c(5), y=c(18), pos=4,
+     labels = c("R = 1.01"))
 
 incidence_data <- RKI_incid %>%
   inner_join(rtlive_incid, by = "date") %>%
