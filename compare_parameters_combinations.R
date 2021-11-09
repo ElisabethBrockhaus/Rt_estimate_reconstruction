@@ -80,6 +80,38 @@ params <- data.frame(gtd=gt_dist, gt_mean=mean_gt, gt_sd=sd_gt, delay=delay)
 methods <- c("ETH", "RKI", "Ilmenau", "SDSC", "Zi", "AGES", "epiforecasts", "rtlive", "globalrt")
 rownames(params) <- methods
 
+# save generation time distributions for rtlive
+gt_main_analysis <- get_infectivity_profile(gt_type="gamma", gt_mean = 4, gt_sd = 4)
+gt_lower_example <- get_infectivity_profile(gt_type="gamma",
+                                            gt_mean = params["AGES", "gt_mean"],
+                                            gt_sd = params["AGES", "gt_sd"])
+gt_upper_example <- get_infectivity_profile(gt_type="gamma",
+                                            gt_mean = params["Ilmenau", "gt_mean"],
+                                            gt_sd = params["Ilmenau", "gt_sd"])
+gt_distributions <- cbind(0:1000, gt_main_analysis, gt_lower_example, gt_upper_example)
+colnames(gt_distributions) <- c("days_after_transmission", "gamma 4 (4)", "gamma 3.4 (1.8)", "gamma 5.6 (4.2)")
+
+write.csv(gt_distributions, "Rt_estimate_reconstruction/gt_distributions.csv", row.names = F)
+
+plot(gt_main_analysis[1:30], type="l", ylim = c(0, 0.32))
+lines(gt_lower_example, col="red")
+lines(gt_upper_example, col="blue")
+
+R_Cori_exponential <- estimate_RKI_R(incid, method = "EpiEstim",
+                                     window = 7,
+                                     gt_type = "exponential",
+                                     gt_mean = 4,
+                                     gt_sd = 4)
+
+R_Cori_gamma <- estimate_RKI_R(incid, method = "EpiEstim",
+                               window = 7,
+                               gt_type = "gamma",
+                               gt_mean = 4,
+                               gt_sd = 4)
+
+plot(R_Cori_exponential, type="l")
+
+
 gtd_scatterplot <- ggplot(data = params, aes(x = gt_mean, y = gt_sd)) +
   labs(x = "mean", y = "standard deviation") +
   theme_minimal() +

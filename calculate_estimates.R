@@ -516,35 +516,35 @@ repronum <- function(
 
 ### function to calculate infectivity profile given distribution type, mean and sd
 get_infectivity_profile <- function(gt_type=c("ad hoc", "gamma", "exponential", "uniform", "constant", "lognorm"),
-                                    gt_mean, gt_sd){
+                                    gt_mean, gt_sd, n_days = 1000){
   
   if (gt_type == "ad hoc"){
-    gt_dist <- c(0, (0:3)/3, 1, (5:0)/5, rep(0, 988))
+    gt_dist <- c(0, (0:3)/3, 1, (5:0)/5, rep(0, n_days-12))
     names(gt_dist) <- seq_along(gt_dist)
     
   } else if (gt_type == "gamma"){
-    gt_dist <- dgamma(0:1000, shape = (gt_mean^2)/gt_sd, scale = gt_sd/gt_mean)
+    gt_dist <- dgamma(0:n_days, shape = (gt_mean^2)/gt_sd, scale = gt_sd/gt_mean)
     
   } else if (gt_type == "exponential"){
     if(gt_mean != gt_sd){
       print("Ignoring 'gt_sd'! A exponential distribution implies sd = mean.")
     }
-    gt_dist <- dexp(0:1000, rate = 1/gt_mean)
+    gt_dist <- dexp(0:n_days, rate = 1/gt_mean)
     
   } else if (gt_type == "uniform"){
     if(gt_sd != sqrt(((2+1)^2-1)/12)) {
       print("Ignoring 'gt_sd'! A uniform distribution is assumed with min = gt_mean - 1 and max = gt_mean + 1. This implies sd = 0.82 approx.")
     }
-    gt_dist <- dunif(0:1000, min = gt_mean - 1, max = gt_mean + 1)
+    gt_dist <- dunif(0:n_days, min = gt_mean - 1, max = gt_mean + 1)
     
   } else if (gt_type == "constant"){
     if (gt_sd != 0) {
       print("Ignoring 'gt_sd'! Returning a vector of zeros except at position gt_mean. This implies sd = 0.")
     }
-    gt_dist <- c(rep(0, gt_mean), 1, rep(0, 1000-gt_mean-1))
+    gt_dist <- c(rep(0, gt_mean), 1, rep(0, n_days-gt_mean-1))
     
   } else if (gt_type == "lognorm"){
-    gt_dist <- dlnorm(0:1000, meanlog = convert_to_logmean(gt_mean, gt_sd),
+    gt_dist <- dlnorm(0:n_days, meanlog = convert_to_logmean(gt_mean, gt_sd),
                       sdlog = convert_to_logsd(gt_mean, gt_sd))
   } else {
     print("Type of generation time distribution not known.
