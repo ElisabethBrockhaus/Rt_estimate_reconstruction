@@ -7,6 +7,7 @@ library(fitdistrplus)
 library(qs)
 library(lubridate)
 library(covidregionaldata)
+library(jsonlite)
 
 ##################################################
 # load estimates from git (reproductive_numbers) #
@@ -110,6 +111,13 @@ load_incidence_data <- function(method, location="DE", ...){
       data <- load_SDSC_data(country="Switzerland", ...)
     } else {
       print("Location not included in analysis, choose from [DE, AT, CH].")
+    }
+    
+  } else if (method == "Zi") {
+    if (location == "DE") {
+      data <- load_Zi_data()
+    } else {
+      print("Zi incidence data only available for Germany, pass location = 'DE'.")
     }
 
   } else if (method == "epiforecasts") {
@@ -236,6 +244,15 @@ load_SDSC_data <- function(country="Germany", data_status="2021-08-29"){
   # select cases for location
   data <- data[data$country==country, c("date", "daily_smoothed")]
   names(data) <- c("date", "I")
+  
+  return(data)
+}
+
+
+load_Zi_data <- function(country = "Germany"){
+  path_incid <- "https://raw.githubusercontent.com/zidatalab/covid19dashboard/master/data/plotdata/akutinfiziert.json"
+  data <- fromJSON(path_incid) %>% as.data.frame
+  data$date <- as_date(data$date)
   
   return(data)
 }
