@@ -98,6 +98,17 @@ write.csv(gt_distributions, "Rt_estimate_reconstruction/gt_distributions.csv", r
 plot(gt_main_analysis, type="l", ylim = c(0, 0.32))
 lines(gt_lower_example, col="red")
 lines(gt_upper_example, col="blue")
+#lines(get_infectivity_profile(gt_type="exponential", gt_mean = 4.7, gt_sd = 2.9, n_days = 30), col = "green")
+lines(c(0.00000000e+00, 7.33148180e-03, 1.03868478e-01, 1.95147643e-01,
+        1.93797118e-01, 1.52828476e-01, 1.09576993e-01, 7.54229927e-02,
+        5.10921821e-02, 3.44849062e-02, 2.33407210e-02, 1.58958932e-02,
+        1.09121047e-02, 7.55711343e-03, 5.28165515e-03, 3.72529635e-03,
+        2.65131301e-03, 1.90352772e-03, 1.37822529e-03, 1.00599866e-03,
+        7.40014799e-04, 5.48403039e-04, 4.09289125e-04, 3.07532780e-04,
+        2.32567920e-04, 1.76961382e-04, 1.35443284e-04, 1.04249379e-04,
+        8.06714362e-05, 6.27474302e-05), col="orange")
+legend(x="topright", legend=c("gamma_4", "gamma_3.4", "gamma_5.6", "lnorm_discr_4.7"),
+       lty=1, col=c("black", "red", "blue", "orange"))
 
 # plot assumed mean and sd of generation times
 gtd_scatterplot <- ggplot(data = params, aes(x = gt_mean, y = gt_sd)) +
@@ -231,22 +242,22 @@ plot_for_comparison(estimates_input, comp_methods, filenames = "_input-data.pdf"
 #######################################
 R_raw_EpiEstim_gt <- estimate_RKI_R(incid, method = "EpiEstim",
                                     window = 7,
-                                    gt_type = params[method, "gtd"],
+                                    gt_type = "gamma",
                                     gt_mean = params[method, "gt_mean"],
                                     gt_sd = params[method, "gt_sd"])
 
 R_ETH_EpiEstim_gt <- estimate_ETH_R(incid_for_ETH,
-                                    gt_type = params[method, "gtd"],
+                                    gt_type = "gamma",
                                     gt_mean = params[method, "gt_mean"],
                                     gt_sd = params[method, "gt_sd"])
 
 R_AGES_EpiEstim_gt <- estimate_AGES_R(incid,
-                                      gt_type = params[method, "gtd"],
+                                      gt_type = "gamma",
                                       gt_mean=params[method, "gt_mean"],
                                       gt_sd=params[method, "gt_sd"])
 
 R_Ilmenau_gt <- estimate_Ilmenau_R(incid,
-                                   gt_type = params[method, "gtd"],
+                                   gt_type = "gamma",
                                    gt_mean=params[method, "gt_mean"],
                                    gt_sd=params[method, "gt_sd"])
 names(R_Ilmenau_gt) <- c("date", "R_calc", "lower", "upper")
@@ -295,6 +306,7 @@ estimates_GTD_CI <- as.data.frame(R_ETH_EpiEstim_gt) %>%
 comp_CI <- c("ETH EpiEstim", "Ilmenau", "epiforecasts", "globalrt", "rtlive")
 plot_for_comparison(estimates_GTD_CI, comp_CI, include_CI = T,
                     method = method, variation = "generation time")
+
 
 ##############################
 # additionally adjust delays #
@@ -354,14 +366,14 @@ R_raw_EpiEstim_ws <- R_raw_EpiEstim_d
 
 R_ETH_EpiEstim_ws <- estimate_ETH_R(incid_for_ETH,
                                     window = 7,
-                                    gt_type = params[method, "gtd"],
+                                    gt_type = "gamma",
                                     gt_mean = params[method, "gt_mean"],
                                     gt_sd = params[method, "gt_sd"])
 R_ETH_EpiEstim_ws$date <- R_ETH_EpiEstim_ws$date + params["ETH", "delay"]
 
 R_AGES_EpiEstim_ws <- estimate_AGES_R(incid,
                                       window = 7,
-                                      gt_type = params[method, "gtd"],
+                                      gt_type = "gamma",
                                       gt_mean=params[method, "gt_mean"],
                                       gt_sd=params[method, "gt_sd"],
                                       delay = params["AGES", "delay"])
@@ -369,7 +381,7 @@ R_AGES_EpiEstim_ws$date <- R_AGES_EpiEstim_ws$date + params["AGES", "delay"]
 
 R_Ilmenau_ws <- estimate_Ilmenau_R(incid,
                                    window = 7,
-                                   gt_type = params[method, "gtd"],
+                                   gt_type = "gamma",
                                    gt_mean=params[method, "gt_mean"],
                                    gt_sd=params[method, "gt_sd"],
                                    delay = params["Ilmenau", "delay"])
