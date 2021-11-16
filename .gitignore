@@ -16,9 +16,9 @@ ETH/data/countryData/DEU-Estimates.rds
 ETH/data/countryData/AUT-Estimates.rds
 
 # summaries of traces
-rtlive/DE/*
+rtlive/*
 !rtlive/DE/*.zip
-rtlive/rtlive_summary_validation.ipynb
+!rtlive/summaries
 
 # rtlive repo
 rtlive/rtlive-global/
