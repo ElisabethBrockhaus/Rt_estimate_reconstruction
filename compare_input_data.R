@@ -8,29 +8,38 @@ getwd()
 source("Rt_estimate_reconstruction/load_data.R")
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
-RKI_incid <- load_incidence_data(method = "RKI")
+# load incidence data used by research groups
 rtlive_incid <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid.csv")
-ETH_incid <- load_incidence_data(method = "ETHZ_sliding_window")[, c("date", "value")]
-ETH_incid_mean <- ETH_incid$value %>% aggregate(by = list(ETH_incid$date), FUN = mean)
-names(ETH_incid_mean) <- c("date", "I")
+
+#RKI_incid <- load_incidence_data(method = "RKI")
+
+#ETH_incid <- load_incidence_data(method = "ETHZ_sliding_window")[, c("date", "value")]
+#ETH_incid_mean <- ETH_incid$value %>% aggregate(by = list(ETH_incid$date), FUN = mean)
+#names(ETH_incid_mean) <- c("date", "I")
+
 ilmenau_incid <- load_incidence_data(method = "ilmenau")
-sdsc_incid <- load_incidence_data(method = "sdsc")
+
+#sdsc_incid <- load_incidence_data(method = "sdsc")
+
 epiforecasts_incid <- load_incidence_data(method = "epiforecasts")
+
 globalrt_data <- read_csv("Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/time_series_covid19_confirmed_global.csv")
 dates_globalrt <- as.Date(names(globalrt_data[,6:595]), format = "%m/%d/%y")
 globalrt_total <- data.frame(date = dates_globalrt, cases = t(globalrt_data[1,6:595]))
 globalrt_incid <- data.frame(date = dates_globalrt,
                              I =t(globalrt_data[1,6:595]) - dplyr::lag(t(globalrt_data[1,6:595]), n = 1))
 
-incidence_data <- RKI_incid %>%
-  inner_join(rtlive_incid, by = "date") %>%
-  inner_join(ETH_incid_mean, by = "date") %>%
+# join incidence time series
+incidence_data <- rtlive_incid %>%
+  #inner_join(RKI_incid, by = "date") %>%
+  #inner_join(ETH_incid_mean, by = "date") %>%
   inner_join(ilmenau_incid, by = "date") %>%
-  inner_join(sdsc_incid, by = "date") %>%
+  #inner_join(sdsc_incid, by = "date") %>%
   inner_join(epiforecasts_incid, by = "date") %>%
   inner_join(globalrt_incid, by = "date")
-
-names(incidence_data) <- c("date", "RKI (nowcast)", "rtlive", "ETH (deconvoluted)", "Ilmenau", "SDSC (smoothed)", "epiforecasts", "globalrt") 
+names(incidence_data) <- c("date", "rtlive", #"RKI (nowcast)", "ETH (deconvoluted)",
+                           "Ilmenau", #"SDSC (smoothed)",
+                           "epiforecasts", "globalrt") 
 
 # reshape data
 incid  <- incidence_data %>%
