@@ -28,7 +28,7 @@ plot_for_comparison(estimates_window, comp_methods, filenames = "_windowAll.pdf"
 
 
 path <- "Rt_estimate_reconstruction/rtlive/summaries/"
-file <- "DE_2021-07-31_all_trace_summary.csv"
+file <- "DE_2021-07-10_all_trace_summary.csv"
 R_rtlive_gt_4.7 <- read.csv(paste0(path, file)) %>%
   dplyr::select(X, mean, X2.5., X97.5.) %>%
   rename(c("date" = "X", "R_calc" = "mean", "lower" = "X2.5.", "upper" = "X97.5.")) %>%
@@ -60,6 +60,6 @@ estimates_rtlive_gt <- R_rtlive_gt_4.7 %>%
   full_join(R_rtlive_gt_3.4, by = "date") %>% 
   full_join(R_rtlive_gt_5.6, by = "date")
 
-comp_methods <- c("rtlive", "rtlive_4", "rtlive_3.4", "rtlive_5.6")
+comp_methods <- c("rtlive_4.7_org", "rtlive_4", "rtlive_3.4", "rtlive_5.6")
 plot_for_comparison(estimates_rtlive_gt, comp_methods, filenames = "_rtlive-various-gtds.pdf",
                     method = "rtlive", variation = "generation time")
