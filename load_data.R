@@ -65,7 +65,7 @@ load_published_R_estimates <- function(source,
 ####################################################
 # load incidence data depending on source/preproc. #
 ####################################################
-# TODO: add Zi, rtlive and globalrt
+# TODO: add rtlive and globalrt
 load_incidence_data <- function(method, location="DE", ...){
   
   # depending on method call functions
@@ -113,7 +113,7 @@ load_incidence_data <- function(method, location="DE", ...){
       print("Location not included in analysis, choose from [DE, AT, CH].")
     }
     
-  } else if (method == "Zi") {
+  } else if (method == "zidatalab") {
     if (location == "DE") {
       data <- load_Zi_data()
     } else {
@@ -132,7 +132,7 @@ load_incidence_data <- function(method, location="DE", ...){
     }
     
   } else {
-    print("Method unknown, choose from [RKI, ETHZ_sliding_window, ilmenau, AGES, sdsc, epiforecasts].")
+    print("Method unknown, choose from [RKI, ETHZ_sliding_window, ilmenau, AGES, sdsc, zidatalab, epiforecasts].")
   }
   
   return(data)
