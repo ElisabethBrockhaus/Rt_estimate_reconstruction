@@ -409,6 +409,18 @@ comp_methods <- c("raw EpiEstim", "ETH EpiEstim", "AGES EpiEstim", "Ilmenau",
 plot_for_comparison(estimates_window_Cori, comp_methods, filenames = "_windowCori.pdf",
                     method = method, variation = "generation time")
 
+estimates_ws_CI <- as.data.frame(R_raw_EpiEstim_ws) %>% 
+  full_join(R_ETH_EpiEstim_ws, by = "date") %>%
+  full_join(R_Ilmenau_ws, by = "date") %>% 
+  full_join(R_epiforecasts_ws, by = "date") %>%
+  full_join(R_globalrt_ws, by = "date") %>%
+  full_join(R_rtlive_ws, by = "date")
+
+comp_CI <- c("raw EpiEstim", "ETH EpiEstim", "Ilmenau", "epiforecasts", "globalrt", "rtlive")
+plot_for_comparison(estimates_ws_CI, comp_CI, include_CI = T,
+                    method = method, variation = "delays")
+
+
 
 # with preprocessing of incidence data for globalrt method
 path <- "Rt_estimate_reconstruction/ArroyoMarioli/estimates/"
