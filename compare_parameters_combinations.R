@@ -339,7 +339,9 @@ R_raw_EpiEstim_d <- R_raw_EpiEstim_gt
 R_raw_EpiEstim_d$date <- R_raw_EpiEstim_d$date + params["RKI", "delay"]
 
 R_RKI_d <- R_RKI_gt
-R_RKI_d$date <- R_RKI_d$date + params["RKI", "delay"] # um kompletten delay anzupassen, müsste noch mean der Zeit zwischen Meldedatum und Referenzdatum addiert werden, weil der Nowcast schon den reporting delay beachtet, incid aber nicht bzw. die anderen Methoden nicht im Preprocessing
+R_RKI_d$date <- R_RKI_d$date + params["RKI", "delay"]
+# additionally correct for mean difference between reference date and reporting date (Nowcast vs. rtlive aggregation used for other forecasts)
+R_RKI_d$date <- R_RKI_d$date + 3 # eigentlich ca 3.37 Tage
 
 R_SDSC_EpiEstim_d <- R_SDSC_EpiEstim_gt
 R_SDSC_EpiEstim_d$date <- R_SDSC_EpiEstim_d$date + params["SDSC", "delay"]

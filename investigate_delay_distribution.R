@@ -228,3 +228,19 @@ par(mfrow=c(1,1))
 
 
 
+#################################################################
+# Reporting delay RKI line list (Nowcast vs rtlive aggregation) #
+#################################################################
+raw_data <- read_csv("D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/rtlive/rtlive-global/data/RKI_COVID19.csv")
+raw_data$Meldedatum <- as_date(raw_data$Meldedatum)
+raw_data$Refdatum <- as_date(raw_data$Refdatum)
+data <- raw_data %>%
+  dplyr::select(AnzahlFall, Meldedatum, Refdatum) %>%
+  dplyr::filter(Meldedatum <= as_date("2021-07-10")) %>%
+  group_by(Meldedatum) %>%
+  summarise(AnzahlFall=sum(AnzahlFall), Refdatum=mean(Refdatum))
+View(data)
+
+(data$AnzahlFall %*% as.numeric(data$Meldedatum - data$Refdatum)) / sum(data$AnzahlFall)
+
+
