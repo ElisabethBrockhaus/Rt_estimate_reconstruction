@@ -67,13 +67,17 @@ estimate_RKI_R <- function(incid, window=7, gt_type="constant", gt_mean=4, gt_sd
         estimate[t-1, "R_calc"] <- new_infect / total_infect
       }
     }
+    
+    # avoid problems in plotting by setting CI's to width zero (no real uncertainty intervals!! Don't interpret those)
+    estimate$lower <- estimate$upper <- estimate$R_calc
   }
   
   # shift estimates by delay
   estimate$date <- estimate$date - (delay - 1)
+  return(estimate)
   
-  # return only columns containg non-NA values (omit "lower" and "upper" if method == "RKI")
-  return(estimate[colSums(!is.na(estimate)) > 0])
+  ## return only columns containg non-NA values (omit "lower" and "upper" if method == "RKI")
+  #return(estimate[colSums(!is.na(estimate)) > 0])
 }
 
 
