@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     output_folder = "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/ArroyoMarioli/estimates/"
     input_folder = "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/"
-    days_infectious = 4
+    days_infectious = 7
     num_iter = 10000  # MCMC iterations
     num_warmup = 2000  # MCMC warmup period
     num_chains = 3  # MCMC chains
