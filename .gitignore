@@ -5,7 +5,7 @@
 # checkpoints
 */.ipynb_checkpoints
 */.pytest_cache
-*/__pycache__
+*.pyc
 
 # data that is not needed for estimation
 incidence_data/*
