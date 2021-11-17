@@ -147,7 +147,7 @@ load_incidence_data <- function(method, location="DE", ...){
 load_RKI_data <- function(){
   
   # path to RKI incidence data
-  repo_incid <- "https://raw.githubusercontent.com/robert-koch-institut/SARS-CoV-2-Nowcasting_und_-R-Schaetzung/main/Nowcast_R_aktuell.csv"
+  repo_incid <- "https://raw.githubusercontent.com/robert-koch-institut/SARS-CoV-2-Nowcasting_und_-R-Schaetzung/main/Archiv/Nowcast_R_2021-07-10.csv"
   
   # load incidence data
   data <- read_csv(repo_incid)
@@ -367,7 +367,7 @@ ETH_load_countryData <- function(country="Germany", region="DEU", data_source = 
     # load data used in AnDerHeiden
     if (region == "DEU") {
       if (TRUE){
-        RKI_data <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid.csv")
+        RKI_data <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid_21_07_10.csv")
         print("Loading data used by rtlive")
       } else {
         RKI_data <- load_RKI_data()
