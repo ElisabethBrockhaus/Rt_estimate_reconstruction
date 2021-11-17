@@ -23,16 +23,23 @@ load_data_for_globalrt <- function(method, countries=c("Germany")){
       names(country_data)[2] <- country
       joined_data <- if (!exists("joined_data")) country_data else full_join(joined_data, country_data, by = "date")
     }
+    
   } else if ((method == "rtlive") & (countries == c("Germany"))) {
-    country_data <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid.csv")
-    names(country_data) <- c("date", "Germany")
+    country_data <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid_21_07_10.csv")
+    names(country_data) <- c("date", "Germany_rtlive")
+    country_data <- country_data %>%
+      mutate(Germany_rtlive_rolling = zoo::rollapplyr(Germany_rtlive, width = 7, FUN = sum, partial = TRUE))
+    #country_data$Germany_rtlive_rolling[1:6] <- NA
     joined_data <- if (!exists("joined_data")) country_data else full_join(joined_data, country_data, by = "date")
+
   } else if ((method == "rtlive_preprocessed") & (countries == c("Germany"))) {
-    country_data <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid.csv")
+    # TODO: delete this case (contains mistakes)
+    country_data <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid_21_07_10.csv")
     # calculate moving sum (7) over incidence for globalrt estimation with preprocessing substituting window size
     country_data$I <- as.numeric(stats::filter(country_data, rep(7, 7), method = "convolution", sides = 1)[,2])
     names(country_data) <- c("date", "Germany")
     joined_data <- if (!exists("joined_data")) country_data else full_join(joined_data, country_data, by = "date")
+
   } else {
     for (country in countries){
       country_data <- load_incidence_data(method = method, location = locations[country])
@@ -70,14 +77,21 @@ load_data_for_globalrt <- function(method, countries=c("Germany")){
   return(data)
 }
 
+rtlive_data <- load_data_for_globalrt(method = "rtlive", countries=c("Germany"))
+rtlive_data[1,2] <- "Germany_rtlive"
+rtlive_data[2,2] <- "Germany_rtlive_rolling"
+
+write_csv(rtlive_data, "Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/time_series_covid19_confirmed_global_final.csv")
+
+
 # load, format and save data from RKI (used for main analysis)
 #data_rki <- load_data_for_globalrt(method = "RKI", countries=c("Germany"))
-write_csv(load_data_for_globalrt(method = "RKI", countries=c("Germany")),
-          "Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/time_series_covid19_confirmed_global_RKI.csv")
+#write_csv(load_data_for_globalrt(method = "RKI", countries=c("Germany")),
+#          "Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/time_series_covid19_confirmed_global_RKI.csv")
 
-write_csv(load_data_for_globalrt(method = "rtlive", countries=c("Germany")),
-          "Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/time_series_covid19_confirmed_global_rtlive.csv")
+#write_csv(load_data_for_globalrt(method = "rtlive", countries=c("Germany")),
+#          "Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/time_series_covid19_confirmed_global_rtlive.csv")
 
-write_csv(load_data_for_globalrt(method = "rtlive_preprocessed", countries=c("Germany")),
-          "Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/time_series_covid19_confirmed_global_rtlive_preprocessed.csv")
+#write_csv(load_data_for_globalrt(method = "rtlive_preprocessed", countries=c("Germany")),
+#          "Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/time_series_covid19_confirmed_global_rtlive_preprocessed.csv")
 
