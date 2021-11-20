@@ -12,34 +12,24 @@ library(jsonlite)
 ##################################################
 # load estimates from git (reproductive_numbers) #
 ##################################################
-load_published_R_estimates <- function(source,
+load_published_R_estimates <- function(source, pub_date="2021-07-10",
                                        start=as.Date("2019-12-28"), end=Sys.Date(),
                                        location="DE"){
   
   # define path where Rt estimates are located
   path <- paste0("reproductive_numbers/data-processed/", source, "/")
   
-  if (source == "epiforecasts"){
-    file <- "2021-05-31-epiforecasts.csv"
-    
+  tryCatch({
+    file <- paste0(pub_date, "-", source, ".csv")
+
     # load estimates
     print(paste("Loading estimates from file", file))
     R_est <- read_csv(paste0(path, file), col_types = list(date = col_date()))
-    
-  } else {
-    tryCatch({
-      # find most recent estimates
-      file <- max(list.files(path, pattern = paste0("\\d{4}-\\d{2}-\\d{2}-|_", source, ".csv")))
-  
-      # load estimates
-      print(paste("Loading estimates from file", file))
-      R_est <- read_csv(paste0(path, file), col_types = list(date = col_date()))
-    }, error=function(e) {
-      print("Unmatched source, choose from:")
-      # TODO resolve: directories sometimes have different names than files
-      print(list.dirs("reproductive_numbers/data-processed/", full.names = F))
-    })
-  }
+  }, error=function(e) {
+    print("Unmatched pub_date or source, try different pub_date and make sure source is one of:")
+    # TODO resolve: directories sometimes have different names than files
+    print(list.dirs("reproductive_numbers/data-processed/", full.names = F))
+  })
   
   if (source != "zidatalab"){
     R_est <- R_est[R_est$location==location, c("date", "quantile", "type", "value")]
@@ -59,7 +49,6 @@ load_published_R_estimates <- function(source,
   data <- merge(R_est, dates, by.x = 'date', by.y = 'date', all.x = FALSE, all.y = TRUE)
   return(data)
 }
-
 
 
 ####################################################
