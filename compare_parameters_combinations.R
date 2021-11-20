@@ -14,7 +14,10 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 ####################################
 # compare real-time estimates #
 ####################################
-RKI_R_pub <- load_published_R_estimates(source = "RKI_7day")
+RKI_R_pub <- read_csv("https://raw.githubusercontent.com/robert-koch-institut/SARS-CoV-2-Nowcasting_und_-R-Schaetzung/main/Archiv/Nowcast_R_2021-07-10.csv",
+                      col_types = list(Datum = col_date())) %>%
+  dplyr::select("Datum", "PS_7_Tage_R_Wert", "UG_PI_7_Tage_R_Wert", "OG_PI_7_Tage_R_Wert") %>%
+  rename(c("date" = "Datum", "R_pub" = "PS_7_Tage_R_Wert", "lower" = "UG_PI_7_Tage_R_Wert", "upper" = "OG_PI_7_Tage_R_Wert"))
 ETH_R_pub <- load_published_R_estimates("ETHZ_sliding_window")
 Ilmenau_R_pub <- load_published_R_estimates("ilmenau")
 SDSC_R_pub <- load_published_R_estimates("sdsc")
@@ -35,7 +38,8 @@ estimates_pub <- RKI_R_pub[,c("date", "R_pub")] %>%
 
 org_methods <- c("RKI", "ETH", "Ilmenau", "SDSC", "Zi",
                  "globalrt", "epiforecasts", "rtlive")
-plot_for_comparison(estimates_pub, org_methods, filenames = "_real-time.pdf",
+plot_for_comparison(estimates_pub, org_methods,
+                    legend_name = "research group", filenames = "_real-time.pdf",
                     method = "original", variation = "parameters")
 
 estimates_pub_ci <- ETH_R_pub %>% 
@@ -183,23 +187,18 @@ R_epiforecasts_input <- R_epiforecasts_input[,c("date", "mean", "lower_95", "upp
 names(R_epiforecasts_input) <- c("date", "R_calc", "lower", "upper")
 
 path <- "Rt_estimate_reconstruction/ArroyoMarioli/estimates/"
-file <- paste0("bayesian_smoother_gt7.csv")
+file <- paste0("bayesian_smoother7.csv")
 R_globalrt_smoother_input <- read_csv(paste0(path, file))
 names(R_globalrt_smoother_input) <- c("date", "R_calc", "lower", "upper")
 
-file <- paste0("bayesian_filter_gt7.csv")
+file <- paste0("bayesian_filter7.csv")
 R_globalrt_filter_input <- read_csv(paste0(path, file))
 names(R_globalrt_filter_input) <- c("date", "R_calc", "lower", "upper")
 
-#plot(R_globalrt_input2$date, R_globalrt_input2$R_calc, type="l")
-#lines(R_globalrt_smoother$Date, R_globalrt_smoother$R, col = "red")
-#lines(R_globalrt_filter$Date, R_globalrt_filter$R, col = "blue")
-#legend(x="topright", legend=c("estimates from KF", "Bayesian smoothed", "Bayesian filtered"),
-#       lty=1, col=c("black", "red", "blue"))
-#lines(R_globalrt_smoother$Date, R_globalrt_smoother$lb_95, col = "red", lty=2)
-#lines(R_globalrt_smoother$Date, R_globalrt_smoother$ub_95, col = "red", lty=2)
-#lines(R_globalrt_filter$Date, R_globalrt_filter$lb_95, col = "blue", lty=2)
-#lines(R_globalrt_filter$Date, R_globalrt_filter$ub_95, col = "blue", lty=2)
+plot(R_globalrt_smoother_input$date, R_globalrt_smoother_input$R_calc, type="l")
+lines(R_globalrt_filter_input$date, R_globalrt_filter_input$R_calc, col = "blue")
+legend(x="topright", legend=c("Bayesian smoother", "Bayesian filter"),
+       lty=1, col=c("black", "blue"))
 
 path <- "Rt_estimate_reconstruction/rtlive/summaries/"
 file <- "DE_2021-07-10_all_trace_summary.csv"
