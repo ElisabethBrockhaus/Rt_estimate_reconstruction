@@ -180,7 +180,7 @@ plot_for_comparison <- function(estimates, comp_methods,
     names(estimates) <- c("date", names_R)
   }
   
-  estimates <- estimates[estimates$date < "2021-07-10",]
+  estimates <- estimates[estimates$date < "2021-06-15",]
   estimates <- estimates[rowSums(is.na(estimates)) == 0,]
   latest_estimates <- estimates[estimates$date >= "2021-01-13",]
   
