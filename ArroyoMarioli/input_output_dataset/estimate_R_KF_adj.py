@@ -89,11 +89,11 @@ def estimate_R(y, gamma, n_start_values_grid=0, maxiter=200):
     else:
         res_ll = mod_ll.fit(maxiter=maxiter, disp=False)
     R = 1 + 1 / (gamma) * res_ll.smoothed_state[0]
-    print("smoothed")
-    print((1 / gamma * (res_ll.smoothed_state_cov[0] ** 0.5))[0][0:5])
-    print("filtered")
-    print((1 / gamma * (res_ll.filtered_state_cov[0] ** 0.5))[0][0:5])
     se_R = (1 / gamma * (res_ll.smoothed_state_cov[0] ** 0.5))[0]
+
+    # EB:
+    print("Look if sd large enough:")
+    print(se_R[0:5])
 
     # EB: added conditional print command
     if res_ll.mle_retvals["converged"] is False:
@@ -262,7 +262,8 @@ def parametrized_estimation(
         .reset_index()
     )
     df_optim_res.to_csv(
-        "{}/optim_res{}{}{}.csv".format(output_folder, method, variation, data_source), index=False
+        "{}/optim_res{}{}{}.csv".format(output_folder, method, variation, data_source),
+        index=False,
     )
 
     ##################

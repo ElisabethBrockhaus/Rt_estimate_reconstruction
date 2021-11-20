@@ -40,7 +40,7 @@ if __name__ == "__main__":
     #############
 
     # Load data for Germany
-    df = pd.read_csv(input_folder + "dataset_rtlive.csv")
+    df = pd.read_csv(input_folder + "dataset_rtlive_short2.csv")
     mask = df["Country/Region"] == "Germany"
     df = df.loc[
         mask,
@@ -100,7 +100,7 @@ if __name__ == "__main__":
     df_smoother_Bayesian["lb_95"] = res_Bayes["lb_95"]
     df_smoother_Bayesian["ub_95"] = res_Bayes["ub_95"]
     df_smoother_Bayesian.to_csv(
-        "{}/bayesian_smoother.csv".format(output_folder), index=False
+        "{}/bayesian_smoother{}.csv".format(output_folder, days_infectious), index=False
     )
 
     # Get Bayesian filtered states
@@ -149,5 +149,5 @@ if __name__ == "__main__":
         df_filter_Bayesian.groupby("Date").mean()[["R", "lb_95", "ub_95"]].reset_index()
     )
     df_filter_Bayesian.to_csv(
-        "{}/bayesian_filter.csv".format(output_folder), index=False
+        "{}/bayesian_filter{}.csv".format(output_folder, days_infectious), index=False
     )

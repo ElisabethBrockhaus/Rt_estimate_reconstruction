@@ -1,12 +1,14 @@
 import os
 import shutil
+import errno
 
 import numpy as np
 import pandas as pd
-import scipy.integrate, scipy.stats, scipy.optimize, scipy.signal
-from scipy.stats import mannwhitneyu
+import scipy.integrate
+import scipy.stats
+import scipy.optimize
+import scipy.signal
 import statsmodels.formula.api as smf
-import pystan
 
 
 def clean_folder(folder):
@@ -201,7 +203,6 @@ def simulate_AR1(rho, sigma, T, shocks=None):
     Initial condition is
 
     x_0 ~ N(0, sigma ^ 2 / (1 - rho ^ 2))
-
     Persistence parameter must lie in (-1, 1)
     for an AR(1) to be simulated.
 

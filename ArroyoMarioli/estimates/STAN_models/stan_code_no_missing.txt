@@ -13,6 +13,8 @@
     real mu[N];
     real<lower=0> precision_irregular;  // Precision (inverse of variance) of irregular component
     real<lower=0> signal_to_noise;      // Signal-to-noise ratio
+    real s[N];                          // Intraweek seasonality component
+    real<lower=0> precision_seasonal;   // Precision (inverse of variance) of seasonal component
   }
 
   transformed parameters {
@@ -24,20 +26,25 @@
 
   model {
     // Priors
-    precision_irregular ~ gamma(3.1302407912715062, 0.02543069111234041);
-    signal_to_noise     ~ gamma(2.2213941941957973, 91.51961701237597);
-    mu_zero             ~ normal(0.35, 0.5);
+    precision_irregular ~ gamma(9.390722373814523, 0.15258414667404252);
+    signal_to_noise     ~ gamma(6.664182582587391, 274.5588510371279);
+    mu_zero             ~ normal(0.25, 0.15);
+    precision_seasonal  ~ gamma(9.390722373814523, 0.15258414667404252);
 
     // initial state
     mu[1] ~ normal(mu_zero, precision_level ^ (-0.5));
-
+    // intraweek seasonality component
+    for(i in 7:N) {
+      s[i] ~ normal(-s[i-1]-s[i-2]-s[i-3]-s[i-4]-s[i-5]-s[i-6], precision_seasonal ^ (-0.5));
+      // Ensures that E(s[i] + s_[i-1] + ... s[i- 6]) = 0
+      // See https://tharte.github.io/mbt/mbt.html#sec-3-9
+    }
     // state equation
     for(i in 2:N) {
       mu[i] ~ normal(mu[i-1], precision_level ^ (-0.5));
     }
-
     // observation equation
     for(i in 1:N) {
-      y[i] ~ normal(mu[i], precision_irregular ^ (-0.5));
+      y[i] ~ normal(mu[i] + s[i], precision_irregular ^ (-0.5));
     }
   }
