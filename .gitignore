@@ -38,3 +38,6 @@ epiforecasts/input_data/
 
 # open .xlsx files
 otherFiles/~$*.xlsx
+
+# copies
+*Kopie*
