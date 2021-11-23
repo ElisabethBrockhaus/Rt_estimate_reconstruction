@@ -163,7 +163,7 @@ plot_published_vs_calculated_95CI <- function(published, calculated, method_name
 
 plot_for_comparison <- function(estimates, comp_methods,
                                 legend_name="model", filenames = "latest_plot.png",
-                                include_CI=F, method, variation, comparing_parameters=F){
+                                include_CI=F, comparing_parameters=F){
   if (length(comp_methods)*3 == dim(estimates)[2]-1){
     names_ci <- rep(NA, length(comp_methods)*3)
     for (i in 1:length(comp_methods)){
@@ -210,20 +210,14 @@ plot_for_comparison <- function(estimates, comp_methods,
     mean_abs_diff <- pheatmap(matr, color = viridis(100), breaks = seq(0,0.3,0.3/100),
                               border_color = NA, display_numbers = TRUE,
                               fontsize = 18, fontsize_number=22, number_color = "white",
-                              angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE)#,
-                              #main = paste("Mean absolute differences between estimates over",
-                              #             max(estimates$date) - min(estimates$date),
-                              #             "days using", method, variation))
+                              angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE)
     save_pheatmap_pdf(mean_abs_diff, paste0("Figures/mean_abs_diff", filenames))
     
     
     correlations <- pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0.25,1,0.75/100),
                              border_color = NA, display_numbers = TRUE,
                              fontsize = 18, fontsize_number=22, number_color = "white",
-                             angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE)#,
-                             #main = paste("Correlations between estimates over",
-                             #             max(estimates$date) - min(estimates$date),
-                             #             "days using", method, variation))
+                             angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE)
     save_pheatmap_pdf(correlations, paste0("correlations", filenames))
   }
 }
