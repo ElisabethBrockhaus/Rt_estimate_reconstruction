@@ -75,6 +75,78 @@ plot_for_comparison(estimates_gtd, comp_methods = gtd_strs,
 
 
 
+# vary input data
+rki_incid <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid_21_11_23.csv")
+who_incid <- read_csv("Rt_estimate_reconstruction/incidence_data/epiforecasts_incid_21_11_23.csv")
+jhu_incid <- read_csv("Rt_estimate_reconstruction/incidence_data/jhu_incid_21_11_23.csv")
+incids <- rki_incid %>%
+  inner_join(who_incid, by = "date") %>%
+  inner_join(jhu_incid, by = "date") %>%
+  dplyr::filter(date<=as_date("2021-07-10"))
+data_sources <- c("RKI", "WHO", "JHU")
+colnames(incids) <- c("date", data_sources)
+
+if (exists("estimates_input")) rm(estimates_input)
+for (src in data_sources){
+  incid <- incids[c("date", src)] %>% rename(c("I"=src))
+  R_est <- estimate_RKI_R(incid, method = "EpiEstim",
+                          window = 7,
+                          gt_type = "gamma",
+                          gt_mean = 4,
+                          gt_sd = 4,
+                          delay = 0)
+  names(R_est) <- c("date", src, paste0(src, ".lower"), paste0(src, ".upper"))
+  if (!exists("estimates_input")){
+    estimates_input <- R_est
+  } else {
+    estimates_input <- estimates_input %>% full_join(R_est, by = "date")
+  }
+}
+plot_for_comparison(estimates_input, comp_methods = data_sources,
+                    legend_name = "data source", filenames = "_influence_input_data.pdf",
+                    method = "EpiEstim", variation = "with different sources of input data",
+                    comparing_parameters = FALSE)
 
 
+# vary preprocessing
+rki_incid <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid_21_07_10.csv")
+rki_nowcast <- load_RKI_data()
+sdsc_smoothed <- load_SDSC_data(country="Germany", data_status="2021-07-10")
+sdsc_smoothed$I <- round(sdsc_smoothed$I)
+incids <- rki_incid %>%
+  inner_join(rki_nowcast, by = "date") %>%
+  inner_join(sdsc_smoothed, by = "date")
+preprocessing <- c("none", "nowcast RKI", "smoothing SDSC")
+colnames(incids) <- c("date", preprocessing)
+
+if (exists("estimates_preprocess")) rm(estimates_preprocess)
+for (type in preprocessing){
+  incid <- incids[c("date", type)] %>% rename(c("I"=type))
+  R_est <- estimate_RKI_R(incid, method = "EpiEstim",
+                          window = 7,
+                          gt_type = "gamma",
+                          gt_mean = 4,
+                          gt_sd = 4,
+                          delay = 0)
+  names(R_est) <- c("date", type, paste0(type, ".lower"), paste0(type, ".upper"))
+  if (!exists("estimates_preprocess")){
+    estimates_preprocess <- R_est
+  } else {
+    estimates_preprocess <- estimates_preprocess %>% full_join(R_est, by = "date")
+  }
+}
+
+incid_for_ETH <- load_incidence_data(method = "ETHZ_sliding_window", source = "_simpleRKI",
+                                     new_deconvolution = FALSE)
+R_ETH <- estimate_ETH_R(incid_for_ETH,
+                        window = 7,
+                        gt_type = "gamma",
+                        gt_mean = 4,
+                        gt_sd = 4)
+R_ETH$date <- R_ETH$date + 11 # mean delay of ETH estimates
+estimates_preprocess <- estimates_preprocess %>% full_join(R_ETH, by = "date")
+
+plot_for_comparison(estimates_preprocess, comp_methods = c(preprocessing, "deconvolution ETH"),
+                    legend_name = "preprocessing", filenames = "_influence_preprocessing.pdf",
+                    method = "EpiEstim", variation = "with different preprocessing methods")
 
