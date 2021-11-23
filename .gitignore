@@ -21,6 +21,8 @@ ETH/data/countryData/AUT-Estimates.rds
 rtlive/*
 !rtlive/DE/*.zip
 !rtlive/summaries
+!rtlive/gt_distributions.csv
+!rtlive/extract_gtds_for_rtlive.R
 
 # rtlive repo
 rtlive/rtlive-global/
