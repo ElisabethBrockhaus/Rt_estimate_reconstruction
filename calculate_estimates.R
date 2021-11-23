@@ -527,7 +527,7 @@ get_infectivity_profile <- function(gt_type=c("ad hoc", "gamma", "exponential", 
     names(gt_dist) <- seq_along(gt_dist)
     
   } else if (gt_type == "gamma"){
-    gt_dist <- dgamma(0:n_days, shape = (gt_mean^2)/gt_sd, scale = gt_sd/gt_mean)
+    gt_dist <- EpiEstim::discr_si(0:n_days, gt_mean, gt_sd)
     
   } else if (gt_type == "exponential"){
     if(gt_mean != gt_sd){
