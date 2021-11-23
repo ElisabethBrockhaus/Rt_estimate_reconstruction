@@ -214,7 +214,7 @@ plot_for_comparison <- function(estimates, comp_methods,
                               #main = paste("Mean absolute differences between estimates over",
                               #             max(estimates$date) - min(estimates$date),
                               #             "days using", method, variation))
-    save_pheatmap_pdf(mean_abs_diff, paste0("mean_abs_diff", filenames))
+    save_pheatmap_pdf(mean_abs_diff, paste0("Figures/mean_abs_diff", filenames))
     
     
     correlations <- pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0.25,1,0.75/100),
