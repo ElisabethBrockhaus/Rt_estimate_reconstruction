@@ -11,9 +11,9 @@ source("Rt_estimate_reconstruction/calculate_estimates.R")
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
 
-####################################
+###############################
 # compare real-time estimates #
-####################################
+###############################
 RKI_R_pub <- read_csv("https://raw.githubusercontent.com/robert-koch-institut/SARS-CoV-2-Nowcasting_und_-R-Schaetzung/main/Archiv/Nowcast_R_2021-07-10.csv",
                       col_types = list(Datum = col_date())) %>%
   dplyr::select("Datum", "PS_7_Tage_R_Wert", "UG_PI_7_Tage_R_Wert", "OG_PI_7_Tage_R_Wert") %>%
@@ -21,7 +21,7 @@ RKI_R_pub <- read_csv("https://raw.githubusercontent.com/robert-koch-institut/SA
 ETH_R_pub <- load_published_R_estimates("ETHZ_sliding_window")
 Ilmenau_R_pub <- load_published_R_estimates("ilmenau")
 SDSC_R_pub <- load_published_R_estimates("sdsc")
-Zi_R_pub <- load_published_R_estimates("zidatalab")
+#Zi_R_pub <- load_published_R_estimates("zidatalab")
 globalrt_R_pub <- load_published_R_estimates("globalrt_7d")
 epinow_R_pub <- load_published_R_estimates("epiforecasts")
 rtlive_R_pub <- load_published_R_estimates("rtlive")
@@ -31,12 +31,12 @@ estimates_pub <- RKI_R_pub[,c("date", "R_pub")] %>%
   full_join(ETH_R_pub[,c("date", "R_pub")], by = "date") %>% 
   full_join(Ilmenau_R_pub[,c("date", "R_pub")], by = "date") %>% 
   full_join(SDSC_R_pub[,c("date", "R_pub")], by = "date") %>% 
-  full_join(Zi_R_pub[,c("date", "R_pub")], by = "date") %>% 
+  #full_join(Zi_R_pub[,c("date", "R_pub")], by = "date") %>% 
   full_join(globalrt_R_pub[,c("date", "R_pub")], by = "date") %>%
   full_join(epinow_R_pub[,c("date", "R_pub")], by = "date") %>%
   full_join(rtlive_R_pub[,c("date", "R_pub")], by = "date")
 
-org_methods <- c("RKI", "ETH", "Ilmenau", "SDSC", "Zi",
+org_methods <- c("RKI", "ETH", "Ilmenau", "SDSC", #"Zi",
                  "globalrt", "epiforecasts", "rtlive")
 plot_for_comparison(estimates_pub, org_methods,
                     legend_name = "research group", filenames = "_real-time.pdf",
@@ -59,13 +59,13 @@ plot_for_comparison(estimates_pub_ci, org_methods, include_CI=T,
 ################################
 
 # parameter combinations used in papers
-gt_dist <- c("gamma", "constant", "ad hoc", "gamma", "gamma", "gamma", "gamma", "lognorm", "exponential")
-mean_gt <- c(4.8,      4,          5.6,      4.8,     5,       3.4,     3.6,     4.7,       7)
-sd_gt <-   c(2.3,      0,          4.2,      2.3,     4,       1.8,     3.1,     2.9,       7)
-delay <-   c(11,       1,          7,        10,      0,       0,       12,      12,        0)
+gt_dist <- c("gamma", "constant", "ad hoc", "gamma", "gamma", "gamma", "lognorm", "exponential")
+mean_gt <- c(4.8,      4,          5.6,      4.8,    3.4,     3.6,     4.7,       7)
+sd_gt <-   c(2.3,      0,          4.2,      2.3,    1.8,     3.1,     2.9,       7)
+delay <-   c(11,       1,          7,        10,     0,       12,      12,        0)
 
 params <- data.frame(gtd=gt_dist, gt_mean=mean_gt, gt_sd=sd_gt, delay=delay)
-methods <- c("ETH", "RKI", "Ilmenau", "SDSC", "Zi", "AGES", "epiforecasts", "rtlive", "globalrt")
+methods <- c("ETH", "RKI", "Ilmenau", "SDSC", "AGES", "epiforecasts", "rtlive", "globalrt")
 rownames(params) <- methods
 
 source("Rt_estimate_reconstruction/ETH/delays_for_ETH_estimation.R")
@@ -113,7 +113,7 @@ gtd_scatterplot <- ggplot(data = params, aes(x = gt_mean, y = gt_sd)) +
     panel.background = element_rect(fill = "transparent")
     ) +
   geom_point(size = 2) +
-  geom_text(label=c("ETH/SDSC", "RKI", "Ilmenau", "SDSC", "Zi", "AGES", "epiforecasts", "rtlive", "globalrt"),
+  geom_text(label=c("ETH/SDSC", "RKI", "Ilmenau", "SDSC", "AGES", "epiforecasts", "rtlive", "globalrt"),
             nudge_y = 0.3, check_overlap = TRUE, size = 5) + 
   geom_point(data = data.frame(gt_mean=4, gt_sd=4), colour = "red", size = 3)
 print(gtd_scatterplot)
