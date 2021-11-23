@@ -189,7 +189,7 @@ plot_for_comparison <- function(estimates, comp_methods,
   
   #ggsave(R_plot, filename = "estimates_plot.png",  bg = "transparent")
   #print(R_plot)
-  ggsave(R_plot_latest, filename = paste0("estimates", filenames),  bg = "transparent",
+  ggsave(R_plot_latest, filename = paste0("Figures/estimates", filenames),  bg = "transparent",
          width = 13.1, height = 6.3)
   print(R_plot_latest) 
   
