@@ -26,7 +26,7 @@ std_dev_mu0 = 0.15  # Prior for initial state: standard devitaion
 # Calibrate priors using KF estimates #
 #######################################
 
-df = pd.read_csv("{}/optim_res_globalrt_rtlive.csv".format(input_folder))
+df = pd.read_csv("{}/optim_res.csv".format(input_folder))
 
 # The local-level model estimated by frequentist Kalman filtering
 # does not include a seasonal component. For calibration

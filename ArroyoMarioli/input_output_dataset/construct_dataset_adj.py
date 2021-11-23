@@ -55,6 +55,9 @@ days_infectious_list = [4, 5, 6, 7, 8, 9, 10]
 # EB: chose later end_date
 end_date = "2021-07-10"  # End of sample
 restrict_end_sample = False
+# EB: add start_date to avoid computational issues
+start_date = "2020-03-11"
+restrict_start_sample = True
 
 #####################
 # Construct dataset #
@@ -62,10 +65,10 @@ restrict_end_sample = False
 
 # EB: deleted clean_folder(output_folder)
 
-# EB: add "rtlive" ending to filename (describing the data source)
+# EB: add ending "final" to filename (use aggregated RKI line list data)
 # Read in data on total cases
 df = construct_dataset(
-    file_name="{}/time_series_covid19_confirmed_global_rtlive.csv".format(input_folder),
+    file_name="{}/time_series_covid19_confirmed_global_final.csv".format(input_folder),
     var_name="total_cases",
 )
 
@@ -224,6 +227,12 @@ if restrict_end_sample:
     df = df.loc[
         mask,
     ]
+# EB: restict start, too
+if restrict_start_sample:
+    mask = df["Date"] >= start_date
+    df = df.loc[
+        mask,
+    ]
 
 # Save final dataset
-df.to_csv("{}/dataset_rtlive.csv".format(output_folder), index=False)
+df.to_csv("{}/dataset_final.csv".format(output_folder), index=False)
