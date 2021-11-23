@@ -9,37 +9,45 @@ source("Rt_estimate_reconstruction/load_data.R")
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
 # load incidence data used by research groups
-rtlive_incid <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid.csv")
 
-#RKI_incid <- load_incidence_data(method = "RKI")
+########################
+# Ilmenau/rtlive (RKI) #
+########################
+#rki_data <- read_csv("Rt_estimate_reconstruction/rtlive/rtlive-global/data/rtlive_data_21_11_23.csv")
+#rki_incid <- rki_data %>%
+#  dplyr::filter(region == "all") %>%
+#  dplyr::select(date, new_cases) %>%
+#  rename(c("I" = "new_cases"))
+#write_csv(rki_incid, "Rt_estimate_reconstruction/incidence_data/rtlive_incid_21_11_23.csv")
+rki_incid <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid_21_11_23.csv")
 
-#ETH_incid <- load_incidence_data(method = "ETHZ_sliding_window")[, c("date", "value")]
-#ETH_incid_mean <- ETH_incid$value %>% aggregate(by = list(ETH_incid$date), FUN = mean)
-#names(ETH_incid_mean) <- c("date", "I")
+######################
+# epiforecasts (WHO) #
+######################
+#who_incid <- load_incidence_data(method = "epiforecasts")
+#write_csv(who_incid, "Rt_estimate_reconstruction/incidence_data/epiforecasts_incid_21_11_23.csv")
+who_incid <- read_csv("Rt_estimate_reconstruction/incidence_data/epiforecasts_incid_21_11_23.csv")
 
-ilmenau_incid <- load_incidence_data(method = "ilmenau")
+#######################
+# globalrt/SDSC (JHU) #
+#######################
+#jhu_incid_global <- read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")
+#jhu_incid <- jhu_incid_global %>%
+#  filter(`Country/Region` == "Germany") %>%
+#  unlist(., use.names=TRUE)
+#jhu_incid <- as.numeric(jhu_incid[5:dim(jhu_incid_global)[2]])
+#jhu_incid <- diff(jhu_incid, lag=1)
+#jhu_incid <- data.frame("date"=as.Date(names(jhu_incid_global)[6:dim(jhu_incid_global)[2]], format = "%m/%d/%y"),
+#                        "I"=jhu_incid)
+#write_csv(jhu_incid, "Rt_estimate_reconstruction/incidence_data/jhu_incid_21_11_23.csv")
+jhu_incid <- read_csv("Rt_estimate_reconstruction/incidence_data/jhu_incid_21_11_23.csv")
 
-#sdsc_incid <- load_incidence_data(method = "sdsc")
-
-epiforecasts_incid <- load_incidence_data(method = "epiforecasts")
-
-globalrt_data <- read_csv("Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/time_series_covid19_confirmed_global.csv")
-dates_globalrt <- as.Date(names(globalrt_data[,6:595]), format = "%m/%d/%y")
-globalrt_total <- data.frame(date = dates_globalrt, cases = t(globalrt_data[1,6:595]))
-globalrt_incid <- data.frame(date = dates_globalrt,
-                             I =t(globalrt_data[1,6:595]) - dplyr::lag(t(globalrt_data[1,6:595]), n = 1))
 
 # join incidence time series
-incidence_data <- rtlive_incid %>%
-  #inner_join(RKI_incid, by = "date") %>%
-  #inner_join(ETH_incid_mean, by = "date") %>%
-  inner_join(ilmenau_incid, by = "date") %>%
-  #inner_join(sdsc_incid, by = "date") %>%
-  inner_join(epiforecasts_incid, by = "date") %>%
-  inner_join(globalrt_incid, by = "date")
-names(incidence_data) <- c("date", "rtlive", #"RKI (nowcast)", "ETH (deconvoluted)",
-                           "Ilmenau", #"SDSC (smoothed)",
-                           "epiforecasts", "globalrt") 
+incidence_data <- rki_incid %>%
+  inner_join(who_incid, by = "date") %>%
+  inner_join(jhu_incid, by = "date")
+names(incidence_data) <- c("date", "Ilmenau/rtlive", "epiforecasts", "SDSC/globalrt")
 
 # reshape data
 incid  <- incidence_data %>%
@@ -69,5 +77,5 @@ R_plot <- ggplot(data = incid, aes(x = date, y = value)) +
   scale_colour_viridis_d(end = 0.9, name="group")
 
 print(R_plot)
-ggsave(R_plot, filename = "incidence_data.pdf",  bg = "transparent",
+ggsave(R_plot, filename = "Figures/incidence_data.pdf",  bg = "transparent",
        width = 13.1, height = 6.3)
