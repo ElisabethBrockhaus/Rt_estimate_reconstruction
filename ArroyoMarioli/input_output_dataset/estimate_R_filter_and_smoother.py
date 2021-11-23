@@ -114,6 +114,12 @@ if __name__ == "__main__":
         dist_var_irregular = fit_res["precision_irregular"] ** (
             -1
         )  # Draws from the estimated distribution from Stan
+
+        # EB: add seasonal component to Kalman filter
+        dist_var_seasonal = fit_res["precision_seasonal"] ** (
+            -1
+        )  # Draws from the estimated distribution from Stan
+
         dist_signal_to_noise = fit_res[
             "signal_to_noise"
         ]  # Draws from the estimated distribution from Stan
@@ -126,6 +132,10 @@ if __name__ == "__main__":
             # Pick a random draw for the variances of the
             # irregular and level components from the Bayesian estimates
             var_irregular = np.random.choice(dist_var_irregular, 1)[0]
+
+            # EB: add seasonal component to Kalman filter
+            var_seasonal = np.random.choice(dist_var_seasonal, 1)[0]
+
             var_level = var_irregular * np.random.choice(dist_signal_to_noise, 1)[0]
 
             # Run Kalman filter using these variances

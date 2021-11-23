@@ -27,8 +27,8 @@ load_data_for_globalrt <- function(method, countries=c("Germany")){
   } else if ((method == "rtlive") & (countries == c("Germany"))) {
     country_data <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid_21_07_10.csv")
     names(country_data) <- c("date", "Germany_rtlive")
-    country_data <- country_data %>%
-      mutate(Germany_rtlive_rolling = zoo::rollapplyr(Germany_rtlive, width = 7, FUN = sum, partial = TRUE))
+    #country_data <- country_data %>%
+    #  mutate(Germany_rtlive_rolling = zoo::rollapplyr(Germany_rtlive, width = 7, FUN = sum, partial = TRUE))
     #country_data$Germany_rtlive_rolling[1:6] <- NA
     joined_data <- if (!exists("joined_data")) country_data else full_join(joined_data, country_data, by = "date")
 
@@ -78,8 +78,8 @@ load_data_for_globalrt <- function(method, countries=c("Germany")){
 }
 
 rtlive_data <- load_data_for_globalrt(method = "rtlive", countries=c("Germany"))
-rtlive_data[1,2] <- "Germany_rtlive"
-rtlive_data[2,2] <- "Germany_rtlive_rolling"
+#rtlive_data[1,2] <- "Germany_rtlive"
+#rtlive_data[2,2] <- "Germany_rtlive_rolling"
 
 write_csv(rtlive_data, "Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/time_series_covid19_confirmed_global_final.csv")
 

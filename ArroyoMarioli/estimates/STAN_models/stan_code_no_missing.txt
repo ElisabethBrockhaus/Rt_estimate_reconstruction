@@ -26,10 +26,10 @@
 
   model {
     // Priors
-    precision_irregular ~ gamma(9.390722373814523, 0.15258414667404252);
-    signal_to_noise     ~ gamma(6.664182582587391, 274.5588510371279);
+    precision_irregular ~ gamma(0.8174474761001104, 0.0051494454004118685);
+    signal_to_noise     ~ gamma(1.1513367157579535, 26.39955686019644);
     mu_zero             ~ normal(0.25, 0.15);
-    precision_seasonal  ~ gamma(9.390722373814523, 0.15258414667404252);
+    precision_seasonal  ~ gamma(0.8174474761001104, 0.0051494454004118685);
 
     // initial state
     mu[1] ~ normal(mu_zero, precision_level ^ (-0.5));
