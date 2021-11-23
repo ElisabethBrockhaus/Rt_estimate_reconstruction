@@ -3,7 +3,7 @@ library(readr)
 # more complex for ETH estimation
 delay_RKI <- vector("list", 1)
 names(delay_RKI) <- c("Confirmed cases")
-delay_RKI["Confirmed cases"] <- list(c(rep(0, params["RKI", "delay"]),
+delay_RKI["Confirmed cases"] <- list(c(rep(0, params["RKI", "delay"]+3),
                                        1,
                                        rep(0, 199-params["RKI", "delay"])))
 delay_Ilmenau <- vector("list", 1)
@@ -16,10 +16,6 @@ names(delay_SDSC) <- c("Confirmed cases")
 delay_SDSC["Confirmed cases"] <- list(c(rep(0, params["SDSC", "delay"]),
                                         1,
                                         rep(0, 199-params["SDSC", "delay"])))
-delay_Zi <- vector("list", 1)
-names(delay_Zi) <- c("Confirmed cases")
-delay_Zi["Confirmed cases"] <- list(c(1, rep(0,199)))
-delay_AGES <- delay_globalrt <- delay_Zi
 
 delay_rtlive <- vector("list", 1)
 names(delay_rtlive) <- c("Confirmed cases")
@@ -42,6 +38,6 @@ delay_epiforecasts <- vector("list", 1)
 names(delay_epiforecasts) <- c("Confirmed cases")
 delay_epiforecasts["Confirmed cases"] <- list(delay(0:199))
 
-delays_ETH <- list(list(), delay_RKI, delay_Ilmenau, delay_SDSC, delay_Zi,
-                   delay_AGES, delay_epiforecasts, delay_rtlive, delay_globalrt)
+delays_ETH <- list(list(), delay_RKI, delay_Ilmenau, delay_SDSC, delay_AGES,
+                   delay_epiforecasts, delay_rtlive, delay_globalrt)
 names(delays_ETH) <- methods
