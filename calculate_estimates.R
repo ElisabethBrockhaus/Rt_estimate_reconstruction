@@ -186,8 +186,8 @@ estimate_Ilmenau_R <- function(incid, window=1, gt_type="empirical",
   
   estimate <- data.frame(date=incid$date, R_calc=estimate$repronum,
                          lower=estimate$ci.lower, upper=estimate$ci.upper)
-  names(estimate) <- c("date", 0.5, alpha/2, 1 - alpha/2)
-
+  names(estimate) <- c("date", "R_calc", "lower", "upper")
+  
   return(estimate)
 }
 
@@ -196,7 +196,7 @@ estimate_Ilmenau_R <- function(incid, window=1, gt_type="empirical",
 ##############################
 # estimate as in Richter2020 #
 ##############################
-estimate_AGES_R <- function(incid, window = 13, gt_type="gamma", gt_mean = 4.46, gt_sd = 2.63, delay=0){
+estimate_AGES_R <- function(incid, window = 13, gt_type="gamma", gt_mean = 3.37, gt_sd = 1.83, delay=0){
   
   # filter incid to dates where incidence data is available
   start_i <- min(which(!is.na(incid$I)))
