@@ -1,12 +1,12 @@
 library(ggplot2)
 
 # parameter combinations used in papers
-gt_dist <- c("gamma", "constant", "ad hoc", "gamma", "gamma", "gamma", "lognorm", "exponential")
-mean_gt <- c(4.8,      4,          5.6,      4.8,    3.4,     3.6,     4.7,       7)
-sd_gt <-   c(2.3,      0,          4.2,      2.3,    1.8,     3.1,     2.9,       7)
+gt_dist <- c("gamma", "constant", "ad hoc", "gamma", "gamma", "gamma", "lognorm", "exponential", "gamma")
+mean_gt <- c(4.8,      4,          5.6,      4.8,    3.4,     3.6,     4.7,       7,             4)
+sd_gt <-   c(2.3,      0,          4.2,      2.3,    1.8,     3.1,     2.9,       7,             4)
 
 gtds <- data.frame(gtd=gt_dist, gt_mean=mean_gt, gt_sd=sd_gt)
-methods <- c("ETH", "RKI", "Ilmenau", "SDSC", "AGES", "epiforecasts", "rtlive", "globalrt")
+methods <- c("ETH", "RKI", "Ilmenau", "SDSC", "AGES", "epiforecasts", "rtlive", "globalrt", "consensus")
 rownames(gtds) <- methods
 
 # plot assumed mean and sd of generation times
@@ -24,7 +24,7 @@ gtd_scatterplot <- ggplot(data = gtds, aes(x = gt_mean, y = gt_sd)) +
     panel.background = element_rect(fill = "transparent")
   ) +
   geom_point(size = 2) +
-  geom_text(label=c("ETH/SDSC", "RKI", "Ilmenau", "SDSC", "AGES", "epiforecasts", "rtlive", "globalrt"),
+  geom_text(label=c("ETH/SDSC", "RKI", "Ilmenau", "SDSC", "AGES", "epiforecasts", "rtlive", "globalrt", "consensus"),
             nudge_y = 0.3, check_overlap = TRUE, size = 5) + 
   geom_point(data = data.frame(gt_mean=4, gt_sd=4), colour = "red", size = 3)
 print(gtd_scatterplot)
