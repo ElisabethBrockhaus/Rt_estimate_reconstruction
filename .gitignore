@@ -11,8 +11,8 @@
 incidence_data/*
 # keep data needed for estimation
 !incidence_data/rtlive_incid_21_07_10.csv
-incidence_data/RKI_nowcast_21_07_10.csv
-incidence_data/rtlive_incid_for_ETH_21_07_10.csv
+!incidence_data/RKI_nowcast_21_07_10.csv
+!incidence_data/rtlive_incid_for_ETH_21_07_10.csv
 !incidence_data/SDSC_incid_21_07_10.csv
 !incidence_data/rtlive_incid_21_07_10.csv
 # keep data needed for comparison of input data
