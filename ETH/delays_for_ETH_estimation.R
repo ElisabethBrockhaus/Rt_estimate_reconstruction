@@ -17,6 +17,11 @@ delay_SDSC["Confirmed cases"] <- list(c(rep(0, params["SDSC", "delay"]),
                                         1,
                                         rep(0, 199-params["SDSC", "delay"])))
 
+delay_AGES <- vector("list", 1)
+names(delay_AGES) <- c("Confirmed cases")
+delay_AGES["Confirmed cases"] <- list(c(1, rep(0,199)))
+delay_globalrt <- delay_AGES
+
 delay_rtlive <- vector("list", 1)
 names(delay_rtlive) <- c("Confirmed cases")
 delay_rtlive["Confirmed cases"] <- list(c(read_csv("rtlive/p_delay.csv")$p_delay,
