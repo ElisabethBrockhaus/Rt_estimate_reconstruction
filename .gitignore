@@ -33,6 +33,7 @@ rtlive/*
 !rtlive/summaries
 !rtlive/gt_distributions.csv
 !rtlive/extract_gtds_for_rtlive.R
+!rtlive/important_files_from_repo/
 
 # rtlive repo
 rtlive/rtlive-global/
