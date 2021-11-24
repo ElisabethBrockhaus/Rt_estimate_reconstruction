@@ -31,14 +31,18 @@ source("Rt_estimate_reconstruction/ETH/delays_for_ETH_estimation.R")
 ######################
 
 # read RKI Nowcast data for RKI estimation
-RKI_incid <- load_incidence_data(method = "RKI")
+#RKI_incid <- load_incidence_data(method = "RKI")
+#write_csv(RKI_incid, "Rt_estimate_reconstruction/incidence_data/RKI_nowcast_21_07_10.csv")
+RKI_incid <- read_csv("Rt_estimate_reconstruction/incidence_data/RKI_nowcast_21_07_10.csv")
 
 # read smoothed RKI incidence data for SDSC estimation
 SDSC_incid <-  read_csv("Rt_estimate_reconstruction/incidence_data/SDSC_incid_21_07_10.csv")
 
 # deconvolve RKI incidence data for ETH estimation
-incid_for_ETH <- load_incidence_data(method = "ETHZ_sliding_window", source = "_simpleRKI",
-                                     new_deconvolution = FALSE)
+#incid_for_ETH <- load_incidence_data(method = "ETHZ_sliding_window", source = "_simpleRKI",
+#                                     new_deconvolution = FALSE)
+#write_csv(incid_for_ETH, "Rt_estimate_reconstruction/incidence_data/rtlive_incid_for_ETH_21_07_10.csv")
+incid_for_ETH <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid_for_ETH_21_07_10.csv")
 
 # read incidence data used by rtlive (sourced from RKI line-list data) for other estimations
 incid <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid_21_07_10.csv")
