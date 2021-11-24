@@ -54,7 +54,7 @@ plot_published_vs_calculated <- function(published, calculated, method_name, dif
 
 
 plot_multiple_estimates <- function(estimates, legend_name,
-                                    include_CI=F, comparing_parameters=F) {
+                                    include_CI=F, sort_numerically=F) {
   
   # reshape data
   R_est  <- estimates %>%
@@ -66,7 +66,7 @@ plot_multiple_estimates <- function(estimates, legend_name,
              remove = TRUE) %>%
     spread(type, value)
 
-  if (comparing_parameters) {
+  if (sort_numerically) {
     R_est <- R_est %>%
       mutate_at(vars("model"), as.numeric) %>%
       arrange(date, model) %>%
@@ -163,7 +163,8 @@ plot_published_vs_calculated_95CI <- function(published, calculated, method_name
 
 plot_for_comparison <- function(estimates, comp_methods,
                                 legend_name="model", filenames = "latest_plot.png",
-                                include_CI=F, comparing_parameters=F){
+                                include_CI=F, plot_diff_matrices=F, sort_numerically=F,
+                                ylims=c(0.2, 1.85)){
   if (length(comp_methods)*3 == dim(estimates)[2]-1){
     names_ci <- rep(NA, length(comp_methods)*3)
     for (i in 1:length(comp_methods)){
@@ -181,19 +182,19 @@ plot_for_comparison <- function(estimates, comp_methods,
   }
   
   estimates <- estimates[estimates$date < "2021-06-15",]
-  estimates <- estimates[rowSums(is.na(estimates)) == 0,]
-  latest_estimates <- estimates[estimates$date >= "2021-01-13",]
+  #estimates <- estimates[rowSums(is.na(estimates)) == 0,]
+  latest_estimates <- estimates[estimates$date >= "2021-01-01",]
   
-  R_plot <- plot_multiple_estimates(estimates, legend_name, include_CI = include_CI, comparing_parameters = comparing_parameters)
-  R_plot_latest <- plot_multiple_estimates(latest_estimates, legend_name, include_CI = include_CI, comparing_parameters = comparing_parameters)
+  #R_plot <- plot_multiple_estimates(estimates, legend_name, include_CI = include_CI, sort_numerically = sort_numerically)
+  R_plot_latest <- plot_multiple_estimates(latest_estimates, legend_name, include_CI = include_CI, sort_numerically = sort_numerically)
   
   #ggsave(R_plot, filename = "estimates_plot.png",  bg = "transparent")
   #print(R_plot)
   ggsave(R_plot_latest, filename = paste0("Figures/estimates", filenames),  bg = "transparent",
          width = 13.1, height = 6.3)
-  print(R_plot_latest) 
+  print(R_plot_latest + ylim(ylims))
   
-  if(!comparing_parameters) {
+  if(plot_diff_matrices) {
     n <- length(comp_methods)
     matr <- matrix(rep(rep(0,n), n), ncol=n)
     corr <- matrix(rep(rep(0,n), n), ncol=n)
