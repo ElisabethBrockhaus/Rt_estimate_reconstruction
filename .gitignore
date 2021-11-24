@@ -9,6 +9,12 @@
 
 # data that is not needed for estimation
 incidence_data/*
+!incidence_data/rtlive_incid_21_07_10.csv
+!incidence_data/SDSC_incid_21_07_10.csv
+!incidence_data/rtlive_incid_21_07_10.csv
+!incidence_data/rtlive_incid_21_11_23.csv
+!incidence_data/jhu_incid_21_11_23.csv
+!incidence_data/epiforecasts_incid_21_11_23.csv
 
 # ETH data that is calculated in every estimation process
 ETH/data/temp/*
