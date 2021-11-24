@@ -6,8 +6,7 @@ library(lubridate)
 library(qs)
 library(readr)
 
-wd <- "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/epiforecasts"
-setwd(wd)
+setwd("/home/brockhaus/reproductive_numbers")
 
 country <- "Germany"
 
@@ -94,7 +93,7 @@ calculacte_and_save_estimates <- function(reported_cases,
                                              "lower_95", "lower_50", "upper_95", "upper_50")]
   
   # for originally constant delays correct for different mean used in epiforecasts estimation
-  result$date <- result$date + params[method, "delay_shift"]
+  result$date <- result$date + params[method, "necessary_shift"]
   
   qsave(result, paste0("R_calc_", date_of_data, "_", method, variation, ".qs"))
   
@@ -104,7 +103,7 @@ calculacte_and_save_estimates <- function(reported_cases,
   if ((method == "globalrt") & (variation == "_delays")){
     # reverse globalrt delay shift
     result$date <- result$date - params[method, "delay_shift"]
-    
+
     for (method in c("RKI", "Ilmenau", "SDSC", "Zi", "AGES")){
       # shift as needed for this parameter sources
       result$date <- result$date + params[method, "delay_shift"]
@@ -144,6 +143,7 @@ calculacte_and_save_estimates <- function(reported_cases,
 incid <- read_csv("rtlive_incid.csv")
 names(incid) <- c("date", "confirm")
 incid <- incid[incid$date < "2021-10-01",]
+incid <- incid[incid$date >= "2021-01-01",]
 
 # set date for file names to the date, when the data was loaded
 date_of_data <- "2021-10-19"
@@ -152,20 +152,43 @@ date_of_data <- "2021-10-19"
 o <- 0.1 # replacement for zeros that would lead to mathematical issues
 oo <- 0.5
 m <- 2 # mean incubation period and reporting delay in case of constant delay distributions (shifted back manually after the estimation)
-mean_gt <-           c(4.8, 4,  5.6, 4.8, 5,  3.4, 3.6,  4.7, 7)
-sd_gt <-             c(2.3, 0,  4.2, 2.3, 4,  1.8, 3.1,  2.9, 7)
-mean_incubation <-   c(5.3, m,  m,   m,   m,  m,   5.5,  5,   m)
-sd_incubation <-     c(3.2, oo, oo,  oo,  oo, oo,  2.4,  oo,  oo)
-mean_report_delay <- c(5.5, m,  m,   m,   m,  m,   6.5,  7.1, m)
-sd_report_delay <-   c(3.8, o,  o,   o,   o,  o,   17.1, 5.9, o)
-delay_shift <-       c(0,   3,  -3,  -6,  4,  4,   0,    0,   4)
+mean_gt <-        c(4.8,  4,   5.6, 4.8, 5,   3.4, 3.6, 4.7,  7)
+sd_gt <-          c(2.3,  0,   4.2, 2.3, 4,   1.8, 3.1, 2.9,  7)
+mean_delay <-     c(10.8, 1,   7,   10,  0,   0,   12,  12.1, 0)
+necessary_shift <- c(-1.2, -11, -5,  -2,  -12, -12, 0,   0.1,  0) # always using epiforecasts delay distributions with mean 12 -> correct through shift
 
 params <- data.frame(gt_mean=mean_gt, gt_sd=sd_gt,
-                     incubation_mean=mean_incubation, incubation_sd=sd_incubation,
-                     report_delay_mean=mean_report_delay, report_delay_sd=sd_report_delay,
-                     delay_shift=delay_shift)
+                     necessary_shift=round(necessary_shift))
 methods <- c("ETH", "RKI", "Ilmenau", "SDSC", "Zi", "AGES", "epiforecasts", "rtlive", "globalrt")
 rownames(params) <- methods
+
+# estimation with adjusted input data using epiforecasts delay and generation time distributions
+method <- "epiforecasts"
+incubation_period <- readRDS("distributions/incubation_period.rds")
+reporting_delay <- readRDS("distributions/onset_to_admission_delay.rds")
+generation_time <- readRDS("distributions/generation_time.rds")
+
+print("Start with estimation using original distributions")
+
+calculacte_and_save_estimates(incid, generation_time,
+                              incubation_period, reporting_delay,
+                              method, variation = "")
+
+# estimation with adjusted input data and generation time distribution using epiforecasts delay distributions
+method <- "globalrt"
+generation_time <- list(
+  mean = 4, mean_sd = 0.5,
+  sd = 4, sd_sd = 0.5,
+  max = 30
+)
+
+print(paste0("Start with estimation using generation time from", method))
+
+calculacte_and_save_estimates(incid, generation_time,
+                              incubation_period, reporting_delay,
+                              method, variation = "_GTD")
+
+
 
 # estimation with adjusted delays and generation time
 for (method in c("globalrt")){ #, "ETH", "epiforecasts", "rtlive", "SDSC", "Ilmenau", "Zi", "AGES")){
@@ -253,7 +276,7 @@ for (method in c("globalrt")){ #, "ETH", "rtlive", "SDSC", "Ilmenau", "Zi", "AGE
     sd = params[method, "gt_sd"], sd_sd = 0.1,
     max = 30
   )
-  
+
   calculacte_and_save_estimates(incid, generation_time,
                                 incubation_period, reporting_delay,
                                 method, variation = "_GTD")
