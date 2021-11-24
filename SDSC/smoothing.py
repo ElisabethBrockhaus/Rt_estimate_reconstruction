@@ -1,10 +1,11 @@
 import numpy as np
-import statsmodels.api as sm
+from statsmodels.tsa.seasonal import STL
 
 # import pandas as pd
 # import numpy.matlib as mp
 # import scipy as sp
 # import statsmodels
+# import statsmodels.api as sm
 
 
 def two_step_STL(x, start_p=None, H=7, robust=True):
@@ -24,7 +25,7 @@ def two_step_STL(x, start_p=None, H=7, robust=True):
             start_p = start_p[0]
 
     if robust is True:
-        stl_log_daily = sm.tsa.seasonal.STL(
+        stl_log_daily = STL(
             z[start_p:], robust=True, seasonal=H, period=H, trend=2 * H + 1
         ).fit()
         trend_no_outl = stl_log_daily.trend
@@ -33,9 +34,7 @@ def two_step_STL(x, start_p=None, H=7, robust=True):
     else:
         trend_no_outl = z[start_p:]
 
-    stl_no_outliers = sm.tsa.seasonal.STL(
-        trend_no_outl, seasonal=H, period=H, trend=2 * H + 1
-    ).fit()
+    stl_no_outliers = STL(trend_no_outl, seasonal=H, period=H, trend=2 * H + 1).fit()
     # second more smooth non robust application
     smoothed = np.where(stl_no_outliers.trend > 0, stl_no_outliers.trend, 0)
 

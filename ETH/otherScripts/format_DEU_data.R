@@ -12,11 +12,14 @@ if (interactive()) {
   })
 }
 
-outDir <- here::here("ETH", "data", "DEU")
+# EB: set manually
+outDir <- "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/ETH/data/DEU"
+#outDir <- here::here("ETH", "data", "DEU")
+#dir.create(outDir, showWarnings = FALSE)
 
-dir.create(outDir, showWarnings = FALSE)
-
-url <- "https://www.arcgis.com/sharing/rest/content/items/f10774f1c63e40168479a1feb6c7ca74/data"
+# EB: use data from 2021-07-10
+#url <- "https://www.arcgis.com/sharing/rest/content/items/f10774f1c63e40168479a1feb6c7ca74/data"
+url <- "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/incidence_data/RKI_COVID19_21_07_10.csv"
 
 cat("reading German linelist data file...\n")
 

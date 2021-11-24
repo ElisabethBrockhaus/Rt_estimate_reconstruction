@@ -13,9 +13,11 @@ outDir <- here::here("ETH", "data")
 #linelist_codes <- c("CHE", "DEU", "HKG")
 linelist_codes <- c("DEU")
 
-for(code in linelist_codes) {
-  source(here::here("ETH", "otherScripts", paste0("format_",code,"_data.R")))
-}
+# EB: source format_DEU_data.R only
+#for(code in linelist_codes) {
+#  source(here::here("ETH", "otherScripts", paste0("format_",code,"_data.R")))
+#}
+source("Rt_estimate_reconstruction/ETH/otherScripts/format_DEU_data.R")
 
 delay_data <- c()
 for (code in linelist_codes) {

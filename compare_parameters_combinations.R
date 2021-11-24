@@ -40,7 +40,7 @@ SDSC_incid <-  read_csv("Rt_estimate_reconstruction/incidence_data/SDSC_incid_21
 
 # deconvolve RKI incidence data for ETH estimation
 #incid_for_ETH <- load_incidence_data(method = "ETHZ_sliding_window", source = "_simpleRKI",
-#                                     new_deconvolution = FALSE)
+#                                     new_deconvolution = TRUE)
 #write_csv(incid_for_ETH, "Rt_estimate_reconstruction/incidence_data/rtlive_incid_for_ETH_21_07_10.csv")
 incid_for_ETH <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid_for_ETH_21_07_10.csv")
 
@@ -141,7 +141,8 @@ estimates_adjInput <- R_raw_EpiEstim_adjInput %>%
   #full_join(R_epiforecasts_adjInput, by = "date") %>%
   full_join(R_globalrt_smoother_adjInput, by = "date") %>%
   #full_join(R_globalrt_filter_adjInput, by = "date") %>%
-  full_join(R_rtlive_adjInput, by = "date")
+  full_join(R_rtlive_adjInput, by = "date") %>%
+  arrange(date)
 
 comp_methods <- c("raw EpiEstim", "RKI", "SDSC", "ETH",
                   "AGES", "Ilmenau", #"epiforecasts",
@@ -157,7 +158,8 @@ estimates_adjInput_CI <- as.data.frame(R_raw_EpiEstim_adjInput) %>%
   #full_join(R_epiforecasts_adjInput, by = "date") %>%
   full_join(R_globalrt_smoother_adjInput, by = "date") %>%
   #full_join(R_globalrt_filter_adjInput, by = "date") %>%
-  full_join(R_rtlive_adjInput, by = "date")
+  full_join(R_rtlive_adjInput, by = "date") %>%
+  arrange(date)
 
 comp_CI <- c("raw EpiEstim", "SDSC", "ETH",
              "AGES", "Ilmenau", #"epiforecasts",
@@ -203,7 +205,8 @@ estimates_adjInputWindow <- R_raw_EpiEstim_adjInputWindow %>%
   #full_join(R_epiforecasts_adjInputWindow, by = "date") %>%
   full_join(R_globalrt_smoother_adjInputWindow, by = "date") %>%
   #full_join(R_globalrt_filter_adjInputWindow, by = "date") %>%
-  full_join(R_rtlive_adjInputWindow, by = "date")
+  full_join(R_rtlive_adjInputWindow, by = "date") %>%
+  arrange(date)
 
 comp_methods <- c("raw EpiEstim", "RKI", "SDSC", "ETH",
                   "AGES", "Ilmenau", #"epiforecasts",
@@ -219,7 +222,8 @@ estimates_adjInputWindow_CI <- as.data.frame(R_raw_EpiEstim_adjInputWindow) %>%
   #full_join(R_epiforecasts_adjInputWindow, by = "date") %>%
   full_join(R_globalrt_smoother_adjInputWindow, by = "date") %>%
   #full_join(R_globalrt_filter_adjInputWindow, by = "date") %>%
-  full_join(R_rtlive_adjInputWindow, by = "date")
+  full_join(R_rtlive_adjInputWindow, by = "date") %>%
+  arrange(date)
 
 comp_CI <- c("raw EpiEstim", "SDSC", "ETH",
              "AGES", "Ilmenau", #"epiforecasts",
@@ -288,7 +292,8 @@ estimates_adjInputWindowGTD <- R_raw_EpiEstim_adjInputWindowGTD %>%
   #full_join(R_epiforecasts_adjInputWindowGTD, by = "date") %>%
   full_join(R_globalrt_smoother_adjInputWindowGTD, by = "date") %>%
   #full_join(R_globalrt_filter_adjInputWindowGTD, by = "date") %>%
-  full_join(R_rtlive_adjInputWindowGTD, by = "date")
+  full_join(R_rtlive_adjInputWindowGTD, by = "date") %>%
+  arrange(date)
 
 comp_methods <- c("raw EpiEstim", "RKI", "SDSC", "ETH",
                   "AGES", "Ilmenau", #"epiforecasts",
@@ -304,7 +309,8 @@ estimates_adjInputWindowGTD_CI <- as.data.frame(R_raw_EpiEstim_adjInputWindowGTD
   #full_join(R_epiforecasts_adjInputWindowGTD, by = "date") %>%
   full_join(R_globalrt_smoother_adjInputWindowGTD, by = "date") %>%
   #full_join(R_globalrt_filter_adjInputWindowGTD, by = "date") %>%
-  full_join(R_rtlive_adjInputWindowGTD, by = "date")
+  full_join(R_rtlive_adjInputWindowGTD, by = "date") %>%
+  arrange(date)
 
 comp_CI <- c("raw EpiEstim", "SDSC", "ETH",
              "AGES", "Ilmenau", #"epiforecasts",
@@ -375,7 +381,8 @@ estimates_adjAll <- R_raw_EpiEstim_adjAll %>%
   #full_join(R_epiforecasts_adjAll, by = "date") %>%
   full_join(R_globalrt_smoother_adjAll, by = "date") %>%
   #full_join(R_globalrt_filter_adjAll, by = "date") %>%
-  full_join(R_rtlive_adjAll, by = "date")
+  full_join(R_rtlive_adjAll, by = "date") %>%
+  arrange(date)
 
 comp_methods <- c("raw EpiEstim", "RKI", "SDSC", "ETH",
                   "AGES", "Ilmenau", #"epiforecasts",
@@ -391,7 +398,8 @@ estimates_adjAll_CI <- as.data.frame(R_raw_EpiEstim_adjAll) %>%
   #full_join(R_epiforecasts_adjAll, by = "date") %>%
   full_join(R_globalrt_smoother_adjAll, by = "date") %>%
   #full_join(R_globalrt_filter_adjAll, by = "date") %>%
-  full_join(R_rtlive_adjAll, by = "date")
+  full_join(R_rtlive_adjAll, by = "date") %>%
+  arrange(date)
 
 comp_CI <- c("raw EpiEstim", "SDSC", "ETH",
              "AGES", "Ilmenau", #"epiforecasts",
