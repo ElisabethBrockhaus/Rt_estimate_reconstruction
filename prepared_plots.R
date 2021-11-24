@@ -181,18 +181,20 @@ plot_for_comparison <- function(estimates, comp_methods,
     names(estimates) <- c("date", names_R)
   }
   
-  estimates <- estimates[estimates$date < "2021-06-15",]
+  estimates <- estimates[estimates$date < "2021-06-10",]
   #estimates <- estimates[rowSums(is.na(estimates)) == 0,]
   latest_estimates <- estimates[estimates$date >= "2021-01-01",]
   
   #R_plot <- plot_multiple_estimates(estimates, legend_name, include_CI = include_CI, sort_numerically = sort_numerically)
-  R_plot_latest <- plot_multiple_estimates(latest_estimates, legend_name, include_CI = include_CI, sort_numerically = sort_numerically)
+  R_plot_latest <- plot_multiple_estimates(latest_estimates, legend_name,
+                                           include_CI = include_CI,
+                                           sort_numerically = sort_numerically)  + ylim(ylims)
   
   #ggsave(R_plot, filename = "estimates_plot.png",  bg = "transparent")
   #print(R_plot)
   ggsave(R_plot_latest, filename = paste0("Figures/estimates", filenames),  bg = "transparent",
          width = 13.1, height = 6.3)
-  print(R_plot_latest + ylim(ylims))
+  print(R_plot_latest)
   
   if(plot_diff_matrices) {
     n <- length(comp_methods)
