@@ -88,7 +88,7 @@ max <- max(colMax(estimates_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021
 min <- min(colMin(estimates_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(gtd_strs))))
 # plot
 plot_for_comparison(estimates_gtd, comp_methods = gtd_strs,
-                    legend_name = "GTD", filenames = "influence_GTD.pdf",
+                    legend_name = "GTD", filenames = "_influence_GTD.pdf",
                     sort_numerically = FALSE, ylims = c(min, max))
 
 
