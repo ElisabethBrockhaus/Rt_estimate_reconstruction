@@ -51,6 +51,7 @@ epiforecasts/backup_server/
 otherFiles/play_with_form_of_gtd.R
 
 # old versions of estimates and code
+archive/
 ArroyoMarioli/input_output_dataset/archive/
 ArroyoMarioli/estimates/archive/
 epiforecasts/estimates/
