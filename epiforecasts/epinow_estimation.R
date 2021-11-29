@@ -100,7 +100,7 @@ mean <- z %*% delay(z)
 mean
 # shift estimates by mean delay
 R_epiforecasts_final <- R_epiforecasts_adjInputWindowGTD
-R_epiforecasts_final$date <- R_epiforecasts_final$date + round(mean)
+R_epiforecasts_final$date <- R_epiforecasts_final$date + c(round(mean))
 
 # no window size to adjust, save the same estimates for the second level of adjustment
 qsave(R_epiforecasts_final, paste0(output_path, "R_calc_", date_of_data, "_final_adjAll.qs"))
