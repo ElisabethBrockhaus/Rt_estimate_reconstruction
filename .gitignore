@@ -41,7 +41,6 @@ rtlive/rtlive-global/
 # ArroyoMarioli data
 ArroyoMarioli/data_all_countries
 ArroyoMarioli/mismeasurements
-ArroyoMarioli/input_output_dataset/dataset.csv
 ArroyoMarioli/estimates/optim_res*
 
 # RScripts with irrelevant code, just for getting started
@@ -50,6 +49,13 @@ epiforecasts/example_epiforecasts.R
 epiforecasts/input_data/
 epiforecasts/backup_server/
 otherFiles/play_with_form_of_gtd.R
+
+# old versions of estimates and code
+ArroyoMarioli/input_output_dataset/archive/
+ArroyoMarioli/estimates/archive/
+epiforecasts/estimates/
+!epiforecasts/estimates/R_calc_2021-07-10*
+incidence_data/archive/
 
 # open .xlsx files
 otherFiles/~$*.xlsx
