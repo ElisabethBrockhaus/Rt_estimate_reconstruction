@@ -9,7 +9,7 @@ library(tidyverse)
 Sys.setlocale("LC_TIME", "English")
 
 # function for saving pheatmap
-save_pheatmap_pdf <- function(x, filename, width=9, height=4) {
+save_pheatmap_pdf <- function(x, filename, width=9, height=5) {
   stopifnot(!missing(x))
   stopifnot(!missing(filename))
   pdf(filename, width=width, height=height)
@@ -181,20 +181,17 @@ plot_for_comparison <- function(estimates, comp_methods,
     names(estimates) <- c("date", names_R)
   }
   
-  estimates <- estimates[estimates$date < "2021-06-10",]
+  estimates <- estimates %>%
+    dplyr::filter(date >= "2021-01-01", date <= "2021-06-10")
   #estimates <- estimates[rowSums(is.na(estimates)) == 0,]
-  latest_estimates <- estimates[estimates$date >= "2021-01-01",]
-  
-  #R_plot <- plot_multiple_estimates(estimates, legend_name, include_CI = include_CI, sort_numerically = sort_numerically)
-  R_plot_latest <- plot_multiple_estimates(latest_estimates, legend_name,
-                                           include_CI = include_CI,
-                                           sort_numerically = sort_numerically)  + ylim(ylims)
-  
-  #ggsave(R_plot, filename = "estimates_plot.png",  bg = "transparent")
-  #print(R_plot)
-  ggsave(R_plot_latest, filename = paste0("Figures/estimates", filenames),  bg = "transparent",
-         width = 13.1, height = 6.3)
-  print(R_plot_latest)
+
+  R_plot <- plot_multiple_estimates(estimates, legend_name,
+                                    include_CI = include_CI,
+                                    sort_numerically = sort_numerically) + ylim(ylims)
+
+  ggsave(R_plot, filename = paste0("Figures/estimates", filenames),  bg = "transparent",
+         width = 13.1, height = 5.8)
+  print(R_plot)
   
   if(plot_diff_matrices) {
     n <- length(comp_methods)
@@ -204,23 +201,28 @@ plot_for_comparison <- function(estimates, comp_methods,
     
     for (method1 in comp_methods) {
       for (method2 in comp_methods){
+        estimates <- data.frame(estimates)
         diff <- estimates[,paste0("R.", method1)] - estimates[,paste0("R.", method2)]
         matr[method1, method2] <- mean(as.vector(abs(diff)))
-        corr[method1, method2] <- cor(estimates[,paste0("R.", method1)], estimates[,paste0("R.", method2)])
+        corr[method1, method2] <- cor(estimates[,paste0("R.", method1)],
+                                      estimates[,paste0("R.", method2)])
       }
     }
     
-    mean_abs_diff <- pheatmap(matr, color = viridis(100), breaks = seq(0,0.3,0.3/100),
-                              border_color = NA, display_numbers = TRUE,
-                              fontsize = 18, fontsize_number=22, number_color = "white",
-                              angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE)
-    save_pheatmap_pdf(mean_abs_diff, paste0("Figures/mean_abs_diff", filenames))
+    df <- data.frame(matr)
+    df <- df[order(row.names(df)), order(colnames(df))]
     
+    mean_abs_error <- pheatmap(df, color = viridis(100), breaks = seq(0,0.2,0.2/100),
+                               border_color = NA, display_numbers = TRUE,
+                               fontsize = 18, fontsize_number=22, number_color = "white",
+                               angle_col = 315, cluster_rows = FALSE, cluster_cols = FALSE,
+                               legend = FALSE)
+    save_pheatmap_pdf(mean_abs_error, paste0("Figures/mean_abs_error", filenames))
     
-    correlations <- pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0.25,1,0.75/100),
-                             border_color = NA, display_numbers = TRUE,
-                             fontsize = 18, fontsize_number=22, number_color = "white",
-                             angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE)
-    save_pheatmap_pdf(correlations, paste0("correlations", filenames))
+    #correlations <- pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0.25,1,0.75/100),
+    #                         border_color = NA, display_numbers = TRUE,
+    #                         fontsize = 18, fontsize_number=22, number_color = "white",
+    #                         angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE)
+    #save_pheatmap_pdf(correlations, paste0("correlations", filenames))
   }
 }

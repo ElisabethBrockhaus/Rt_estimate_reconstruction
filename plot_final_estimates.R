@@ -24,7 +24,6 @@ plot_for_comparison(estimates_epiforecasts, org_methods,
 
 
 
-source("Rt_estimate_reconstruction/prepared_plots.R")
 # find ylim
 colMax <- function(data) sapply(data, max, na.rm = TRUE)
 colMin <- function(data) sapply(data, min, na.rm = TRUE)
@@ -46,16 +45,18 @@ min_adjAll <- min(colMin(estimates_adjAll %>% dplyr::filter(date>="2021-01-01", 
 ylim_adjWindow <- c(min(min_adjInputWindow, min_adjInputWindowGTD, min_adjAll), max(max_adjInputWindow, max_adjInputWindowGTD, max_adjAll))
 
 
+source("Rt_estimate_reconstruction/prepared_plots.R")
 plot_for_comparison(estimates_pub, org_methods, legend_name = "research group",
-                    filenames = "_real-time.pdf", ylims = ylim_diffWindow)
+                    filenames = "_real-time.pdf", ylims = ylim_diffWindow, plot_diff_matrices=T)
 plot_for_comparison(estimates_adjInput, comp_methods,
-                    filenames = "_adjInput.pdf", ylims = ylim_diffWindow)
+                    filenames = "_adjInput.pdf", ylims = ylim_diffWindow, plot_diff_matrices=T)
 plot_for_comparison(estimates_adjInputWindow, comp_methods,
-                    filenames = "_adjInputWindow.pdf", ylims = ylim_diffWindow)
+                    filenames = "_adjInputWindow.pdf", ylims = ylim_diffWindow, plot_diff_matrices=T)
 plot_for_comparison(estimates_adjInputWindowGTD, comp_methods,
-                    filenames = "_adjInputWindowGTD.pdf", ylims = ylim_diffWindow)
+                    filenames = "_adjInputWindowGTD.pdf", ylims = ylim_diffWindow, plot_diff_matrices=T)
 plot_for_comparison(estimates_adjAll, comp_methods,
-                    filenames = "_adjAll.pdf", ylims = ylim_diffWindow)
+                    filenames = "_adjAll.pdf", ylims = ylim_diffWindow, plot_diff_matrices=T)
+
 plot_for_comparison(estimates_adjInputWindow, comp_methods,
                     filenames = "_adjInputWindow_smallYlim.pdf", ylims = ylim_adjWindow)
 plot_for_comparison(estimates_adjInputWindowGTD, comp_methods,
@@ -78,7 +79,7 @@ ylim_CI <- c(min(min_pub, min_adjInput, min_adjInputWindow, min_adjInputWindowGT
              max(max_pub, max_adjInput, max_adjInputWindow, max_adjInputWindowGTD, max_adjAll))
 
 
-plot_for_comparison(estimates_pub_ci, org_methods_ci, include_CI = T, legend_name = "research group",
+plot_for_comparison(estimates_pub_ci, org_methods, include_CI = T, legend_name = "research group",
                     filenames = "_CI_real-time.pdf", ylims = ylim_CI)
 plot_for_comparison(estimates_adjInput_CI, comp_CI, include_CI = T,
                     filenames = "_CI_adjInput.pdf", ylims = ylim_CI)
