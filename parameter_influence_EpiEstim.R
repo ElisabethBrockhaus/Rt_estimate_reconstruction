@@ -1,5 +1,3 @@
-library(readr)
-
 setwd("..")
 # needs to be the directory with the repos "Rt_estimate_reconstruction", "reproductive_numbers" 
 # and for SDSC method "covid-19-forecast" (https://renkulab.io/gitlab/covid-19/covid-19-forecast/-/tree/master)
