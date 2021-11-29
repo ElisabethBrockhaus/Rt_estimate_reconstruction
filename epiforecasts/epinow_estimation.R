@@ -8,6 +8,7 @@ library(readr)
 
 #setwd("/home/brockhaus/reproductive_numbers")
 setwd("D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code")
+output_path <- "Rt_estimate_reconstruction/epiforecasts/estimates/"
 
 
 #######################
@@ -17,7 +18,7 @@ setwd("D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code
 # load incidence data as used by rtlive (RKI line list aggregated)
 incid <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid_21_07_10.csv")
 names(incid) <- c("date", "confirm")
-#incid <- incid[incid$date >= "2021-01-01",]
+incid <- incid[incid$date >= "2020-12-01",]
 
 # set date for file names to the date, when the data was loaded
 date_of_data <- "2021-07-10"
@@ -52,7 +53,7 @@ calculacte_and_save_estimates <- function(reported_cases,
                                            c("date", "type", "median", "mean", "sd",
                                              "lower_95", "lower_50", "upper_95", "upper_50")]
   
-  qsave(result, paste0("R_calc_", date_of_data, "_final_", variation, ".qs"))
+  qsave(result, paste0(output_path, "R_calc_", date_of_data, "_final_", variation, ".qs"))
   #plot(result$date, result$mean, type="l", main=method, xlab="date", ylab="Rt estimate")
   return(result)
 }
@@ -75,14 +76,11 @@ R_epiforecasts_adjInput <- calculacte_and_save_estimates(incid, generation_time,
                                                          variation = "adjInput")
 
 # no window size to adjust, save the same estimates for the second level of adjustment
-qsave(R_epiforecasts_adjInput, paste0("R_calc_", date_of_data, "_final_adjInputWindow.qs"))
+qsave(R_epiforecasts_adjInput, paste0(output_path, "R_calc_", date_of_data, "_final_adjInputWindow.qs"))
 
 # estimation with adjusted input data and generation time distribution
-generation_time <- list(
-  mean = 4, mean_sd = 0.5,
-  sd = 4, sd_sd = 0.5,
-  max = 30
-)
+generation_time$mean <- 4
+generation_time$sd <- 4
 
 print("Start with estimation with adjusted input data and generation time distribution")
 R_epiforecasts_adjInputWindowGTD <- calculacte_and_save_estimates(incid, generation_time,
@@ -104,4 +102,6 @@ mean
 R_epiforecasts_final <- R_epiforecasts_adjInputWindowGTD
 R_epiforecasts_final$date <- R_epiforecasts_final$date + round(mean)
 
+# no window size to adjust, save the same estimates for the second level of adjustment
+qsave(R_epiforecasts_final, paste0(output_path, "R_calc_", date_of_data, "_final_adjAll.qs"))
 
