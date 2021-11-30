@@ -174,3 +174,35 @@ min <- min(colMin(estimates_preprocess %>% dplyr::filter(date>="2021-01-01", dat
 plot_for_comparison(estimates_preprocess, comp_methods = c(preprocessing, "deconvolution ETH"),
                     legend_name = "preprocessing", filenames = "_influence_preprocessing.pdf",
                     sort_numerically = FALSE, ylims = c(min, max))
+
+
+###############################################################################
+# APPENDIX
+
+######################################
+# vary standard deviation of the GTD #
+######################################
+sds <-    c(1.8, 3.1, 0.001, 4.0, 2.9, 2.3, 4.2, 7.0)
+
+if (exists("estimates_SD_gtd")) rm(estimates_SD_gtd)
+for (sd in sds){
+  R_est <- estimate_RKI_R(RKI_incid, method = "EpiEstim",
+                          window = 7,
+                          gt_type = "gamma",
+                          gt_mean = 4,
+                          gt_sd = sd,
+                          delay = 0)
+  names(R_est) <- c("date", sd, paste0(sd, ".lower"), paste0(sd, ".upper"))
+  if (!exists("estimates_SD_gtd")){
+    estimates_SD_gtd <- R_est
+  } else {
+    estimates_SD_gtd <- estimates_SD_gtd %>% full_join(R_est, by = "date")
+  }
+}
+# find ylim
+max <- max(colMax(estimates_SD_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(sds)))))
+min <- min(colMin(estimates_SD_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(sds)))))
+# plot
+plot_for_comparison(estimates_SD_gtd, comp_methods = sds,
+                    legend_name = "SD of the GTD", filenames = "_influence_SD_GTD.pdf",
+                    sort_numerically = TRUE, ylims = c(min, max))
