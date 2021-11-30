@@ -162,6 +162,7 @@ plot_published_vs_calculated_95CI <- function(published, calculated, method_name
 ##############################
 
 plot_for_comparison <- function(estimates, comp_methods,
+                                start_date = "2021-01-01", end_date = "2021-06-10",
                                 legend_name="model", filenames = "latest_plot.png",
                                 include_CI=F, plot_diff_matrices=F, sort_numerically=F,
                                 ylims=c(0.2, 1.85)){
@@ -182,7 +183,7 @@ plot_for_comparison <- function(estimates, comp_methods,
   }
   
   estimates <- estimates %>%
-    dplyr::filter(date >= "2021-01-01", date <= "2021-06-10")
+    dplyr::filter(date >=start_date, date <= end_date)
   #estimates <- estimates[rowSums(is.na(estimates)) == 0,]
 
   R_plot <- plot_multiple_estimates(estimates, legend_name,
