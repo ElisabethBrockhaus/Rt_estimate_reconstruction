@@ -39,18 +39,13 @@ RKI_incid <- read_csv("Rt_estimate_reconstruction/incidence_data/RKI_nowcast_21_
 SDSC_incid <-  read_csv("Rt_estimate_reconstruction/incidence_data/SDSC_incid_21_07_10.csv")
 
 # deconvolve RKI incidence data for ETH estimation
-#incid_for_ETH <- load_incidence_data(method = "ETHZ_sliding_window", source = "_simpleRKI",
+#incid_for_ETH <- load_incidence_data(method = "ETHZ_sliding_window", source = "_RKI_2021_07_10",
 #                                     new_deconvolution = TRUE)
 #write_csv(incid_for_ETH, "Rt_estimate_reconstruction/incidence_data/rtlive_incid_for_ETH_21_07_10.csv")
 incid_for_ETH <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid_for_ETH_21_07_10.csv")
 
 # read incidence data used by rtlive (sourced from RKI line-list data) for other estimations
 incid <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid_21_07_10.csv")
-
-# compare incidence time series used by RKI vs. SDSC vs. rtlive
-plot(RKI_incid, type="l")
-lines(incid, col="blue")
-lines(SDSC_incid, col="red")
 
 
 ###############################

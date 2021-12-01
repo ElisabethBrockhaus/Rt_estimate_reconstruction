@@ -134,7 +134,7 @@ plot_for_comparison(estimates_input, comp_methods = data_sources,
 incids <- RKI_incid %>%
   inner_join(RKI_nowcast, by = "date") %>%
   inner_join(SDSC_smoothed, by = "date")
-preprocessing <- c("none", "nowcast RKI", "smoothing SDSC")
+preprocessing <- c("none", "nowcast (RKI)", "smoothing (SDSC)")
 colnames(incids) <- c("date", preprocessing)
 
 if (exists("estimates_preprocess")) rm(estimates_preprocess)
@@ -148,7 +148,7 @@ for (type in preprocessing){
                           delay = 0)
   names(R_est) <- c("date", type, paste0(type, ".lower"), paste0(type, ".upper"))
   
-  if (type == "nowcast RKI"){
+  if (type == "nowcast (RKI)"){
     R_est$date <- R_est$date + 3 # mean onset-to-reporting delay in RKI line list data
   }
   
@@ -168,10 +168,10 @@ R_ETH$date <- R_ETH$date + 11 # mean delay of ETH estimates
 estimates_preprocess <- estimates_preprocess %>% full_join(R_ETH, by = "date")
 
 # find ylim
-max <- max(colMax(estimates_preprocess %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(c(preprocessing, "deconvolution ETH")))))
-min <- min(colMin(estimates_preprocess %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(c(preprocessing, "deconvolution ETH")))))
+max <- max(colMax(estimates_preprocess %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(c(preprocessing, "R_calc")))))
+min <- min(colMin(estimates_preprocess %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(c(preprocessing, "R_calc")))))
 # plot
-plot_for_comparison(estimates_preprocess, comp_methods = c(preprocessing, "deconvolution ETH"),
+plot_for_comparison(estimates_preprocess, comp_methods = c(preprocessing, "deconvolution (ETH)"),
                     legend_name = "preprocessing", filenames = "_influence_preprocessing.pdf",
                     sort_numerically = FALSE, ylims = c(min, max))
 
@@ -182,7 +182,8 @@ plot_for_comparison(estimates_preprocess, comp_methods = c(preprocessing, "decon
 ######################################
 # vary standard deviation of the GTD #
 ######################################
-sds <-    c(1.8, 3.1, 0.001, 4.0, 2.9, 2.3, 4.2, 7.0)
+sds <- c(1.8, 3.1, 0.001, 4.0, 2.9, 2.3, 4.2, 7.0)
+#sds <- 1:10
 
 if (exists("estimates_SD_gtd")) rm(estimates_SD_gtd)
 for (sd in sds){

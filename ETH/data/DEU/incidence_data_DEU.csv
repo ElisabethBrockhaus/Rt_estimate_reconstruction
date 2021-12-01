@@ -1,1621 +1,1621 @@
 date,region,countryIso3,source,data_type,date_type,value,local_infection
-2020-01-02,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-01-03,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-01-04,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-01-05,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-01-06,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-01-07,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-01-08,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-01-09,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-01-10,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-01-11,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-01-12,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-01-13,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-01-14,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-01-15,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-01-16,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-01-17,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-01-18,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-01-19,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-01-20,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-01-21,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-01-22,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-01-23,DEU,DEU,RKI,confirmed,onset,2,TRUE
-2020-01-24,DEU,DEU,RKI,confirmed,onset,1,TRUE
-2020-01-25,DEU,DEU,RKI,confirmed,onset,1,TRUE
-2020-01-26,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-01-27,DEU,DEU,RKI,confirmed,onset,2,TRUE
-2020-01-28,DEU,DEU,RKI,confirmed,onset,1,TRUE
-2020-01-29,DEU,DEU,RKI,confirmed,onset,1,TRUE
-2020-01-30,DEU,DEU,RKI,confirmed,onset,1,TRUE
-2020-01-31,DEU,DEU,RKI,confirmed,onset,1,TRUE
-2020-02-01,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-02-02,DEU,DEU,RKI,confirmed,onset,2,TRUE
-2020-02-03,DEU,DEU,RKI,confirmed,onset,1,TRUE
-2020-02-04,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-02-05,DEU,DEU,RKI,confirmed,onset,1,TRUE
-2020-02-06,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-02-07,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-02-08,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-02-09,DEU,DEU,RKI,confirmed,onset,1,TRUE
-2020-02-10,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-02-11,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-02-12,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-02-13,DEU,DEU,RKI,confirmed,onset,0,TRUE
-2020-02-14,DEU,DEU,RKI,confirmed,onset,2,TRUE
-2020-02-15,DEU,DEU,RKI,confirmed,onset,3,TRUE
-2020-02-16,DEU,DEU,RKI,confirmed,onset,4,TRUE
-2020-02-17,DEU,DEU,RKI,confirmed,onset,5,TRUE
-2020-02-18,DEU,DEU,RKI,confirmed,onset,6,TRUE
-2020-02-19,DEU,DEU,RKI,confirmed,onset,7,TRUE
-2020-02-20,DEU,DEU,RKI,confirmed,onset,18,TRUE
-2020-02-21,DEU,DEU,RKI,confirmed,onset,11,TRUE
-2020-02-22,DEU,DEU,RKI,confirmed,onset,18,TRUE
-2020-02-23,DEU,DEU,RKI,confirmed,onset,36,TRUE
-2020-02-24,DEU,DEU,RKI,confirmed,onset,52,TRUE
-2020-02-25,DEU,DEU,RKI,confirmed,onset,84,TRUE
-2020-02-26,DEU,DEU,RKI,confirmed,onset,129,TRUE
-2020-02-27,DEU,DEU,RKI,confirmed,onset,125,TRUE
-2020-02-28,DEU,DEU,RKI,confirmed,onset,154,TRUE
-2020-02-29,DEU,DEU,RKI,confirmed,onset,158,TRUE
-2020-03-01,DEU,DEU,RKI,confirmed,onset,186,TRUE
-2020-03-02,DEU,DEU,RKI,confirmed,onset,250,TRUE
-2020-03-03,DEU,DEU,RKI,confirmed,onset,258,TRUE
-2020-03-04,DEU,DEU,RKI,confirmed,onset,365,TRUE
-2020-03-05,DEU,DEU,RKI,confirmed,onset,400,TRUE
-2020-03-06,DEU,DEU,RKI,confirmed,onset,605,TRUE
-2020-03-07,DEU,DEU,RKI,confirmed,onset,779,TRUE
-2020-03-08,DEU,DEU,RKI,confirmed,onset,1062,TRUE
-2020-03-09,DEU,DEU,RKI,confirmed,onset,1671,TRUE
-2020-03-10,DEU,DEU,RKI,confirmed,onset,2089,TRUE
-2020-03-11,DEU,DEU,RKI,confirmed,onset,2647,TRUE
-2020-03-12,DEU,DEU,RKI,confirmed,onset,2899,TRUE
-2020-03-13,DEU,DEU,RKI,confirmed,onset,3555,TRUE
-2020-03-14,DEU,DEU,RKI,confirmed,onset,3590,TRUE
-2020-03-15,DEU,DEU,RKI,confirmed,onset,3726,TRUE
-2020-03-16,DEU,DEU,RKI,confirmed,onset,4948,TRUE
-2020-03-17,DEU,DEU,RKI,confirmed,onset,4206,TRUE
-2020-03-18,DEU,DEU,RKI,confirmed,onset,4291,TRUE
-2020-03-19,DEU,DEU,RKI,confirmed,onset,3724,TRUE
-2020-03-20,DEU,DEU,RKI,confirmed,onset,4340,TRUE
-2020-03-21,DEU,DEU,RKI,confirmed,onset,3523,TRUE
-2020-03-22,DEU,DEU,RKI,confirmed,onset,2915,TRUE
-2020-03-23,DEU,DEU,RKI,confirmed,onset,4187,TRUE
-2020-03-24,DEU,DEU,RKI,confirmed,onset,3117,TRUE
-2020-03-25,DEU,DEU,RKI,confirmed,onset,3449,TRUE
-2020-03-26,DEU,DEU,RKI,confirmed,onset,3053,TRUE
-2020-03-27,DEU,DEU,RKI,confirmed,onset,3165,TRUE
-2020-03-28,DEU,DEU,RKI,confirmed,onset,2973,TRUE
-2020-03-29,DEU,DEU,RKI,confirmed,onset,2335,TRUE
-2020-03-30,DEU,DEU,RKI,confirmed,onset,3397,TRUE
-2020-03-31,DEU,DEU,RKI,confirmed,onset,2522,TRUE
-2020-04-01,DEU,DEU,RKI,confirmed,onset,2977,TRUE
-2020-04-02,DEU,DEU,RKI,confirmed,onset,2662,TRUE
-2020-04-03,DEU,DEU,RKI,confirmed,onset,2689,TRUE
-2020-04-04,DEU,DEU,RKI,confirmed,onset,2125,TRUE
-2020-04-05,DEU,DEU,RKI,confirmed,onset,1876,TRUE
-2020-04-06,DEU,DEU,RKI,confirmed,onset,2431,TRUE
-2020-04-07,DEU,DEU,RKI,confirmed,onset,2109,TRUE
-2020-04-08,DEU,DEU,RKI,confirmed,onset,1957,TRUE
-2020-04-09,DEU,DEU,RKI,confirmed,onset,1848,TRUE
-2020-04-10,DEU,DEU,RKI,confirmed,onset,1579,TRUE
-2020-04-11,DEU,DEU,RKI,confirmed,onset,1322,TRUE
-2020-04-12,DEU,DEU,RKI,confirmed,onset,1284,TRUE
-2020-04-13,DEU,DEU,RKI,confirmed,onset,1241,TRUE
-2020-04-14,DEU,DEU,RKI,confirmed,onset,1277,TRUE
-2020-04-15,DEU,DEU,RKI,confirmed,onset,1277,TRUE
-2020-04-16,DEU,DEU,RKI,confirmed,onset,1099,TRUE
-2020-04-17,DEU,DEU,RKI,confirmed,onset,1058,TRUE
-2020-04-18,DEU,DEU,RKI,confirmed,onset,910,TRUE
-2020-04-19,DEU,DEU,RKI,confirmed,onset,780,TRUE
-2020-04-20,DEU,DEU,RKI,confirmed,onset,1019,TRUE
-2020-04-21,DEU,DEU,RKI,confirmed,onset,800,TRUE
-2020-04-22,DEU,DEU,RKI,confirmed,onset,770,TRUE
-2020-04-23,DEU,DEU,RKI,confirmed,onset,760,TRUE
-2020-04-24,DEU,DEU,RKI,confirmed,onset,685,TRUE
-2020-04-25,DEU,DEU,RKI,confirmed,onset,596,TRUE
-2020-04-26,DEU,DEU,RKI,confirmed,onset,498,TRUE
-2020-04-27,DEU,DEU,RKI,confirmed,onset,676,TRUE
-2020-04-28,DEU,DEU,RKI,confirmed,onset,535,TRUE
-2020-04-29,DEU,DEU,RKI,confirmed,onset,500,TRUE
-2020-04-30,DEU,DEU,RKI,confirmed,onset,571,TRUE
-2020-05-01,DEU,DEU,RKI,confirmed,onset,470,TRUE
-2020-05-02,DEU,DEU,RKI,confirmed,onset,422,TRUE
-2020-05-03,DEU,DEU,RKI,confirmed,onset,415,TRUE
-2020-05-04,DEU,DEU,RKI,confirmed,onset,530,TRUE
-2020-05-05,DEU,DEU,RKI,confirmed,onset,460,TRUE
-2020-05-06,DEU,DEU,RKI,confirmed,onset,403,TRUE
-2020-05-07,DEU,DEU,RKI,confirmed,onset,405,TRUE
-2020-05-08,DEU,DEU,RKI,confirmed,onset,375,TRUE
-2020-05-09,DEU,DEU,RKI,confirmed,onset,305,TRUE
-2020-05-10,DEU,DEU,RKI,confirmed,onset,282,TRUE
-2020-05-11,DEU,DEU,RKI,confirmed,onset,364,TRUE
-2020-05-12,DEU,DEU,RKI,confirmed,onset,325,TRUE
-2020-05-13,DEU,DEU,RKI,confirmed,onset,302,TRUE
-2020-05-14,DEU,DEU,RKI,confirmed,onset,249,TRUE
-2020-05-15,DEU,DEU,RKI,confirmed,onset,363,TRUE
-2020-05-16,DEU,DEU,RKI,confirmed,onset,297,TRUE
-2020-05-17,DEU,DEU,RKI,confirmed,onset,201,TRUE
-2020-05-18,DEU,DEU,RKI,confirmed,onset,344,TRUE
-2020-05-19,DEU,DEU,RKI,confirmed,onset,216,TRUE
-2020-05-20,DEU,DEU,RKI,confirmed,onset,318,TRUE
-2020-05-21,DEU,DEU,RKI,confirmed,onset,190,TRUE
-2020-05-22,DEU,DEU,RKI,confirmed,onset,204,TRUE
-2020-05-23,DEU,DEU,RKI,confirmed,onset,194,TRUE
-2020-05-24,DEU,DEU,RKI,confirmed,onset,173,TRUE
-2020-05-25,DEU,DEU,RKI,confirmed,onset,257,TRUE
-2020-05-26,DEU,DEU,RKI,confirmed,onset,225,TRUE
-2020-05-27,DEU,DEU,RKI,confirmed,onset,249,TRUE
-2020-05-28,DEU,DEU,RKI,confirmed,onset,202,TRUE
-2020-05-29,DEU,DEU,RKI,confirmed,onset,183,TRUE
-2020-05-30,DEU,DEU,RKI,confirmed,onset,155,TRUE
-2020-05-31,DEU,DEU,RKI,confirmed,onset,137,TRUE
-2020-06-01,DEU,DEU,RKI,confirmed,onset,170,TRUE
-2020-06-02,DEU,DEU,RKI,confirmed,onset,222,TRUE
-2020-06-03,DEU,DEU,RKI,confirmed,onset,215,TRUE
-2020-06-04,DEU,DEU,RKI,confirmed,onset,184,TRUE
-2020-06-05,DEU,DEU,RKI,confirmed,onset,175,TRUE
-2020-06-06,DEU,DEU,RKI,confirmed,onset,165,TRUE
-2020-06-07,DEU,DEU,RKI,confirmed,onset,109,TRUE
-2020-06-08,DEU,DEU,RKI,confirmed,onset,217,TRUE
-2020-06-09,DEU,DEU,RKI,confirmed,onset,208,TRUE
-2020-06-10,DEU,DEU,RKI,confirmed,onset,226,TRUE
-2020-06-11,DEU,DEU,RKI,confirmed,onset,176,TRUE
-2020-06-12,DEU,DEU,RKI,confirmed,onset,188,TRUE
-2020-06-13,DEU,DEU,RKI,confirmed,onset,188,TRUE
-2020-06-14,DEU,DEU,RKI,confirmed,onset,159,TRUE
-2020-06-15,DEU,DEU,RKI,confirmed,onset,290,TRUE
-2020-06-16,DEU,DEU,RKI,confirmed,onset,594,TRUE
-2020-06-17,DEU,DEU,RKI,confirmed,onset,331,TRUE
-2020-06-18,DEU,DEU,RKI,confirmed,onset,227,TRUE
-2020-06-19,DEU,DEU,RKI,confirmed,onset,289,TRUE
-2020-06-20,DEU,DEU,RKI,confirmed,onset,210,TRUE
-2020-06-21,DEU,DEU,RKI,confirmed,onset,160,TRUE
-2020-06-22,DEU,DEU,RKI,confirmed,onset,239,TRUE
-2020-06-23,DEU,DEU,RKI,confirmed,onset,199,TRUE
-2020-06-24,DEU,DEU,RKI,confirmed,onset,241,TRUE
-2020-06-25,DEU,DEU,RKI,confirmed,onset,201,TRUE
-2020-06-26,DEU,DEU,RKI,confirmed,onset,218,TRUE
-2020-06-27,DEU,DEU,RKI,confirmed,onset,176,TRUE
-2020-06-28,DEU,DEU,RKI,confirmed,onset,142,TRUE
-2020-06-29,DEU,DEU,RKI,confirmed,onset,240,TRUE
-2020-06-30,DEU,DEU,RKI,confirmed,onset,225,TRUE
-2020-07-01,DEU,DEU,RKI,confirmed,onset,210,TRUE
-2020-07-02,DEU,DEU,RKI,confirmed,onset,180,TRUE
-2020-07-03,DEU,DEU,RKI,confirmed,onset,190,TRUE
-2020-07-04,DEU,DEU,RKI,confirmed,onset,143,TRUE
-2020-07-05,DEU,DEU,RKI,confirmed,onset,154,TRUE
-2020-07-06,DEU,DEU,RKI,confirmed,onset,215,TRUE
-2020-07-07,DEU,DEU,RKI,confirmed,onset,194,TRUE
-2020-07-08,DEU,DEU,RKI,confirmed,onset,193,TRUE
-2020-07-09,DEU,DEU,RKI,confirmed,onset,194,TRUE
-2020-07-10,DEU,DEU,RKI,confirmed,onset,240,TRUE
-2020-07-11,DEU,DEU,RKI,confirmed,onset,209,TRUE
-2020-07-12,DEU,DEU,RKI,confirmed,onset,175,TRUE
-2020-07-13,DEU,DEU,RKI,confirmed,onset,325,TRUE
-2020-07-14,DEU,DEU,RKI,confirmed,onset,271,TRUE
-2020-07-15,DEU,DEU,RKI,confirmed,onset,316,TRUE
-2020-07-16,DEU,DEU,RKI,confirmed,onset,242,TRUE
-2020-07-17,DEU,DEU,RKI,confirmed,onset,310,TRUE
-2020-07-18,DEU,DEU,RKI,confirmed,onset,255,TRUE
-2020-07-19,DEU,DEU,RKI,confirmed,onset,276,TRUE
-2020-07-20,DEU,DEU,RKI,confirmed,onset,388,TRUE
-2020-07-21,DEU,DEU,RKI,confirmed,onset,369,TRUE
-2020-07-22,DEU,DEU,RKI,confirmed,onset,391,TRUE
-2020-07-23,DEU,DEU,RKI,confirmed,onset,339,TRUE
-2020-07-24,DEU,DEU,RKI,confirmed,onset,380,TRUE
-2020-07-25,DEU,DEU,RKI,confirmed,onset,321,TRUE
-2020-07-26,DEU,DEU,RKI,confirmed,onset,300,TRUE
-2020-07-27,DEU,DEU,RKI,confirmed,onset,447,TRUE
-2020-07-28,DEU,DEU,RKI,confirmed,onset,392,TRUE
-2020-07-29,DEU,DEU,RKI,confirmed,onset,376,TRUE
-2020-07-30,DEU,DEU,RKI,confirmed,onset,365,TRUE
-2020-07-31,DEU,DEU,RKI,confirmed,onset,378,TRUE
-2020-08-01,DEU,DEU,RKI,confirmed,onset,418,TRUE
-2020-08-02,DEU,DEU,RKI,confirmed,onset,396,TRUE
-2020-08-03,DEU,DEU,RKI,confirmed,onset,532,TRUE
-2020-08-04,DEU,DEU,RKI,confirmed,onset,446,TRUE
-2020-08-05,DEU,DEU,RKI,confirmed,onset,452,TRUE
-2020-08-06,DEU,DEU,RKI,confirmed,onset,424,TRUE
-2020-08-07,DEU,DEU,RKI,confirmed,onset,464,TRUE
-2020-08-08,DEU,DEU,RKI,confirmed,onset,440,TRUE
-2020-08-09,DEU,DEU,RKI,confirmed,onset,429,TRUE
-2020-08-10,DEU,DEU,RKI,confirmed,onset,658,TRUE
-2020-08-11,DEU,DEU,RKI,confirmed,onset,542,TRUE
-2020-08-12,DEU,DEU,RKI,confirmed,onset,584,TRUE
-2020-08-13,DEU,DEU,RKI,confirmed,onset,577,TRUE
-2020-08-14,DEU,DEU,RKI,confirmed,onset,569,TRUE
-2020-08-15,DEU,DEU,RKI,confirmed,onset,526,TRUE
-2020-08-16,DEU,DEU,RKI,confirmed,onset,488,TRUE
-2020-08-17,DEU,DEU,RKI,confirmed,onset,646,TRUE
-2020-08-18,DEU,DEU,RKI,confirmed,onset,652,TRUE
-2020-08-19,DEU,DEU,RKI,confirmed,onset,575,TRUE
-2020-08-20,DEU,DEU,RKI,confirmed,onset,503,TRUE
-2020-08-21,DEU,DEU,RKI,confirmed,onset,532,TRUE
-2020-08-22,DEU,DEU,RKI,confirmed,onset,495,TRUE
-2020-08-23,DEU,DEU,RKI,confirmed,onset,516,TRUE
-2020-08-24,DEU,DEU,RKI,confirmed,onset,688,TRUE
-2020-08-25,DEU,DEU,RKI,confirmed,onset,665,TRUE
-2020-08-26,DEU,DEU,RKI,confirmed,onset,586,TRUE
-2020-08-27,DEU,DEU,RKI,confirmed,onset,577,TRUE
-2020-08-28,DEU,DEU,RKI,confirmed,onset,566,TRUE
-2020-08-29,DEU,DEU,RKI,confirmed,onset,467,TRUE
-2020-08-30,DEU,DEU,RKI,confirmed,onset,486,TRUE
-2020-08-31,DEU,DEU,RKI,confirmed,onset,694,TRUE
-2020-09-01,DEU,DEU,RKI,confirmed,onset,742,TRUE
-2020-09-02,DEU,DEU,RKI,confirmed,onset,650,TRUE
-2020-09-03,DEU,DEU,RKI,confirmed,onset,632,TRUE
-2020-09-04,DEU,DEU,RKI,confirmed,onset,684,TRUE
-2020-09-05,DEU,DEU,RKI,confirmed,onset,600,TRUE
-2020-09-06,DEU,DEU,RKI,confirmed,onset,685,TRUE
-2020-09-07,DEU,DEU,RKI,confirmed,onset,927,TRUE
-2020-09-08,DEU,DEU,RKI,confirmed,onset,922,TRUE
-2020-09-09,DEU,DEU,RKI,confirmed,onset,900,TRUE
-2020-09-10,DEU,DEU,RKI,confirmed,onset,942,TRUE
-2020-09-11,DEU,DEU,RKI,confirmed,onset,976,TRUE
-2020-09-12,DEU,DEU,RKI,confirmed,onset,886,TRUE
-2020-09-13,DEU,DEU,RKI,confirmed,onset,886,TRUE
-2020-09-14,DEU,DEU,RKI,confirmed,onset,1310,TRUE
-2020-09-15,DEU,DEU,RKI,confirmed,onset,1148,TRUE
-2020-09-16,DEU,DEU,RKI,confirmed,onset,1139,TRUE
-2020-09-17,DEU,DEU,RKI,confirmed,onset,987,TRUE
-2020-09-18,DEU,DEU,RKI,confirmed,onset,1031,TRUE
-2020-09-19,DEU,DEU,RKI,confirmed,onset,874,TRUE
-2020-09-20,DEU,DEU,RKI,confirmed,onset,925,TRUE
-2020-09-21,DEU,DEU,RKI,confirmed,onset,1333,TRUE
-2020-09-22,DEU,DEU,RKI,confirmed,onset,1265,TRUE
-2020-09-23,DEU,DEU,RKI,confirmed,onset,1215,TRUE
-2020-09-24,DEU,DEU,RKI,confirmed,onset,1192,TRUE
-2020-09-25,DEU,DEU,RKI,confirmed,onset,1299,TRUE
-2020-09-26,DEU,DEU,RKI,confirmed,onset,1106,TRUE
-2020-09-27,DEU,DEU,RKI,confirmed,onset,1043,TRUE
-2020-09-28,DEU,DEU,RKI,confirmed,onset,1620,TRUE
-2020-09-29,DEU,DEU,RKI,confirmed,onset,1604,TRUE
-2020-09-30,DEU,DEU,RKI,confirmed,onset,1608,TRUE
-2020-10-01,DEU,DEU,RKI,confirmed,onset,1747,TRUE
-2020-10-02,DEU,DEU,RKI,confirmed,onset,2032,TRUE
-2020-10-03,DEU,DEU,RKI,confirmed,onset,1941,TRUE
-2020-10-04,DEU,DEU,RKI,confirmed,onset,1814,TRUE
-2020-10-05,DEU,DEU,RKI,confirmed,onset,2843,TRUE
-2020-10-06,DEU,DEU,RKI,confirmed,onset,2658,TRUE
-2020-10-07,DEU,DEU,RKI,confirmed,onset,2775,TRUE
-2020-10-08,DEU,DEU,RKI,confirmed,onset,2711,TRUE
-2020-10-09,DEU,DEU,RKI,confirmed,onset,2997,TRUE
-2020-10-10,DEU,DEU,RKI,confirmed,onset,2955,TRUE
-2020-10-11,DEU,DEU,RKI,confirmed,onset,2809,TRUE
-2020-10-12,DEU,DEU,RKI,confirmed,onset,4289,TRUE
-2020-10-13,DEU,DEU,RKI,confirmed,onset,4257,TRUE
-2020-10-14,DEU,DEU,RKI,confirmed,onset,4602,TRUE
-2020-10-15,DEU,DEU,RKI,confirmed,onset,4545,TRUE
-2020-10-16,DEU,DEU,RKI,confirmed,onset,5177,TRUE
-2020-10-17,DEU,DEU,RKI,confirmed,onset,4880,TRUE
-2020-10-18,DEU,DEU,RKI,confirmed,onset,5208,TRUE
-2020-10-19,DEU,DEU,RKI,confirmed,onset,7520,TRUE
-2020-10-20,DEU,DEU,RKI,confirmed,onset,7746,TRUE
-2020-10-21,DEU,DEU,RKI,confirmed,onset,8153,TRUE
-2020-10-22,DEU,DEU,RKI,confirmed,onset,7645,TRUE
-2020-10-23,DEU,DEU,RKI,confirmed,onset,8319,TRUE
-2020-10-24,DEU,DEU,RKI,confirmed,onset,7720,TRUE
-2020-10-25,DEU,DEU,RKI,confirmed,onset,7656,TRUE
-2020-10-26,DEU,DEU,RKI,confirmed,onset,10385,TRUE
-2020-10-27,DEU,DEU,RKI,confirmed,onset,9096,TRUE
-2020-10-28,DEU,DEU,RKI,confirmed,onset,9240,TRUE
-2020-10-29,DEU,DEU,RKI,confirmed,onset,8178,TRUE
-2020-10-30,DEU,DEU,RKI,confirmed,onset,8930,TRUE
-2020-10-31,DEU,DEU,RKI,confirmed,onset,7588,TRUE
-2020-11-01,DEU,DEU,RKI,confirmed,onset,7993,TRUE
-2020-11-02,DEU,DEU,RKI,confirmed,onset,11342,TRUE
-2020-11-03,DEU,DEU,RKI,confirmed,onset,9385,TRUE
-2020-11-04,DEU,DEU,RKI,confirmed,onset,9188,TRUE
-2020-11-05,DEU,DEU,RKI,confirmed,onset,8292,TRUE
-2020-11-06,DEU,DEU,RKI,confirmed,onset,8259,TRUE
-2020-11-07,DEU,DEU,RKI,confirmed,onset,7623,TRUE
-2020-11-08,DEU,DEU,RKI,confirmed,onset,7260,TRUE
-2020-11-09,DEU,DEU,RKI,confirmed,onset,10208,TRUE
-2020-11-10,DEU,DEU,RKI,confirmed,onset,9232,TRUE
-2020-11-11,DEU,DEU,RKI,confirmed,onset,9181,TRUE
-2020-11-12,DEU,DEU,RKI,confirmed,onset,8669,TRUE
-2020-11-13,DEU,DEU,RKI,confirmed,onset,9592,TRUE
-2020-11-14,DEU,DEU,RKI,confirmed,onset,8084,TRUE
-2020-11-15,DEU,DEU,RKI,confirmed,onset,7808,TRUE
-2020-11-16,DEU,DEU,RKI,confirmed,onset,10828,TRUE
-2020-11-17,DEU,DEU,RKI,confirmed,onset,9497,TRUE
-2020-11-18,DEU,DEU,RKI,confirmed,onset,9189,TRUE
-2020-11-19,DEU,DEU,RKI,confirmed,onset,8343,TRUE
-2020-11-20,DEU,DEU,RKI,confirmed,onset,8683,TRUE
-2020-11-21,DEU,DEU,RKI,confirmed,onset,7101,TRUE
-2020-11-22,DEU,DEU,RKI,confirmed,onset,6771,TRUE
-2020-11-23,DEU,DEU,RKI,confirmed,onset,9772,TRUE
-2020-11-24,DEU,DEU,RKI,confirmed,onset,8425,TRUE
-2020-11-25,DEU,DEU,RKI,confirmed,onset,8439,TRUE
-2020-11-26,DEU,DEU,RKI,confirmed,onset,7811,TRUE
-2020-11-27,DEU,DEU,RKI,confirmed,onset,8361,TRUE
-2020-11-28,DEU,DEU,RKI,confirmed,onset,7758,TRUE
-2020-11-29,DEU,DEU,RKI,confirmed,onset,7054,TRUE
-2020-11-30,DEU,DEU,RKI,confirmed,onset,11060,TRUE
-2020-12-01,DEU,DEU,RKI,confirmed,onset,10289,TRUE
-2020-12-02,DEU,DEU,RKI,confirmed,onset,10423,TRUE
-2020-12-03,DEU,DEU,RKI,confirmed,onset,10514,TRUE
-2020-12-04,DEU,DEU,RKI,confirmed,onset,11123,TRUE
-2020-12-05,DEU,DEU,RKI,confirmed,onset,10184,TRUE
-2020-12-06,DEU,DEU,RKI,confirmed,onset,9901,TRUE
-2020-12-07,DEU,DEU,RKI,confirmed,onset,13979,TRUE
-2020-12-08,DEU,DEU,RKI,confirmed,onset,12928,TRUE
-2020-12-09,DEU,DEU,RKI,confirmed,onset,12598,TRUE
-2020-12-10,DEU,DEU,RKI,confirmed,onset,12275,TRUE
-2020-12-11,DEU,DEU,RKI,confirmed,onset,12383,TRUE
-2020-12-12,DEU,DEU,RKI,confirmed,onset,11556,TRUE
-2020-12-13,DEU,DEU,RKI,confirmed,onset,10424,TRUE
-2020-12-14,DEU,DEU,RKI,confirmed,onset,14997,TRUE
-2020-12-15,DEU,DEU,RKI,confirmed,onset,13069,TRUE
-2020-12-16,DEU,DEU,RKI,confirmed,onset,12771,TRUE
-2020-12-17,DEU,DEU,RKI,confirmed,onset,11741,TRUE
-2020-12-18,DEU,DEU,RKI,confirmed,onset,11856,TRUE
-2020-12-19,DEU,DEU,RKI,confirmed,onset,10025,TRUE
-2020-12-20,DEU,DEU,RKI,confirmed,onset,9553,TRUE
-2020-12-21,DEU,DEU,RKI,confirmed,onset,12052,TRUE
-2020-12-22,DEU,DEU,RKI,confirmed,onset,10079,TRUE
-2020-12-23,DEU,DEU,RKI,confirmed,onset,9588,TRUE
-2020-12-24,DEU,DEU,RKI,confirmed,onset,8639,TRUE
-2020-12-25,DEU,DEU,RKI,confirmed,onset,7520,TRUE
-2020-12-26,DEU,DEU,RKI,confirmed,onset,8775,TRUE
-2020-12-27,DEU,DEU,RKI,confirmed,onset,9355,TRUE
-2020-12-28,DEU,DEU,RKI,confirmed,onset,12600,TRUE
-2020-12-29,DEU,DEU,RKI,confirmed,onset,9817,TRUE
-2020-12-30,DEU,DEU,RKI,confirmed,onset,9086,TRUE
-2020-12-31,DEU,DEU,RKI,confirmed,onset,7699,TRUE
-2021-01-01,DEU,DEU,RKI,confirmed,onset,8143,TRUE
-2021-01-02,DEU,DEU,RKI,confirmed,onset,9013,TRUE
-2021-01-03,DEU,DEU,RKI,confirmed,onset,9305,TRUE
-2021-01-04,DEU,DEU,RKI,confirmed,onset,12185,TRUE
-2021-01-05,DEU,DEU,RKI,confirmed,onset,9950,TRUE
-2021-01-06,DEU,DEU,RKI,confirmed,onset,8906,TRUE
-2021-01-07,DEU,DEU,RKI,confirmed,onset,8166,TRUE
-2021-01-08,DEU,DEU,RKI,confirmed,onset,8409,TRUE
-2021-01-09,DEU,DEU,RKI,confirmed,onset,6907,TRUE
-2021-01-10,DEU,DEU,RKI,confirmed,onset,7024,TRUE
-2021-01-11,DEU,DEU,RKI,confirmed,onset,9218,TRUE
-2021-01-12,DEU,DEU,RKI,confirmed,onset,7755,TRUE
-2021-01-13,DEU,DEU,RKI,confirmed,onset,7765,TRUE
-2021-01-14,DEU,DEU,RKI,confirmed,onset,6957,TRUE
-2021-01-15,DEU,DEU,RKI,confirmed,onset,7304,TRUE
-2021-01-16,DEU,DEU,RKI,confirmed,onset,6500,TRUE
-2021-01-17,DEU,DEU,RKI,confirmed,onset,6198,TRUE
-2021-01-18,DEU,DEU,RKI,confirmed,onset,8801,TRUE
-2021-01-19,DEU,DEU,RKI,confirmed,onset,7365,TRUE
-2021-01-20,DEU,DEU,RKI,confirmed,onset,7193,TRUE
-2021-01-21,DEU,DEU,RKI,confirmed,onset,6256,TRUE
-2021-01-22,DEU,DEU,RKI,confirmed,onset,6403,TRUE
-2021-01-23,DEU,DEU,RKI,confirmed,onset,5636,TRUE
-2021-01-24,DEU,DEU,RKI,confirmed,onset,5172,TRUE
-2021-01-25,DEU,DEU,RKI,confirmed,onset,7113,TRUE
-2021-01-26,DEU,DEU,RKI,confirmed,onset,6168,TRUE
-2021-01-27,DEU,DEU,RKI,confirmed,onset,5672,TRUE
-2021-01-28,DEU,DEU,RKI,confirmed,onset,5389,TRUE
-2021-01-29,DEU,DEU,RKI,confirmed,onset,5296,TRUE
-2021-01-30,DEU,DEU,RKI,confirmed,onset,4738,TRUE
-2021-01-31,DEU,DEU,RKI,confirmed,onset,4332,TRUE
-2021-02-01,DEU,DEU,RKI,confirmed,onset,6108,TRUE
-2021-02-02,DEU,DEU,RKI,confirmed,onset,5201,TRUE
-2021-02-03,DEU,DEU,RKI,confirmed,onset,4974,TRUE
-2021-02-04,DEU,DEU,RKI,confirmed,onset,4456,TRUE
-2021-02-05,DEU,DEU,RKI,confirmed,onset,4495,TRUE
-2021-02-06,DEU,DEU,RKI,confirmed,onset,3958,TRUE
-2021-02-07,DEU,DEU,RKI,confirmed,onset,3554,TRUE
-2021-02-08,DEU,DEU,RKI,confirmed,onset,4958,TRUE
-2021-02-09,DEU,DEU,RKI,confirmed,onset,4422,TRUE
-2021-02-10,DEU,DEU,RKI,confirmed,onset,4441,TRUE
-2021-02-11,DEU,DEU,RKI,confirmed,onset,3847,TRUE
-2021-02-12,DEU,DEU,RKI,confirmed,onset,4210,TRUE
-2021-02-13,DEU,DEU,RKI,confirmed,onset,3856,TRUE
-2021-02-14,DEU,DEU,RKI,confirmed,onset,3759,TRUE
-2021-02-15,DEU,DEU,RKI,confirmed,onset,5336,TRUE
-2021-02-16,DEU,DEU,RKI,confirmed,onset,4757,TRUE
-2021-02-17,DEU,DEU,RKI,confirmed,onset,4883,TRUE
-2021-02-18,DEU,DEU,RKI,confirmed,onset,4594,TRUE
-2021-02-19,DEU,DEU,RKI,confirmed,onset,4736,TRUE
-2021-02-20,DEU,DEU,RKI,confirmed,onset,4523,TRUE
-2021-02-21,DEU,DEU,RKI,confirmed,onset,4109,TRUE
-2021-02-22,DEU,DEU,RKI,confirmed,onset,5619,TRUE
-2021-02-23,DEU,DEU,RKI,confirmed,onset,5089,TRUE
-2021-02-24,DEU,DEU,RKI,confirmed,onset,4854,TRUE
-2021-02-25,DEU,DEU,RKI,confirmed,onset,4524,TRUE
-2021-02-26,DEU,DEU,RKI,confirmed,onset,4938,TRUE
-2021-02-27,DEU,DEU,RKI,confirmed,onset,4349,TRUE
-2021-02-28,DEU,DEU,RKI,confirmed,onset,4298,TRUE
-2021-03-01,DEU,DEU,RKI,confirmed,onset,6085,TRUE
-2021-03-02,DEU,DEU,RKI,confirmed,onset,5275,TRUE
-2021-03-03,DEU,DEU,RKI,confirmed,onset,5513,TRUE
-2021-03-04,DEU,DEU,RKI,confirmed,onset,5172,TRUE
-2021-03-05,DEU,DEU,RKI,confirmed,onset,5578,TRUE
-2021-03-06,DEU,DEU,RKI,confirmed,onset,5359,TRUE
-2021-03-07,DEU,DEU,RKI,confirmed,onset,5203,TRUE
-2021-03-08,DEU,DEU,RKI,confirmed,onset,7443,TRUE
-2021-03-09,DEU,DEU,RKI,confirmed,onset,6961,TRUE
-2021-03-10,DEU,DEU,RKI,confirmed,onset,7249,TRUE
-2021-03-11,DEU,DEU,RKI,confirmed,onset,6944,TRUE
-2021-03-12,DEU,DEU,RKI,confirmed,onset,7537,TRUE
-2021-03-13,DEU,DEU,RKI,confirmed,onset,7323,TRUE
-2021-03-14,DEU,DEU,RKI,confirmed,onset,7034,TRUE
-2021-03-15,DEU,DEU,RKI,confirmed,onset,9752,TRUE
-2021-03-16,DEU,DEU,RKI,confirmed,onset,8877,TRUE
-2021-03-17,DEU,DEU,RKI,confirmed,onset,9163,TRUE
-2021-03-18,DEU,DEU,RKI,confirmed,onset,8460,TRUE
-2021-03-19,DEU,DEU,RKI,confirmed,onset,9071,TRUE
-2021-03-20,DEU,DEU,RKI,confirmed,onset,8926,TRUE
-2021-03-21,DEU,DEU,RKI,confirmed,onset,8557,TRUE
-2021-03-22,DEU,DEU,RKI,confirmed,onset,11535,TRUE
-2021-03-23,DEU,DEU,RKI,confirmed,onset,10691,TRUE
-2021-03-24,DEU,DEU,RKI,confirmed,onset,10309,TRUE
-2021-03-25,DEU,DEU,RKI,confirmed,onset,9592,TRUE
-2021-03-26,DEU,DEU,RKI,confirmed,onset,9686,TRUE
-2021-03-27,DEU,DEU,RKI,confirmed,onset,8876,TRUE
-2021-03-28,DEU,DEU,RKI,confirmed,onset,8096,TRUE
-2021-03-29,DEU,DEU,RKI,confirmed,onset,11031,TRUE
-2021-03-30,DEU,DEU,RKI,confirmed,onset,9727,TRUE
-2021-03-31,DEU,DEU,RKI,confirmed,onset,9056,TRUE
-2021-04-01,DEU,DEU,RKI,confirmed,onset,10129,TRUE
-2021-04-02,DEU,DEU,RKI,confirmed,onset,8936,TRUE
-2021-04-03,DEU,DEU,RKI,confirmed,onset,8728,TRUE
-2021-04-04,DEU,DEU,RKI,confirmed,onset,8737,TRUE
-2021-04-05,DEU,DEU,RKI,confirmed,onset,10083,TRUE
-2021-04-06,DEU,DEU,RKI,confirmed,onset,11845,TRUE
-2021-04-07,DEU,DEU,RKI,confirmed,onset,11551,TRUE
-2021-04-08,DEU,DEU,RKI,confirmed,onset,11351,TRUE
-2021-04-09,DEU,DEU,RKI,confirmed,onset,11310,TRUE
-2021-04-10,DEU,DEU,RKI,confirmed,onset,11383,TRUE
-2021-04-11,DEU,DEU,RKI,confirmed,onset,9965,TRUE
-2021-04-12,DEU,DEU,RKI,confirmed,onset,13656,TRUE
-2021-04-13,DEU,DEU,RKI,confirmed,onset,11724,TRUE
-2021-04-14,DEU,DEU,RKI,confirmed,onset,11645,TRUE
-2021-04-15,DEU,DEU,RKI,confirmed,onset,10739,TRUE
-2021-04-16,DEU,DEU,RKI,confirmed,onset,11720,TRUE
-2021-04-17,DEU,DEU,RKI,confirmed,onset,10989,TRUE
-2021-04-18,DEU,DEU,RKI,confirmed,onset,10902,TRUE
-2021-04-19,DEU,DEU,RKI,confirmed,onset,14230,TRUE
-2021-04-20,DEU,DEU,RKI,confirmed,onset,12504,TRUE
-2021-04-21,DEU,DEU,RKI,confirmed,onset,11847,TRUE
-2021-04-22,DEU,DEU,RKI,confirmed,onset,10921,TRUE
-2021-04-23,DEU,DEU,RKI,confirmed,onset,10993,TRUE
-2021-04-24,DEU,DEU,RKI,confirmed,onset,10112,TRUE
-2021-04-25,DEU,DEU,RKI,confirmed,onset,9221,TRUE
-2021-04-26,DEU,DEU,RKI,confirmed,onset,12122,TRUE
-2021-04-27,DEU,DEU,RKI,confirmed,onset,10090,TRUE
-2021-04-28,DEU,DEU,RKI,confirmed,onset,9949,TRUE
-2021-04-29,DEU,DEU,RKI,confirmed,onset,8511,TRUE
-2021-04-30,DEU,DEU,RKI,confirmed,onset,8960,TRUE
-2021-05-01,DEU,DEU,RKI,confirmed,onset,8299,TRUE
-2021-05-02,DEU,DEU,RKI,confirmed,onset,7461,TRUE
-2021-05-03,DEU,DEU,RKI,confirmed,onset,9793,TRUE
-2021-05-04,DEU,DEU,RKI,confirmed,onset,8425,TRUE
-2021-05-05,DEU,DEU,RKI,confirmed,onset,7957,TRUE
-2021-05-06,DEU,DEU,RKI,confirmed,onset,7080,TRUE
-2021-05-07,DEU,DEU,RKI,confirmed,onset,6741,TRUE
-2021-05-08,DEU,DEU,RKI,confirmed,onset,6150,TRUE
-2021-05-09,DEU,DEU,RKI,confirmed,onset,5749,TRUE
-2021-05-10,DEU,DEU,RKI,confirmed,onset,7318,TRUE
-2021-05-11,DEU,DEU,RKI,confirmed,onset,5753,TRUE
-2021-05-12,DEU,DEU,RKI,confirmed,onset,5308,TRUE
-2021-05-13,DEU,DEU,RKI,confirmed,onset,4273,TRUE
-2021-05-14,DEU,DEU,RKI,confirmed,onset,4523,TRUE
-2021-05-15,DEU,DEU,RKI,confirmed,onset,4329,TRUE
-2021-05-16,DEU,DEU,RKI,confirmed,onset,3979,TRUE
-2021-05-17,DEU,DEU,RKI,confirmed,onset,4863,TRUE
-2021-05-18,DEU,DEU,RKI,confirmed,onset,4010,TRUE
-2021-05-19,DEU,DEU,RKI,confirmed,onset,3493,TRUE
-2021-05-20,DEU,DEU,RKI,confirmed,onset,3145,TRUE
-2021-05-21,DEU,DEU,RKI,confirmed,onset,2830,TRUE
-2021-05-22,DEU,DEU,RKI,confirmed,onset,2542,TRUE
-2021-05-23,DEU,DEU,RKI,confirmed,onset,2192,TRUE
-2021-05-24,DEU,DEU,RKI,confirmed,onset,2463,TRUE
-2021-05-25,DEU,DEU,RKI,confirmed,onset,2629,TRUE
-2021-05-26,DEU,DEU,RKI,confirmed,onset,2397,TRUE
-2021-05-27,DEU,DEU,RKI,confirmed,onset,2206,TRUE
-2021-05-28,DEU,DEU,RKI,confirmed,onset,2074,TRUE
-2021-05-29,DEU,DEU,RKI,confirmed,onset,1724,TRUE
-2021-05-30,DEU,DEU,RKI,confirmed,onset,1501,TRUE
-2021-05-31,DEU,DEU,RKI,confirmed,onset,1916,TRUE
-2021-06-01,DEU,DEU,RKI,confirmed,onset,1619,TRUE
-2021-06-02,DEU,DEU,RKI,confirmed,onset,1616,TRUE
-2021-06-03,DEU,DEU,RKI,confirmed,onset,1272,TRUE
-2021-06-04,DEU,DEU,RKI,confirmed,onset,1255,TRUE
-2021-06-05,DEU,DEU,RKI,confirmed,onset,1167,TRUE
-2021-06-06,DEU,DEU,RKI,confirmed,onset,1095,TRUE
-2021-06-07,DEU,DEU,RKI,confirmed,onset,1288,TRUE
-2021-06-08,DEU,DEU,RKI,confirmed,onset,977,TRUE
-2021-06-09,DEU,DEU,RKI,confirmed,onset,828,TRUE
-2021-06-10,DEU,DEU,RKI,confirmed,onset,784,TRUE
-2021-06-11,DEU,DEU,RKI,confirmed,onset,658,TRUE
-2021-06-12,DEU,DEU,RKI,confirmed,onset,588,TRUE
-2021-06-13,DEU,DEU,RKI,confirmed,onset,530,TRUE
-2021-06-14,DEU,DEU,RKI,confirmed,onset,669,TRUE
-2021-06-15,DEU,DEU,RKI,confirmed,onset,523,TRUE
-2021-06-16,DEU,DEU,RKI,confirmed,onset,531,TRUE
-2021-06-17,DEU,DEU,RKI,confirmed,onset,436,TRUE
-2021-06-18,DEU,DEU,RKI,confirmed,onset,438,TRUE
-2021-06-19,DEU,DEU,RKI,confirmed,onset,315,TRUE
-2021-06-20,DEU,DEU,RKI,confirmed,onset,346,TRUE
-2021-06-21,DEU,DEU,RKI,confirmed,onset,454,TRUE
-2021-06-22,DEU,DEU,RKI,confirmed,onset,421,TRUE
-2021-06-23,DEU,DEU,RKI,confirmed,onset,380,TRUE
-2021-06-24,DEU,DEU,RKI,confirmed,onset,340,TRUE
-2021-06-25,DEU,DEU,RKI,confirmed,onset,337,TRUE
-2021-06-26,DEU,DEU,RKI,confirmed,onset,355,TRUE
-2021-06-27,DEU,DEU,RKI,confirmed,onset,306,TRUE
-2021-06-28,DEU,DEU,RKI,confirmed,onset,453,TRUE
-2021-06-29,DEU,DEU,RKI,confirmed,onset,369,TRUE
-2021-06-30,DEU,DEU,RKI,confirmed,onset,416,TRUE
-2021-07-01,DEU,DEU,RKI,confirmed,onset,314,TRUE
-2021-07-02,DEU,DEU,RKI,confirmed,onset,299,TRUE
-2021-07-03,DEU,DEU,RKI,confirmed,onset,237,TRUE
-2021-07-04,DEU,DEU,RKI,confirmed,onset,190,TRUE
-2021-07-05,DEU,DEU,RKI,confirmed,onset,150,TRUE
-2021-07-06,DEU,DEU,RKI,confirmed,onset,39,TRUE
-2020-01-02,DEU,DEU,RKI,confirmed,report,1,TRUE
-2020-01-03,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-04,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-05,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-06,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-07,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-08,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-09,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-10,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-11,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-12,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-13,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-14,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-15,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-16,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-17,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-18,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-19,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-20,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-21,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-22,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-23,DEU,DEU,RKI,confirmed,report,2,TRUE
-2020-01-24,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-25,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-26,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-27,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-28,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-29,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-30,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-01-31,DEU,DEU,RKI,confirmed,report,1,TRUE
-2020-02-01,DEU,DEU,RKI,confirmed,report,1,TRUE
-2020-02-02,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-02-03,DEU,DEU,RKI,confirmed,report,1,TRUE
-2020-02-04,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-02-05,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-02-06,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-02-07,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-02-08,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-02-09,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-02-10,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-02-11,DEU,DEU,RKI,confirmed,report,1,TRUE
-2020-02-12,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-02-13,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-02-14,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-02-15,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-02-16,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-02-17,DEU,DEU,RKI,confirmed,report,1,TRUE
-2020-02-18,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-02-19,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-02-20,DEU,DEU,RKI,confirmed,report,2,TRUE
-2020-02-21,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-02-22,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-02-23,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-02-24,DEU,DEU,RKI,confirmed,report,1,TRUE
-2020-02-25,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-02-26,DEU,DEU,RKI,confirmed,report,0,TRUE
-2020-02-27,DEU,DEU,RKI,confirmed,report,2,TRUE
-2020-02-28,DEU,DEU,RKI,confirmed,report,15,TRUE
-2020-02-29,DEU,DEU,RKI,confirmed,report,5,TRUE
-2020-03-01,DEU,DEU,RKI,confirmed,report,11,TRUE
-2020-03-02,DEU,DEU,RKI,confirmed,report,9,TRUE
-2020-03-03,DEU,DEU,RKI,confirmed,report,27,TRUE
-2020-03-04,DEU,DEU,RKI,confirmed,report,37,TRUE
-2020-03-05,DEU,DEU,RKI,confirmed,report,36,TRUE
-2020-03-06,DEU,DEU,RKI,confirmed,report,49,TRUE
-2020-03-07,DEU,DEU,RKI,confirmed,report,19,TRUE
-2020-03-08,DEU,DEU,RKI,confirmed,report,21,TRUE
-2020-03-09,DEU,DEU,RKI,confirmed,report,81,TRUE
-2020-03-10,DEU,DEU,RKI,confirmed,report,132,TRUE
-2020-03-11,DEU,DEU,RKI,confirmed,report,155,TRUE
-2020-03-12,DEU,DEU,RKI,confirmed,report,221,TRUE
-2020-03-13,DEU,DEU,RKI,confirmed,report,323,TRUE
-2020-03-14,DEU,DEU,RKI,confirmed,report,265,TRUE
-2020-03-15,DEU,DEU,RKI,confirmed,report,273,TRUE
-2020-03-16,DEU,DEU,RKI,confirmed,report,487,TRUE
-2020-03-17,DEU,DEU,RKI,confirmed,report,724,TRUE
-2020-03-18,DEU,DEU,RKI,confirmed,report,832,TRUE
-2020-03-19,DEU,DEU,RKI,confirmed,report,863,TRUE
-2020-03-20,DEU,DEU,RKI,confirmed,report,806,TRUE
-2020-03-21,DEU,DEU,RKI,confirmed,report,695,TRUE
-2020-03-22,DEU,DEU,RKI,confirmed,report,468,TRUE
-2020-03-23,DEU,DEU,RKI,confirmed,report,761,TRUE
-2020-03-24,DEU,DEU,RKI,confirmed,report,917,TRUE
-2020-03-25,DEU,DEU,RKI,confirmed,report,1098,TRUE
-2020-03-26,DEU,DEU,RKI,confirmed,report,1204,TRUE
-2020-03-27,DEU,DEU,RKI,confirmed,report,1270,TRUE
-2020-03-28,DEU,DEU,RKI,confirmed,report,954,TRUE
-2020-03-29,DEU,DEU,RKI,confirmed,report,692,TRUE
-2020-03-30,DEU,DEU,RKI,confirmed,report,968,TRUE
-2020-03-31,DEU,DEU,RKI,confirmed,report,1470,TRUE
-2020-04-01,DEU,DEU,RKI,confirmed,report,1513,TRUE
-2020-04-02,DEU,DEU,RKI,confirmed,report,1637,TRUE
-2020-04-03,DEU,DEU,RKI,confirmed,report,1714,TRUE
-2020-04-04,DEU,DEU,RKI,confirmed,report,1156,TRUE
-2020-04-05,DEU,DEU,RKI,confirmed,report,756,TRUE
-2020-04-06,DEU,DEU,RKI,confirmed,report,1080,TRUE
-2020-04-07,DEU,DEU,RKI,confirmed,report,1406,TRUE
-2020-04-08,DEU,DEU,RKI,confirmed,report,1500,TRUE
-2020-04-09,DEU,DEU,RKI,confirmed,report,1455,TRUE
-2020-04-10,DEU,DEU,RKI,confirmed,report,1012,TRUE
-2020-04-11,DEU,DEU,RKI,confirmed,report,1014,TRUE
-2020-04-12,DEU,DEU,RKI,confirmed,report,603,TRUE
-2020-04-13,DEU,DEU,RKI,confirmed,report,544,TRUE
-2020-04-14,DEU,DEU,RKI,confirmed,report,801,TRUE
-2020-04-15,DEU,DEU,RKI,confirmed,report,985,TRUE
-2020-04-16,DEU,DEU,RKI,confirmed,report,1073,TRUE
-2020-04-17,DEU,DEU,RKI,confirmed,report,1181,TRUE
-2020-04-18,DEU,DEU,RKI,confirmed,report,734,TRUE
-2020-04-19,DEU,DEU,RKI,confirmed,report,524,TRUE
-2020-04-20,DEU,DEU,RKI,confirmed,report,646,TRUE
-2020-04-21,DEU,DEU,RKI,confirmed,report,735,TRUE
-2020-04-22,DEU,DEU,RKI,confirmed,report,953,TRUE
-2020-04-23,DEU,DEU,RKI,confirmed,report,844,TRUE
-2020-04-24,DEU,DEU,RKI,confirmed,report,789,TRUE
-2020-04-25,DEU,DEU,RKI,confirmed,report,538,TRUE
-2020-04-26,DEU,DEU,RKI,confirmed,report,290,TRUE
-2020-04-27,DEU,DEU,RKI,confirmed,report,500,TRUE
-2020-04-28,DEU,DEU,RKI,confirmed,report,551,TRUE
-2020-04-29,DEU,DEU,RKI,confirmed,report,620,TRUE
-2020-04-30,DEU,DEU,RKI,confirmed,report,569,TRUE
-2020-05-01,DEU,DEU,RKI,confirmed,report,400,TRUE
-2020-05-02,DEU,DEU,RKI,confirmed,report,266,TRUE
-2020-05-03,DEU,DEU,RKI,confirmed,report,181,TRUE
-2020-05-04,DEU,DEU,RKI,confirmed,report,319,TRUE
-2020-05-05,DEU,DEU,RKI,confirmed,report,453,TRUE
-2020-05-06,DEU,DEU,RKI,confirmed,report,523,TRUE
-2020-05-07,DEU,DEU,RKI,confirmed,report,472,TRUE
-2020-05-08,DEU,DEU,RKI,confirmed,report,439,TRUE
-2020-05-09,DEU,DEU,RKI,confirmed,report,293,TRUE
-2020-05-10,DEU,DEU,RKI,confirmed,report,154,TRUE
-2020-05-11,DEU,DEU,RKI,confirmed,report,322,TRUE
-2020-05-12,DEU,DEU,RKI,confirmed,report,332,TRUE
-2020-05-13,DEU,DEU,RKI,confirmed,report,413,TRUE
-2020-05-14,DEU,DEU,RKI,confirmed,report,397,TRUE
-2020-05-15,DEU,DEU,RKI,confirmed,report,381,TRUE
-2020-05-16,DEU,DEU,RKI,confirmed,report,211,TRUE
-2020-05-17,DEU,DEU,RKI,confirmed,report,194,TRUE
-2020-05-18,DEU,DEU,RKI,confirmed,report,279,TRUE
-2020-05-19,DEU,DEU,RKI,confirmed,report,330,TRUE
-2020-05-20,DEU,DEU,RKI,confirmed,report,394,TRUE
-2020-05-21,DEU,DEU,RKI,confirmed,report,214,TRUE
-2020-05-22,DEU,DEU,RKI,confirmed,report,229,TRUE
-2020-05-23,DEU,DEU,RKI,confirmed,report,164,TRUE
-2020-05-24,DEU,DEU,RKI,confirmed,report,112,TRUE
-2020-05-25,DEU,DEU,RKI,confirmed,report,191,TRUE
-2020-05-26,DEU,DEU,RKI,confirmed,report,337,TRUE
-2020-05-27,DEU,DEU,RKI,confirmed,report,281,TRUE
-2020-05-28,DEU,DEU,RKI,confirmed,report,235,TRUE
-2020-05-29,DEU,DEU,RKI,confirmed,report,194,TRUE
-2020-05-30,DEU,DEU,RKI,confirmed,report,188,TRUE
-2020-05-31,DEU,DEU,RKI,confirmed,report,78,TRUE
-2020-06-01,DEU,DEU,RKI,confirmed,report,67,TRUE
-2020-06-02,DEU,DEU,RKI,confirmed,report,120,TRUE
-2020-06-03,DEU,DEU,RKI,confirmed,report,263,TRUE
-2020-06-04,DEU,DEU,RKI,confirmed,report,258,TRUE
-2020-06-05,DEU,DEU,RKI,confirmed,report,206,TRUE
-2020-06-06,DEU,DEU,RKI,confirmed,report,111,TRUE
-2020-06-07,DEU,DEU,RKI,confirmed,report,74,TRUE
-2020-06-08,DEU,DEU,RKI,confirmed,report,152,TRUE
-2020-06-09,DEU,DEU,RKI,confirmed,report,201,TRUE
-2020-06-10,DEU,DEU,RKI,confirmed,report,266,TRUE
-2020-06-11,DEU,DEU,RKI,confirmed,report,131,TRUE
-2020-06-12,DEU,DEU,RKI,confirmed,report,182,TRUE
-2020-06-13,DEU,DEU,RKI,confirmed,report,156,TRUE
-2020-06-14,DEU,DEU,RKI,confirmed,report,99,TRUE
-2020-06-15,DEU,DEU,RKI,confirmed,report,114,TRUE
-2020-06-16,DEU,DEU,RKI,confirmed,report,255,TRUE
-2020-06-17,DEU,DEU,RKI,confirmed,report,363,TRUE
-2020-06-18,DEU,DEU,RKI,confirmed,report,410,TRUE
-2020-06-19,DEU,DEU,RKI,confirmed,report,521,TRUE
-2020-06-20,DEU,DEU,RKI,confirmed,report,293,TRUE
-2020-06-21,DEU,DEU,RKI,confirmed,report,149,TRUE
-2020-06-22,DEU,DEU,RKI,confirmed,report,246,TRUE
-2020-06-23,DEU,DEU,RKI,confirmed,report,302,TRUE
-2020-06-24,DEU,DEU,RKI,confirmed,report,227,TRUE
-2020-06-25,DEU,DEU,RKI,confirmed,report,275,TRUE
-2020-06-26,DEU,DEU,RKI,confirmed,report,289,TRUE
-2020-06-27,DEU,DEU,RKI,confirmed,report,150,TRUE
-2020-06-28,DEU,DEU,RKI,confirmed,report,118,TRUE
-2020-06-29,DEU,DEU,RKI,confirmed,report,221,TRUE
-2020-06-30,DEU,DEU,RKI,confirmed,report,225,TRUE
-2020-07-01,DEU,DEU,RKI,confirmed,report,230,TRUE
-2020-07-02,DEU,DEU,RKI,confirmed,report,229,TRUE
-2020-07-03,DEU,DEU,RKI,confirmed,report,219,TRUE
-2020-07-04,DEU,DEU,RKI,confirmed,report,149,TRUE
-2020-07-05,DEU,DEU,RKI,confirmed,report,86,TRUE
-2020-07-06,DEU,DEU,RKI,confirmed,report,154,TRUE
-2020-07-07,DEU,DEU,RKI,confirmed,report,181,TRUE
-2020-07-08,DEU,DEU,RKI,confirmed,report,203,TRUE
-2020-07-09,DEU,DEU,RKI,confirmed,report,188,TRUE
-2020-07-10,DEU,DEU,RKI,confirmed,report,213,TRUE
-2020-07-11,DEU,DEU,RKI,confirmed,report,137,TRUE
-2020-07-12,DEU,DEU,RKI,confirmed,report,62,TRUE
-2020-07-13,DEU,DEU,RKI,confirmed,report,148,TRUE
-2020-07-14,DEU,DEU,RKI,confirmed,report,195,TRUE
-2020-07-15,DEU,DEU,RKI,confirmed,report,264,TRUE
-2020-07-16,DEU,DEU,RKI,confirmed,report,246,TRUE
-2020-07-17,DEU,DEU,RKI,confirmed,report,217,TRUE
-2020-07-18,DEU,DEU,RKI,confirmed,report,245,TRUE
-2020-07-19,DEU,DEU,RKI,confirmed,report,111,TRUE
-2020-07-20,DEU,DEU,RKI,confirmed,report,219,TRUE
-2020-07-21,DEU,DEU,RKI,confirmed,report,234,TRUE
-2020-07-22,DEU,DEU,RKI,confirmed,report,295,TRUE
-2020-07-23,DEU,DEU,RKI,confirmed,report,292,TRUE
-2020-07-24,DEU,DEU,RKI,confirmed,report,367,TRUE
-2020-07-25,DEU,DEU,RKI,confirmed,report,263,TRUE
-2020-07-26,DEU,DEU,RKI,confirmed,report,153,TRUE
-2020-07-27,DEU,DEU,RKI,confirmed,report,234,TRUE
-2020-07-28,DEU,DEU,RKI,confirmed,report,334,TRUE
-2020-07-29,DEU,DEU,RKI,confirmed,report,404,TRUE
-2020-07-30,DEU,DEU,RKI,confirmed,report,380,TRUE
-2020-07-31,DEU,DEU,RKI,confirmed,report,470,TRUE
-2020-08-01,DEU,DEU,RKI,confirmed,report,276,TRUE
-2020-08-02,DEU,DEU,RKI,confirmed,report,171,TRUE
-2020-08-03,DEU,DEU,RKI,confirmed,report,388,TRUE
-2020-08-04,DEU,DEU,RKI,confirmed,report,497,TRUE
-2020-08-05,DEU,DEU,RKI,confirmed,report,561,TRUE
-2020-08-06,DEU,DEU,RKI,confirmed,report,640,TRUE
-2020-08-07,DEU,DEU,RKI,confirmed,report,569,TRUE
-2020-08-08,DEU,DEU,RKI,confirmed,report,388,TRUE
-2020-08-09,DEU,DEU,RKI,confirmed,report,184,TRUE
-2020-08-10,DEU,DEU,RKI,confirmed,report,600,TRUE
-2020-08-11,DEU,DEU,RKI,confirmed,report,684,TRUE
-2020-08-12,DEU,DEU,RKI,confirmed,report,877,TRUE
-2020-08-13,DEU,DEU,RKI,confirmed,report,828,TRUE
-2020-08-14,DEU,DEU,RKI,confirmed,report,771,TRUE
-2020-08-15,DEU,DEU,RKI,confirmed,report,430,TRUE
-2020-08-16,DEU,DEU,RKI,confirmed,report,310,TRUE
-2020-08-17,DEU,DEU,RKI,confirmed,report,915,TRUE
-2020-08-18,DEU,DEU,RKI,confirmed,report,869,TRUE
-2020-08-19,DEU,DEU,RKI,confirmed,report,985,TRUE
-2020-08-20,DEU,DEU,RKI,confirmed,report,887,TRUE
-2020-08-21,DEU,DEU,RKI,confirmed,report,972,TRUE
-2020-08-22,DEU,DEU,RKI,confirmed,report,558,TRUE
-2020-08-23,DEU,DEU,RKI,confirmed,report,321,TRUE
-2020-08-24,DEU,DEU,RKI,confirmed,report,808,TRUE
-2020-08-25,DEU,DEU,RKI,confirmed,report,873,TRUE
-2020-08-26,DEU,DEU,RKI,confirmed,report,892,TRUE
-2020-08-27,DEU,DEU,RKI,confirmed,report,832,TRUE
-2020-08-28,DEU,DEU,RKI,confirmed,report,737,TRUE
-2020-08-29,DEU,DEU,RKI,confirmed,report,427,TRUE
-2020-08-30,DEU,DEU,RKI,confirmed,report,281,TRUE
-2020-08-31,DEU,DEU,RKI,confirmed,report,601,TRUE
-2020-09-01,DEU,DEU,RKI,confirmed,report,714,TRUE
-2020-09-02,DEU,DEU,RKI,confirmed,report,708,TRUE
-2020-09-03,DEU,DEU,RKI,confirmed,report,777,TRUE
-2020-09-04,DEU,DEU,RKI,confirmed,report,829,TRUE
-2020-09-05,DEU,DEU,RKI,confirmed,report,574,TRUE
-2020-09-06,DEU,DEU,RKI,confirmed,report,298,TRUE
-2020-09-07,DEU,DEU,RKI,confirmed,report,742,TRUE
-2020-09-08,DEU,DEU,RKI,confirmed,report,724,TRUE
-2020-09-09,DEU,DEU,RKI,confirmed,report,826,TRUE
-2020-09-10,DEU,DEU,RKI,confirmed,report,737,TRUE
-2020-09-11,DEU,DEU,RKI,confirmed,report,715,TRUE
-2020-09-12,DEU,DEU,RKI,confirmed,report,545,TRUE
-2020-09-13,DEU,DEU,RKI,confirmed,report,316,TRUE
-2020-09-14,DEU,DEU,RKI,confirmed,report,665,TRUE
-2020-09-15,DEU,DEU,RKI,confirmed,report,838,TRUE
-2020-09-16,DEU,DEU,RKI,confirmed,report,938,TRUE
-2020-09-17,DEU,DEU,RKI,confirmed,report,980,TRUE
-2020-09-18,DEU,DEU,RKI,confirmed,report,913,TRUE
-2020-09-19,DEU,DEU,RKI,confirmed,report,596,TRUE
-2020-09-20,DEU,DEU,RKI,confirmed,report,280,TRUE
-2020-09-21,DEU,DEU,RKI,confirmed,report,745,TRUE
-2020-09-22,DEU,DEU,RKI,confirmed,report,764,TRUE
-2020-09-23,DEU,DEU,RKI,confirmed,report,896,TRUE
-2020-09-24,DEU,DEU,RKI,confirmed,report,963,TRUE
-2020-09-25,DEU,DEU,RKI,confirmed,report,937,TRUE
-2020-09-26,DEU,DEU,RKI,confirmed,report,757,TRUE
-2020-09-27,DEU,DEU,RKI,confirmed,report,401,TRUE
-2020-09-28,DEU,DEU,RKI,confirmed,report,804,TRUE
-2020-09-29,DEU,DEU,RKI,confirmed,report,929,TRUE
-2020-09-30,DEU,DEU,RKI,confirmed,report,1098,TRUE
-2020-10-01,DEU,DEU,RKI,confirmed,report,1192,TRUE
-2020-10-02,DEU,DEU,RKI,confirmed,report,1295,TRUE
-2020-10-03,DEU,DEU,RKI,confirmed,report,960,TRUE
-2020-10-04,DEU,DEU,RKI,confirmed,report,468,TRUE
-2020-10-05,DEU,DEU,RKI,confirmed,report,1037,TRUE
-2020-10-06,DEU,DEU,RKI,confirmed,report,1498,TRUE
-2020-10-07,DEU,DEU,RKI,confirmed,report,1800,TRUE
-2020-10-08,DEU,DEU,RKI,confirmed,report,2075,TRUE
-2020-10-09,DEU,DEU,RKI,confirmed,report,2270,TRUE
-2020-10-10,DEU,DEU,RKI,confirmed,report,1668,TRUE
-2020-10-11,DEU,DEU,RKI,confirmed,report,1081,TRUE
-2020-10-12,DEU,DEU,RKI,confirmed,report,1904,TRUE
-2020-10-13,DEU,DEU,RKI,confirmed,report,2489,TRUE
-2020-10-14,DEU,DEU,RKI,confirmed,report,3273,TRUE
-2020-10-15,DEU,DEU,RKI,confirmed,report,3531,TRUE
-2020-10-16,DEU,DEU,RKI,confirmed,report,3741,TRUE
-2020-10-17,DEU,DEU,RKI,confirmed,report,2665,TRUE
-2020-10-18,DEU,DEU,RKI,confirmed,report,1715,TRUE
-2020-10-19,DEU,DEU,RKI,confirmed,report,3101,TRUE
-2020-10-20,DEU,DEU,RKI,confirmed,report,4500,TRUE
-2020-10-21,DEU,DEU,RKI,confirmed,report,5898,TRUE
-2020-10-22,DEU,DEU,RKI,confirmed,report,6591,TRUE
-2020-10-23,DEU,DEU,RKI,confirmed,report,6809,TRUE
-2020-10-24,DEU,DEU,RKI,confirmed,report,5168,TRUE
-2020-10-25,DEU,DEU,RKI,confirmed,report,3587,TRUE
-2020-10-26,DEU,DEU,RKI,confirmed,report,5898,TRUE
-2020-10-27,DEU,DEU,RKI,confirmed,report,8055,TRUE
-2020-10-28,DEU,DEU,RKI,confirmed,report,9395,TRUE
-2020-10-29,DEU,DEU,RKI,confirmed,report,9688,TRUE
-2020-10-30,DEU,DEU,RKI,confirmed,report,9578,TRUE
-2020-10-31,DEU,DEU,RKI,confirmed,report,6947,TRUE
-2020-11-01,DEU,DEU,RKI,confirmed,report,5446,TRUE
-2020-11-02,DEU,DEU,RKI,confirmed,report,8046,TRUE
-2020-11-03,DEU,DEU,RKI,confirmed,report,9787,TRUE
-2020-11-04,DEU,DEU,RKI,confirmed,report,10382,TRUE
-2020-11-05,DEU,DEU,RKI,confirmed,report,10945,TRUE
-2020-11-06,DEU,DEU,RKI,confirmed,report,10994,TRUE
-2020-11-07,DEU,DEU,RKI,confirmed,report,8137,TRUE
-2020-11-08,DEU,DEU,RKI,confirmed,report,4952,TRUE
-2020-11-09,DEU,DEU,RKI,confirmed,report,8531,TRUE
-2020-11-10,DEU,DEU,RKI,confirmed,report,9957,TRUE
-2020-11-11,DEU,DEU,RKI,confirmed,report,11160,TRUE
-2020-11-12,DEU,DEU,RKI,confirmed,report,11648,TRUE
-2020-11-13,DEU,DEU,RKI,confirmed,report,10708,TRUE
-2020-11-14,DEU,DEU,RKI,confirmed,report,7681,TRUE
-2020-11-15,DEU,DEU,RKI,confirmed,report,4210,TRUE
-2020-11-16,DEU,DEU,RKI,confirmed,report,7606,TRUE
-2020-11-17,DEU,DEU,RKI,confirmed,report,9831,TRUE
-2020-11-18,DEU,DEU,RKI,confirmed,report,11634,TRUE
-2020-11-19,DEU,DEU,RKI,confirmed,report,12179,TRUE
-2020-11-20,DEU,DEU,RKI,confirmed,report,11429,TRUE
-2020-11-21,DEU,DEU,RKI,confirmed,report,7370,TRUE
-2020-11-22,DEU,DEU,RKI,confirmed,report,4607,TRUE
-2020-11-23,DEU,DEU,RKI,confirmed,report,8018,TRUE
-2020-11-24,DEU,DEU,RKI,confirmed,report,9734,TRUE
-2020-11-25,DEU,DEU,RKI,confirmed,report,11232,TRUE
-2020-11-26,DEU,DEU,RKI,confirmed,report,11654,TRUE
-2020-11-27,DEU,DEU,RKI,confirmed,report,10661,TRUE
-2020-11-28,DEU,DEU,RKI,confirmed,report,7833,TRUE
-2020-11-29,DEU,DEU,RKI,confirmed,report,4543,TRUE
-2020-11-30,DEU,DEU,RKI,confirmed,report,6932,TRUE
-2020-12-01,DEU,DEU,RKI,confirmed,report,9545,TRUE
-2020-12-02,DEU,DEU,RKI,confirmed,report,11158,TRUE
-2020-12-03,DEU,DEU,RKI,confirmed,report,12784,TRUE
-2020-12-04,DEU,DEU,RKI,confirmed,report,11413,TRUE
-2020-12-05,DEU,DEU,RKI,confirmed,report,8060,TRUE
-2020-12-06,DEU,DEU,RKI,confirmed,report,5204,TRUE
-2020-12-07,DEU,DEU,RKI,confirmed,report,8467,TRUE
-2020-12-08,DEU,DEU,RKI,confirmed,report,11458,TRUE
-2020-12-09,DEU,DEU,RKI,confirmed,report,13277,TRUE
-2020-12-10,DEU,DEU,RKI,confirmed,report,14674,TRUE
-2020-12-11,DEU,DEU,RKI,confirmed,report,13948,TRUE
-2020-12-12,DEU,DEU,RKI,confirmed,report,10531,TRUE
-2020-12-13,DEU,DEU,RKI,confirmed,report,6442,TRUE
-2020-12-14,DEU,DEU,RKI,confirmed,report,9771,TRUE
-2020-12-15,DEU,DEU,RKI,confirmed,report,13102,TRUE
-2020-12-16,DEU,DEU,RKI,confirmed,report,15534,TRUE
-2020-12-17,DEU,DEU,RKI,confirmed,report,16063,TRUE
-2020-12-18,DEU,DEU,RKI,confirmed,report,15163,TRUE
-2020-12-19,DEU,DEU,RKI,confirmed,report,10853,TRUE
-2020-12-20,DEU,DEU,RKI,confirmed,report,7452,TRUE
-2020-12-21,DEU,DEU,RKI,confirmed,report,10471,TRUE
-2020-12-22,DEU,DEU,RKI,confirmed,report,14599,TRUE
-2020-12-23,DEU,DEU,RKI,confirmed,report,17438,TRUE
-2020-12-24,DEU,DEU,RKI,confirmed,report,11070,TRUE
-2020-12-25,DEU,DEU,RKI,confirmed,report,6898,TRUE
-2020-12-26,DEU,DEU,RKI,confirmed,report,6217,TRUE
-2020-12-27,DEU,DEU,RKI,confirmed,report,4980,TRUE
-2020-12-28,DEU,DEU,RKI,confirmed,report,7863,TRUE
-2020-12-29,DEU,DEU,RKI,confirmed,report,12804,TRUE
-2020-12-30,DEU,DEU,RKI,confirmed,report,14616,TRUE
-2020-12-31,DEU,DEU,RKI,confirmed,report,9628,TRUE
-2021-01-01,DEU,DEU,RKI,confirmed,report,4874,TRUE
-2021-01-02,DEU,DEU,RKI,confirmed,report,5002,TRUE
-2021-01-03,DEU,DEU,RKI,confirmed,report,4179,TRUE
-2021-01-04,DEU,DEU,RKI,confirmed,report,6684,TRUE
-2021-01-05,DEU,DEU,RKI,confirmed,report,11978,TRUE
-2021-01-06,DEU,DEU,RKI,confirmed,report,12437,TRUE
-2021-01-07,DEU,DEU,RKI,confirmed,report,12112,TRUE
-2021-01-08,DEU,DEU,RKI,confirmed,report,11987,TRUE
-2021-01-09,DEU,DEU,RKI,confirmed,report,8097,TRUE
-2021-01-10,DEU,DEU,RKI,confirmed,report,4148,TRUE
-2021-01-11,DEU,DEU,RKI,confirmed,report,6731,TRUE
-2021-01-12,DEU,DEU,RKI,confirmed,report,10715,TRUE
-2021-01-13,DEU,DEU,RKI,confirmed,report,11386,TRUE
-2021-01-14,DEU,DEU,RKI,confirmed,report,10054,TRUE
-2021-01-15,DEU,DEU,RKI,confirmed,report,8898,TRUE
-2021-01-16,DEU,DEU,RKI,confirmed,report,6684,TRUE
-2021-01-17,DEU,DEU,RKI,confirmed,report,3428,TRUE
-2021-01-18,DEU,DEU,RKI,confirmed,report,4490,TRUE
-2021-01-19,DEU,DEU,RKI,confirmed,report,8307,TRUE
-2021-01-20,DEU,DEU,RKI,confirmed,report,8740,TRUE
-2021-01-21,DEU,DEU,RKI,confirmed,report,7934,TRUE
-2021-01-22,DEU,DEU,RKI,confirmed,report,6913,TRUE
-2021-01-23,DEU,DEU,RKI,confirmed,report,5368,TRUE
-2021-01-24,DEU,DEU,RKI,confirmed,report,2451,TRUE
-2021-01-25,DEU,DEU,RKI,confirmed,report,3175,TRUE
-2021-01-26,DEU,DEU,RKI,confirmed,report,6915,TRUE
-2021-01-27,DEU,DEU,RKI,confirmed,report,6933,TRUE
-2021-01-28,DEU,DEU,RKI,confirmed,report,5862,TRUE
-2021-01-29,DEU,DEU,RKI,confirmed,report,5866,TRUE
-2021-01-30,DEU,DEU,RKI,confirmed,report,4712,TRUE
-2021-01-31,DEU,DEU,RKI,confirmed,report,1918,TRUE
-2021-02-01,DEU,DEU,RKI,confirmed,report,2711,TRUE
-2021-02-02,DEU,DEU,RKI,confirmed,report,5172,TRUE
-2021-02-03,DEU,DEU,RKI,confirmed,report,5963,TRUE
-2021-02-04,DEU,DEU,RKI,confirmed,report,5027,TRUE
-2021-02-05,DEU,DEU,RKI,confirmed,report,4408,TRUE
-2021-02-06,DEU,DEU,RKI,confirmed,report,3722,TRUE
-2021-02-07,DEU,DEU,RKI,confirmed,report,1424,TRUE
-2021-02-08,DEU,DEU,RKI,confirmed,report,1945,TRUE
-2021-02-09,DEU,DEU,RKI,confirmed,report,3647,TRUE
-2021-02-10,DEU,DEU,RKI,confirmed,report,4149,TRUE
-2021-02-11,DEU,DEU,RKI,confirmed,report,3914,TRUE
-2021-02-12,DEU,DEU,RKI,confirmed,report,3680,TRUE
-2021-02-13,DEU,DEU,RKI,confirmed,report,2445,TRUE
-2021-02-14,DEU,DEU,RKI,confirmed,report,1571,TRUE
-2021-02-15,DEU,DEU,RKI,confirmed,report,1904,TRUE
-2021-02-16,DEU,DEU,RKI,confirmed,report,3653,TRUE
-2021-02-17,DEU,DEU,RKI,confirmed,report,3917,TRUE
-2021-02-18,DEU,DEU,RKI,confirmed,report,3809,TRUE
-2021-02-19,DEU,DEU,RKI,confirmed,report,3691,TRUE
-2021-02-20,DEU,DEU,RKI,confirmed,report,3232,TRUE
-2021-02-21,DEU,DEU,RKI,confirmed,report,1213,TRUE
-2021-02-22,DEU,DEU,RKI,confirmed,report,1892,TRUE
-2021-02-23,DEU,DEU,RKI,confirmed,report,3940,TRUE
-2021-02-24,DEU,DEU,RKI,confirmed,report,4250,TRUE
-2021-02-25,DEU,DEU,RKI,confirmed,report,3933,TRUE
-2021-02-26,DEU,DEU,RKI,confirmed,report,3848,TRUE
-2021-02-27,DEU,DEU,RKI,confirmed,report,3326,TRUE
-2021-02-28,DEU,DEU,RKI,confirmed,report,1444,TRUE
-2021-03-01,DEU,DEU,RKI,confirmed,report,2022,TRUE
-2021-03-02,DEU,DEU,RKI,confirmed,report,4222,TRUE
-2021-03-03,DEU,DEU,RKI,confirmed,report,4326,TRUE
-2021-03-04,DEU,DEU,RKI,confirmed,report,3962,TRUE
-2021-03-05,DEU,DEU,RKI,confirmed,report,3972,TRUE
-2021-03-06,DEU,DEU,RKI,confirmed,report,3306,TRUE
-2021-03-07,DEU,DEU,RKI,confirmed,report,1467,TRUE
-2021-03-08,DEU,DEU,RKI,confirmed,report,2012,TRUE
-2021-03-09,DEU,DEU,RKI,confirmed,report,4335,TRUE
-2021-03-10,DEU,DEU,RKI,confirmed,report,5379,TRUE
-2021-03-11,DEU,DEU,RKI,confirmed,report,5282,TRUE
-2021-03-12,DEU,DEU,RKI,confirmed,report,5155,TRUE
-2021-03-13,DEU,DEU,RKI,confirmed,report,4263,TRUE
-2021-03-14,DEU,DEU,RKI,confirmed,report,2020,TRUE
-2021-03-15,DEU,DEU,RKI,confirmed,report,2670,TRUE
-2021-03-16,DEU,DEU,RKI,confirmed,report,5976,TRUE
-2021-03-17,DEU,DEU,RKI,confirmed,report,7088,TRUE
-2021-03-18,DEU,DEU,RKI,confirmed,report,6629,TRUE
-2021-03-19,DEU,DEU,RKI,confirmed,report,6260,TRUE
-2021-03-20,DEU,DEU,RKI,confirmed,report,5294,TRUE
-2021-03-21,DEU,DEU,RKI,confirmed,report,2496,TRUE
-2021-03-22,DEU,DEU,RKI,confirmed,report,3666,TRUE
-2021-03-23,DEU,DEU,RKI,confirmed,report,7399,TRUE
-2021-03-24,DEU,DEU,RKI,confirmed,report,9256,TRUE
-2021-03-25,DEU,DEU,RKI,confirmed,report,9267,TRUE
-2021-03-26,DEU,DEU,RKI,confirmed,report,8723,TRUE
-2021-03-27,DEU,DEU,RKI,confirmed,report,6882,TRUE
-2021-03-28,DEU,DEU,RKI,confirmed,report,3228,TRUE
-2021-03-29,DEU,DEU,RKI,confirmed,report,4721,TRUE
-2021-03-30,DEU,DEU,RKI,confirmed,report,8162,TRUE
-2021-03-31,DEU,DEU,RKI,confirmed,report,10304,TRUE
-2021-04-01,DEU,DEU,RKI,confirmed,report,9251,TRUE
-2021-04-02,DEU,DEU,RKI,confirmed,report,6850,TRUE
-2021-04-03,DEU,DEU,RKI,confirmed,report,4590,TRUE
-2021-04-04,DEU,DEU,RKI,confirmed,report,3129,TRUE
-2021-04-05,DEU,DEU,RKI,confirmed,report,2848,TRUE
-2021-04-06,DEU,DEU,RKI,confirmed,report,4590,TRUE
-2021-04-07,DEU,DEU,RKI,confirmed,report,9066,TRUE
-2021-04-08,DEU,DEU,RKI,confirmed,report,10258,TRUE
-2021-04-09,DEU,DEU,RKI,confirmed,report,9301,TRUE
-2021-04-10,DEU,DEU,RKI,confirmed,report,7301,TRUE
-2021-04-11,DEU,DEU,RKI,confirmed,report,3439,TRUE
-2021-04-12,DEU,DEU,RKI,confirmed,report,4977,TRUE
-2021-04-13,DEU,DEU,RKI,confirmed,report,10501,TRUE
-2021-04-14,DEU,DEU,RKI,confirmed,report,11676,TRUE
-2021-04-15,DEU,DEU,RKI,confirmed,report,10601,TRUE
-2021-04-16,DEU,DEU,RKI,confirmed,report,10127,TRUE
-2021-04-17,DEU,DEU,RKI,confirmed,report,7831,TRUE
-2021-04-18,DEU,DEU,RKI,confirmed,report,3851,TRUE
-2021-04-19,DEU,DEU,RKI,confirmed,report,5275,TRUE
-2021-04-20,DEU,DEU,RKI,confirmed,report,11399,TRUE
-2021-04-21,DEU,DEU,RKI,confirmed,report,12262,TRUE
-2021-04-22,DEU,DEU,RKI,confirmed,report,10967,TRUE
-2021-04-23,DEU,DEU,RKI,confirmed,report,10101,TRUE
-2021-04-24,DEU,DEU,RKI,confirmed,report,7924,TRUE
-2021-04-25,DEU,DEU,RKI,confirmed,report,3689,TRUE
-2021-04-26,DEU,DEU,RKI,confirmed,report,5112,TRUE
-2021-04-27,DEU,DEU,RKI,confirmed,report,9873,TRUE
-2021-04-28,DEU,DEU,RKI,confirmed,report,10471,TRUE
-2021-04-29,DEU,DEU,RKI,confirmed,report,9137,TRUE
-2021-04-30,DEU,DEU,RKI,confirmed,report,8211,TRUE
-2021-05-01,DEU,DEU,RKI,confirmed,report,6531,TRUE
-2021-05-02,DEU,DEU,RKI,confirmed,report,2829,TRUE
-2021-05-03,DEU,DEU,RKI,confirmed,report,3822,TRUE
-2021-05-04,DEU,DEU,RKI,confirmed,report,8232,TRUE
-2021-05-05,DEU,DEU,RKI,confirmed,report,8107,TRUE
-2021-05-06,DEU,DEU,RKI,confirmed,report,6857,TRUE
-2021-05-07,DEU,DEU,RKI,confirmed,report,6378,TRUE
-2021-05-08,DEU,DEU,RKI,confirmed,report,4973,TRUE
-2021-05-09,DEU,DEU,RKI,confirmed,report,2120,TRUE
-2021-05-10,DEU,DEU,RKI,confirmed,report,2910,TRUE
-2021-05-11,DEU,DEU,RKI,confirmed,report,6242,TRUE
-2021-05-12,DEU,DEU,RKI,confirmed,report,6609,TRUE
-2021-05-13,DEU,DEU,RKI,confirmed,report,3945,TRUE
-2021-05-14,DEU,DEU,RKI,confirmed,report,3191,TRUE
-2021-05-15,DEU,DEU,RKI,confirmed,report,3598,TRUE
-2021-05-16,DEU,DEU,RKI,confirmed,report,1688,TRUE
-2021-05-17,DEU,DEU,RKI,confirmed,report,2078,TRUE
-2021-05-18,DEU,DEU,RKI,confirmed,report,4604,TRUE
-2021-05-19,DEU,DEU,RKI,confirmed,report,4523,TRUE
-2021-05-20,DEU,DEU,RKI,confirmed,report,3458,TRUE
-2021-05-21,DEU,DEU,RKI,confirmed,report,3344,TRUE
-2021-05-22,DEU,DEU,RKI,confirmed,report,2478,TRUE
-2021-05-23,DEU,DEU,RKI,confirmed,report,809,TRUE
-2021-05-24,DEU,DEU,RKI,confirmed,report,744,TRUE
-2021-05-25,DEU,DEU,RKI,confirmed,report,1486,TRUE
-2021-05-26,DEU,DEU,RKI,confirmed,report,2681,TRUE
-2021-05-27,DEU,DEU,RKI,confirmed,report,2754,TRUE
-2021-05-28,DEU,DEU,RKI,confirmed,report,2161,TRUE
-2021-05-29,DEU,DEU,RKI,confirmed,report,1554,TRUE
-2021-05-30,DEU,DEU,RKI,confirmed,report,686,TRUE
-2021-05-31,DEU,DEU,RKI,confirmed,report,953,TRUE
-2021-06-01,DEU,DEU,RKI,confirmed,report,2069,TRUE
-2021-06-02,DEU,DEU,RKI,confirmed,report,1894,TRUE
-2021-06-03,DEU,DEU,RKI,confirmed,report,1318,TRUE
-2021-06-04,DEU,DEU,RKI,confirmed,report,932,TRUE
-2021-06-05,DEU,DEU,RKI,confirmed,report,910,TRUE
-2021-06-06,DEU,DEU,RKI,confirmed,report,446,TRUE
-2021-06-07,DEU,DEU,RKI,confirmed,report,697,TRUE
-2021-06-08,DEU,DEU,RKI,confirmed,report,1456,TRUE
-2021-06-09,DEU,DEU,RKI,confirmed,report,1197,TRUE
-2021-06-10,DEU,DEU,RKI,confirmed,report,1033,TRUE
-2021-06-11,DEU,DEU,RKI,confirmed,report,809,TRUE
-2021-06-12,DEU,DEU,RKI,confirmed,report,610,TRUE
-2021-06-13,DEU,DEU,RKI,confirmed,report,235,TRUE
-2021-06-14,DEU,DEU,RKI,confirmed,report,418,TRUE
-2021-06-15,DEU,DEU,RKI,confirmed,report,664,TRUE
-2021-06-16,DEU,DEU,RKI,confirmed,report,618,TRUE
-2021-06-17,DEU,DEU,RKI,confirmed,report,513,TRUE
-2021-06-18,DEU,DEU,RKI,confirmed,report,464,TRUE
-2021-06-19,DEU,DEU,RKI,confirmed,report,317,TRUE
-2021-06-20,DEU,DEU,RKI,confirmed,report,126,TRUE
-2021-06-21,DEU,DEU,RKI,confirmed,report,254,TRUE
-2021-06-22,DEU,DEU,RKI,confirmed,report,435,TRUE
-2021-06-23,DEU,DEU,RKI,confirmed,report,379,TRUE
-2021-06-24,DEU,DEU,RKI,confirmed,report,359,TRUE
-2021-06-25,DEU,DEU,RKI,confirmed,report,320,TRUE
-2021-06-26,DEU,DEU,RKI,confirmed,report,195,TRUE
-2021-06-27,DEU,DEU,RKI,confirmed,report,84,TRUE
-2021-06-28,DEU,DEU,RKI,confirmed,report,212,TRUE
-2021-06-29,DEU,DEU,RKI,confirmed,report,329,TRUE
-2021-06-30,DEU,DEU,RKI,confirmed,report,336,TRUE
-2021-07-01,DEU,DEU,RKI,confirmed,report,252,TRUE
-2021-07-02,DEU,DEU,RKI,confirmed,report,248,TRUE
-2021-07-03,DEU,DEU,RKI,confirmed,report,183,TRUE
-2021-07-04,DEU,DEU,RKI,confirmed,report,85,TRUE
-2021-07-05,DEU,DEU,RKI,confirmed,report,172,TRUE
-2021-07-06,DEU,DEU,RKI,confirmed,report,311,TRUE
-2020-01-02,DEU,DEU,RKI,confirmed,report_plotting,1,NA
-2020-01-23,DEU,DEU,RKI,confirmed,report_plotting,2,NA
-2020-01-28,DEU,DEU,RKI,confirmed,report_plotting,2,NA
-2020-01-29,DEU,DEU,RKI,confirmed,report_plotting,2,NA
-2020-01-31,DEU,DEU,RKI,confirmed,report_plotting,4,NA
-2020-02-01,DEU,DEU,RKI,confirmed,report_plotting,1,NA
-2020-02-03,DEU,DEU,RKI,confirmed,report_plotting,1,NA
-2020-02-04,DEU,DEU,RKI,confirmed,report_plotting,4,NA
-2020-02-06,DEU,DEU,RKI,confirmed,report_plotting,1,NA
-2020-02-07,DEU,DEU,RKI,confirmed,report_plotting,1,NA
-2020-02-11,DEU,DEU,RKI,confirmed,report_plotting,2,NA
-2020-02-17,DEU,DEU,RKI,confirmed,report_plotting,1,NA
-2020-02-18,DEU,DEU,RKI,confirmed,report_plotting,1,NA
-2020-02-20,DEU,DEU,RKI,confirmed,report_plotting,2,NA
-2020-02-24,DEU,DEU,RKI,confirmed,report_plotting,1,NA
-2020-02-25,DEU,DEU,RKI,confirmed,report_plotting,3,NA
-2020-02-26,DEU,DEU,RKI,confirmed,report_plotting,7,NA
-2020-02-27,DEU,DEU,RKI,confirmed,report_plotting,23,NA
-2020-02-28,DEU,DEU,RKI,confirmed,report_plotting,47,NA
-2020-02-29,DEU,DEU,RKI,confirmed,report_plotting,23,NA
-2020-03-01,DEU,DEU,RKI,confirmed,report_plotting,35,NA
-2020-03-02,DEU,DEU,RKI,confirmed,report_plotting,41,NA
-2020-03-03,DEU,DEU,RKI,confirmed,report_plotting,84,NA
-2020-03-04,DEU,DEU,RKI,confirmed,report_plotting,157,NA
-2020-03-05,DEU,DEU,RKI,confirmed,report_plotting,186,NA
-2020-03-06,DEU,DEU,RKI,confirmed,report_plotting,186,NA
-2020-03-07,DEU,DEU,RKI,confirmed,report_plotting,142,NA
-2020-03-08,DEU,DEU,RKI,confirmed,report_plotting,102,NA
-2020-03-09,DEU,DEU,RKI,confirmed,report_plotting,345,NA
-2020-03-10,DEU,DEU,RKI,confirmed,report_plotting,596,NA
-2020-03-11,DEU,DEU,RKI,confirmed,report_plotting,755,NA
-2020-03-12,DEU,DEU,RKI,confirmed,report_plotting,991,NA
-2020-03-13,DEU,DEU,RKI,confirmed,report_plotting,1460,NA
-2020-03-14,DEU,DEU,RKI,confirmed,report_plotting,1304,NA
-2020-03-15,DEU,DEU,RKI,confirmed,report_plotting,980,NA
-2020-03-16,DEU,DEU,RKI,confirmed,report_plotting,2037,NA
-2020-03-17,DEU,DEU,RKI,confirmed,report_plotting,3027,NA
-2020-03-18,DEU,DEU,RKI,confirmed,report_plotting,3602,NA
-2020-03-19,DEU,DEU,RKI,confirmed,report_plotting,4059,NA
-2020-03-20,DEU,DEU,RKI,confirmed,report_plotting,4049,NA
-2020-03-21,DEU,DEU,RKI,confirmed,report_plotting,3355,NA
-2020-03-22,DEU,DEU,RKI,confirmed,report_plotting,2264,NA
-2020-03-23,DEU,DEU,RKI,confirmed,report_plotting,3730,NA
-2020-03-24,DEU,DEU,RKI,confirmed,report_plotting,4882,NA
-2020-03-25,DEU,DEU,RKI,confirmed,report_plotting,5677,NA
-2020-03-26,DEU,DEU,RKI,confirmed,report_plotting,5904,NA
-2020-03-27,DEU,DEU,RKI,confirmed,report_plotting,5978,NA
-2020-03-28,DEU,DEU,RKI,confirmed,report_plotting,4723,NA
-2020-03-29,DEU,DEU,RKI,confirmed,report_plotting,3077,NA
-2020-03-30,DEU,DEU,RKI,confirmed,report_plotting,4119,NA
-2020-03-31,DEU,DEU,RKI,confirmed,report_plotting,6062,NA
-2020-04-01,DEU,DEU,RKI,confirmed,report_plotting,6257,NA
-2020-04-02,DEU,DEU,RKI,confirmed,report_plotting,6549,NA
-2020-04-03,DEU,DEU,RKI,confirmed,report_plotting,6190,NA
-2020-04-04,DEU,DEU,RKI,confirmed,report_plotting,4342,NA
-2020-04-05,DEU,DEU,RKI,confirmed,report_plotting,2535,NA
-2020-04-06,DEU,DEU,RKI,confirmed,report_plotting,3660,NA
-2020-04-07,DEU,DEU,RKI,confirmed,report_plotting,5189,NA
-2020-04-08,DEU,DEU,RKI,confirmed,report_plotting,5276,NA
-2020-04-09,DEU,DEU,RKI,confirmed,report_plotting,4906,NA
-2020-04-10,DEU,DEU,RKI,confirmed,report_plotting,3357,NA
-2020-04-11,DEU,DEU,RKI,confirmed,report_plotting,2886,NA
-2020-04-12,DEU,DEU,RKI,confirmed,report_plotting,1864,NA
-2020-04-13,DEU,DEU,RKI,confirmed,report_plotting,1598,NA
-2020-04-14,DEU,DEU,RKI,confirmed,report_plotting,2466,NA
-2020-04-15,DEU,DEU,RKI,confirmed,report_plotting,3323,NA
-2020-04-16,DEU,DEU,RKI,confirmed,report_plotting,3419,NA
-2020-04-17,DEU,DEU,RKI,confirmed,report_plotting,3048,NA
-2020-04-18,DEU,DEU,RKI,confirmed,report_plotting,2106,NA
-2020-04-19,DEU,DEU,RKI,confirmed,report_plotting,1374,NA
-2020-04-20,DEU,DEU,RKI,confirmed,report_plotting,1708,NA
-2020-04-21,DEU,DEU,RKI,confirmed,report_plotting,2182,NA
-2020-04-22,DEU,DEU,RKI,confirmed,report_plotting,2490,NA
-2020-04-23,DEU,DEU,RKI,confirmed,report_plotting,2089,NA
-2020-04-24,DEU,DEU,RKI,confirmed,report_plotting,1903,NA
-2020-04-25,DEU,DEU,RKI,confirmed,report_plotting,1272,NA
-2020-04-26,DEU,DEU,RKI,confirmed,report_plotting,702,NA
-2020-04-27,DEU,DEU,RKI,confirmed,report_plotting,1116,NA
-2020-04-28,DEU,DEU,RKI,confirmed,report_plotting,1467,NA
-2020-04-29,DEU,DEU,RKI,confirmed,report_plotting,1431,NA
-2020-04-30,DEU,DEU,RKI,confirmed,report_plotting,1458,NA
-2020-05-01,DEU,DEU,RKI,confirmed,report_plotting,918,NA
-2020-05-02,DEU,DEU,RKI,confirmed,report_plotting,620,NA
-2020-05-03,DEU,DEU,RKI,confirmed,report_plotting,425,NA
-2020-05-04,DEU,DEU,RKI,confirmed,report_plotting,729,NA
-2020-05-05,DEU,DEU,RKI,confirmed,report_plotting,1090,NA
-2020-05-06,DEU,DEU,RKI,confirmed,report_plotting,1221,NA
-2020-05-07,DEU,DEU,RKI,confirmed,report_plotting,1198,NA
-2020-05-08,DEU,DEU,RKI,confirmed,report_plotting,979,NA
-2020-05-09,DEU,DEU,RKI,confirmed,report_plotting,678,NA
-2020-05-10,DEU,DEU,RKI,confirmed,report_plotting,343,NA
-2020-05-11,DEU,DEU,RKI,confirmed,report_plotting,686,NA
-2020-05-12,DEU,DEU,RKI,confirmed,report_plotting,855,NA
-2020-05-13,DEU,DEU,RKI,confirmed,report_plotting,912,NA
-2020-05-14,DEU,DEU,RKI,confirmed,report_plotting,809,NA
-2020-05-15,DEU,DEU,RKI,confirmed,report_plotting,727,NA
-2020-05-16,DEU,DEU,RKI,confirmed,report_plotting,459,NA
-2020-05-17,DEU,DEU,RKI,confirmed,report_plotting,316,NA
-2020-05-18,DEU,DEU,RKI,confirmed,report_plotting,543,NA
-2020-05-19,DEU,DEU,RKI,confirmed,report_plotting,728,NA
-2020-05-20,DEU,DEU,RKI,confirmed,report_plotting,829,NA
-2020-05-21,DEU,DEU,RKI,confirmed,report_plotting,418,NA
-2020-05-22,DEU,DEU,RKI,confirmed,report_plotting,525,NA
-2020-05-23,DEU,DEU,RKI,confirmed,report_plotting,337,NA
-2020-05-24,DEU,DEU,RKI,confirmed,report_plotting,218,NA
-2020-05-25,DEU,DEU,RKI,confirmed,report_plotting,412,NA
-2020-05-26,DEU,DEU,RKI,confirmed,report_plotting,617,NA
-2020-05-27,DEU,DEU,RKI,confirmed,report_plotting,648,NA
-2020-05-28,DEU,DEU,RKI,confirmed,report_plotting,529,NA
-2020-05-29,DEU,DEU,RKI,confirmed,report_plotting,445,NA
-2020-05-30,DEU,DEU,RKI,confirmed,report_plotting,374,NA
-2020-05-31,DEU,DEU,RKI,confirmed,report_plotting,179,NA
-2020-06-01,DEU,DEU,RKI,confirmed,report_plotting,137,NA
-2020-06-02,DEU,DEU,RKI,confirmed,report_plotting,304,NA
-2020-06-03,DEU,DEU,RKI,confirmed,report_plotting,496,NA
-2020-06-04,DEU,DEU,RKI,confirmed,report_plotting,528,NA
-2020-06-05,DEU,DEU,RKI,confirmed,report_plotting,437,NA
-2020-06-06,DEU,DEU,RKI,confirmed,report_plotting,285,NA
-2020-06-07,DEU,DEU,RKI,confirmed,report_plotting,164,NA
-2020-06-08,DEU,DEU,RKI,confirmed,report_plotting,295,NA
-2020-06-09,DEU,DEU,RKI,confirmed,report_plotting,425,NA
-2020-06-10,DEU,DEU,RKI,confirmed,report_plotting,518,NA
-2020-06-11,DEU,DEU,RKI,confirmed,report_plotting,280,NA
-2020-06-12,DEU,DEU,RKI,confirmed,report_plotting,352,NA
-2020-06-13,DEU,DEU,RKI,confirmed,report_plotting,299,NA
-2020-06-14,DEU,DEU,RKI,confirmed,report_plotting,172,NA
-2020-06-15,DEU,DEU,RKI,confirmed,report_plotting,259,NA
-2020-06-16,DEU,DEU,RKI,confirmed,report_plotting,518,NA
-2020-06-17,DEU,DEU,RKI,confirmed,report_plotting,862,NA
-2020-06-18,DEU,DEU,RKI,confirmed,report_plotting,763,NA
-2020-06-19,DEU,DEU,RKI,confirmed,report_plotting,996,NA
-2020-06-20,DEU,DEU,RKI,confirmed,report_plotting,570,NA
-2020-06-21,DEU,DEU,RKI,confirmed,report_plotting,222,NA
-2020-06-22,DEU,DEU,RKI,confirmed,report_plotting,443,NA
-2020-06-23,DEU,DEU,RKI,confirmed,report_plotting,541,NA
-2020-06-24,DEU,DEU,RKI,confirmed,report_plotting,506,NA
-2020-06-25,DEU,DEU,RKI,confirmed,report_plotting,564,NA
-2020-06-26,DEU,DEU,RKI,confirmed,report_plotting,574,NA
-2020-06-27,DEU,DEU,RKI,confirmed,report_plotting,325,NA
-2020-06-28,DEU,DEU,RKI,confirmed,report_plotting,200,NA
-2020-06-29,DEU,DEU,RKI,confirmed,report_plotting,416,NA
-2020-06-30,DEU,DEU,RKI,confirmed,report_plotting,457,NA
-2020-07-01,DEU,DEU,RKI,confirmed,report_plotting,482,NA
-2020-07-02,DEU,DEU,RKI,confirmed,report_plotting,473,NA
-2020-07-03,DEU,DEU,RKI,confirmed,report_plotting,426,NA
-2020-07-04,DEU,DEU,RKI,confirmed,report_plotting,292,NA
-2020-07-05,DEU,DEU,RKI,confirmed,report_plotting,142,NA
-2020-07-06,DEU,DEU,RKI,confirmed,report_plotting,327,NA
-2020-07-07,DEU,DEU,RKI,confirmed,report_plotting,390,NA
-2020-07-08,DEU,DEU,RKI,confirmed,report_plotting,451,NA
-2020-07-09,DEU,DEU,RKI,confirmed,report_plotting,426,NA
-2020-07-10,DEU,DEU,RKI,confirmed,report_plotting,426,NA
-2020-07-11,DEU,DEU,RKI,confirmed,report_plotting,276,NA
-2020-07-12,DEU,DEU,RKI,confirmed,report_plotting,131,NA
-2020-07-13,DEU,DEU,RKI,confirmed,report_plotting,326,NA
-2020-07-14,DEU,DEU,RKI,confirmed,report_plotting,465,NA
-2020-07-15,DEU,DEU,RKI,confirmed,report_plotting,537,NA
-2020-07-16,DEU,DEU,RKI,confirmed,report_plotting,554,NA
-2020-07-17,DEU,DEU,RKI,confirmed,report_plotting,521,NA
-2020-07-18,DEU,DEU,RKI,confirmed,report_plotting,440,NA
-2020-07-19,DEU,DEU,RKI,confirmed,report_plotting,179,NA
-2020-07-20,DEU,DEU,RKI,confirmed,report_plotting,454,NA
-2020-07-21,DEU,DEU,RKI,confirmed,report_plotting,522,NA
-2020-07-22,DEU,DEU,RKI,confirmed,report_plotting,697,NA
-2020-07-23,DEU,DEU,RKI,confirmed,report_plotting,695,NA
-2020-07-24,DEU,DEU,RKI,confirmed,report_plotting,805,NA
-2020-07-25,DEU,DEU,RKI,confirmed,report_plotting,542,NA
-2020-07-26,DEU,DEU,RKI,confirmed,report_plotting,211,NA
-2020-07-27,DEU,DEU,RKI,confirmed,report_plotting,528,NA
-2020-07-28,DEU,DEU,RKI,confirmed,report_plotting,755,NA
-2020-07-29,DEU,DEU,RKI,confirmed,report_plotting,908,NA
-2020-07-30,DEU,DEU,RKI,confirmed,report_plotting,860,NA
-2020-07-31,DEU,DEU,RKI,confirmed,report_plotting,914,NA
-2020-08-01,DEU,DEU,RKI,confirmed,report_plotting,561,NA
-2020-08-02,DEU,DEU,RKI,confirmed,report_plotting,305,NA
-2020-08-03,DEU,DEU,RKI,confirmed,report_plotting,797,NA
-2020-08-04,DEU,DEU,RKI,confirmed,report_plotting,947,NA
-2020-08-05,DEU,DEU,RKI,confirmed,report_plotting,1111,NA
-2020-08-06,DEU,DEU,RKI,confirmed,report_plotting,1167,NA
-2020-08-07,DEU,DEU,RKI,confirmed,report_plotting,1005,NA
-2020-08-08,DEU,DEU,RKI,confirmed,report_plotting,711,NA
-2020-08-09,DEU,DEU,RKI,confirmed,report_plotting,320,NA
-2020-08-10,DEU,DEU,RKI,confirmed,report_plotting,1103,NA
-2020-08-11,DEU,DEU,RKI,confirmed,report_plotting,1194,NA
-2020-08-12,DEU,DEU,RKI,confirmed,report_plotting,1543,NA
-2020-08-13,DEU,DEU,RKI,confirmed,report_plotting,1489,NA
-2020-08-14,DEU,DEU,RKI,confirmed,report_plotting,1375,NA
-2020-08-15,DEU,DEU,RKI,confirmed,report_plotting,755,NA
-2020-08-16,DEU,DEU,RKI,confirmed,report_plotting,492,NA
-2020-08-17,DEU,DEU,RKI,confirmed,report_plotting,1547,NA
-2020-08-18,DEU,DEU,RKI,confirmed,report_plotting,1535,NA
-2020-08-19,DEU,DEU,RKI,confirmed,report_plotting,1756,NA
-2020-08-20,DEU,DEU,RKI,confirmed,report_plotting,1622,NA
-2020-08-21,DEU,DEU,RKI,confirmed,report_plotting,1657,NA
-2020-08-22,DEU,DEU,RKI,confirmed,report_plotting,917,NA
-2020-08-23,DEU,DEU,RKI,confirmed,report_plotting,565,NA
-2020-08-24,DEU,DEU,RKI,confirmed,report_plotting,1427,NA
-2020-08-25,DEU,DEU,RKI,confirmed,report_plotting,1482,NA
-2020-08-26,DEU,DEU,RKI,confirmed,report_plotting,1614,NA
-2020-08-27,DEU,DEU,RKI,confirmed,report_plotting,1540,NA
-2020-08-28,DEU,DEU,RKI,confirmed,report_plotting,1388,NA
-2020-08-29,DEU,DEU,RKI,confirmed,report_plotting,833,NA
-2020-08-30,DEU,DEU,RKI,confirmed,report_plotting,536,NA
-2020-08-31,DEU,DEU,RKI,confirmed,report_plotting,1188,NA
-2020-09-01,DEU,DEU,RKI,confirmed,report_plotting,1317,NA
-2020-09-02,DEU,DEU,RKI,confirmed,report_plotting,1415,NA
-2020-09-03,DEU,DEU,RKI,confirmed,report_plotting,1517,NA
-2020-09-04,DEU,DEU,RKI,confirmed,report_plotting,1494,NA
-2020-09-05,DEU,DEU,RKI,confirmed,report_plotting,1105,NA
-2020-09-06,DEU,DEU,RKI,confirmed,report_plotting,582,NA
-2020-09-07,DEU,DEU,RKI,confirmed,report_plotting,1408,NA
-2020-09-08,DEU,DEU,RKI,confirmed,report_plotting,1379,NA
-2020-09-09,DEU,DEU,RKI,confirmed,report_plotting,1748,NA
-2020-09-10,DEU,DEU,RKI,confirmed,report_plotting,1591,NA
-2020-09-11,DEU,DEU,RKI,confirmed,report_plotting,1652,NA
-2020-09-12,DEU,DEU,RKI,confirmed,report_plotting,1225,NA
-2020-09-13,DEU,DEU,RKI,confirmed,report_plotting,760,NA
-2020-09-14,DEU,DEU,RKI,confirmed,report_plotting,1483,NA
-2020-09-15,DEU,DEU,RKI,confirmed,report_plotting,2003,NA
-2020-09-16,DEU,DEU,RKI,confirmed,report_plotting,2197,NA
-2020-09-17,DEU,DEU,RKI,confirmed,report_plotting,2354,NA
-2020-09-18,DEU,DEU,RKI,confirmed,report_plotting,2169,NA
-2020-09-19,DEU,DEU,RKI,confirmed,report_plotting,1393,NA
-2020-09-20,DEU,DEU,RKI,confirmed,report_plotting,691,NA
-2020-09-21,DEU,DEU,RKI,confirmed,report_plotting,1657,NA
-2020-09-22,DEU,DEU,RKI,confirmed,report_plotting,1813,NA
-2020-09-23,DEU,DEU,RKI,confirmed,report_plotting,2209,NA
-2020-09-24,DEU,DEU,RKI,confirmed,report_plotting,2396,NA
-2020-09-25,DEU,DEU,RKI,confirmed,report_plotting,2328,NA
-2020-09-26,DEU,DEU,RKI,confirmed,report_plotting,1786,NA
-2020-09-27,DEU,DEU,RKI,confirmed,report_plotting,873,NA
-2020-09-28,DEU,DEU,RKI,confirmed,report_plotting,1827,NA
-2020-09-29,DEU,DEU,RKI,confirmed,report_plotting,2167,NA
-2020-09-30,DEU,DEU,RKI,confirmed,report_plotting,2729,NA
-2020-10-01,DEU,DEU,RKI,confirmed,report_plotting,2928,NA
-2020-10-02,DEU,DEU,RKI,confirmed,report_plotting,2921,NA
-2020-10-03,DEU,DEU,RKI,confirmed,report_plotting,2198,NA
-2020-10-04,DEU,DEU,RKI,confirmed,report_plotting,1155,NA
-2020-10-05,DEU,DEU,RKI,confirmed,report_plotting,2411,NA
-2020-10-06,DEU,DEU,RKI,confirmed,report_plotting,3586,NA
-2020-10-07,DEU,DEU,RKI,confirmed,report_plotting,4487,NA
-2020-10-08,DEU,DEU,RKI,confirmed,report_plotting,4668,NA
-2020-10-09,DEU,DEU,RKI,confirmed,report_plotting,5058,NA
-2020-10-10,DEU,DEU,RKI,confirmed,report_plotting,3629,NA
-2020-10-11,DEU,DEU,RKI,confirmed,report_plotting,2272,NA
-2020-10-12,DEU,DEU,RKI,confirmed,report_plotting,4191,NA
-2020-10-13,DEU,DEU,RKI,confirmed,report_plotting,5369,NA
-2020-10-14,DEU,DEU,RKI,confirmed,report_plotting,7249,NA
-2020-10-15,DEU,DEU,RKI,confirmed,report_plotting,7913,NA
-2020-10-16,DEU,DEU,RKI,confirmed,report_plotting,7968,NA
-2020-10-17,DEU,DEU,RKI,confirmed,report_plotting,5693,NA
-2020-10-18,DEU,DEU,RKI,confirmed,report_plotting,3678,NA
-2020-10-19,DEU,DEU,RKI,confirmed,report_plotting,6474,NA
-2020-10-20,DEU,DEU,RKI,confirmed,report_plotting,9445,NA
-2020-10-21,DEU,DEU,RKI,confirmed,report_plotting,12412,NA
-2020-10-22,DEU,DEU,RKI,confirmed,report_plotting,13941,NA
-2020-10-23,DEU,DEU,RKI,confirmed,report_plotting,14039,NA
-2020-10-24,DEU,DEU,RKI,confirmed,report_plotting,11102,NA
-2020-10-25,DEU,DEU,RKI,confirmed,report_plotting,7458,NA
-2020-10-26,DEU,DEU,RKI,confirmed,report_plotting,12024,NA
-2020-10-27,DEU,DEU,RKI,confirmed,report_plotting,15953,NA
-2020-10-28,DEU,DEU,RKI,confirmed,report_plotting,19239,NA
-2020-10-29,DEU,DEU,RKI,confirmed,report_plotting,19853,NA
-2020-10-30,DEU,DEU,RKI,confirmed,report_plotting,19421,NA
-2020-10-31,DEU,DEU,RKI,confirmed,report_plotting,14008,NA
-2020-11-01,DEU,DEU,RKI,confirmed,report_plotting,10529,NA
-2020-11-02,DEU,DEU,RKI,confirmed,report_plotting,15258,NA
-2020-11-03,DEU,DEU,RKI,confirmed,report_plotting,19345,NA
-2020-11-04,DEU,DEU,RKI,confirmed,report_plotting,21216,NA
-2020-11-05,DEU,DEU,RKI,confirmed,report_plotting,22281,NA
-2020-11-06,DEU,DEU,RKI,confirmed,report_plotting,21582,NA
-2020-11-07,DEU,DEU,RKI,confirmed,report_plotting,15939,NA
-2020-11-08,DEU,DEU,RKI,confirmed,report_plotting,10147,NA
-2020-11-09,DEU,DEU,RKI,confirmed,report_plotting,15974,NA
-2020-11-10,DEU,DEU,RKI,confirmed,report_plotting,19616,NA
-2020-11-11,DEU,DEU,RKI,confirmed,report_plotting,22699,NA
-2020-11-12,DEU,DEU,RKI,confirmed,report_plotting,23499,NA
-2020-11-13,DEU,DEU,RKI,confirmed,report_plotting,21349,NA
-2020-11-14,DEU,DEU,RKI,confirmed,report_plotting,15793,NA
-2020-11-15,DEU,DEU,RKI,confirmed,report_plotting,8855,NA
-2020-11-16,DEU,DEU,RKI,confirmed,report_plotting,14694,NA
-2020-11-17,DEU,DEU,RKI,confirmed,report_plotting,20346,NA
-2020-11-18,DEU,DEU,RKI,confirmed,report_plotting,23693,NA
-2020-11-19,DEU,DEU,RKI,confirmed,report_plotting,23743,NA
-2020-11-20,DEU,DEU,RKI,confirmed,report_plotting,22288,NA
-2020-11-21,DEU,DEU,RKI,confirmed,report_plotting,14780,NA
-2020-11-22,DEU,DEU,RKI,confirmed,report_plotting,8836,NA
-2020-11-23,DEU,DEU,RKI,confirmed,report_plotting,15086,NA
-2020-11-24,DEU,DEU,RKI,confirmed,report_plotting,19420,NA
-2020-11-25,DEU,DEU,RKI,confirmed,report_plotting,22066,NA
-2020-11-26,DEU,DEU,RKI,confirmed,report_plotting,22767,NA
-2020-11-27,DEU,DEU,RKI,confirmed,report_plotting,20145,NA
-2020-11-28,DEU,DEU,RKI,confirmed,report_plotting,14945,NA
-2020-11-29,DEU,DEU,RKI,confirmed,report_plotting,8791,NA
-2020-11-30,DEU,DEU,RKI,confirmed,report_plotting,13302,NA
-2020-12-01,DEU,DEU,RKI,confirmed,report_plotting,19220,NA
-2020-12-02,DEU,DEU,RKI,confirmed,report_plotting,23214,NA
-2020-12-03,DEU,DEU,RKI,confirmed,report_plotting,24436,NA
-2020-12-04,DEU,DEU,RKI,confirmed,report_plotting,22262,NA
-2020-12-05,DEU,DEU,RKI,confirmed,report_plotting,15723,NA
-2020-12-06,DEU,DEU,RKI,confirmed,report_plotting,10241,NA
-2020-12-07,DEU,DEU,RKI,confirmed,report_plotting,16446,NA
-2020-12-08,DEU,DEU,RKI,confirmed,report_plotting,22786,NA
-2020-12-09,DEU,DEU,RKI,confirmed,report_plotting,27657,NA
-2020-12-10,DEU,DEU,RKI,confirmed,report_plotting,29042,NA
-2020-12-11,DEU,DEU,RKI,confirmed,report_plotting,27255,NA
-2020-12-12,DEU,DEU,RKI,confirmed,report_plotting,20615,NA
-2020-12-13,DEU,DEU,RKI,confirmed,report_plotting,12506,NA
-2020-12-14,DEU,DEU,RKI,confirmed,report_plotting,19065,NA
-2020-12-15,DEU,DEU,RKI,confirmed,report_plotting,26933,NA
-2020-12-16,DEU,DEU,RKI,confirmed,report_plotting,31370,NA
-2020-12-17,DEU,DEU,RKI,confirmed,report_plotting,31987,NA
-2020-12-18,DEU,DEU,RKI,confirmed,report_plotting,29787,NA
-2020-12-19,DEU,DEU,RKI,confirmed,report_plotting,21698,NA
-2020-12-20,DEU,DEU,RKI,confirmed,report_plotting,13900,NA
-2020-12-21,DEU,DEU,RKI,confirmed,report_plotting,20309,NA
-2020-12-22,DEU,DEU,RKI,confirmed,report_plotting,28994,NA
-2020-12-23,DEU,DEU,RKI,confirmed,report_plotting,33985,NA
-2020-12-24,DEU,DEU,RKI,confirmed,report_plotting,21173,NA
-2020-12-25,DEU,DEU,RKI,confirmed,report_plotting,13175,NA
-2020-12-26,DEU,DEU,RKI,confirmed,report_plotting,11546,NA
-2020-12-27,DEU,DEU,RKI,confirmed,report_plotting,9812,NA
-2020-12-28,DEU,DEU,RKI,confirmed,report_plotting,15741,NA
-2020-12-29,DEU,DEU,RKI,confirmed,report_plotting,27580,NA
-2020-12-30,DEU,DEU,RKI,confirmed,report_plotting,31065,NA
-2020-12-31,DEU,DEU,RKI,confirmed,report_plotting,19603,NA
-2021-01-01,DEU,DEU,RKI,confirmed,report_plotting,10274,NA
-2021-01-02,DEU,DEU,RKI,confirmed,report_plotting,10003,NA
-2021-01-03,DEU,DEU,RKI,confirmed,report_plotting,8819,NA
-2021-01-04,DEU,DEU,RKI,confirmed,report_plotting,14295,NA
-2021-01-05,DEU,DEU,RKI,confirmed,report_plotting,27415,NA
-2021-01-06,DEU,DEU,RKI,confirmed,report_plotting,27989,NA
-2021-01-07,DEU,DEU,RKI,confirmed,report_plotting,26116,NA
-2021-01-08,DEU,DEU,RKI,confirmed,report_plotting,24528,NA
-2021-01-09,DEU,DEU,RKI,confirmed,report_plotting,16658,NA
-2021-01-10,DEU,DEU,RKI,confirmed,report_plotting,8468,NA
-2021-01-11,DEU,DEU,RKI,confirmed,report_plotting,13488,NA
-2021-01-12,DEU,DEU,RKI,confirmed,report_plotting,22590,NA
-2021-01-13,DEU,DEU,RKI,confirmed,report_plotting,24105,NA
-2021-01-14,DEU,DEU,RKI,confirmed,report_plotting,20407,NA
-2021-01-15,DEU,DEU,RKI,confirmed,report_plotting,18300,NA
-2021-01-16,DEU,DEU,RKI,confirmed,report_plotting,13442,NA
-2021-01-17,DEU,DEU,RKI,confirmed,report_plotting,6597,NA
-2021-01-18,DEU,DEU,RKI,confirmed,report_plotting,9154,NA
-2021-01-19,DEU,DEU,RKI,confirmed,report_plotting,18465,NA
-2021-01-20,DEU,DEU,RKI,confirmed,report_plotting,19496,NA
-2021-01-21,DEU,DEU,RKI,confirmed,report_plotting,16804,NA
-2021-01-22,DEU,DEU,RKI,confirmed,report_plotting,15020,NA
-2021-01-23,DEU,DEU,RKI,confirmed,report_plotting,11575,NA
-2021-01-24,DEU,DEU,RKI,confirmed,report_plotting,5018,NA
-2021-01-25,DEU,DEU,RKI,confirmed,report_plotting,6744,NA
-2021-01-26,DEU,DEU,RKI,confirmed,report_plotting,15508,NA
-2021-01-27,DEU,DEU,RKI,confirmed,report_plotting,15816,NA
-2021-01-28,DEU,DEU,RKI,confirmed,report_plotting,13349,NA
-2021-01-29,DEU,DEU,RKI,confirmed,report_plotting,12558,NA
-2021-01-30,DEU,DEU,RKI,confirmed,report_plotting,9941,NA
-2021-01-31,DEU,DEU,RKI,confirmed,report_plotting,4198,NA
-2021-02-01,DEU,DEU,RKI,confirmed,report_plotting,5862,NA
-2021-02-02,DEU,DEU,RKI,confirmed,report_plotting,12302,NA
-2021-02-03,DEU,DEU,RKI,confirmed,report_plotting,13415,NA
-2021-02-04,DEU,DEU,RKI,confirmed,report_plotting,11513,NA
-2021-02-05,DEU,DEU,RKI,confirmed,report_plotting,10000,NA
-2021-02-06,DEU,DEU,RKI,confirmed,report_plotting,8386,NA
-2021-02-07,DEU,DEU,RKI,confirmed,report_plotting,3092,NA
-2021-02-08,DEU,DEU,RKI,confirmed,report_plotting,4187,NA
-2021-02-09,DEU,DEU,RKI,confirmed,report_plotting,9097,NA
-2021-02-10,DEU,DEU,RKI,confirmed,report_plotting,10266,NA
-2021-02-11,DEU,DEU,RKI,confirmed,report_plotting,9358,NA
-2021-02-12,DEU,DEU,RKI,confirmed,report_plotting,8529,NA
-2021-02-13,DEU,DEU,RKI,confirmed,report_plotting,5604,NA
-2021-02-14,DEU,DEU,RKI,confirmed,report_plotting,3761,NA
-2021-02-15,DEU,DEU,RKI,confirmed,report_plotting,4378,NA
-2021-02-16,DEU,DEU,RKI,confirmed,report_plotting,9245,NA
-2021-02-17,DEU,DEU,RKI,confirmed,report_plotting,9998,NA
-2021-02-18,DEU,DEU,RKI,confirmed,report_plotting,9229,NA
-2021-02-19,DEU,DEU,RKI,confirmed,report_plotting,8729,NA
-2021-02-20,DEU,DEU,RKI,confirmed,report_plotting,7786,NA
-2021-02-21,DEU,DEU,RKI,confirmed,report_plotting,3040,NA
-2021-02-22,DEU,DEU,RKI,confirmed,report_plotting,4404,NA
-2021-02-23,DEU,DEU,RKI,confirmed,report_plotting,10189,NA
-2021-02-24,DEU,DEU,RKI,confirmed,report_plotting,11292,NA
-2021-02-25,DEU,DEU,RKI,confirmed,report_plotting,9916,NA
-2021-02-26,DEU,DEU,RKI,confirmed,report_plotting,9454,NA
-2021-02-27,DEU,DEU,RKI,confirmed,report_plotting,7653,NA
-2021-02-28,DEU,DEU,RKI,confirmed,report_plotting,3450,NA
-2021-03-01,DEU,DEU,RKI,confirmed,report_plotting,4681,NA
-2021-03-02,DEU,DEU,RKI,confirmed,report_plotting,10954,NA
-2021-03-03,DEU,DEU,RKI,confirmed,report_plotting,11302,NA
-2021-03-04,DEU,DEU,RKI,confirmed,report_plotting,10121,NA
-2021-03-05,DEU,DEU,RKI,confirmed,report_plotting,9652,NA
-2021-03-06,DEU,DEU,RKI,confirmed,report_plotting,8292,NA
-2021-03-07,DEU,DEU,RKI,confirmed,report_plotting,3364,NA
-2021-03-08,DEU,DEU,RKI,confirmed,report_plotting,4839,NA
-2021-03-09,DEU,DEU,RKI,confirmed,report_plotting,11495,NA
-2021-03-10,DEU,DEU,RKI,confirmed,report_plotting,13986,NA
-2021-03-11,DEU,DEU,RKI,confirmed,report_plotting,13142,NA
-2021-03-12,DEU,DEU,RKI,confirmed,report_plotting,12523,NA
-2021-03-13,DEU,DEU,RKI,confirmed,report_plotting,10479,NA
-2021-03-14,DEU,DEU,RKI,confirmed,report_plotting,4843,NA
-2021-03-15,DEU,DEU,RKI,confirmed,report_plotting,6818,NA
-2021-03-16,DEU,DEU,RKI,confirmed,report_plotting,15795,NA
-2021-03-17,DEU,DEU,RKI,confirmed,report_plotting,18367,NA
-2021-03-18,DEU,DEU,RKI,confirmed,report_plotting,16725,NA
-2021-03-19,DEU,DEU,RKI,confirmed,report_plotting,15715,NA
-2021-03-20,DEU,DEU,RKI,confirmed,report_plotting,13217,NA
-2021-03-21,DEU,DEU,RKI,confirmed,report_plotting,5959,NA
-2021-03-22,DEU,DEU,RKI,confirmed,report_plotting,8889,NA
-2021-03-23,DEU,DEU,RKI,confirmed,report_plotting,19458,NA
-2021-03-24,DEU,DEU,RKI,confirmed,report_plotting,22636,NA
-2021-03-25,DEU,DEU,RKI,confirmed,report_plotting,21897,NA
-2021-03-26,DEU,DEU,RKI,confirmed,report_plotting,20026,NA
-2021-03-27,DEU,DEU,RKI,confirmed,report_plotting,15776,NA
-2021-03-28,DEU,DEU,RKI,confirmed,report_plotting,7590,NA
-2021-03-29,DEU,DEU,RKI,confirmed,report_plotting,10991,NA
-2021-03-30,DEU,DEU,RKI,confirmed,report_plotting,20390,NA
-2021-03-31,DEU,DEU,RKI,confirmed,report_plotting,23996,NA
-2021-04-01,DEU,DEU,RKI,confirmed,report_plotting,21439,NA
-2021-04-02,DEU,DEU,RKI,confirmed,report_plotting,15497,NA
-2021-04-03,DEU,DEU,RKI,confirmed,report_plotting,10636,NA
-2021-04-04,DEU,DEU,RKI,confirmed,report_plotting,7150,NA
-2021-04-05,DEU,DEU,RKI,confirmed,report_plotting,7052,NA
-2021-04-06,DEU,DEU,RKI,confirmed,report_plotting,11514,NA
-2021-04-07,DEU,DEU,RKI,confirmed,report_plotting,23729,NA
-2021-04-08,DEU,DEU,RKI,confirmed,report_plotting,25759,NA
-2021-04-09,DEU,DEU,RKI,confirmed,report_plotting,23280,NA
-2021-04-10,DEU,DEU,RKI,confirmed,report_plotting,18069,NA
-2021-04-11,DEU,DEU,RKI,confirmed,report_plotting,8847,NA
-2021-04-12,DEU,DEU,RKI,confirmed,report_plotting,12112,NA
-2021-04-13,DEU,DEU,RKI,confirmed,report_plotting,26735,NA
-2021-04-14,DEU,DEU,RKI,confirmed,report_plotting,28566,NA
-2021-04-15,DEU,DEU,RKI,confirmed,report_plotting,25060,NA
-2021-04-16,DEU,DEU,RKI,confirmed,report_plotting,23047,NA
-2021-04-17,DEU,DEU,RKI,confirmed,report_plotting,17687,NA
-2021-04-18,DEU,DEU,RKI,confirmed,report_plotting,8819,NA
-2021-04-19,DEU,DEU,RKI,confirmed,report_plotting,12308,NA
-2021-04-20,DEU,DEU,RKI,confirmed,report_plotting,27971,NA
-2021-04-21,DEU,DEU,RKI,confirmed,report_plotting,29354,NA
-2021-04-22,DEU,DEU,RKI,confirmed,report_plotting,25463,NA
-2021-04-23,DEU,DEU,RKI,confirmed,report_plotting,22942,NA
-2021-04-24,DEU,DEU,RKI,confirmed,report_plotting,18012,NA
-2021-04-25,DEU,DEU,RKI,confirmed,report_plotting,8705,NA
-2021-04-26,DEU,DEU,RKI,confirmed,report_plotting,12225,NA
-2021-04-27,DEU,DEU,RKI,confirmed,report_plotting,25254,NA
-2021-04-28,DEU,DEU,RKI,confirmed,report_plotting,25050,NA
-2021-04-29,DEU,DEU,RKI,confirmed,report_plotting,21419,NA
-2021-04-30,DEU,DEU,RKI,confirmed,report_plotting,19174,NA
-2021-05-01,DEU,DEU,RKI,confirmed,report_plotting,15079,NA
-2021-05-02,DEU,DEU,RKI,confirmed,report_plotting,6647,NA
-2021-05-03,DEU,DEU,RKI,confirmed,report_plotting,9159,NA
-2021-05-04,DEU,DEU,RKI,confirmed,report_plotting,20997,NA
-2021-05-05,DEU,DEU,RKI,confirmed,report_plotting,20859,NA
-2021-05-06,DEU,DEU,RKI,confirmed,report_plotting,17168,NA
-2021-05-07,DEU,DEU,RKI,confirmed,report_plotting,15482,NA
-2021-05-08,DEU,DEU,RKI,confirmed,report_plotting,12026,NA
-2021-05-09,DEU,DEU,RKI,confirmed,report_plotting,5322,NA
-2021-05-10,DEU,DEU,RKI,confirmed,report_plotting,7431,NA
-2021-05-11,DEU,DEU,RKI,confirmed,report_plotting,16782,NA
-2021-05-12,DEU,DEU,RKI,confirmed,report_plotting,16485,NA
-2021-05-13,DEU,DEU,RKI,confirmed,report_plotting,9669,NA
-2021-05-14,DEU,DEU,RKI,confirmed,report_plotting,7623,NA
-2021-05-15,DEU,DEU,RKI,confirmed,report_plotting,8592,NA
-2021-05-16,DEU,DEU,RKI,confirmed,report_plotting,4281,NA
-2021-05-17,DEU,DEU,RKI,confirmed,report_plotting,5279,NA
-2021-05-18,DEU,DEU,RKI,confirmed,report_plotting,12342,NA
-2021-05-19,DEU,DEU,RKI,confirmed,report_plotting,11298,NA
-2021-05-20,DEU,DEU,RKI,confirmed,report_plotting,8433,NA
-2021-05-21,DEU,DEU,RKI,confirmed,report_plotting,7584,NA
-2021-05-22,DEU,DEU,RKI,confirmed,report_plotting,5811,NA
-2021-05-23,DEU,DEU,RKI,confirmed,report_plotting,2000,NA
-2021-05-24,DEU,DEU,RKI,confirmed,report_plotting,1804,NA
-2021-05-25,DEU,DEU,RKI,confirmed,report_plotting,3671,NA
-2021-05-26,DEU,DEU,RKI,confirmed,report_plotting,7148,NA
-2021-05-27,DEU,DEU,RKI,confirmed,report_plotting,6820,NA
-2021-05-28,DEU,DEU,RKI,confirmed,report_plotting,5163,NA
-2021-05-29,DEU,DEU,RKI,confirmed,report_plotting,3687,NA
-2021-05-30,DEU,DEU,RKI,confirmed,report_plotting,1603,NA
-2021-05-31,DEU,DEU,RKI,confirmed,report_plotting,2448,NA
-2021-06-01,DEU,DEU,RKI,confirmed,report_plotting,5119,NA
-2021-06-02,DEU,DEU,RKI,confirmed,report_plotting,4494,NA
-2021-06-03,DEU,DEU,RKI,confirmed,report_plotting,2942,NA
-2021-06-04,DEU,DEU,RKI,confirmed,report_plotting,2273,NA
-2021-06-05,DEU,DEU,RKI,confirmed,report_plotting,2306,NA
-2021-06-06,DEU,DEU,RKI,confirmed,report_plotting,1123,NA
-2021-06-07,DEU,DEU,RKI,confirmed,report_plotting,1706,NA
-2021-06-08,DEU,DEU,RKI,confirmed,report_plotting,3532,NA
-2021-06-09,DEU,DEU,RKI,confirmed,report_plotting,2864,NA
-2021-06-10,DEU,DEU,RKI,confirmed,report_plotting,2271,NA
-2021-06-11,DEU,DEU,RKI,confirmed,report_plotting,1845,NA
-2021-06-12,DEU,DEU,RKI,confirmed,report_plotting,1299,NA
-2021-06-13,DEU,DEU,RKI,confirmed,report_plotting,510,NA
-2021-06-14,DEU,DEU,RKI,confirmed,report_plotting,933,NA
-2021-06-15,DEU,DEU,RKI,confirmed,report_plotting,1699,NA
-2021-06-16,DEU,DEU,RKI,confirmed,report_plotting,1440,NA
-2021-06-17,DEU,DEU,RKI,confirmed,report_plotting,1148,NA
-2021-06-18,DEU,DEU,RKI,confirmed,report_plotting,1023,NA
-2021-06-19,DEU,DEU,RKI,confirmed,report_plotting,739,NA
-2021-06-20,DEU,DEU,RKI,confirmed,report_plotting,272,NA
-2021-06-21,DEU,DEU,RKI,confirmed,report_plotting,599,NA
-2021-06-22,DEU,DEU,RKI,confirmed,report_plotting,1052,NA
-2021-06-23,DEU,DEU,RKI,confirmed,report_plotting,896,NA
-2021-06-24,DEU,DEU,RKI,confirmed,report_plotting,821,NA
-2021-06-25,DEU,DEU,RKI,confirmed,report_plotting,736,NA
-2021-06-26,DEU,DEU,RKI,confirmed,report_plotting,483,NA
-2021-06-27,DEU,DEU,RKI,confirmed,report_plotting,221,NA
-2021-06-28,DEU,DEU,RKI,confirmed,report_plotting,507,NA
-2021-06-29,DEU,DEU,RKI,confirmed,report_plotting,895,NA
-2021-06-30,DEU,DEU,RKI,confirmed,report_plotting,855,NA
-2021-07-01,DEU,DEU,RKI,confirmed,report_plotting,700,NA
-2021-07-02,DEU,DEU,RKI,confirmed,report_plotting,668,NA
-2021-07-03,DEU,DEU,RKI,confirmed,report_plotting,509,NA
-2021-07-04,DEU,DEU,RKI,confirmed,report_plotting,207,NA
-2021-07-05,DEU,DEU,RKI,confirmed,report_plotting,551,NA
-2021-07-06,DEU,DEU,RKI,confirmed,report_plotting,1054,NA
-2021-07-07,DEU,DEU,RKI,confirmed,report_plotting,960,NA
-2021-07-08,DEU,DEU,RKI,confirmed,report_plotting,954,NA
-2021-07-09,DEU,DEU,RKI,confirmed,report_plotting,944,NA
+2020-01-02,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-01-03,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-01-04,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-01-05,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-01-06,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-01-07,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-01-08,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-01-09,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-01-10,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-01-11,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-01-12,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-01-13,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-01-14,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-01-15,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-01-16,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-01-17,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-01-18,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-01-19,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-01-20,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-01-21,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-01-22,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-01-23,DEU,DEU,RKI,Confirmed cases,onset,2,TRUE
+2020-01-24,DEU,DEU,RKI,Confirmed cases,onset,1,TRUE
+2020-01-25,DEU,DEU,RKI,Confirmed cases,onset,1,TRUE
+2020-01-26,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-01-27,DEU,DEU,RKI,Confirmed cases,onset,2,TRUE
+2020-01-28,DEU,DEU,RKI,Confirmed cases,onset,1,TRUE
+2020-01-29,DEU,DEU,RKI,Confirmed cases,onset,1,TRUE
+2020-01-30,DEU,DEU,RKI,Confirmed cases,onset,1,TRUE
+2020-01-31,DEU,DEU,RKI,Confirmed cases,onset,1,TRUE
+2020-02-01,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-02-02,DEU,DEU,RKI,Confirmed cases,onset,2,TRUE
+2020-02-03,DEU,DEU,RKI,Confirmed cases,onset,1,TRUE
+2020-02-04,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-02-05,DEU,DEU,RKI,Confirmed cases,onset,1,TRUE
+2020-02-06,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-02-07,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-02-08,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-02-09,DEU,DEU,RKI,Confirmed cases,onset,1,TRUE
+2020-02-10,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-02-11,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-02-12,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-02-13,DEU,DEU,RKI,Confirmed cases,onset,0,TRUE
+2020-02-14,DEU,DEU,RKI,Confirmed cases,onset,2,TRUE
+2020-02-15,DEU,DEU,RKI,Confirmed cases,onset,3,TRUE
+2020-02-16,DEU,DEU,RKI,Confirmed cases,onset,4,TRUE
+2020-02-17,DEU,DEU,RKI,Confirmed cases,onset,5,TRUE
+2020-02-18,DEU,DEU,RKI,Confirmed cases,onset,6,TRUE
+2020-02-19,DEU,DEU,RKI,Confirmed cases,onset,7,TRUE
+2020-02-20,DEU,DEU,RKI,Confirmed cases,onset,18,TRUE
+2020-02-21,DEU,DEU,RKI,Confirmed cases,onset,11,TRUE
+2020-02-22,DEU,DEU,RKI,Confirmed cases,onset,18,TRUE
+2020-02-23,DEU,DEU,RKI,Confirmed cases,onset,36,TRUE
+2020-02-24,DEU,DEU,RKI,Confirmed cases,onset,52,TRUE
+2020-02-25,DEU,DEU,RKI,Confirmed cases,onset,84,TRUE
+2020-02-26,DEU,DEU,RKI,Confirmed cases,onset,129,TRUE
+2020-02-27,DEU,DEU,RKI,Confirmed cases,onset,125,TRUE
+2020-02-28,DEU,DEU,RKI,Confirmed cases,onset,154,TRUE
+2020-02-29,DEU,DEU,RKI,Confirmed cases,onset,158,TRUE
+2020-03-01,DEU,DEU,RKI,Confirmed cases,onset,186,TRUE
+2020-03-02,DEU,DEU,RKI,Confirmed cases,onset,250,TRUE
+2020-03-03,DEU,DEU,RKI,Confirmed cases,onset,258,TRUE
+2020-03-04,DEU,DEU,RKI,Confirmed cases,onset,365,TRUE
+2020-03-05,DEU,DEU,RKI,Confirmed cases,onset,400,TRUE
+2020-03-06,DEU,DEU,RKI,Confirmed cases,onset,605,TRUE
+2020-03-07,DEU,DEU,RKI,Confirmed cases,onset,779,TRUE
+2020-03-08,DEU,DEU,RKI,Confirmed cases,onset,1062,TRUE
+2020-03-09,DEU,DEU,RKI,Confirmed cases,onset,1671,TRUE
+2020-03-10,DEU,DEU,RKI,Confirmed cases,onset,2089,TRUE
+2020-03-11,DEU,DEU,RKI,Confirmed cases,onset,2647,TRUE
+2020-03-12,DEU,DEU,RKI,Confirmed cases,onset,2899,TRUE
+2020-03-13,DEU,DEU,RKI,Confirmed cases,onset,3555,TRUE
+2020-03-14,DEU,DEU,RKI,Confirmed cases,onset,3590,TRUE
+2020-03-15,DEU,DEU,RKI,Confirmed cases,onset,3726,TRUE
+2020-03-16,DEU,DEU,RKI,Confirmed cases,onset,4948,TRUE
+2020-03-17,DEU,DEU,RKI,Confirmed cases,onset,4206,TRUE
+2020-03-18,DEU,DEU,RKI,Confirmed cases,onset,4291,TRUE
+2020-03-19,DEU,DEU,RKI,Confirmed cases,onset,3724,TRUE
+2020-03-20,DEU,DEU,RKI,Confirmed cases,onset,4340,TRUE
+2020-03-21,DEU,DEU,RKI,Confirmed cases,onset,3523,TRUE
+2020-03-22,DEU,DEU,RKI,Confirmed cases,onset,2915,TRUE
+2020-03-23,DEU,DEU,RKI,Confirmed cases,onset,4187,TRUE
+2020-03-24,DEU,DEU,RKI,Confirmed cases,onset,3117,TRUE
+2020-03-25,DEU,DEU,RKI,Confirmed cases,onset,3449,TRUE
+2020-03-26,DEU,DEU,RKI,Confirmed cases,onset,3053,TRUE
+2020-03-27,DEU,DEU,RKI,Confirmed cases,onset,3165,TRUE
+2020-03-28,DEU,DEU,RKI,Confirmed cases,onset,2973,TRUE
+2020-03-29,DEU,DEU,RKI,Confirmed cases,onset,2335,TRUE
+2020-03-30,DEU,DEU,RKI,Confirmed cases,onset,3397,TRUE
+2020-03-31,DEU,DEU,RKI,Confirmed cases,onset,2522,TRUE
+2020-04-01,DEU,DEU,RKI,Confirmed cases,onset,2977,TRUE
+2020-04-02,DEU,DEU,RKI,Confirmed cases,onset,2662,TRUE
+2020-04-03,DEU,DEU,RKI,Confirmed cases,onset,2689,TRUE
+2020-04-04,DEU,DEU,RKI,Confirmed cases,onset,2125,TRUE
+2020-04-05,DEU,DEU,RKI,Confirmed cases,onset,1876,TRUE
+2020-04-06,DEU,DEU,RKI,Confirmed cases,onset,2431,TRUE
+2020-04-07,DEU,DEU,RKI,Confirmed cases,onset,2109,TRUE
+2020-04-08,DEU,DEU,RKI,Confirmed cases,onset,1957,TRUE
+2020-04-09,DEU,DEU,RKI,Confirmed cases,onset,1848,TRUE
+2020-04-10,DEU,DEU,RKI,Confirmed cases,onset,1579,TRUE
+2020-04-11,DEU,DEU,RKI,Confirmed cases,onset,1322,TRUE
+2020-04-12,DEU,DEU,RKI,Confirmed cases,onset,1284,TRUE
+2020-04-13,DEU,DEU,RKI,Confirmed cases,onset,1241,TRUE
+2020-04-14,DEU,DEU,RKI,Confirmed cases,onset,1277,TRUE
+2020-04-15,DEU,DEU,RKI,Confirmed cases,onset,1277,TRUE
+2020-04-16,DEU,DEU,RKI,Confirmed cases,onset,1099,TRUE
+2020-04-17,DEU,DEU,RKI,Confirmed cases,onset,1058,TRUE
+2020-04-18,DEU,DEU,RKI,Confirmed cases,onset,910,TRUE
+2020-04-19,DEU,DEU,RKI,Confirmed cases,onset,780,TRUE
+2020-04-20,DEU,DEU,RKI,Confirmed cases,onset,1019,TRUE
+2020-04-21,DEU,DEU,RKI,Confirmed cases,onset,800,TRUE
+2020-04-22,DEU,DEU,RKI,Confirmed cases,onset,770,TRUE
+2020-04-23,DEU,DEU,RKI,Confirmed cases,onset,760,TRUE
+2020-04-24,DEU,DEU,RKI,Confirmed cases,onset,685,TRUE
+2020-04-25,DEU,DEU,RKI,Confirmed cases,onset,596,TRUE
+2020-04-26,DEU,DEU,RKI,Confirmed cases,onset,498,TRUE
+2020-04-27,DEU,DEU,RKI,Confirmed cases,onset,676,TRUE
+2020-04-28,DEU,DEU,RKI,Confirmed cases,onset,535,TRUE
+2020-04-29,DEU,DEU,RKI,Confirmed cases,onset,500,TRUE
+2020-04-30,DEU,DEU,RKI,Confirmed cases,onset,571,TRUE
+2020-05-01,DEU,DEU,RKI,Confirmed cases,onset,470,TRUE
+2020-05-02,DEU,DEU,RKI,Confirmed cases,onset,422,TRUE
+2020-05-03,DEU,DEU,RKI,Confirmed cases,onset,415,TRUE
+2020-05-04,DEU,DEU,RKI,Confirmed cases,onset,530,TRUE
+2020-05-05,DEU,DEU,RKI,Confirmed cases,onset,460,TRUE
+2020-05-06,DEU,DEU,RKI,Confirmed cases,onset,403,TRUE
+2020-05-07,DEU,DEU,RKI,Confirmed cases,onset,405,TRUE
+2020-05-08,DEU,DEU,RKI,Confirmed cases,onset,375,TRUE
+2020-05-09,DEU,DEU,RKI,Confirmed cases,onset,305,TRUE
+2020-05-10,DEU,DEU,RKI,Confirmed cases,onset,282,TRUE
+2020-05-11,DEU,DEU,RKI,Confirmed cases,onset,364,TRUE
+2020-05-12,DEU,DEU,RKI,Confirmed cases,onset,325,TRUE
+2020-05-13,DEU,DEU,RKI,Confirmed cases,onset,302,TRUE
+2020-05-14,DEU,DEU,RKI,Confirmed cases,onset,249,TRUE
+2020-05-15,DEU,DEU,RKI,Confirmed cases,onset,363,TRUE
+2020-05-16,DEU,DEU,RKI,Confirmed cases,onset,297,TRUE
+2020-05-17,DEU,DEU,RKI,Confirmed cases,onset,201,TRUE
+2020-05-18,DEU,DEU,RKI,Confirmed cases,onset,344,TRUE
+2020-05-19,DEU,DEU,RKI,Confirmed cases,onset,216,TRUE
+2020-05-20,DEU,DEU,RKI,Confirmed cases,onset,318,TRUE
+2020-05-21,DEU,DEU,RKI,Confirmed cases,onset,190,TRUE
+2020-05-22,DEU,DEU,RKI,Confirmed cases,onset,204,TRUE
+2020-05-23,DEU,DEU,RKI,Confirmed cases,onset,194,TRUE
+2020-05-24,DEU,DEU,RKI,Confirmed cases,onset,173,TRUE
+2020-05-25,DEU,DEU,RKI,Confirmed cases,onset,257,TRUE
+2020-05-26,DEU,DEU,RKI,Confirmed cases,onset,225,TRUE
+2020-05-27,DEU,DEU,RKI,Confirmed cases,onset,249,TRUE
+2020-05-28,DEU,DEU,RKI,Confirmed cases,onset,202,TRUE
+2020-05-29,DEU,DEU,RKI,Confirmed cases,onset,183,TRUE
+2020-05-30,DEU,DEU,RKI,Confirmed cases,onset,155,TRUE
+2020-05-31,DEU,DEU,RKI,Confirmed cases,onset,137,TRUE
+2020-06-01,DEU,DEU,RKI,Confirmed cases,onset,170,TRUE
+2020-06-02,DEU,DEU,RKI,Confirmed cases,onset,222,TRUE
+2020-06-03,DEU,DEU,RKI,Confirmed cases,onset,215,TRUE
+2020-06-04,DEU,DEU,RKI,Confirmed cases,onset,184,TRUE
+2020-06-05,DEU,DEU,RKI,Confirmed cases,onset,175,TRUE
+2020-06-06,DEU,DEU,RKI,Confirmed cases,onset,165,TRUE
+2020-06-07,DEU,DEU,RKI,Confirmed cases,onset,109,TRUE
+2020-06-08,DEU,DEU,RKI,Confirmed cases,onset,217,TRUE
+2020-06-09,DEU,DEU,RKI,Confirmed cases,onset,208,TRUE
+2020-06-10,DEU,DEU,RKI,Confirmed cases,onset,226,TRUE
+2020-06-11,DEU,DEU,RKI,Confirmed cases,onset,176,TRUE
+2020-06-12,DEU,DEU,RKI,Confirmed cases,onset,188,TRUE
+2020-06-13,DEU,DEU,RKI,Confirmed cases,onset,188,TRUE
+2020-06-14,DEU,DEU,RKI,Confirmed cases,onset,159,TRUE
+2020-06-15,DEU,DEU,RKI,Confirmed cases,onset,290,TRUE
+2020-06-16,DEU,DEU,RKI,Confirmed cases,onset,594,TRUE
+2020-06-17,DEU,DEU,RKI,Confirmed cases,onset,331,TRUE
+2020-06-18,DEU,DEU,RKI,Confirmed cases,onset,227,TRUE
+2020-06-19,DEU,DEU,RKI,Confirmed cases,onset,289,TRUE
+2020-06-20,DEU,DEU,RKI,Confirmed cases,onset,210,TRUE
+2020-06-21,DEU,DEU,RKI,Confirmed cases,onset,160,TRUE
+2020-06-22,DEU,DEU,RKI,Confirmed cases,onset,239,TRUE
+2020-06-23,DEU,DEU,RKI,Confirmed cases,onset,199,TRUE
+2020-06-24,DEU,DEU,RKI,Confirmed cases,onset,241,TRUE
+2020-06-25,DEU,DEU,RKI,Confirmed cases,onset,201,TRUE
+2020-06-26,DEU,DEU,RKI,Confirmed cases,onset,218,TRUE
+2020-06-27,DEU,DEU,RKI,Confirmed cases,onset,176,TRUE
+2020-06-28,DEU,DEU,RKI,Confirmed cases,onset,142,TRUE
+2020-06-29,DEU,DEU,RKI,Confirmed cases,onset,240,TRUE
+2020-06-30,DEU,DEU,RKI,Confirmed cases,onset,225,TRUE
+2020-07-01,DEU,DEU,RKI,Confirmed cases,onset,210,TRUE
+2020-07-02,DEU,DEU,RKI,Confirmed cases,onset,180,TRUE
+2020-07-03,DEU,DEU,RKI,Confirmed cases,onset,190,TRUE
+2020-07-04,DEU,DEU,RKI,Confirmed cases,onset,143,TRUE
+2020-07-05,DEU,DEU,RKI,Confirmed cases,onset,154,TRUE
+2020-07-06,DEU,DEU,RKI,Confirmed cases,onset,215,TRUE
+2020-07-07,DEU,DEU,RKI,Confirmed cases,onset,194,TRUE
+2020-07-08,DEU,DEU,RKI,Confirmed cases,onset,193,TRUE
+2020-07-09,DEU,DEU,RKI,Confirmed cases,onset,194,TRUE
+2020-07-10,DEU,DEU,RKI,Confirmed cases,onset,240,TRUE
+2020-07-11,DEU,DEU,RKI,Confirmed cases,onset,209,TRUE
+2020-07-12,DEU,DEU,RKI,Confirmed cases,onset,175,TRUE
+2020-07-13,DEU,DEU,RKI,Confirmed cases,onset,325,TRUE
+2020-07-14,DEU,DEU,RKI,Confirmed cases,onset,271,TRUE
+2020-07-15,DEU,DEU,RKI,Confirmed cases,onset,316,TRUE
+2020-07-16,DEU,DEU,RKI,Confirmed cases,onset,242,TRUE
+2020-07-17,DEU,DEU,RKI,Confirmed cases,onset,310,TRUE
+2020-07-18,DEU,DEU,RKI,Confirmed cases,onset,255,TRUE
+2020-07-19,DEU,DEU,RKI,Confirmed cases,onset,276,TRUE
+2020-07-20,DEU,DEU,RKI,Confirmed cases,onset,388,TRUE
+2020-07-21,DEU,DEU,RKI,Confirmed cases,onset,369,TRUE
+2020-07-22,DEU,DEU,RKI,Confirmed cases,onset,391,TRUE
+2020-07-23,DEU,DEU,RKI,Confirmed cases,onset,339,TRUE
+2020-07-24,DEU,DEU,RKI,Confirmed cases,onset,380,TRUE
+2020-07-25,DEU,DEU,RKI,Confirmed cases,onset,321,TRUE
+2020-07-26,DEU,DEU,RKI,Confirmed cases,onset,300,TRUE
+2020-07-27,DEU,DEU,RKI,Confirmed cases,onset,447,TRUE
+2020-07-28,DEU,DEU,RKI,Confirmed cases,onset,392,TRUE
+2020-07-29,DEU,DEU,RKI,Confirmed cases,onset,376,TRUE
+2020-07-30,DEU,DEU,RKI,Confirmed cases,onset,365,TRUE
+2020-07-31,DEU,DEU,RKI,Confirmed cases,onset,378,TRUE
+2020-08-01,DEU,DEU,RKI,Confirmed cases,onset,418,TRUE
+2020-08-02,DEU,DEU,RKI,Confirmed cases,onset,396,TRUE
+2020-08-03,DEU,DEU,RKI,Confirmed cases,onset,532,TRUE
+2020-08-04,DEU,DEU,RKI,Confirmed cases,onset,446,TRUE
+2020-08-05,DEU,DEU,RKI,Confirmed cases,onset,452,TRUE
+2020-08-06,DEU,DEU,RKI,Confirmed cases,onset,424,TRUE
+2020-08-07,DEU,DEU,RKI,Confirmed cases,onset,464,TRUE
+2020-08-08,DEU,DEU,RKI,Confirmed cases,onset,440,TRUE
+2020-08-09,DEU,DEU,RKI,Confirmed cases,onset,429,TRUE
+2020-08-10,DEU,DEU,RKI,Confirmed cases,onset,658,TRUE
+2020-08-11,DEU,DEU,RKI,Confirmed cases,onset,542,TRUE
+2020-08-12,DEU,DEU,RKI,Confirmed cases,onset,584,TRUE
+2020-08-13,DEU,DEU,RKI,Confirmed cases,onset,577,TRUE
+2020-08-14,DEU,DEU,RKI,Confirmed cases,onset,569,TRUE
+2020-08-15,DEU,DEU,RKI,Confirmed cases,onset,526,TRUE
+2020-08-16,DEU,DEU,RKI,Confirmed cases,onset,488,TRUE
+2020-08-17,DEU,DEU,RKI,Confirmed cases,onset,646,TRUE
+2020-08-18,DEU,DEU,RKI,Confirmed cases,onset,652,TRUE
+2020-08-19,DEU,DEU,RKI,Confirmed cases,onset,575,TRUE
+2020-08-20,DEU,DEU,RKI,Confirmed cases,onset,503,TRUE
+2020-08-21,DEU,DEU,RKI,Confirmed cases,onset,532,TRUE
+2020-08-22,DEU,DEU,RKI,Confirmed cases,onset,495,TRUE
+2020-08-23,DEU,DEU,RKI,Confirmed cases,onset,516,TRUE
+2020-08-24,DEU,DEU,RKI,Confirmed cases,onset,688,TRUE
+2020-08-25,DEU,DEU,RKI,Confirmed cases,onset,665,TRUE
+2020-08-26,DEU,DEU,RKI,Confirmed cases,onset,586,TRUE
+2020-08-27,DEU,DEU,RKI,Confirmed cases,onset,577,TRUE
+2020-08-28,DEU,DEU,RKI,Confirmed cases,onset,566,TRUE
+2020-08-29,DEU,DEU,RKI,Confirmed cases,onset,467,TRUE
+2020-08-30,DEU,DEU,RKI,Confirmed cases,onset,486,TRUE
+2020-08-31,DEU,DEU,RKI,Confirmed cases,onset,694,TRUE
+2020-09-01,DEU,DEU,RKI,Confirmed cases,onset,742,TRUE
+2020-09-02,DEU,DEU,RKI,Confirmed cases,onset,650,TRUE
+2020-09-03,DEU,DEU,RKI,Confirmed cases,onset,632,TRUE
+2020-09-04,DEU,DEU,RKI,Confirmed cases,onset,684,TRUE
+2020-09-05,DEU,DEU,RKI,Confirmed cases,onset,600,TRUE
+2020-09-06,DEU,DEU,RKI,Confirmed cases,onset,685,TRUE
+2020-09-07,DEU,DEU,RKI,Confirmed cases,onset,927,TRUE
+2020-09-08,DEU,DEU,RKI,Confirmed cases,onset,922,TRUE
+2020-09-09,DEU,DEU,RKI,Confirmed cases,onset,900,TRUE
+2020-09-10,DEU,DEU,RKI,Confirmed cases,onset,942,TRUE
+2020-09-11,DEU,DEU,RKI,Confirmed cases,onset,976,TRUE
+2020-09-12,DEU,DEU,RKI,Confirmed cases,onset,886,TRUE
+2020-09-13,DEU,DEU,RKI,Confirmed cases,onset,886,TRUE
+2020-09-14,DEU,DEU,RKI,Confirmed cases,onset,1310,TRUE
+2020-09-15,DEU,DEU,RKI,Confirmed cases,onset,1148,TRUE
+2020-09-16,DEU,DEU,RKI,Confirmed cases,onset,1139,TRUE
+2020-09-17,DEU,DEU,RKI,Confirmed cases,onset,987,TRUE
+2020-09-18,DEU,DEU,RKI,Confirmed cases,onset,1031,TRUE
+2020-09-19,DEU,DEU,RKI,Confirmed cases,onset,874,TRUE
+2020-09-20,DEU,DEU,RKI,Confirmed cases,onset,925,TRUE
+2020-09-21,DEU,DEU,RKI,Confirmed cases,onset,1333,TRUE
+2020-09-22,DEU,DEU,RKI,Confirmed cases,onset,1265,TRUE
+2020-09-23,DEU,DEU,RKI,Confirmed cases,onset,1215,TRUE
+2020-09-24,DEU,DEU,RKI,Confirmed cases,onset,1192,TRUE
+2020-09-25,DEU,DEU,RKI,Confirmed cases,onset,1299,TRUE
+2020-09-26,DEU,DEU,RKI,Confirmed cases,onset,1106,TRUE
+2020-09-27,DEU,DEU,RKI,Confirmed cases,onset,1043,TRUE
+2020-09-28,DEU,DEU,RKI,Confirmed cases,onset,1620,TRUE
+2020-09-29,DEU,DEU,RKI,Confirmed cases,onset,1604,TRUE
+2020-09-30,DEU,DEU,RKI,Confirmed cases,onset,1608,TRUE
+2020-10-01,DEU,DEU,RKI,Confirmed cases,onset,1747,TRUE
+2020-10-02,DEU,DEU,RKI,Confirmed cases,onset,2032,TRUE
+2020-10-03,DEU,DEU,RKI,Confirmed cases,onset,1941,TRUE
+2020-10-04,DEU,DEU,RKI,Confirmed cases,onset,1814,TRUE
+2020-10-05,DEU,DEU,RKI,Confirmed cases,onset,2843,TRUE
+2020-10-06,DEU,DEU,RKI,Confirmed cases,onset,2658,TRUE
+2020-10-07,DEU,DEU,RKI,Confirmed cases,onset,2775,TRUE
+2020-10-08,DEU,DEU,RKI,Confirmed cases,onset,2711,TRUE
+2020-10-09,DEU,DEU,RKI,Confirmed cases,onset,2997,TRUE
+2020-10-10,DEU,DEU,RKI,Confirmed cases,onset,2955,TRUE
+2020-10-11,DEU,DEU,RKI,Confirmed cases,onset,2809,TRUE
+2020-10-12,DEU,DEU,RKI,Confirmed cases,onset,4289,TRUE
+2020-10-13,DEU,DEU,RKI,Confirmed cases,onset,4257,TRUE
+2020-10-14,DEU,DEU,RKI,Confirmed cases,onset,4602,TRUE
+2020-10-15,DEU,DEU,RKI,Confirmed cases,onset,4545,TRUE
+2020-10-16,DEU,DEU,RKI,Confirmed cases,onset,5177,TRUE
+2020-10-17,DEU,DEU,RKI,Confirmed cases,onset,4880,TRUE
+2020-10-18,DEU,DEU,RKI,Confirmed cases,onset,5208,TRUE
+2020-10-19,DEU,DEU,RKI,Confirmed cases,onset,7520,TRUE
+2020-10-20,DEU,DEU,RKI,Confirmed cases,onset,7746,TRUE
+2020-10-21,DEU,DEU,RKI,Confirmed cases,onset,8153,TRUE
+2020-10-22,DEU,DEU,RKI,Confirmed cases,onset,7645,TRUE
+2020-10-23,DEU,DEU,RKI,Confirmed cases,onset,8319,TRUE
+2020-10-24,DEU,DEU,RKI,Confirmed cases,onset,7720,TRUE
+2020-10-25,DEU,DEU,RKI,Confirmed cases,onset,7656,TRUE
+2020-10-26,DEU,DEU,RKI,Confirmed cases,onset,10385,TRUE
+2020-10-27,DEU,DEU,RKI,Confirmed cases,onset,9096,TRUE
+2020-10-28,DEU,DEU,RKI,Confirmed cases,onset,9240,TRUE
+2020-10-29,DEU,DEU,RKI,Confirmed cases,onset,8178,TRUE
+2020-10-30,DEU,DEU,RKI,Confirmed cases,onset,8930,TRUE
+2020-10-31,DEU,DEU,RKI,Confirmed cases,onset,7588,TRUE
+2020-11-01,DEU,DEU,RKI,Confirmed cases,onset,7993,TRUE
+2020-11-02,DEU,DEU,RKI,Confirmed cases,onset,11342,TRUE
+2020-11-03,DEU,DEU,RKI,Confirmed cases,onset,9385,TRUE
+2020-11-04,DEU,DEU,RKI,Confirmed cases,onset,9188,TRUE
+2020-11-05,DEU,DEU,RKI,Confirmed cases,onset,8292,TRUE
+2020-11-06,DEU,DEU,RKI,Confirmed cases,onset,8259,TRUE
+2020-11-07,DEU,DEU,RKI,Confirmed cases,onset,7623,TRUE
+2020-11-08,DEU,DEU,RKI,Confirmed cases,onset,7260,TRUE
+2020-11-09,DEU,DEU,RKI,Confirmed cases,onset,10208,TRUE
+2020-11-10,DEU,DEU,RKI,Confirmed cases,onset,9232,TRUE
+2020-11-11,DEU,DEU,RKI,Confirmed cases,onset,9181,TRUE
+2020-11-12,DEU,DEU,RKI,Confirmed cases,onset,8669,TRUE
+2020-11-13,DEU,DEU,RKI,Confirmed cases,onset,9592,TRUE
+2020-11-14,DEU,DEU,RKI,Confirmed cases,onset,8084,TRUE
+2020-11-15,DEU,DEU,RKI,Confirmed cases,onset,7808,TRUE
+2020-11-16,DEU,DEU,RKI,Confirmed cases,onset,10828,TRUE
+2020-11-17,DEU,DEU,RKI,Confirmed cases,onset,9497,TRUE
+2020-11-18,DEU,DEU,RKI,Confirmed cases,onset,9189,TRUE
+2020-11-19,DEU,DEU,RKI,Confirmed cases,onset,8343,TRUE
+2020-11-20,DEU,DEU,RKI,Confirmed cases,onset,8683,TRUE
+2020-11-21,DEU,DEU,RKI,Confirmed cases,onset,7101,TRUE
+2020-11-22,DEU,DEU,RKI,Confirmed cases,onset,6771,TRUE
+2020-11-23,DEU,DEU,RKI,Confirmed cases,onset,9772,TRUE
+2020-11-24,DEU,DEU,RKI,Confirmed cases,onset,8425,TRUE
+2020-11-25,DEU,DEU,RKI,Confirmed cases,onset,8439,TRUE
+2020-11-26,DEU,DEU,RKI,Confirmed cases,onset,7811,TRUE
+2020-11-27,DEU,DEU,RKI,Confirmed cases,onset,8361,TRUE
+2020-11-28,DEU,DEU,RKI,Confirmed cases,onset,7758,TRUE
+2020-11-29,DEU,DEU,RKI,Confirmed cases,onset,7054,TRUE
+2020-11-30,DEU,DEU,RKI,Confirmed cases,onset,11060,TRUE
+2020-12-01,DEU,DEU,RKI,Confirmed cases,onset,10289,TRUE
+2020-12-02,DEU,DEU,RKI,Confirmed cases,onset,10423,TRUE
+2020-12-03,DEU,DEU,RKI,Confirmed cases,onset,10514,TRUE
+2020-12-04,DEU,DEU,RKI,Confirmed cases,onset,11123,TRUE
+2020-12-05,DEU,DEU,RKI,Confirmed cases,onset,10184,TRUE
+2020-12-06,DEU,DEU,RKI,Confirmed cases,onset,9901,TRUE
+2020-12-07,DEU,DEU,RKI,Confirmed cases,onset,13979,TRUE
+2020-12-08,DEU,DEU,RKI,Confirmed cases,onset,12928,TRUE
+2020-12-09,DEU,DEU,RKI,Confirmed cases,onset,12598,TRUE
+2020-12-10,DEU,DEU,RKI,Confirmed cases,onset,12275,TRUE
+2020-12-11,DEU,DEU,RKI,Confirmed cases,onset,12383,TRUE
+2020-12-12,DEU,DEU,RKI,Confirmed cases,onset,11556,TRUE
+2020-12-13,DEU,DEU,RKI,Confirmed cases,onset,10424,TRUE
+2020-12-14,DEU,DEU,RKI,Confirmed cases,onset,14997,TRUE
+2020-12-15,DEU,DEU,RKI,Confirmed cases,onset,13069,TRUE
+2020-12-16,DEU,DEU,RKI,Confirmed cases,onset,12771,TRUE
+2020-12-17,DEU,DEU,RKI,Confirmed cases,onset,11741,TRUE
+2020-12-18,DEU,DEU,RKI,Confirmed cases,onset,11856,TRUE
+2020-12-19,DEU,DEU,RKI,Confirmed cases,onset,10025,TRUE
+2020-12-20,DEU,DEU,RKI,Confirmed cases,onset,9553,TRUE
+2020-12-21,DEU,DEU,RKI,Confirmed cases,onset,12052,TRUE
+2020-12-22,DEU,DEU,RKI,Confirmed cases,onset,10079,TRUE
+2020-12-23,DEU,DEU,RKI,Confirmed cases,onset,9588,TRUE
+2020-12-24,DEU,DEU,RKI,Confirmed cases,onset,8639,TRUE
+2020-12-25,DEU,DEU,RKI,Confirmed cases,onset,7520,TRUE
+2020-12-26,DEU,DEU,RKI,Confirmed cases,onset,8775,TRUE
+2020-12-27,DEU,DEU,RKI,Confirmed cases,onset,9355,TRUE
+2020-12-28,DEU,DEU,RKI,Confirmed cases,onset,12600,TRUE
+2020-12-29,DEU,DEU,RKI,Confirmed cases,onset,9817,TRUE
+2020-12-30,DEU,DEU,RKI,Confirmed cases,onset,9086,TRUE
+2020-12-31,DEU,DEU,RKI,Confirmed cases,onset,7699,TRUE
+2021-01-01,DEU,DEU,RKI,Confirmed cases,onset,8143,TRUE
+2021-01-02,DEU,DEU,RKI,Confirmed cases,onset,9013,TRUE
+2021-01-03,DEU,DEU,RKI,Confirmed cases,onset,9305,TRUE
+2021-01-04,DEU,DEU,RKI,Confirmed cases,onset,12185,TRUE
+2021-01-05,DEU,DEU,RKI,Confirmed cases,onset,9950,TRUE
+2021-01-06,DEU,DEU,RKI,Confirmed cases,onset,8906,TRUE
+2021-01-07,DEU,DEU,RKI,Confirmed cases,onset,8166,TRUE
+2021-01-08,DEU,DEU,RKI,Confirmed cases,onset,8409,TRUE
+2021-01-09,DEU,DEU,RKI,Confirmed cases,onset,6907,TRUE
+2021-01-10,DEU,DEU,RKI,Confirmed cases,onset,7024,TRUE
+2021-01-11,DEU,DEU,RKI,Confirmed cases,onset,9218,TRUE
+2021-01-12,DEU,DEU,RKI,Confirmed cases,onset,7755,TRUE
+2021-01-13,DEU,DEU,RKI,Confirmed cases,onset,7765,TRUE
+2021-01-14,DEU,DEU,RKI,Confirmed cases,onset,6957,TRUE
+2021-01-15,DEU,DEU,RKI,Confirmed cases,onset,7304,TRUE
+2021-01-16,DEU,DEU,RKI,Confirmed cases,onset,6500,TRUE
+2021-01-17,DEU,DEU,RKI,Confirmed cases,onset,6198,TRUE
+2021-01-18,DEU,DEU,RKI,Confirmed cases,onset,8801,TRUE
+2021-01-19,DEU,DEU,RKI,Confirmed cases,onset,7365,TRUE
+2021-01-20,DEU,DEU,RKI,Confirmed cases,onset,7193,TRUE
+2021-01-21,DEU,DEU,RKI,Confirmed cases,onset,6256,TRUE
+2021-01-22,DEU,DEU,RKI,Confirmed cases,onset,6403,TRUE
+2021-01-23,DEU,DEU,RKI,Confirmed cases,onset,5636,TRUE
+2021-01-24,DEU,DEU,RKI,Confirmed cases,onset,5172,TRUE
+2021-01-25,DEU,DEU,RKI,Confirmed cases,onset,7113,TRUE
+2021-01-26,DEU,DEU,RKI,Confirmed cases,onset,6168,TRUE
+2021-01-27,DEU,DEU,RKI,Confirmed cases,onset,5672,TRUE
+2021-01-28,DEU,DEU,RKI,Confirmed cases,onset,5389,TRUE
+2021-01-29,DEU,DEU,RKI,Confirmed cases,onset,5296,TRUE
+2021-01-30,DEU,DEU,RKI,Confirmed cases,onset,4738,TRUE
+2021-01-31,DEU,DEU,RKI,Confirmed cases,onset,4332,TRUE
+2021-02-01,DEU,DEU,RKI,Confirmed cases,onset,6108,TRUE
+2021-02-02,DEU,DEU,RKI,Confirmed cases,onset,5201,TRUE
+2021-02-03,DEU,DEU,RKI,Confirmed cases,onset,4974,TRUE
+2021-02-04,DEU,DEU,RKI,Confirmed cases,onset,4456,TRUE
+2021-02-05,DEU,DEU,RKI,Confirmed cases,onset,4495,TRUE
+2021-02-06,DEU,DEU,RKI,Confirmed cases,onset,3958,TRUE
+2021-02-07,DEU,DEU,RKI,Confirmed cases,onset,3554,TRUE
+2021-02-08,DEU,DEU,RKI,Confirmed cases,onset,4958,TRUE
+2021-02-09,DEU,DEU,RKI,Confirmed cases,onset,4422,TRUE
+2021-02-10,DEU,DEU,RKI,Confirmed cases,onset,4441,TRUE
+2021-02-11,DEU,DEU,RKI,Confirmed cases,onset,3847,TRUE
+2021-02-12,DEU,DEU,RKI,Confirmed cases,onset,4210,TRUE
+2021-02-13,DEU,DEU,RKI,Confirmed cases,onset,3856,TRUE
+2021-02-14,DEU,DEU,RKI,Confirmed cases,onset,3759,TRUE
+2021-02-15,DEU,DEU,RKI,Confirmed cases,onset,5336,TRUE
+2021-02-16,DEU,DEU,RKI,Confirmed cases,onset,4757,TRUE
+2021-02-17,DEU,DEU,RKI,Confirmed cases,onset,4883,TRUE
+2021-02-18,DEU,DEU,RKI,Confirmed cases,onset,4594,TRUE
+2021-02-19,DEU,DEU,RKI,Confirmed cases,onset,4736,TRUE
+2021-02-20,DEU,DEU,RKI,Confirmed cases,onset,4523,TRUE
+2021-02-21,DEU,DEU,RKI,Confirmed cases,onset,4109,TRUE
+2021-02-22,DEU,DEU,RKI,Confirmed cases,onset,5619,TRUE
+2021-02-23,DEU,DEU,RKI,Confirmed cases,onset,5089,TRUE
+2021-02-24,DEU,DEU,RKI,Confirmed cases,onset,4854,TRUE
+2021-02-25,DEU,DEU,RKI,Confirmed cases,onset,4524,TRUE
+2021-02-26,DEU,DEU,RKI,Confirmed cases,onset,4938,TRUE
+2021-02-27,DEU,DEU,RKI,Confirmed cases,onset,4349,TRUE
+2021-02-28,DEU,DEU,RKI,Confirmed cases,onset,4298,TRUE
+2021-03-01,DEU,DEU,RKI,Confirmed cases,onset,6085,TRUE
+2021-03-02,DEU,DEU,RKI,Confirmed cases,onset,5275,TRUE
+2021-03-03,DEU,DEU,RKI,Confirmed cases,onset,5513,TRUE
+2021-03-04,DEU,DEU,RKI,Confirmed cases,onset,5172,TRUE
+2021-03-05,DEU,DEU,RKI,Confirmed cases,onset,5578,TRUE
+2021-03-06,DEU,DEU,RKI,Confirmed cases,onset,5359,TRUE
+2021-03-07,DEU,DEU,RKI,Confirmed cases,onset,5203,TRUE
+2021-03-08,DEU,DEU,RKI,Confirmed cases,onset,7443,TRUE
+2021-03-09,DEU,DEU,RKI,Confirmed cases,onset,6961,TRUE
+2021-03-10,DEU,DEU,RKI,Confirmed cases,onset,7249,TRUE
+2021-03-11,DEU,DEU,RKI,Confirmed cases,onset,6944,TRUE
+2021-03-12,DEU,DEU,RKI,Confirmed cases,onset,7537,TRUE
+2021-03-13,DEU,DEU,RKI,Confirmed cases,onset,7323,TRUE
+2021-03-14,DEU,DEU,RKI,Confirmed cases,onset,7034,TRUE
+2021-03-15,DEU,DEU,RKI,Confirmed cases,onset,9752,TRUE
+2021-03-16,DEU,DEU,RKI,Confirmed cases,onset,8877,TRUE
+2021-03-17,DEU,DEU,RKI,Confirmed cases,onset,9163,TRUE
+2021-03-18,DEU,DEU,RKI,Confirmed cases,onset,8460,TRUE
+2021-03-19,DEU,DEU,RKI,Confirmed cases,onset,9071,TRUE
+2021-03-20,DEU,DEU,RKI,Confirmed cases,onset,8926,TRUE
+2021-03-21,DEU,DEU,RKI,Confirmed cases,onset,8557,TRUE
+2021-03-22,DEU,DEU,RKI,Confirmed cases,onset,11535,TRUE
+2021-03-23,DEU,DEU,RKI,Confirmed cases,onset,10691,TRUE
+2021-03-24,DEU,DEU,RKI,Confirmed cases,onset,10309,TRUE
+2021-03-25,DEU,DEU,RKI,Confirmed cases,onset,9592,TRUE
+2021-03-26,DEU,DEU,RKI,Confirmed cases,onset,9686,TRUE
+2021-03-27,DEU,DEU,RKI,Confirmed cases,onset,8876,TRUE
+2021-03-28,DEU,DEU,RKI,Confirmed cases,onset,8096,TRUE
+2021-03-29,DEU,DEU,RKI,Confirmed cases,onset,11031,TRUE
+2021-03-30,DEU,DEU,RKI,Confirmed cases,onset,9727,TRUE
+2021-03-31,DEU,DEU,RKI,Confirmed cases,onset,9056,TRUE
+2021-04-01,DEU,DEU,RKI,Confirmed cases,onset,10129,TRUE
+2021-04-02,DEU,DEU,RKI,Confirmed cases,onset,8936,TRUE
+2021-04-03,DEU,DEU,RKI,Confirmed cases,onset,8728,TRUE
+2021-04-04,DEU,DEU,RKI,Confirmed cases,onset,8737,TRUE
+2021-04-05,DEU,DEU,RKI,Confirmed cases,onset,10083,TRUE
+2021-04-06,DEU,DEU,RKI,Confirmed cases,onset,11845,TRUE
+2021-04-07,DEU,DEU,RKI,Confirmed cases,onset,11551,TRUE
+2021-04-08,DEU,DEU,RKI,Confirmed cases,onset,11351,TRUE
+2021-04-09,DEU,DEU,RKI,Confirmed cases,onset,11310,TRUE
+2021-04-10,DEU,DEU,RKI,Confirmed cases,onset,11383,TRUE
+2021-04-11,DEU,DEU,RKI,Confirmed cases,onset,9965,TRUE
+2021-04-12,DEU,DEU,RKI,Confirmed cases,onset,13656,TRUE
+2021-04-13,DEU,DEU,RKI,Confirmed cases,onset,11724,TRUE
+2021-04-14,DEU,DEU,RKI,Confirmed cases,onset,11645,TRUE
+2021-04-15,DEU,DEU,RKI,Confirmed cases,onset,10739,TRUE
+2021-04-16,DEU,DEU,RKI,Confirmed cases,onset,11720,TRUE
+2021-04-17,DEU,DEU,RKI,Confirmed cases,onset,10989,TRUE
+2021-04-18,DEU,DEU,RKI,Confirmed cases,onset,10902,TRUE
+2021-04-19,DEU,DEU,RKI,Confirmed cases,onset,14230,TRUE
+2021-04-20,DEU,DEU,RKI,Confirmed cases,onset,12504,TRUE
+2021-04-21,DEU,DEU,RKI,Confirmed cases,onset,11847,TRUE
+2021-04-22,DEU,DEU,RKI,Confirmed cases,onset,10921,TRUE
+2021-04-23,DEU,DEU,RKI,Confirmed cases,onset,10993,TRUE
+2021-04-24,DEU,DEU,RKI,Confirmed cases,onset,10112,TRUE
+2021-04-25,DEU,DEU,RKI,Confirmed cases,onset,9221,TRUE
+2021-04-26,DEU,DEU,RKI,Confirmed cases,onset,12122,TRUE
+2021-04-27,DEU,DEU,RKI,Confirmed cases,onset,10090,TRUE
+2021-04-28,DEU,DEU,RKI,Confirmed cases,onset,9949,TRUE
+2021-04-29,DEU,DEU,RKI,Confirmed cases,onset,8511,TRUE
+2021-04-30,DEU,DEU,RKI,Confirmed cases,onset,8960,TRUE
+2021-05-01,DEU,DEU,RKI,Confirmed cases,onset,8299,TRUE
+2021-05-02,DEU,DEU,RKI,Confirmed cases,onset,7461,TRUE
+2021-05-03,DEU,DEU,RKI,Confirmed cases,onset,9793,TRUE
+2021-05-04,DEU,DEU,RKI,Confirmed cases,onset,8425,TRUE
+2021-05-05,DEU,DEU,RKI,Confirmed cases,onset,7957,TRUE
+2021-05-06,DEU,DEU,RKI,Confirmed cases,onset,7080,TRUE
+2021-05-07,DEU,DEU,RKI,Confirmed cases,onset,6741,TRUE
+2021-05-08,DEU,DEU,RKI,Confirmed cases,onset,6150,TRUE
+2021-05-09,DEU,DEU,RKI,Confirmed cases,onset,5749,TRUE
+2021-05-10,DEU,DEU,RKI,Confirmed cases,onset,7318,TRUE
+2021-05-11,DEU,DEU,RKI,Confirmed cases,onset,5753,TRUE
+2021-05-12,DEU,DEU,RKI,Confirmed cases,onset,5308,TRUE
+2021-05-13,DEU,DEU,RKI,Confirmed cases,onset,4273,TRUE
+2021-05-14,DEU,DEU,RKI,Confirmed cases,onset,4523,TRUE
+2021-05-15,DEU,DEU,RKI,Confirmed cases,onset,4329,TRUE
+2021-05-16,DEU,DEU,RKI,Confirmed cases,onset,3979,TRUE
+2021-05-17,DEU,DEU,RKI,Confirmed cases,onset,4863,TRUE
+2021-05-18,DEU,DEU,RKI,Confirmed cases,onset,4010,TRUE
+2021-05-19,DEU,DEU,RKI,Confirmed cases,onset,3493,TRUE
+2021-05-20,DEU,DEU,RKI,Confirmed cases,onset,3145,TRUE
+2021-05-21,DEU,DEU,RKI,Confirmed cases,onset,2830,TRUE
+2021-05-22,DEU,DEU,RKI,Confirmed cases,onset,2542,TRUE
+2021-05-23,DEU,DEU,RKI,Confirmed cases,onset,2192,TRUE
+2021-05-24,DEU,DEU,RKI,Confirmed cases,onset,2463,TRUE
+2021-05-25,DEU,DEU,RKI,Confirmed cases,onset,2629,TRUE
+2021-05-26,DEU,DEU,RKI,Confirmed cases,onset,2397,TRUE
+2021-05-27,DEU,DEU,RKI,Confirmed cases,onset,2206,TRUE
+2021-05-28,DEU,DEU,RKI,Confirmed cases,onset,2074,TRUE
+2021-05-29,DEU,DEU,RKI,Confirmed cases,onset,1724,TRUE
+2021-05-30,DEU,DEU,RKI,Confirmed cases,onset,1501,TRUE
+2021-05-31,DEU,DEU,RKI,Confirmed cases,onset,1916,TRUE
+2021-06-01,DEU,DEU,RKI,Confirmed cases,onset,1619,TRUE
+2021-06-02,DEU,DEU,RKI,Confirmed cases,onset,1616,TRUE
+2021-06-03,DEU,DEU,RKI,Confirmed cases,onset,1272,TRUE
+2021-06-04,DEU,DEU,RKI,Confirmed cases,onset,1255,TRUE
+2021-06-05,DEU,DEU,RKI,Confirmed cases,onset,1167,TRUE
+2021-06-06,DEU,DEU,RKI,Confirmed cases,onset,1095,TRUE
+2021-06-07,DEU,DEU,RKI,Confirmed cases,onset,1288,TRUE
+2021-06-08,DEU,DEU,RKI,Confirmed cases,onset,977,TRUE
+2021-06-09,DEU,DEU,RKI,Confirmed cases,onset,828,TRUE
+2021-06-10,DEU,DEU,RKI,Confirmed cases,onset,784,TRUE
+2021-06-11,DEU,DEU,RKI,Confirmed cases,onset,658,TRUE
+2021-06-12,DEU,DEU,RKI,Confirmed cases,onset,588,TRUE
+2021-06-13,DEU,DEU,RKI,Confirmed cases,onset,530,TRUE
+2021-06-14,DEU,DEU,RKI,Confirmed cases,onset,669,TRUE
+2021-06-15,DEU,DEU,RKI,Confirmed cases,onset,523,TRUE
+2021-06-16,DEU,DEU,RKI,Confirmed cases,onset,531,TRUE
+2021-06-17,DEU,DEU,RKI,Confirmed cases,onset,436,TRUE
+2021-06-18,DEU,DEU,RKI,Confirmed cases,onset,438,TRUE
+2021-06-19,DEU,DEU,RKI,Confirmed cases,onset,315,TRUE
+2021-06-20,DEU,DEU,RKI,Confirmed cases,onset,346,TRUE
+2021-06-21,DEU,DEU,RKI,Confirmed cases,onset,454,TRUE
+2021-06-22,DEU,DEU,RKI,Confirmed cases,onset,421,TRUE
+2021-06-23,DEU,DEU,RKI,Confirmed cases,onset,380,TRUE
+2021-06-24,DEU,DEU,RKI,Confirmed cases,onset,340,TRUE
+2021-06-25,DEU,DEU,RKI,Confirmed cases,onset,337,TRUE
+2021-06-26,DEU,DEU,RKI,Confirmed cases,onset,355,TRUE
+2021-06-27,DEU,DEU,RKI,Confirmed cases,onset,306,TRUE
+2021-06-28,DEU,DEU,RKI,Confirmed cases,onset,453,TRUE
+2021-06-29,DEU,DEU,RKI,Confirmed cases,onset,369,TRUE
+2021-06-30,DEU,DEU,RKI,Confirmed cases,onset,416,TRUE
+2021-07-01,DEU,DEU,RKI,Confirmed cases,onset,314,TRUE
+2021-07-02,DEU,DEU,RKI,Confirmed cases,onset,299,TRUE
+2021-07-03,DEU,DEU,RKI,Confirmed cases,onset,237,TRUE
+2021-07-04,DEU,DEU,RKI,Confirmed cases,onset,190,TRUE
+2021-07-05,DEU,DEU,RKI,Confirmed cases,onset,150,TRUE
+2021-07-06,DEU,DEU,RKI,Confirmed cases,onset,39,TRUE
+2020-01-02,DEU,DEU,RKI,Confirmed cases,report,1,TRUE
+2020-01-03,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-04,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-05,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-06,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-07,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-08,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-09,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-10,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-11,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-12,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-13,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-14,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-15,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-16,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-17,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-18,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-19,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-20,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-21,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-22,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-23,DEU,DEU,RKI,Confirmed cases,report,2,TRUE
+2020-01-24,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-25,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-26,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-27,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-28,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-29,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-30,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-01-31,DEU,DEU,RKI,Confirmed cases,report,1,TRUE
+2020-02-01,DEU,DEU,RKI,Confirmed cases,report,1,TRUE
+2020-02-02,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-02-03,DEU,DEU,RKI,Confirmed cases,report,1,TRUE
+2020-02-04,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-02-05,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-02-06,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-02-07,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-02-08,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-02-09,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-02-10,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-02-11,DEU,DEU,RKI,Confirmed cases,report,1,TRUE
+2020-02-12,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-02-13,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-02-14,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-02-15,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-02-16,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-02-17,DEU,DEU,RKI,Confirmed cases,report,1,TRUE
+2020-02-18,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-02-19,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-02-20,DEU,DEU,RKI,Confirmed cases,report,2,TRUE
+2020-02-21,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-02-22,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-02-23,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-02-24,DEU,DEU,RKI,Confirmed cases,report,1,TRUE
+2020-02-25,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-02-26,DEU,DEU,RKI,Confirmed cases,report,0,TRUE
+2020-02-27,DEU,DEU,RKI,Confirmed cases,report,2,TRUE
+2020-02-28,DEU,DEU,RKI,Confirmed cases,report,15,TRUE
+2020-02-29,DEU,DEU,RKI,Confirmed cases,report,5,TRUE
+2020-03-01,DEU,DEU,RKI,Confirmed cases,report,11,TRUE
+2020-03-02,DEU,DEU,RKI,Confirmed cases,report,9,TRUE
+2020-03-03,DEU,DEU,RKI,Confirmed cases,report,27,TRUE
+2020-03-04,DEU,DEU,RKI,Confirmed cases,report,37,TRUE
+2020-03-05,DEU,DEU,RKI,Confirmed cases,report,36,TRUE
+2020-03-06,DEU,DEU,RKI,Confirmed cases,report,49,TRUE
+2020-03-07,DEU,DEU,RKI,Confirmed cases,report,19,TRUE
+2020-03-08,DEU,DEU,RKI,Confirmed cases,report,21,TRUE
+2020-03-09,DEU,DEU,RKI,Confirmed cases,report,81,TRUE
+2020-03-10,DEU,DEU,RKI,Confirmed cases,report,132,TRUE
+2020-03-11,DEU,DEU,RKI,Confirmed cases,report,155,TRUE
+2020-03-12,DEU,DEU,RKI,Confirmed cases,report,221,TRUE
+2020-03-13,DEU,DEU,RKI,Confirmed cases,report,323,TRUE
+2020-03-14,DEU,DEU,RKI,Confirmed cases,report,265,TRUE
+2020-03-15,DEU,DEU,RKI,Confirmed cases,report,273,TRUE
+2020-03-16,DEU,DEU,RKI,Confirmed cases,report,487,TRUE
+2020-03-17,DEU,DEU,RKI,Confirmed cases,report,724,TRUE
+2020-03-18,DEU,DEU,RKI,Confirmed cases,report,832,TRUE
+2020-03-19,DEU,DEU,RKI,Confirmed cases,report,863,TRUE
+2020-03-20,DEU,DEU,RKI,Confirmed cases,report,806,TRUE
+2020-03-21,DEU,DEU,RKI,Confirmed cases,report,695,TRUE
+2020-03-22,DEU,DEU,RKI,Confirmed cases,report,468,TRUE
+2020-03-23,DEU,DEU,RKI,Confirmed cases,report,761,TRUE
+2020-03-24,DEU,DEU,RKI,Confirmed cases,report,917,TRUE
+2020-03-25,DEU,DEU,RKI,Confirmed cases,report,1098,TRUE
+2020-03-26,DEU,DEU,RKI,Confirmed cases,report,1204,TRUE
+2020-03-27,DEU,DEU,RKI,Confirmed cases,report,1270,TRUE
+2020-03-28,DEU,DEU,RKI,Confirmed cases,report,954,TRUE
+2020-03-29,DEU,DEU,RKI,Confirmed cases,report,692,TRUE
+2020-03-30,DEU,DEU,RKI,Confirmed cases,report,968,TRUE
+2020-03-31,DEU,DEU,RKI,Confirmed cases,report,1470,TRUE
+2020-04-01,DEU,DEU,RKI,Confirmed cases,report,1513,TRUE
+2020-04-02,DEU,DEU,RKI,Confirmed cases,report,1637,TRUE
+2020-04-03,DEU,DEU,RKI,Confirmed cases,report,1714,TRUE
+2020-04-04,DEU,DEU,RKI,Confirmed cases,report,1156,TRUE
+2020-04-05,DEU,DEU,RKI,Confirmed cases,report,756,TRUE
+2020-04-06,DEU,DEU,RKI,Confirmed cases,report,1080,TRUE
+2020-04-07,DEU,DEU,RKI,Confirmed cases,report,1406,TRUE
+2020-04-08,DEU,DEU,RKI,Confirmed cases,report,1500,TRUE
+2020-04-09,DEU,DEU,RKI,Confirmed cases,report,1455,TRUE
+2020-04-10,DEU,DEU,RKI,Confirmed cases,report,1012,TRUE
+2020-04-11,DEU,DEU,RKI,Confirmed cases,report,1014,TRUE
+2020-04-12,DEU,DEU,RKI,Confirmed cases,report,603,TRUE
+2020-04-13,DEU,DEU,RKI,Confirmed cases,report,544,TRUE
+2020-04-14,DEU,DEU,RKI,Confirmed cases,report,801,TRUE
+2020-04-15,DEU,DEU,RKI,Confirmed cases,report,985,TRUE
+2020-04-16,DEU,DEU,RKI,Confirmed cases,report,1073,TRUE
+2020-04-17,DEU,DEU,RKI,Confirmed cases,report,1181,TRUE
+2020-04-18,DEU,DEU,RKI,Confirmed cases,report,734,TRUE
+2020-04-19,DEU,DEU,RKI,Confirmed cases,report,524,TRUE
+2020-04-20,DEU,DEU,RKI,Confirmed cases,report,646,TRUE
+2020-04-21,DEU,DEU,RKI,Confirmed cases,report,735,TRUE
+2020-04-22,DEU,DEU,RKI,Confirmed cases,report,953,TRUE
+2020-04-23,DEU,DEU,RKI,Confirmed cases,report,844,TRUE
+2020-04-24,DEU,DEU,RKI,Confirmed cases,report,789,TRUE
+2020-04-25,DEU,DEU,RKI,Confirmed cases,report,538,TRUE
+2020-04-26,DEU,DEU,RKI,Confirmed cases,report,290,TRUE
+2020-04-27,DEU,DEU,RKI,Confirmed cases,report,500,TRUE
+2020-04-28,DEU,DEU,RKI,Confirmed cases,report,551,TRUE
+2020-04-29,DEU,DEU,RKI,Confirmed cases,report,620,TRUE
+2020-04-30,DEU,DEU,RKI,Confirmed cases,report,569,TRUE
+2020-05-01,DEU,DEU,RKI,Confirmed cases,report,400,TRUE
+2020-05-02,DEU,DEU,RKI,Confirmed cases,report,266,TRUE
+2020-05-03,DEU,DEU,RKI,Confirmed cases,report,181,TRUE
+2020-05-04,DEU,DEU,RKI,Confirmed cases,report,319,TRUE
+2020-05-05,DEU,DEU,RKI,Confirmed cases,report,453,TRUE
+2020-05-06,DEU,DEU,RKI,Confirmed cases,report,523,TRUE
+2020-05-07,DEU,DEU,RKI,Confirmed cases,report,472,TRUE
+2020-05-08,DEU,DEU,RKI,Confirmed cases,report,439,TRUE
+2020-05-09,DEU,DEU,RKI,Confirmed cases,report,293,TRUE
+2020-05-10,DEU,DEU,RKI,Confirmed cases,report,154,TRUE
+2020-05-11,DEU,DEU,RKI,Confirmed cases,report,322,TRUE
+2020-05-12,DEU,DEU,RKI,Confirmed cases,report,332,TRUE
+2020-05-13,DEU,DEU,RKI,Confirmed cases,report,413,TRUE
+2020-05-14,DEU,DEU,RKI,Confirmed cases,report,397,TRUE
+2020-05-15,DEU,DEU,RKI,Confirmed cases,report,381,TRUE
+2020-05-16,DEU,DEU,RKI,Confirmed cases,report,211,TRUE
+2020-05-17,DEU,DEU,RKI,Confirmed cases,report,194,TRUE
+2020-05-18,DEU,DEU,RKI,Confirmed cases,report,279,TRUE
+2020-05-19,DEU,DEU,RKI,Confirmed cases,report,330,TRUE
+2020-05-20,DEU,DEU,RKI,Confirmed cases,report,394,TRUE
+2020-05-21,DEU,DEU,RKI,Confirmed cases,report,214,TRUE
+2020-05-22,DEU,DEU,RKI,Confirmed cases,report,229,TRUE
+2020-05-23,DEU,DEU,RKI,Confirmed cases,report,164,TRUE
+2020-05-24,DEU,DEU,RKI,Confirmed cases,report,112,TRUE
+2020-05-25,DEU,DEU,RKI,Confirmed cases,report,191,TRUE
+2020-05-26,DEU,DEU,RKI,Confirmed cases,report,337,TRUE
+2020-05-27,DEU,DEU,RKI,Confirmed cases,report,281,TRUE
+2020-05-28,DEU,DEU,RKI,Confirmed cases,report,235,TRUE
+2020-05-29,DEU,DEU,RKI,Confirmed cases,report,194,TRUE
+2020-05-30,DEU,DEU,RKI,Confirmed cases,report,188,TRUE
+2020-05-31,DEU,DEU,RKI,Confirmed cases,report,78,TRUE
+2020-06-01,DEU,DEU,RKI,Confirmed cases,report,67,TRUE
+2020-06-02,DEU,DEU,RKI,Confirmed cases,report,120,TRUE
+2020-06-03,DEU,DEU,RKI,Confirmed cases,report,263,TRUE
+2020-06-04,DEU,DEU,RKI,Confirmed cases,report,258,TRUE
+2020-06-05,DEU,DEU,RKI,Confirmed cases,report,206,TRUE
+2020-06-06,DEU,DEU,RKI,Confirmed cases,report,111,TRUE
+2020-06-07,DEU,DEU,RKI,Confirmed cases,report,74,TRUE
+2020-06-08,DEU,DEU,RKI,Confirmed cases,report,152,TRUE
+2020-06-09,DEU,DEU,RKI,Confirmed cases,report,201,TRUE
+2020-06-10,DEU,DEU,RKI,Confirmed cases,report,266,TRUE
+2020-06-11,DEU,DEU,RKI,Confirmed cases,report,131,TRUE
+2020-06-12,DEU,DEU,RKI,Confirmed cases,report,182,TRUE
+2020-06-13,DEU,DEU,RKI,Confirmed cases,report,156,TRUE
+2020-06-14,DEU,DEU,RKI,Confirmed cases,report,99,TRUE
+2020-06-15,DEU,DEU,RKI,Confirmed cases,report,114,TRUE
+2020-06-16,DEU,DEU,RKI,Confirmed cases,report,255,TRUE
+2020-06-17,DEU,DEU,RKI,Confirmed cases,report,363,TRUE
+2020-06-18,DEU,DEU,RKI,Confirmed cases,report,410,TRUE
+2020-06-19,DEU,DEU,RKI,Confirmed cases,report,521,TRUE
+2020-06-20,DEU,DEU,RKI,Confirmed cases,report,293,TRUE
+2020-06-21,DEU,DEU,RKI,Confirmed cases,report,149,TRUE
+2020-06-22,DEU,DEU,RKI,Confirmed cases,report,246,TRUE
+2020-06-23,DEU,DEU,RKI,Confirmed cases,report,302,TRUE
+2020-06-24,DEU,DEU,RKI,Confirmed cases,report,227,TRUE
+2020-06-25,DEU,DEU,RKI,Confirmed cases,report,275,TRUE
+2020-06-26,DEU,DEU,RKI,Confirmed cases,report,289,TRUE
+2020-06-27,DEU,DEU,RKI,Confirmed cases,report,150,TRUE
+2020-06-28,DEU,DEU,RKI,Confirmed cases,report,118,TRUE
+2020-06-29,DEU,DEU,RKI,Confirmed cases,report,221,TRUE
+2020-06-30,DEU,DEU,RKI,Confirmed cases,report,225,TRUE
+2020-07-01,DEU,DEU,RKI,Confirmed cases,report,230,TRUE
+2020-07-02,DEU,DEU,RKI,Confirmed cases,report,229,TRUE
+2020-07-03,DEU,DEU,RKI,Confirmed cases,report,219,TRUE
+2020-07-04,DEU,DEU,RKI,Confirmed cases,report,149,TRUE
+2020-07-05,DEU,DEU,RKI,Confirmed cases,report,86,TRUE
+2020-07-06,DEU,DEU,RKI,Confirmed cases,report,154,TRUE
+2020-07-07,DEU,DEU,RKI,Confirmed cases,report,181,TRUE
+2020-07-08,DEU,DEU,RKI,Confirmed cases,report,203,TRUE
+2020-07-09,DEU,DEU,RKI,Confirmed cases,report,188,TRUE
+2020-07-10,DEU,DEU,RKI,Confirmed cases,report,213,TRUE
+2020-07-11,DEU,DEU,RKI,Confirmed cases,report,137,TRUE
+2020-07-12,DEU,DEU,RKI,Confirmed cases,report,62,TRUE
+2020-07-13,DEU,DEU,RKI,Confirmed cases,report,148,TRUE
+2020-07-14,DEU,DEU,RKI,Confirmed cases,report,195,TRUE
+2020-07-15,DEU,DEU,RKI,Confirmed cases,report,264,TRUE
+2020-07-16,DEU,DEU,RKI,Confirmed cases,report,246,TRUE
+2020-07-17,DEU,DEU,RKI,Confirmed cases,report,217,TRUE
+2020-07-18,DEU,DEU,RKI,Confirmed cases,report,245,TRUE
+2020-07-19,DEU,DEU,RKI,Confirmed cases,report,111,TRUE
+2020-07-20,DEU,DEU,RKI,Confirmed cases,report,219,TRUE
+2020-07-21,DEU,DEU,RKI,Confirmed cases,report,234,TRUE
+2020-07-22,DEU,DEU,RKI,Confirmed cases,report,295,TRUE
+2020-07-23,DEU,DEU,RKI,Confirmed cases,report,292,TRUE
+2020-07-24,DEU,DEU,RKI,Confirmed cases,report,367,TRUE
+2020-07-25,DEU,DEU,RKI,Confirmed cases,report,263,TRUE
+2020-07-26,DEU,DEU,RKI,Confirmed cases,report,153,TRUE
+2020-07-27,DEU,DEU,RKI,Confirmed cases,report,234,TRUE
+2020-07-28,DEU,DEU,RKI,Confirmed cases,report,334,TRUE
+2020-07-29,DEU,DEU,RKI,Confirmed cases,report,404,TRUE
+2020-07-30,DEU,DEU,RKI,Confirmed cases,report,380,TRUE
+2020-07-31,DEU,DEU,RKI,Confirmed cases,report,470,TRUE
+2020-08-01,DEU,DEU,RKI,Confirmed cases,report,276,TRUE
+2020-08-02,DEU,DEU,RKI,Confirmed cases,report,171,TRUE
+2020-08-03,DEU,DEU,RKI,Confirmed cases,report,388,TRUE
+2020-08-04,DEU,DEU,RKI,Confirmed cases,report,497,TRUE
+2020-08-05,DEU,DEU,RKI,Confirmed cases,report,561,TRUE
+2020-08-06,DEU,DEU,RKI,Confirmed cases,report,640,TRUE
+2020-08-07,DEU,DEU,RKI,Confirmed cases,report,569,TRUE
+2020-08-08,DEU,DEU,RKI,Confirmed cases,report,388,TRUE
+2020-08-09,DEU,DEU,RKI,Confirmed cases,report,184,TRUE
+2020-08-10,DEU,DEU,RKI,Confirmed cases,report,600,TRUE
+2020-08-11,DEU,DEU,RKI,Confirmed cases,report,684,TRUE
+2020-08-12,DEU,DEU,RKI,Confirmed cases,report,877,TRUE
+2020-08-13,DEU,DEU,RKI,Confirmed cases,report,828,TRUE
+2020-08-14,DEU,DEU,RKI,Confirmed cases,report,771,TRUE
+2020-08-15,DEU,DEU,RKI,Confirmed cases,report,430,TRUE
+2020-08-16,DEU,DEU,RKI,Confirmed cases,report,310,TRUE
+2020-08-17,DEU,DEU,RKI,Confirmed cases,report,915,TRUE
+2020-08-18,DEU,DEU,RKI,Confirmed cases,report,869,TRUE
+2020-08-19,DEU,DEU,RKI,Confirmed cases,report,985,TRUE
+2020-08-20,DEU,DEU,RKI,Confirmed cases,report,887,TRUE
+2020-08-21,DEU,DEU,RKI,Confirmed cases,report,972,TRUE
+2020-08-22,DEU,DEU,RKI,Confirmed cases,report,558,TRUE
+2020-08-23,DEU,DEU,RKI,Confirmed cases,report,321,TRUE
+2020-08-24,DEU,DEU,RKI,Confirmed cases,report,808,TRUE
+2020-08-25,DEU,DEU,RKI,Confirmed cases,report,873,TRUE
+2020-08-26,DEU,DEU,RKI,Confirmed cases,report,892,TRUE
+2020-08-27,DEU,DEU,RKI,Confirmed cases,report,832,TRUE
+2020-08-28,DEU,DEU,RKI,Confirmed cases,report,737,TRUE
+2020-08-29,DEU,DEU,RKI,Confirmed cases,report,427,TRUE
+2020-08-30,DEU,DEU,RKI,Confirmed cases,report,281,TRUE
+2020-08-31,DEU,DEU,RKI,Confirmed cases,report,601,TRUE
+2020-09-01,DEU,DEU,RKI,Confirmed cases,report,714,TRUE
+2020-09-02,DEU,DEU,RKI,Confirmed cases,report,708,TRUE
+2020-09-03,DEU,DEU,RKI,Confirmed cases,report,777,TRUE
+2020-09-04,DEU,DEU,RKI,Confirmed cases,report,829,TRUE
+2020-09-05,DEU,DEU,RKI,Confirmed cases,report,574,TRUE
+2020-09-06,DEU,DEU,RKI,Confirmed cases,report,298,TRUE
+2020-09-07,DEU,DEU,RKI,Confirmed cases,report,742,TRUE
+2020-09-08,DEU,DEU,RKI,Confirmed cases,report,724,TRUE
+2020-09-09,DEU,DEU,RKI,Confirmed cases,report,826,TRUE
+2020-09-10,DEU,DEU,RKI,Confirmed cases,report,737,TRUE
+2020-09-11,DEU,DEU,RKI,Confirmed cases,report,715,TRUE
+2020-09-12,DEU,DEU,RKI,Confirmed cases,report,545,TRUE
+2020-09-13,DEU,DEU,RKI,Confirmed cases,report,316,TRUE
+2020-09-14,DEU,DEU,RKI,Confirmed cases,report,665,TRUE
+2020-09-15,DEU,DEU,RKI,Confirmed cases,report,838,TRUE
+2020-09-16,DEU,DEU,RKI,Confirmed cases,report,938,TRUE
+2020-09-17,DEU,DEU,RKI,Confirmed cases,report,980,TRUE
+2020-09-18,DEU,DEU,RKI,Confirmed cases,report,913,TRUE
+2020-09-19,DEU,DEU,RKI,Confirmed cases,report,596,TRUE
+2020-09-20,DEU,DEU,RKI,Confirmed cases,report,280,TRUE
+2020-09-21,DEU,DEU,RKI,Confirmed cases,report,745,TRUE
+2020-09-22,DEU,DEU,RKI,Confirmed cases,report,764,TRUE
+2020-09-23,DEU,DEU,RKI,Confirmed cases,report,896,TRUE
+2020-09-24,DEU,DEU,RKI,Confirmed cases,report,963,TRUE
+2020-09-25,DEU,DEU,RKI,Confirmed cases,report,937,TRUE
+2020-09-26,DEU,DEU,RKI,Confirmed cases,report,757,TRUE
+2020-09-27,DEU,DEU,RKI,Confirmed cases,report,401,TRUE
+2020-09-28,DEU,DEU,RKI,Confirmed cases,report,804,TRUE
+2020-09-29,DEU,DEU,RKI,Confirmed cases,report,929,TRUE
+2020-09-30,DEU,DEU,RKI,Confirmed cases,report,1098,TRUE
+2020-10-01,DEU,DEU,RKI,Confirmed cases,report,1192,TRUE
+2020-10-02,DEU,DEU,RKI,Confirmed cases,report,1295,TRUE
+2020-10-03,DEU,DEU,RKI,Confirmed cases,report,960,TRUE
+2020-10-04,DEU,DEU,RKI,Confirmed cases,report,468,TRUE
+2020-10-05,DEU,DEU,RKI,Confirmed cases,report,1037,TRUE
+2020-10-06,DEU,DEU,RKI,Confirmed cases,report,1498,TRUE
+2020-10-07,DEU,DEU,RKI,Confirmed cases,report,1800,TRUE
+2020-10-08,DEU,DEU,RKI,Confirmed cases,report,2075,TRUE
+2020-10-09,DEU,DEU,RKI,Confirmed cases,report,2270,TRUE
+2020-10-10,DEU,DEU,RKI,Confirmed cases,report,1668,TRUE
+2020-10-11,DEU,DEU,RKI,Confirmed cases,report,1081,TRUE
+2020-10-12,DEU,DEU,RKI,Confirmed cases,report,1904,TRUE
+2020-10-13,DEU,DEU,RKI,Confirmed cases,report,2489,TRUE
+2020-10-14,DEU,DEU,RKI,Confirmed cases,report,3273,TRUE
+2020-10-15,DEU,DEU,RKI,Confirmed cases,report,3531,TRUE
+2020-10-16,DEU,DEU,RKI,Confirmed cases,report,3741,TRUE
+2020-10-17,DEU,DEU,RKI,Confirmed cases,report,2665,TRUE
+2020-10-18,DEU,DEU,RKI,Confirmed cases,report,1715,TRUE
+2020-10-19,DEU,DEU,RKI,Confirmed cases,report,3101,TRUE
+2020-10-20,DEU,DEU,RKI,Confirmed cases,report,4500,TRUE
+2020-10-21,DEU,DEU,RKI,Confirmed cases,report,5898,TRUE
+2020-10-22,DEU,DEU,RKI,Confirmed cases,report,6591,TRUE
+2020-10-23,DEU,DEU,RKI,Confirmed cases,report,6809,TRUE
+2020-10-24,DEU,DEU,RKI,Confirmed cases,report,5168,TRUE
+2020-10-25,DEU,DEU,RKI,Confirmed cases,report,3587,TRUE
+2020-10-26,DEU,DEU,RKI,Confirmed cases,report,5898,TRUE
+2020-10-27,DEU,DEU,RKI,Confirmed cases,report,8055,TRUE
+2020-10-28,DEU,DEU,RKI,Confirmed cases,report,9395,TRUE
+2020-10-29,DEU,DEU,RKI,Confirmed cases,report,9688,TRUE
+2020-10-30,DEU,DEU,RKI,Confirmed cases,report,9578,TRUE
+2020-10-31,DEU,DEU,RKI,Confirmed cases,report,6947,TRUE
+2020-11-01,DEU,DEU,RKI,Confirmed cases,report,5446,TRUE
+2020-11-02,DEU,DEU,RKI,Confirmed cases,report,8046,TRUE
+2020-11-03,DEU,DEU,RKI,Confirmed cases,report,9787,TRUE
+2020-11-04,DEU,DEU,RKI,Confirmed cases,report,10382,TRUE
+2020-11-05,DEU,DEU,RKI,Confirmed cases,report,10945,TRUE
+2020-11-06,DEU,DEU,RKI,Confirmed cases,report,10994,TRUE
+2020-11-07,DEU,DEU,RKI,Confirmed cases,report,8137,TRUE
+2020-11-08,DEU,DEU,RKI,Confirmed cases,report,4952,TRUE
+2020-11-09,DEU,DEU,RKI,Confirmed cases,report,8531,TRUE
+2020-11-10,DEU,DEU,RKI,Confirmed cases,report,9957,TRUE
+2020-11-11,DEU,DEU,RKI,Confirmed cases,report,11160,TRUE
+2020-11-12,DEU,DEU,RKI,Confirmed cases,report,11648,TRUE
+2020-11-13,DEU,DEU,RKI,Confirmed cases,report,10708,TRUE
+2020-11-14,DEU,DEU,RKI,Confirmed cases,report,7681,TRUE
+2020-11-15,DEU,DEU,RKI,Confirmed cases,report,4210,TRUE
+2020-11-16,DEU,DEU,RKI,Confirmed cases,report,7606,TRUE
+2020-11-17,DEU,DEU,RKI,Confirmed cases,report,9831,TRUE
+2020-11-18,DEU,DEU,RKI,Confirmed cases,report,11634,TRUE
+2020-11-19,DEU,DEU,RKI,Confirmed cases,report,12179,TRUE
+2020-11-20,DEU,DEU,RKI,Confirmed cases,report,11429,TRUE
+2020-11-21,DEU,DEU,RKI,Confirmed cases,report,7370,TRUE
+2020-11-22,DEU,DEU,RKI,Confirmed cases,report,4607,TRUE
+2020-11-23,DEU,DEU,RKI,Confirmed cases,report,8018,TRUE
+2020-11-24,DEU,DEU,RKI,Confirmed cases,report,9734,TRUE
+2020-11-25,DEU,DEU,RKI,Confirmed cases,report,11232,TRUE
+2020-11-26,DEU,DEU,RKI,Confirmed cases,report,11654,TRUE
+2020-11-27,DEU,DEU,RKI,Confirmed cases,report,10661,TRUE
+2020-11-28,DEU,DEU,RKI,Confirmed cases,report,7833,TRUE
+2020-11-29,DEU,DEU,RKI,Confirmed cases,report,4543,TRUE
+2020-11-30,DEU,DEU,RKI,Confirmed cases,report,6932,TRUE
+2020-12-01,DEU,DEU,RKI,Confirmed cases,report,9545,TRUE
+2020-12-02,DEU,DEU,RKI,Confirmed cases,report,11158,TRUE
+2020-12-03,DEU,DEU,RKI,Confirmed cases,report,12784,TRUE
+2020-12-04,DEU,DEU,RKI,Confirmed cases,report,11413,TRUE
+2020-12-05,DEU,DEU,RKI,Confirmed cases,report,8060,TRUE
+2020-12-06,DEU,DEU,RKI,Confirmed cases,report,5204,TRUE
+2020-12-07,DEU,DEU,RKI,Confirmed cases,report,8467,TRUE
+2020-12-08,DEU,DEU,RKI,Confirmed cases,report,11458,TRUE
+2020-12-09,DEU,DEU,RKI,Confirmed cases,report,13277,TRUE
+2020-12-10,DEU,DEU,RKI,Confirmed cases,report,14674,TRUE
+2020-12-11,DEU,DEU,RKI,Confirmed cases,report,13948,TRUE
+2020-12-12,DEU,DEU,RKI,Confirmed cases,report,10531,TRUE
+2020-12-13,DEU,DEU,RKI,Confirmed cases,report,6442,TRUE
+2020-12-14,DEU,DEU,RKI,Confirmed cases,report,9771,TRUE
+2020-12-15,DEU,DEU,RKI,Confirmed cases,report,13102,TRUE
+2020-12-16,DEU,DEU,RKI,Confirmed cases,report,15534,TRUE
+2020-12-17,DEU,DEU,RKI,Confirmed cases,report,16063,TRUE
+2020-12-18,DEU,DEU,RKI,Confirmed cases,report,15163,TRUE
+2020-12-19,DEU,DEU,RKI,Confirmed cases,report,10853,TRUE
+2020-12-20,DEU,DEU,RKI,Confirmed cases,report,7452,TRUE
+2020-12-21,DEU,DEU,RKI,Confirmed cases,report,10471,TRUE
+2020-12-22,DEU,DEU,RKI,Confirmed cases,report,14599,TRUE
+2020-12-23,DEU,DEU,RKI,Confirmed cases,report,17438,TRUE
+2020-12-24,DEU,DEU,RKI,Confirmed cases,report,11070,TRUE
+2020-12-25,DEU,DEU,RKI,Confirmed cases,report,6898,TRUE
+2020-12-26,DEU,DEU,RKI,Confirmed cases,report,6217,TRUE
+2020-12-27,DEU,DEU,RKI,Confirmed cases,report,4980,TRUE
+2020-12-28,DEU,DEU,RKI,Confirmed cases,report,7863,TRUE
+2020-12-29,DEU,DEU,RKI,Confirmed cases,report,12804,TRUE
+2020-12-30,DEU,DEU,RKI,Confirmed cases,report,14616,TRUE
+2020-12-31,DEU,DEU,RKI,Confirmed cases,report,9628,TRUE
+2021-01-01,DEU,DEU,RKI,Confirmed cases,report,4874,TRUE
+2021-01-02,DEU,DEU,RKI,Confirmed cases,report,5002,TRUE
+2021-01-03,DEU,DEU,RKI,Confirmed cases,report,4179,TRUE
+2021-01-04,DEU,DEU,RKI,Confirmed cases,report,6684,TRUE
+2021-01-05,DEU,DEU,RKI,Confirmed cases,report,11978,TRUE
+2021-01-06,DEU,DEU,RKI,Confirmed cases,report,12437,TRUE
+2021-01-07,DEU,DEU,RKI,Confirmed cases,report,12112,TRUE
+2021-01-08,DEU,DEU,RKI,Confirmed cases,report,11987,TRUE
+2021-01-09,DEU,DEU,RKI,Confirmed cases,report,8097,TRUE
+2021-01-10,DEU,DEU,RKI,Confirmed cases,report,4148,TRUE
+2021-01-11,DEU,DEU,RKI,Confirmed cases,report,6731,TRUE
+2021-01-12,DEU,DEU,RKI,Confirmed cases,report,10715,TRUE
+2021-01-13,DEU,DEU,RKI,Confirmed cases,report,11386,TRUE
+2021-01-14,DEU,DEU,RKI,Confirmed cases,report,10054,TRUE
+2021-01-15,DEU,DEU,RKI,Confirmed cases,report,8898,TRUE
+2021-01-16,DEU,DEU,RKI,Confirmed cases,report,6684,TRUE
+2021-01-17,DEU,DEU,RKI,Confirmed cases,report,3428,TRUE
+2021-01-18,DEU,DEU,RKI,Confirmed cases,report,4490,TRUE
+2021-01-19,DEU,DEU,RKI,Confirmed cases,report,8307,TRUE
+2021-01-20,DEU,DEU,RKI,Confirmed cases,report,8740,TRUE
+2021-01-21,DEU,DEU,RKI,Confirmed cases,report,7934,TRUE
+2021-01-22,DEU,DEU,RKI,Confirmed cases,report,6913,TRUE
+2021-01-23,DEU,DEU,RKI,Confirmed cases,report,5368,TRUE
+2021-01-24,DEU,DEU,RKI,Confirmed cases,report,2451,TRUE
+2021-01-25,DEU,DEU,RKI,Confirmed cases,report,3175,TRUE
+2021-01-26,DEU,DEU,RKI,Confirmed cases,report,6915,TRUE
+2021-01-27,DEU,DEU,RKI,Confirmed cases,report,6933,TRUE
+2021-01-28,DEU,DEU,RKI,Confirmed cases,report,5862,TRUE
+2021-01-29,DEU,DEU,RKI,Confirmed cases,report,5866,TRUE
+2021-01-30,DEU,DEU,RKI,Confirmed cases,report,4712,TRUE
+2021-01-31,DEU,DEU,RKI,Confirmed cases,report,1918,TRUE
+2021-02-01,DEU,DEU,RKI,Confirmed cases,report,2711,TRUE
+2021-02-02,DEU,DEU,RKI,Confirmed cases,report,5172,TRUE
+2021-02-03,DEU,DEU,RKI,Confirmed cases,report,5963,TRUE
+2021-02-04,DEU,DEU,RKI,Confirmed cases,report,5027,TRUE
+2021-02-05,DEU,DEU,RKI,Confirmed cases,report,4408,TRUE
+2021-02-06,DEU,DEU,RKI,Confirmed cases,report,3722,TRUE
+2021-02-07,DEU,DEU,RKI,Confirmed cases,report,1424,TRUE
+2021-02-08,DEU,DEU,RKI,Confirmed cases,report,1945,TRUE
+2021-02-09,DEU,DEU,RKI,Confirmed cases,report,3647,TRUE
+2021-02-10,DEU,DEU,RKI,Confirmed cases,report,4149,TRUE
+2021-02-11,DEU,DEU,RKI,Confirmed cases,report,3914,TRUE
+2021-02-12,DEU,DEU,RKI,Confirmed cases,report,3680,TRUE
+2021-02-13,DEU,DEU,RKI,Confirmed cases,report,2445,TRUE
+2021-02-14,DEU,DEU,RKI,Confirmed cases,report,1571,TRUE
+2021-02-15,DEU,DEU,RKI,Confirmed cases,report,1904,TRUE
+2021-02-16,DEU,DEU,RKI,Confirmed cases,report,3653,TRUE
+2021-02-17,DEU,DEU,RKI,Confirmed cases,report,3917,TRUE
+2021-02-18,DEU,DEU,RKI,Confirmed cases,report,3809,TRUE
+2021-02-19,DEU,DEU,RKI,Confirmed cases,report,3691,TRUE
+2021-02-20,DEU,DEU,RKI,Confirmed cases,report,3232,TRUE
+2021-02-21,DEU,DEU,RKI,Confirmed cases,report,1213,TRUE
+2021-02-22,DEU,DEU,RKI,Confirmed cases,report,1892,TRUE
+2021-02-23,DEU,DEU,RKI,Confirmed cases,report,3940,TRUE
+2021-02-24,DEU,DEU,RKI,Confirmed cases,report,4250,TRUE
+2021-02-25,DEU,DEU,RKI,Confirmed cases,report,3933,TRUE
+2021-02-26,DEU,DEU,RKI,Confirmed cases,report,3848,TRUE
+2021-02-27,DEU,DEU,RKI,Confirmed cases,report,3326,TRUE
+2021-02-28,DEU,DEU,RKI,Confirmed cases,report,1444,TRUE
+2021-03-01,DEU,DEU,RKI,Confirmed cases,report,2022,TRUE
+2021-03-02,DEU,DEU,RKI,Confirmed cases,report,4222,TRUE
+2021-03-03,DEU,DEU,RKI,Confirmed cases,report,4326,TRUE
+2021-03-04,DEU,DEU,RKI,Confirmed cases,report,3962,TRUE
+2021-03-05,DEU,DEU,RKI,Confirmed cases,report,3972,TRUE
+2021-03-06,DEU,DEU,RKI,Confirmed cases,report,3306,TRUE
+2021-03-07,DEU,DEU,RKI,Confirmed cases,report,1467,TRUE
+2021-03-08,DEU,DEU,RKI,Confirmed cases,report,2012,TRUE
+2021-03-09,DEU,DEU,RKI,Confirmed cases,report,4335,TRUE
+2021-03-10,DEU,DEU,RKI,Confirmed cases,report,5379,TRUE
+2021-03-11,DEU,DEU,RKI,Confirmed cases,report,5282,TRUE
+2021-03-12,DEU,DEU,RKI,Confirmed cases,report,5155,TRUE
+2021-03-13,DEU,DEU,RKI,Confirmed cases,report,4263,TRUE
+2021-03-14,DEU,DEU,RKI,Confirmed cases,report,2020,TRUE
+2021-03-15,DEU,DEU,RKI,Confirmed cases,report,2670,TRUE
+2021-03-16,DEU,DEU,RKI,Confirmed cases,report,5976,TRUE
+2021-03-17,DEU,DEU,RKI,Confirmed cases,report,7088,TRUE
+2021-03-18,DEU,DEU,RKI,Confirmed cases,report,6629,TRUE
+2021-03-19,DEU,DEU,RKI,Confirmed cases,report,6260,TRUE
+2021-03-20,DEU,DEU,RKI,Confirmed cases,report,5294,TRUE
+2021-03-21,DEU,DEU,RKI,Confirmed cases,report,2496,TRUE
+2021-03-22,DEU,DEU,RKI,Confirmed cases,report,3666,TRUE
+2021-03-23,DEU,DEU,RKI,Confirmed cases,report,7399,TRUE
+2021-03-24,DEU,DEU,RKI,Confirmed cases,report,9256,TRUE
+2021-03-25,DEU,DEU,RKI,Confirmed cases,report,9267,TRUE
+2021-03-26,DEU,DEU,RKI,Confirmed cases,report,8723,TRUE
+2021-03-27,DEU,DEU,RKI,Confirmed cases,report,6882,TRUE
+2021-03-28,DEU,DEU,RKI,Confirmed cases,report,3228,TRUE
+2021-03-29,DEU,DEU,RKI,Confirmed cases,report,4721,TRUE
+2021-03-30,DEU,DEU,RKI,Confirmed cases,report,8162,TRUE
+2021-03-31,DEU,DEU,RKI,Confirmed cases,report,10304,TRUE
+2021-04-01,DEU,DEU,RKI,Confirmed cases,report,9251,TRUE
+2021-04-02,DEU,DEU,RKI,Confirmed cases,report,6850,TRUE
+2021-04-03,DEU,DEU,RKI,Confirmed cases,report,4590,TRUE
+2021-04-04,DEU,DEU,RKI,Confirmed cases,report,3129,TRUE
+2021-04-05,DEU,DEU,RKI,Confirmed cases,report,2848,TRUE
+2021-04-06,DEU,DEU,RKI,Confirmed cases,report,4590,TRUE
+2021-04-07,DEU,DEU,RKI,Confirmed cases,report,9066,TRUE
+2021-04-08,DEU,DEU,RKI,Confirmed cases,report,10258,TRUE
+2021-04-09,DEU,DEU,RKI,Confirmed cases,report,9301,TRUE
+2021-04-10,DEU,DEU,RKI,Confirmed cases,report,7301,TRUE
+2021-04-11,DEU,DEU,RKI,Confirmed cases,report,3439,TRUE
+2021-04-12,DEU,DEU,RKI,Confirmed cases,report,4977,TRUE
+2021-04-13,DEU,DEU,RKI,Confirmed cases,report,10501,TRUE
+2021-04-14,DEU,DEU,RKI,Confirmed cases,report,11676,TRUE
+2021-04-15,DEU,DEU,RKI,Confirmed cases,report,10601,TRUE
+2021-04-16,DEU,DEU,RKI,Confirmed cases,report,10127,TRUE
+2021-04-17,DEU,DEU,RKI,Confirmed cases,report,7831,TRUE
+2021-04-18,DEU,DEU,RKI,Confirmed cases,report,3851,TRUE
+2021-04-19,DEU,DEU,RKI,Confirmed cases,report,5275,TRUE
+2021-04-20,DEU,DEU,RKI,Confirmed cases,report,11399,TRUE
+2021-04-21,DEU,DEU,RKI,Confirmed cases,report,12262,TRUE
+2021-04-22,DEU,DEU,RKI,Confirmed cases,report,10967,TRUE
+2021-04-23,DEU,DEU,RKI,Confirmed cases,report,10101,TRUE
+2021-04-24,DEU,DEU,RKI,Confirmed cases,report,7924,TRUE
+2021-04-25,DEU,DEU,RKI,Confirmed cases,report,3689,TRUE
+2021-04-26,DEU,DEU,RKI,Confirmed cases,report,5112,TRUE
+2021-04-27,DEU,DEU,RKI,Confirmed cases,report,9873,TRUE
+2021-04-28,DEU,DEU,RKI,Confirmed cases,report,10471,TRUE
+2021-04-29,DEU,DEU,RKI,Confirmed cases,report,9137,TRUE
+2021-04-30,DEU,DEU,RKI,Confirmed cases,report,8211,TRUE
+2021-05-01,DEU,DEU,RKI,Confirmed cases,report,6531,TRUE
+2021-05-02,DEU,DEU,RKI,Confirmed cases,report,2829,TRUE
+2021-05-03,DEU,DEU,RKI,Confirmed cases,report,3822,TRUE
+2021-05-04,DEU,DEU,RKI,Confirmed cases,report,8232,TRUE
+2021-05-05,DEU,DEU,RKI,Confirmed cases,report,8107,TRUE
+2021-05-06,DEU,DEU,RKI,Confirmed cases,report,6857,TRUE
+2021-05-07,DEU,DEU,RKI,Confirmed cases,report,6378,TRUE
+2021-05-08,DEU,DEU,RKI,Confirmed cases,report,4973,TRUE
+2021-05-09,DEU,DEU,RKI,Confirmed cases,report,2120,TRUE
+2021-05-10,DEU,DEU,RKI,Confirmed cases,report,2910,TRUE
+2021-05-11,DEU,DEU,RKI,Confirmed cases,report,6242,TRUE
+2021-05-12,DEU,DEU,RKI,Confirmed cases,report,6609,TRUE
+2021-05-13,DEU,DEU,RKI,Confirmed cases,report,3945,TRUE
+2021-05-14,DEU,DEU,RKI,Confirmed cases,report,3191,TRUE
+2021-05-15,DEU,DEU,RKI,Confirmed cases,report,3598,TRUE
+2021-05-16,DEU,DEU,RKI,Confirmed cases,report,1688,TRUE
+2021-05-17,DEU,DEU,RKI,Confirmed cases,report,2078,TRUE
+2021-05-18,DEU,DEU,RKI,Confirmed cases,report,4604,TRUE
+2021-05-19,DEU,DEU,RKI,Confirmed cases,report,4523,TRUE
+2021-05-20,DEU,DEU,RKI,Confirmed cases,report,3458,TRUE
+2021-05-21,DEU,DEU,RKI,Confirmed cases,report,3344,TRUE
+2021-05-22,DEU,DEU,RKI,Confirmed cases,report,2478,TRUE
+2021-05-23,DEU,DEU,RKI,Confirmed cases,report,809,TRUE
+2021-05-24,DEU,DEU,RKI,Confirmed cases,report,744,TRUE
+2021-05-25,DEU,DEU,RKI,Confirmed cases,report,1486,TRUE
+2021-05-26,DEU,DEU,RKI,Confirmed cases,report,2681,TRUE
+2021-05-27,DEU,DEU,RKI,Confirmed cases,report,2754,TRUE
+2021-05-28,DEU,DEU,RKI,Confirmed cases,report,2161,TRUE
+2021-05-29,DEU,DEU,RKI,Confirmed cases,report,1554,TRUE
+2021-05-30,DEU,DEU,RKI,Confirmed cases,report,686,TRUE
+2021-05-31,DEU,DEU,RKI,Confirmed cases,report,953,TRUE
+2021-06-01,DEU,DEU,RKI,Confirmed cases,report,2069,TRUE
+2021-06-02,DEU,DEU,RKI,Confirmed cases,report,1894,TRUE
+2021-06-03,DEU,DEU,RKI,Confirmed cases,report,1318,TRUE
+2021-06-04,DEU,DEU,RKI,Confirmed cases,report,932,TRUE
+2021-06-05,DEU,DEU,RKI,Confirmed cases,report,910,TRUE
+2021-06-06,DEU,DEU,RKI,Confirmed cases,report,446,TRUE
+2021-06-07,DEU,DEU,RKI,Confirmed cases,report,697,TRUE
+2021-06-08,DEU,DEU,RKI,Confirmed cases,report,1456,TRUE
+2021-06-09,DEU,DEU,RKI,Confirmed cases,report,1197,TRUE
+2021-06-10,DEU,DEU,RKI,Confirmed cases,report,1033,TRUE
+2021-06-11,DEU,DEU,RKI,Confirmed cases,report,809,TRUE
+2021-06-12,DEU,DEU,RKI,Confirmed cases,report,610,TRUE
+2021-06-13,DEU,DEU,RKI,Confirmed cases,report,235,TRUE
+2021-06-14,DEU,DEU,RKI,Confirmed cases,report,418,TRUE
+2021-06-15,DEU,DEU,RKI,Confirmed cases,report,664,TRUE
+2021-06-16,DEU,DEU,RKI,Confirmed cases,report,618,TRUE
+2021-06-17,DEU,DEU,RKI,Confirmed cases,report,513,TRUE
+2021-06-18,DEU,DEU,RKI,Confirmed cases,report,464,TRUE
+2021-06-19,DEU,DEU,RKI,Confirmed cases,report,317,TRUE
+2021-06-20,DEU,DEU,RKI,Confirmed cases,report,126,TRUE
+2021-06-21,DEU,DEU,RKI,Confirmed cases,report,254,TRUE
+2021-06-22,DEU,DEU,RKI,Confirmed cases,report,435,TRUE
+2021-06-23,DEU,DEU,RKI,Confirmed cases,report,379,TRUE
+2021-06-24,DEU,DEU,RKI,Confirmed cases,report,359,TRUE
+2021-06-25,DEU,DEU,RKI,Confirmed cases,report,320,TRUE
+2021-06-26,DEU,DEU,RKI,Confirmed cases,report,195,TRUE
+2021-06-27,DEU,DEU,RKI,Confirmed cases,report,84,TRUE
+2021-06-28,DEU,DEU,RKI,Confirmed cases,report,212,TRUE
+2021-06-29,DEU,DEU,RKI,Confirmed cases,report,329,TRUE
+2021-06-30,DEU,DEU,RKI,Confirmed cases,report,336,TRUE
+2021-07-01,DEU,DEU,RKI,Confirmed cases,report,252,TRUE
+2021-07-02,DEU,DEU,RKI,Confirmed cases,report,248,TRUE
+2021-07-03,DEU,DEU,RKI,Confirmed cases,report,183,TRUE
+2021-07-04,DEU,DEU,RKI,Confirmed cases,report,85,TRUE
+2021-07-05,DEU,DEU,RKI,Confirmed cases,report,172,TRUE
+2021-07-06,DEU,DEU,RKI,Confirmed cases,report,311,TRUE
+2020-01-02,DEU,DEU,RKI,Confirmed cases,report_plotting,1,NA
+2020-01-23,DEU,DEU,RKI,Confirmed cases,report_plotting,2,NA
+2020-01-28,DEU,DEU,RKI,Confirmed cases,report_plotting,2,NA
+2020-01-29,DEU,DEU,RKI,Confirmed cases,report_plotting,2,NA
+2020-01-31,DEU,DEU,RKI,Confirmed cases,report_plotting,4,NA
+2020-02-01,DEU,DEU,RKI,Confirmed cases,report_plotting,1,NA
+2020-02-03,DEU,DEU,RKI,Confirmed cases,report_plotting,1,NA
+2020-02-04,DEU,DEU,RKI,Confirmed cases,report_plotting,4,NA
+2020-02-06,DEU,DEU,RKI,Confirmed cases,report_plotting,1,NA
+2020-02-07,DEU,DEU,RKI,Confirmed cases,report_plotting,1,NA
+2020-02-11,DEU,DEU,RKI,Confirmed cases,report_plotting,2,NA
+2020-02-17,DEU,DEU,RKI,Confirmed cases,report_plotting,1,NA
+2020-02-18,DEU,DEU,RKI,Confirmed cases,report_plotting,1,NA
+2020-02-20,DEU,DEU,RKI,Confirmed cases,report_plotting,2,NA
+2020-02-24,DEU,DEU,RKI,Confirmed cases,report_plotting,1,NA
+2020-02-25,DEU,DEU,RKI,Confirmed cases,report_plotting,3,NA
+2020-02-26,DEU,DEU,RKI,Confirmed cases,report_plotting,7,NA
+2020-02-27,DEU,DEU,RKI,Confirmed cases,report_plotting,23,NA
+2020-02-28,DEU,DEU,RKI,Confirmed cases,report_plotting,47,NA
+2020-02-29,DEU,DEU,RKI,Confirmed cases,report_plotting,23,NA
+2020-03-01,DEU,DEU,RKI,Confirmed cases,report_plotting,35,NA
+2020-03-02,DEU,DEU,RKI,Confirmed cases,report_plotting,41,NA
+2020-03-03,DEU,DEU,RKI,Confirmed cases,report_plotting,84,NA
+2020-03-04,DEU,DEU,RKI,Confirmed cases,report_plotting,157,NA
+2020-03-05,DEU,DEU,RKI,Confirmed cases,report_plotting,186,NA
+2020-03-06,DEU,DEU,RKI,Confirmed cases,report_plotting,186,NA
+2020-03-07,DEU,DEU,RKI,Confirmed cases,report_plotting,142,NA
+2020-03-08,DEU,DEU,RKI,Confirmed cases,report_plotting,102,NA
+2020-03-09,DEU,DEU,RKI,Confirmed cases,report_plotting,345,NA
+2020-03-10,DEU,DEU,RKI,Confirmed cases,report_plotting,596,NA
+2020-03-11,DEU,DEU,RKI,Confirmed cases,report_plotting,755,NA
+2020-03-12,DEU,DEU,RKI,Confirmed cases,report_plotting,991,NA
+2020-03-13,DEU,DEU,RKI,Confirmed cases,report_plotting,1460,NA
+2020-03-14,DEU,DEU,RKI,Confirmed cases,report_plotting,1304,NA
+2020-03-15,DEU,DEU,RKI,Confirmed cases,report_plotting,980,NA
+2020-03-16,DEU,DEU,RKI,Confirmed cases,report_plotting,2037,NA
+2020-03-17,DEU,DEU,RKI,Confirmed cases,report_plotting,3027,NA
+2020-03-18,DEU,DEU,RKI,Confirmed cases,report_plotting,3602,NA
+2020-03-19,DEU,DEU,RKI,Confirmed cases,report_plotting,4059,NA
+2020-03-20,DEU,DEU,RKI,Confirmed cases,report_plotting,4049,NA
+2020-03-21,DEU,DEU,RKI,Confirmed cases,report_plotting,3355,NA
+2020-03-22,DEU,DEU,RKI,Confirmed cases,report_plotting,2264,NA
+2020-03-23,DEU,DEU,RKI,Confirmed cases,report_plotting,3730,NA
+2020-03-24,DEU,DEU,RKI,Confirmed cases,report_plotting,4882,NA
+2020-03-25,DEU,DEU,RKI,Confirmed cases,report_plotting,5677,NA
+2020-03-26,DEU,DEU,RKI,Confirmed cases,report_plotting,5904,NA
+2020-03-27,DEU,DEU,RKI,Confirmed cases,report_plotting,5978,NA
+2020-03-28,DEU,DEU,RKI,Confirmed cases,report_plotting,4723,NA
+2020-03-29,DEU,DEU,RKI,Confirmed cases,report_plotting,3077,NA
+2020-03-30,DEU,DEU,RKI,Confirmed cases,report_plotting,4119,NA
+2020-03-31,DEU,DEU,RKI,Confirmed cases,report_plotting,6062,NA
+2020-04-01,DEU,DEU,RKI,Confirmed cases,report_plotting,6257,NA
+2020-04-02,DEU,DEU,RKI,Confirmed cases,report_plotting,6549,NA
+2020-04-03,DEU,DEU,RKI,Confirmed cases,report_plotting,6190,NA
+2020-04-04,DEU,DEU,RKI,Confirmed cases,report_plotting,4342,NA
+2020-04-05,DEU,DEU,RKI,Confirmed cases,report_plotting,2535,NA
+2020-04-06,DEU,DEU,RKI,Confirmed cases,report_plotting,3660,NA
+2020-04-07,DEU,DEU,RKI,Confirmed cases,report_plotting,5189,NA
+2020-04-08,DEU,DEU,RKI,Confirmed cases,report_plotting,5276,NA
+2020-04-09,DEU,DEU,RKI,Confirmed cases,report_plotting,4906,NA
+2020-04-10,DEU,DEU,RKI,Confirmed cases,report_plotting,3357,NA
+2020-04-11,DEU,DEU,RKI,Confirmed cases,report_plotting,2886,NA
+2020-04-12,DEU,DEU,RKI,Confirmed cases,report_plotting,1864,NA
+2020-04-13,DEU,DEU,RKI,Confirmed cases,report_plotting,1598,NA
+2020-04-14,DEU,DEU,RKI,Confirmed cases,report_plotting,2466,NA
+2020-04-15,DEU,DEU,RKI,Confirmed cases,report_plotting,3323,NA
+2020-04-16,DEU,DEU,RKI,Confirmed cases,report_plotting,3419,NA
+2020-04-17,DEU,DEU,RKI,Confirmed cases,report_plotting,3048,NA
+2020-04-18,DEU,DEU,RKI,Confirmed cases,report_plotting,2106,NA
+2020-04-19,DEU,DEU,RKI,Confirmed cases,report_plotting,1374,NA
+2020-04-20,DEU,DEU,RKI,Confirmed cases,report_plotting,1708,NA
+2020-04-21,DEU,DEU,RKI,Confirmed cases,report_plotting,2182,NA
+2020-04-22,DEU,DEU,RKI,Confirmed cases,report_plotting,2490,NA
+2020-04-23,DEU,DEU,RKI,Confirmed cases,report_plotting,2089,NA
+2020-04-24,DEU,DEU,RKI,Confirmed cases,report_plotting,1903,NA
+2020-04-25,DEU,DEU,RKI,Confirmed cases,report_plotting,1272,NA
+2020-04-26,DEU,DEU,RKI,Confirmed cases,report_plotting,702,NA
+2020-04-27,DEU,DEU,RKI,Confirmed cases,report_plotting,1116,NA
+2020-04-28,DEU,DEU,RKI,Confirmed cases,report_plotting,1467,NA
+2020-04-29,DEU,DEU,RKI,Confirmed cases,report_plotting,1431,NA
+2020-04-30,DEU,DEU,RKI,Confirmed cases,report_plotting,1458,NA
+2020-05-01,DEU,DEU,RKI,Confirmed cases,report_plotting,918,NA
+2020-05-02,DEU,DEU,RKI,Confirmed cases,report_plotting,620,NA
+2020-05-03,DEU,DEU,RKI,Confirmed cases,report_plotting,425,NA
+2020-05-04,DEU,DEU,RKI,Confirmed cases,report_plotting,729,NA
+2020-05-05,DEU,DEU,RKI,Confirmed cases,report_plotting,1090,NA
+2020-05-06,DEU,DEU,RKI,Confirmed cases,report_plotting,1221,NA
+2020-05-07,DEU,DEU,RKI,Confirmed cases,report_plotting,1198,NA
+2020-05-08,DEU,DEU,RKI,Confirmed cases,report_plotting,979,NA
+2020-05-09,DEU,DEU,RKI,Confirmed cases,report_plotting,678,NA
+2020-05-10,DEU,DEU,RKI,Confirmed cases,report_plotting,343,NA
+2020-05-11,DEU,DEU,RKI,Confirmed cases,report_plotting,686,NA
+2020-05-12,DEU,DEU,RKI,Confirmed cases,report_plotting,855,NA
+2020-05-13,DEU,DEU,RKI,Confirmed cases,report_plotting,912,NA
+2020-05-14,DEU,DEU,RKI,Confirmed cases,report_plotting,809,NA
+2020-05-15,DEU,DEU,RKI,Confirmed cases,report_plotting,727,NA
+2020-05-16,DEU,DEU,RKI,Confirmed cases,report_plotting,459,NA
+2020-05-17,DEU,DEU,RKI,Confirmed cases,report_plotting,316,NA
+2020-05-18,DEU,DEU,RKI,Confirmed cases,report_plotting,543,NA
+2020-05-19,DEU,DEU,RKI,Confirmed cases,report_plotting,728,NA
+2020-05-20,DEU,DEU,RKI,Confirmed cases,report_plotting,829,NA
+2020-05-21,DEU,DEU,RKI,Confirmed cases,report_plotting,418,NA
+2020-05-22,DEU,DEU,RKI,Confirmed cases,report_plotting,525,NA
+2020-05-23,DEU,DEU,RKI,Confirmed cases,report_plotting,337,NA
+2020-05-24,DEU,DEU,RKI,Confirmed cases,report_plotting,218,NA
+2020-05-25,DEU,DEU,RKI,Confirmed cases,report_plotting,412,NA
+2020-05-26,DEU,DEU,RKI,Confirmed cases,report_plotting,617,NA
+2020-05-27,DEU,DEU,RKI,Confirmed cases,report_plotting,648,NA
+2020-05-28,DEU,DEU,RKI,Confirmed cases,report_plotting,529,NA
+2020-05-29,DEU,DEU,RKI,Confirmed cases,report_plotting,445,NA
+2020-05-30,DEU,DEU,RKI,Confirmed cases,report_plotting,374,NA
+2020-05-31,DEU,DEU,RKI,Confirmed cases,report_plotting,179,NA
+2020-06-01,DEU,DEU,RKI,Confirmed cases,report_plotting,137,NA
+2020-06-02,DEU,DEU,RKI,Confirmed cases,report_plotting,304,NA
+2020-06-03,DEU,DEU,RKI,Confirmed cases,report_plotting,496,NA
+2020-06-04,DEU,DEU,RKI,Confirmed cases,report_plotting,528,NA
+2020-06-05,DEU,DEU,RKI,Confirmed cases,report_plotting,437,NA
+2020-06-06,DEU,DEU,RKI,Confirmed cases,report_plotting,285,NA
+2020-06-07,DEU,DEU,RKI,Confirmed cases,report_plotting,164,NA
+2020-06-08,DEU,DEU,RKI,Confirmed cases,report_plotting,295,NA
+2020-06-09,DEU,DEU,RKI,Confirmed cases,report_plotting,425,NA
+2020-06-10,DEU,DEU,RKI,Confirmed cases,report_plotting,518,NA
+2020-06-11,DEU,DEU,RKI,Confirmed cases,report_plotting,280,NA
+2020-06-12,DEU,DEU,RKI,Confirmed cases,report_plotting,352,NA
+2020-06-13,DEU,DEU,RKI,Confirmed cases,report_plotting,299,NA
+2020-06-14,DEU,DEU,RKI,Confirmed cases,report_plotting,172,NA
+2020-06-15,DEU,DEU,RKI,Confirmed cases,report_plotting,259,NA
+2020-06-16,DEU,DEU,RKI,Confirmed cases,report_plotting,518,NA
+2020-06-17,DEU,DEU,RKI,Confirmed cases,report_plotting,862,NA
+2020-06-18,DEU,DEU,RKI,Confirmed cases,report_plotting,763,NA
+2020-06-19,DEU,DEU,RKI,Confirmed cases,report_plotting,996,NA
+2020-06-20,DEU,DEU,RKI,Confirmed cases,report_plotting,570,NA
+2020-06-21,DEU,DEU,RKI,Confirmed cases,report_plotting,222,NA
+2020-06-22,DEU,DEU,RKI,Confirmed cases,report_plotting,443,NA
+2020-06-23,DEU,DEU,RKI,Confirmed cases,report_plotting,541,NA
+2020-06-24,DEU,DEU,RKI,Confirmed cases,report_plotting,506,NA
+2020-06-25,DEU,DEU,RKI,Confirmed cases,report_plotting,564,NA
+2020-06-26,DEU,DEU,RKI,Confirmed cases,report_plotting,574,NA
+2020-06-27,DEU,DEU,RKI,Confirmed cases,report_plotting,325,NA
+2020-06-28,DEU,DEU,RKI,Confirmed cases,report_plotting,200,NA
+2020-06-29,DEU,DEU,RKI,Confirmed cases,report_plotting,416,NA
+2020-06-30,DEU,DEU,RKI,Confirmed cases,report_plotting,457,NA
+2020-07-01,DEU,DEU,RKI,Confirmed cases,report_plotting,482,NA
+2020-07-02,DEU,DEU,RKI,Confirmed cases,report_plotting,473,NA
+2020-07-03,DEU,DEU,RKI,Confirmed cases,report_plotting,426,NA
+2020-07-04,DEU,DEU,RKI,Confirmed cases,report_plotting,292,NA
+2020-07-05,DEU,DEU,RKI,Confirmed cases,report_plotting,142,NA
+2020-07-06,DEU,DEU,RKI,Confirmed cases,report_plotting,327,NA
+2020-07-07,DEU,DEU,RKI,Confirmed cases,report_plotting,390,NA
+2020-07-08,DEU,DEU,RKI,Confirmed cases,report_plotting,451,NA
+2020-07-09,DEU,DEU,RKI,Confirmed cases,report_plotting,426,NA
+2020-07-10,DEU,DEU,RKI,Confirmed cases,report_plotting,426,NA
+2020-07-11,DEU,DEU,RKI,Confirmed cases,report_plotting,276,NA
+2020-07-12,DEU,DEU,RKI,Confirmed cases,report_plotting,131,NA
+2020-07-13,DEU,DEU,RKI,Confirmed cases,report_plotting,326,NA
+2020-07-14,DEU,DEU,RKI,Confirmed cases,report_plotting,465,NA
+2020-07-15,DEU,DEU,RKI,Confirmed cases,report_plotting,537,NA
+2020-07-16,DEU,DEU,RKI,Confirmed cases,report_plotting,554,NA
+2020-07-17,DEU,DEU,RKI,Confirmed cases,report_plotting,521,NA
+2020-07-18,DEU,DEU,RKI,Confirmed cases,report_plotting,440,NA
+2020-07-19,DEU,DEU,RKI,Confirmed cases,report_plotting,179,NA
+2020-07-20,DEU,DEU,RKI,Confirmed cases,report_plotting,454,NA
+2020-07-21,DEU,DEU,RKI,Confirmed cases,report_plotting,522,NA
+2020-07-22,DEU,DEU,RKI,Confirmed cases,report_plotting,697,NA
+2020-07-23,DEU,DEU,RKI,Confirmed cases,report_plotting,695,NA
+2020-07-24,DEU,DEU,RKI,Confirmed cases,report_plotting,805,NA
+2020-07-25,DEU,DEU,RKI,Confirmed cases,report_plotting,542,NA
+2020-07-26,DEU,DEU,RKI,Confirmed cases,report_plotting,211,NA
+2020-07-27,DEU,DEU,RKI,Confirmed cases,report_plotting,528,NA
+2020-07-28,DEU,DEU,RKI,Confirmed cases,report_plotting,755,NA
+2020-07-29,DEU,DEU,RKI,Confirmed cases,report_plotting,908,NA
+2020-07-30,DEU,DEU,RKI,Confirmed cases,report_plotting,860,NA
+2020-07-31,DEU,DEU,RKI,Confirmed cases,report_plotting,914,NA
+2020-08-01,DEU,DEU,RKI,Confirmed cases,report_plotting,561,NA
+2020-08-02,DEU,DEU,RKI,Confirmed cases,report_plotting,305,NA
+2020-08-03,DEU,DEU,RKI,Confirmed cases,report_plotting,797,NA
+2020-08-04,DEU,DEU,RKI,Confirmed cases,report_plotting,947,NA
+2020-08-05,DEU,DEU,RKI,Confirmed cases,report_plotting,1111,NA
+2020-08-06,DEU,DEU,RKI,Confirmed cases,report_plotting,1167,NA
+2020-08-07,DEU,DEU,RKI,Confirmed cases,report_plotting,1005,NA
+2020-08-08,DEU,DEU,RKI,Confirmed cases,report_plotting,711,NA
+2020-08-09,DEU,DEU,RKI,Confirmed cases,report_plotting,320,NA
+2020-08-10,DEU,DEU,RKI,Confirmed cases,report_plotting,1103,NA
+2020-08-11,DEU,DEU,RKI,Confirmed cases,report_plotting,1194,NA
+2020-08-12,DEU,DEU,RKI,Confirmed cases,report_plotting,1543,NA
+2020-08-13,DEU,DEU,RKI,Confirmed cases,report_plotting,1489,NA
+2020-08-14,DEU,DEU,RKI,Confirmed cases,report_plotting,1375,NA
+2020-08-15,DEU,DEU,RKI,Confirmed cases,report_plotting,755,NA
+2020-08-16,DEU,DEU,RKI,Confirmed cases,report_plotting,492,NA
+2020-08-17,DEU,DEU,RKI,Confirmed cases,report_plotting,1547,NA
+2020-08-18,DEU,DEU,RKI,Confirmed cases,report_plotting,1535,NA
+2020-08-19,DEU,DEU,RKI,Confirmed cases,report_plotting,1756,NA
+2020-08-20,DEU,DEU,RKI,Confirmed cases,report_plotting,1622,NA
+2020-08-21,DEU,DEU,RKI,Confirmed cases,report_plotting,1657,NA
+2020-08-22,DEU,DEU,RKI,Confirmed cases,report_plotting,917,NA
+2020-08-23,DEU,DEU,RKI,Confirmed cases,report_plotting,565,NA
+2020-08-24,DEU,DEU,RKI,Confirmed cases,report_plotting,1427,NA
+2020-08-25,DEU,DEU,RKI,Confirmed cases,report_plotting,1482,NA
+2020-08-26,DEU,DEU,RKI,Confirmed cases,report_plotting,1614,NA
+2020-08-27,DEU,DEU,RKI,Confirmed cases,report_plotting,1540,NA
+2020-08-28,DEU,DEU,RKI,Confirmed cases,report_plotting,1388,NA
+2020-08-29,DEU,DEU,RKI,Confirmed cases,report_plotting,833,NA
+2020-08-30,DEU,DEU,RKI,Confirmed cases,report_plotting,536,NA
+2020-08-31,DEU,DEU,RKI,Confirmed cases,report_plotting,1188,NA
+2020-09-01,DEU,DEU,RKI,Confirmed cases,report_plotting,1317,NA
+2020-09-02,DEU,DEU,RKI,Confirmed cases,report_plotting,1415,NA
+2020-09-03,DEU,DEU,RKI,Confirmed cases,report_plotting,1517,NA
+2020-09-04,DEU,DEU,RKI,Confirmed cases,report_plotting,1494,NA
+2020-09-05,DEU,DEU,RKI,Confirmed cases,report_plotting,1105,NA
+2020-09-06,DEU,DEU,RKI,Confirmed cases,report_plotting,582,NA
+2020-09-07,DEU,DEU,RKI,Confirmed cases,report_plotting,1408,NA
+2020-09-08,DEU,DEU,RKI,Confirmed cases,report_plotting,1379,NA
+2020-09-09,DEU,DEU,RKI,Confirmed cases,report_plotting,1748,NA
+2020-09-10,DEU,DEU,RKI,Confirmed cases,report_plotting,1591,NA
+2020-09-11,DEU,DEU,RKI,Confirmed cases,report_plotting,1652,NA
+2020-09-12,DEU,DEU,RKI,Confirmed cases,report_plotting,1225,NA
+2020-09-13,DEU,DEU,RKI,Confirmed cases,report_plotting,760,NA
+2020-09-14,DEU,DEU,RKI,Confirmed cases,report_plotting,1483,NA
+2020-09-15,DEU,DEU,RKI,Confirmed cases,report_plotting,2003,NA
+2020-09-16,DEU,DEU,RKI,Confirmed cases,report_plotting,2197,NA
+2020-09-17,DEU,DEU,RKI,Confirmed cases,report_plotting,2354,NA
+2020-09-18,DEU,DEU,RKI,Confirmed cases,report_plotting,2169,NA
+2020-09-19,DEU,DEU,RKI,Confirmed cases,report_plotting,1393,NA
+2020-09-20,DEU,DEU,RKI,Confirmed cases,report_plotting,691,NA
+2020-09-21,DEU,DEU,RKI,Confirmed cases,report_plotting,1657,NA
+2020-09-22,DEU,DEU,RKI,Confirmed cases,report_plotting,1813,NA
+2020-09-23,DEU,DEU,RKI,Confirmed cases,report_plotting,2209,NA
+2020-09-24,DEU,DEU,RKI,Confirmed cases,report_plotting,2396,NA
+2020-09-25,DEU,DEU,RKI,Confirmed cases,report_plotting,2328,NA
+2020-09-26,DEU,DEU,RKI,Confirmed cases,report_plotting,1786,NA
+2020-09-27,DEU,DEU,RKI,Confirmed cases,report_plotting,873,NA
+2020-09-28,DEU,DEU,RKI,Confirmed cases,report_plotting,1827,NA
+2020-09-29,DEU,DEU,RKI,Confirmed cases,report_plotting,2167,NA
+2020-09-30,DEU,DEU,RKI,Confirmed cases,report_plotting,2729,NA
+2020-10-01,DEU,DEU,RKI,Confirmed cases,report_plotting,2928,NA
+2020-10-02,DEU,DEU,RKI,Confirmed cases,report_plotting,2921,NA
+2020-10-03,DEU,DEU,RKI,Confirmed cases,report_plotting,2198,NA
+2020-10-04,DEU,DEU,RKI,Confirmed cases,report_plotting,1155,NA
+2020-10-05,DEU,DEU,RKI,Confirmed cases,report_plotting,2411,NA
+2020-10-06,DEU,DEU,RKI,Confirmed cases,report_plotting,3586,NA
+2020-10-07,DEU,DEU,RKI,Confirmed cases,report_plotting,4487,NA
+2020-10-08,DEU,DEU,RKI,Confirmed cases,report_plotting,4668,NA
+2020-10-09,DEU,DEU,RKI,Confirmed cases,report_plotting,5058,NA
+2020-10-10,DEU,DEU,RKI,Confirmed cases,report_plotting,3629,NA
+2020-10-11,DEU,DEU,RKI,Confirmed cases,report_plotting,2272,NA
+2020-10-12,DEU,DEU,RKI,Confirmed cases,report_plotting,4191,NA
+2020-10-13,DEU,DEU,RKI,Confirmed cases,report_plotting,5369,NA
+2020-10-14,DEU,DEU,RKI,Confirmed cases,report_plotting,7249,NA
+2020-10-15,DEU,DEU,RKI,Confirmed cases,report_plotting,7913,NA
+2020-10-16,DEU,DEU,RKI,Confirmed cases,report_plotting,7968,NA
+2020-10-17,DEU,DEU,RKI,Confirmed cases,report_plotting,5693,NA
+2020-10-18,DEU,DEU,RKI,Confirmed cases,report_plotting,3678,NA
+2020-10-19,DEU,DEU,RKI,Confirmed cases,report_plotting,6474,NA
+2020-10-20,DEU,DEU,RKI,Confirmed cases,report_plotting,9445,NA
+2020-10-21,DEU,DEU,RKI,Confirmed cases,report_plotting,12412,NA
+2020-10-22,DEU,DEU,RKI,Confirmed cases,report_plotting,13941,NA
+2020-10-23,DEU,DEU,RKI,Confirmed cases,report_plotting,14039,NA
+2020-10-24,DEU,DEU,RKI,Confirmed cases,report_plotting,11102,NA
+2020-10-25,DEU,DEU,RKI,Confirmed cases,report_plotting,7458,NA
+2020-10-26,DEU,DEU,RKI,Confirmed cases,report_plotting,12024,NA
+2020-10-27,DEU,DEU,RKI,Confirmed cases,report_plotting,15953,NA
+2020-10-28,DEU,DEU,RKI,Confirmed cases,report_plotting,19239,NA
+2020-10-29,DEU,DEU,RKI,Confirmed cases,report_plotting,19853,NA
+2020-10-30,DEU,DEU,RKI,Confirmed cases,report_plotting,19421,NA
+2020-10-31,DEU,DEU,RKI,Confirmed cases,report_plotting,14008,NA
+2020-11-01,DEU,DEU,RKI,Confirmed cases,report_plotting,10529,NA
+2020-11-02,DEU,DEU,RKI,Confirmed cases,report_plotting,15258,NA
+2020-11-03,DEU,DEU,RKI,Confirmed cases,report_plotting,19345,NA
+2020-11-04,DEU,DEU,RKI,Confirmed cases,report_plotting,21216,NA
+2020-11-05,DEU,DEU,RKI,Confirmed cases,report_plotting,22281,NA
+2020-11-06,DEU,DEU,RKI,Confirmed cases,report_plotting,21582,NA
+2020-11-07,DEU,DEU,RKI,Confirmed cases,report_plotting,15939,NA
+2020-11-08,DEU,DEU,RKI,Confirmed cases,report_plotting,10147,NA
+2020-11-09,DEU,DEU,RKI,Confirmed cases,report_plotting,15974,NA
+2020-11-10,DEU,DEU,RKI,Confirmed cases,report_plotting,19616,NA
+2020-11-11,DEU,DEU,RKI,Confirmed cases,report_plotting,22699,NA
+2020-11-12,DEU,DEU,RKI,Confirmed cases,report_plotting,23499,NA
+2020-11-13,DEU,DEU,RKI,Confirmed cases,report_plotting,21349,NA
+2020-11-14,DEU,DEU,RKI,Confirmed cases,report_plotting,15793,NA
+2020-11-15,DEU,DEU,RKI,Confirmed cases,report_plotting,8855,NA
+2020-11-16,DEU,DEU,RKI,Confirmed cases,report_plotting,14694,NA
+2020-11-17,DEU,DEU,RKI,Confirmed cases,report_plotting,20346,NA
+2020-11-18,DEU,DEU,RKI,Confirmed cases,report_plotting,23693,NA
+2020-11-19,DEU,DEU,RKI,Confirmed cases,report_plotting,23743,NA
+2020-11-20,DEU,DEU,RKI,Confirmed cases,report_plotting,22288,NA
+2020-11-21,DEU,DEU,RKI,Confirmed cases,report_plotting,14780,NA
+2020-11-22,DEU,DEU,RKI,Confirmed cases,report_plotting,8836,NA
+2020-11-23,DEU,DEU,RKI,Confirmed cases,report_plotting,15086,NA
+2020-11-24,DEU,DEU,RKI,Confirmed cases,report_plotting,19420,NA
+2020-11-25,DEU,DEU,RKI,Confirmed cases,report_plotting,22066,NA
+2020-11-26,DEU,DEU,RKI,Confirmed cases,report_plotting,22767,NA
+2020-11-27,DEU,DEU,RKI,Confirmed cases,report_plotting,20145,NA
+2020-11-28,DEU,DEU,RKI,Confirmed cases,report_plotting,14945,NA
+2020-11-29,DEU,DEU,RKI,Confirmed cases,report_plotting,8791,NA
+2020-11-30,DEU,DEU,RKI,Confirmed cases,report_plotting,13302,NA
+2020-12-01,DEU,DEU,RKI,Confirmed cases,report_plotting,19220,NA
+2020-12-02,DEU,DEU,RKI,Confirmed cases,report_plotting,23214,NA
+2020-12-03,DEU,DEU,RKI,Confirmed cases,report_plotting,24436,NA
+2020-12-04,DEU,DEU,RKI,Confirmed cases,report_plotting,22262,NA
+2020-12-05,DEU,DEU,RKI,Confirmed cases,report_plotting,15723,NA
+2020-12-06,DEU,DEU,RKI,Confirmed cases,report_plotting,10241,NA
+2020-12-07,DEU,DEU,RKI,Confirmed cases,report_plotting,16446,NA
+2020-12-08,DEU,DEU,RKI,Confirmed cases,report_plotting,22786,NA
+2020-12-09,DEU,DEU,RKI,Confirmed cases,report_plotting,27657,NA
+2020-12-10,DEU,DEU,RKI,Confirmed cases,report_plotting,29042,NA
+2020-12-11,DEU,DEU,RKI,Confirmed cases,report_plotting,27255,NA
+2020-12-12,DEU,DEU,RKI,Confirmed cases,report_plotting,20615,NA
+2020-12-13,DEU,DEU,RKI,Confirmed cases,report_plotting,12506,NA
+2020-12-14,DEU,DEU,RKI,Confirmed cases,report_plotting,19065,NA
+2020-12-15,DEU,DEU,RKI,Confirmed cases,report_plotting,26933,NA
+2020-12-16,DEU,DEU,RKI,Confirmed cases,report_plotting,31370,NA
+2020-12-17,DEU,DEU,RKI,Confirmed cases,report_plotting,31987,NA
+2020-12-18,DEU,DEU,RKI,Confirmed cases,report_plotting,29787,NA
+2020-12-19,DEU,DEU,RKI,Confirmed cases,report_plotting,21698,NA
+2020-12-20,DEU,DEU,RKI,Confirmed cases,report_plotting,13900,NA
+2020-12-21,DEU,DEU,RKI,Confirmed cases,report_plotting,20309,NA
+2020-12-22,DEU,DEU,RKI,Confirmed cases,report_plotting,28994,NA
+2020-12-23,DEU,DEU,RKI,Confirmed cases,report_plotting,33985,NA
+2020-12-24,DEU,DEU,RKI,Confirmed cases,report_plotting,21173,NA
+2020-12-25,DEU,DEU,RKI,Confirmed cases,report_plotting,13175,NA
+2020-12-26,DEU,DEU,RKI,Confirmed cases,report_plotting,11546,NA
+2020-12-27,DEU,DEU,RKI,Confirmed cases,report_plotting,9812,NA
+2020-12-28,DEU,DEU,RKI,Confirmed cases,report_plotting,15741,NA
+2020-12-29,DEU,DEU,RKI,Confirmed cases,report_plotting,27580,NA
+2020-12-30,DEU,DEU,RKI,Confirmed cases,report_plotting,31065,NA
+2020-12-31,DEU,DEU,RKI,Confirmed cases,report_plotting,19603,NA
+2021-01-01,DEU,DEU,RKI,Confirmed cases,report_plotting,10274,NA
+2021-01-02,DEU,DEU,RKI,Confirmed cases,report_plotting,10003,NA
+2021-01-03,DEU,DEU,RKI,Confirmed cases,report_plotting,8819,NA
+2021-01-04,DEU,DEU,RKI,Confirmed cases,report_plotting,14295,NA
+2021-01-05,DEU,DEU,RKI,Confirmed cases,report_plotting,27415,NA
+2021-01-06,DEU,DEU,RKI,Confirmed cases,report_plotting,27989,NA
+2021-01-07,DEU,DEU,RKI,Confirmed cases,report_plotting,26116,NA
+2021-01-08,DEU,DEU,RKI,Confirmed cases,report_plotting,24528,NA
+2021-01-09,DEU,DEU,RKI,Confirmed cases,report_plotting,16658,NA
+2021-01-10,DEU,DEU,RKI,Confirmed cases,report_plotting,8468,NA
+2021-01-11,DEU,DEU,RKI,Confirmed cases,report_plotting,13488,NA
+2021-01-12,DEU,DEU,RKI,Confirmed cases,report_plotting,22590,NA
+2021-01-13,DEU,DEU,RKI,Confirmed cases,report_plotting,24105,NA
+2021-01-14,DEU,DEU,RKI,Confirmed cases,report_plotting,20407,NA
+2021-01-15,DEU,DEU,RKI,Confirmed cases,report_plotting,18300,NA
+2021-01-16,DEU,DEU,RKI,Confirmed cases,report_plotting,13442,NA
+2021-01-17,DEU,DEU,RKI,Confirmed cases,report_plotting,6597,NA
+2021-01-18,DEU,DEU,RKI,Confirmed cases,report_plotting,9154,NA
+2021-01-19,DEU,DEU,RKI,Confirmed cases,report_plotting,18465,NA
+2021-01-20,DEU,DEU,RKI,Confirmed cases,report_plotting,19496,NA
+2021-01-21,DEU,DEU,RKI,Confirmed cases,report_plotting,16804,NA
+2021-01-22,DEU,DEU,RKI,Confirmed cases,report_plotting,15020,NA
+2021-01-23,DEU,DEU,RKI,Confirmed cases,report_plotting,11575,NA
+2021-01-24,DEU,DEU,RKI,Confirmed cases,report_plotting,5018,NA
+2021-01-25,DEU,DEU,RKI,Confirmed cases,report_plotting,6744,NA
+2021-01-26,DEU,DEU,RKI,Confirmed cases,report_plotting,15508,NA
+2021-01-27,DEU,DEU,RKI,Confirmed cases,report_plotting,15816,NA
+2021-01-28,DEU,DEU,RKI,Confirmed cases,report_plotting,13349,NA
+2021-01-29,DEU,DEU,RKI,Confirmed cases,report_plotting,12558,NA
+2021-01-30,DEU,DEU,RKI,Confirmed cases,report_plotting,9941,NA
+2021-01-31,DEU,DEU,RKI,Confirmed cases,report_plotting,4198,NA
+2021-02-01,DEU,DEU,RKI,Confirmed cases,report_plotting,5862,NA
+2021-02-02,DEU,DEU,RKI,Confirmed cases,report_plotting,12302,NA
+2021-02-03,DEU,DEU,RKI,Confirmed cases,report_plotting,13415,NA
+2021-02-04,DEU,DEU,RKI,Confirmed cases,report_plotting,11513,NA
+2021-02-05,DEU,DEU,RKI,Confirmed cases,report_plotting,10000,NA
+2021-02-06,DEU,DEU,RKI,Confirmed cases,report_plotting,8386,NA
+2021-02-07,DEU,DEU,RKI,Confirmed cases,report_plotting,3092,NA
+2021-02-08,DEU,DEU,RKI,Confirmed cases,report_plotting,4187,NA
+2021-02-09,DEU,DEU,RKI,Confirmed cases,report_plotting,9097,NA
+2021-02-10,DEU,DEU,RKI,Confirmed cases,report_plotting,10266,NA
+2021-02-11,DEU,DEU,RKI,Confirmed cases,report_plotting,9358,NA
+2021-02-12,DEU,DEU,RKI,Confirmed cases,report_plotting,8529,NA
+2021-02-13,DEU,DEU,RKI,Confirmed cases,report_plotting,5604,NA
+2021-02-14,DEU,DEU,RKI,Confirmed cases,report_plotting,3761,NA
+2021-02-15,DEU,DEU,RKI,Confirmed cases,report_plotting,4378,NA
+2021-02-16,DEU,DEU,RKI,Confirmed cases,report_plotting,9245,NA
+2021-02-17,DEU,DEU,RKI,Confirmed cases,report_plotting,9998,NA
+2021-02-18,DEU,DEU,RKI,Confirmed cases,report_plotting,9229,NA
+2021-02-19,DEU,DEU,RKI,Confirmed cases,report_plotting,8729,NA
+2021-02-20,DEU,DEU,RKI,Confirmed cases,report_plotting,7786,NA
+2021-02-21,DEU,DEU,RKI,Confirmed cases,report_plotting,3040,NA
+2021-02-22,DEU,DEU,RKI,Confirmed cases,report_plotting,4404,NA
+2021-02-23,DEU,DEU,RKI,Confirmed cases,report_plotting,10189,NA
+2021-02-24,DEU,DEU,RKI,Confirmed cases,report_plotting,11292,NA
+2021-02-25,DEU,DEU,RKI,Confirmed cases,report_plotting,9916,NA
+2021-02-26,DEU,DEU,RKI,Confirmed cases,report_plotting,9454,NA
+2021-02-27,DEU,DEU,RKI,Confirmed cases,report_plotting,7653,NA
+2021-02-28,DEU,DEU,RKI,Confirmed cases,report_plotting,3450,NA
+2021-03-01,DEU,DEU,RKI,Confirmed cases,report_plotting,4681,NA
+2021-03-02,DEU,DEU,RKI,Confirmed cases,report_plotting,10954,NA
+2021-03-03,DEU,DEU,RKI,Confirmed cases,report_plotting,11302,NA
+2021-03-04,DEU,DEU,RKI,Confirmed cases,report_plotting,10121,NA
+2021-03-05,DEU,DEU,RKI,Confirmed cases,report_plotting,9652,NA
+2021-03-06,DEU,DEU,RKI,Confirmed cases,report_plotting,8292,NA
+2021-03-07,DEU,DEU,RKI,Confirmed cases,report_plotting,3364,NA
+2021-03-08,DEU,DEU,RKI,Confirmed cases,report_plotting,4839,NA
+2021-03-09,DEU,DEU,RKI,Confirmed cases,report_plotting,11495,NA
+2021-03-10,DEU,DEU,RKI,Confirmed cases,report_plotting,13986,NA
+2021-03-11,DEU,DEU,RKI,Confirmed cases,report_plotting,13142,NA
+2021-03-12,DEU,DEU,RKI,Confirmed cases,report_plotting,12523,NA
+2021-03-13,DEU,DEU,RKI,Confirmed cases,report_plotting,10479,NA
+2021-03-14,DEU,DEU,RKI,Confirmed cases,report_plotting,4843,NA
+2021-03-15,DEU,DEU,RKI,Confirmed cases,report_plotting,6818,NA
+2021-03-16,DEU,DEU,RKI,Confirmed cases,report_plotting,15795,NA
+2021-03-17,DEU,DEU,RKI,Confirmed cases,report_plotting,18367,NA
+2021-03-18,DEU,DEU,RKI,Confirmed cases,report_plotting,16725,NA
+2021-03-19,DEU,DEU,RKI,Confirmed cases,report_plotting,15715,NA
+2021-03-20,DEU,DEU,RKI,Confirmed cases,report_plotting,13217,NA
+2021-03-21,DEU,DEU,RKI,Confirmed cases,report_plotting,5959,NA
+2021-03-22,DEU,DEU,RKI,Confirmed cases,report_plotting,8889,NA
+2021-03-23,DEU,DEU,RKI,Confirmed cases,report_plotting,19458,NA
+2021-03-24,DEU,DEU,RKI,Confirmed cases,report_plotting,22636,NA
+2021-03-25,DEU,DEU,RKI,Confirmed cases,report_plotting,21897,NA
+2021-03-26,DEU,DEU,RKI,Confirmed cases,report_plotting,20026,NA
+2021-03-27,DEU,DEU,RKI,Confirmed cases,report_plotting,15776,NA
+2021-03-28,DEU,DEU,RKI,Confirmed cases,report_plotting,7590,NA
+2021-03-29,DEU,DEU,RKI,Confirmed cases,report_plotting,10991,NA
+2021-03-30,DEU,DEU,RKI,Confirmed cases,report_plotting,20390,NA
+2021-03-31,DEU,DEU,RKI,Confirmed cases,report_plotting,23996,NA
+2021-04-01,DEU,DEU,RKI,Confirmed cases,report_plotting,21439,NA
+2021-04-02,DEU,DEU,RKI,Confirmed cases,report_plotting,15497,NA
+2021-04-03,DEU,DEU,RKI,Confirmed cases,report_plotting,10636,NA
+2021-04-04,DEU,DEU,RKI,Confirmed cases,report_plotting,7150,NA
+2021-04-05,DEU,DEU,RKI,Confirmed cases,report_plotting,7052,NA
+2021-04-06,DEU,DEU,RKI,Confirmed cases,report_plotting,11514,NA
+2021-04-07,DEU,DEU,RKI,Confirmed cases,report_plotting,23729,NA
+2021-04-08,DEU,DEU,RKI,Confirmed cases,report_plotting,25759,NA
+2021-04-09,DEU,DEU,RKI,Confirmed cases,report_plotting,23280,NA
+2021-04-10,DEU,DEU,RKI,Confirmed cases,report_plotting,18069,NA
+2021-04-11,DEU,DEU,RKI,Confirmed cases,report_plotting,8847,NA
+2021-04-12,DEU,DEU,RKI,Confirmed cases,report_plotting,12112,NA
+2021-04-13,DEU,DEU,RKI,Confirmed cases,report_plotting,26735,NA
+2021-04-14,DEU,DEU,RKI,Confirmed cases,report_plotting,28566,NA
+2021-04-15,DEU,DEU,RKI,Confirmed cases,report_plotting,25060,NA
+2021-04-16,DEU,DEU,RKI,Confirmed cases,report_plotting,23047,NA
+2021-04-17,DEU,DEU,RKI,Confirmed cases,report_plotting,17687,NA
+2021-04-18,DEU,DEU,RKI,Confirmed cases,report_plotting,8819,NA
+2021-04-19,DEU,DEU,RKI,Confirmed cases,report_plotting,12308,NA
+2021-04-20,DEU,DEU,RKI,Confirmed cases,report_plotting,27971,NA
+2021-04-21,DEU,DEU,RKI,Confirmed cases,report_plotting,29354,NA
+2021-04-22,DEU,DEU,RKI,Confirmed cases,report_plotting,25463,NA
+2021-04-23,DEU,DEU,RKI,Confirmed cases,report_plotting,22942,NA
+2021-04-24,DEU,DEU,RKI,Confirmed cases,report_plotting,18012,NA
+2021-04-25,DEU,DEU,RKI,Confirmed cases,report_plotting,8705,NA
+2021-04-26,DEU,DEU,RKI,Confirmed cases,report_plotting,12225,NA
+2021-04-27,DEU,DEU,RKI,Confirmed cases,report_plotting,25254,NA
+2021-04-28,DEU,DEU,RKI,Confirmed cases,report_plotting,25050,NA
+2021-04-29,DEU,DEU,RKI,Confirmed cases,report_plotting,21419,NA
+2021-04-30,DEU,DEU,RKI,Confirmed cases,report_plotting,19174,NA
+2021-05-01,DEU,DEU,RKI,Confirmed cases,report_plotting,15079,NA
+2021-05-02,DEU,DEU,RKI,Confirmed cases,report_plotting,6647,NA
+2021-05-03,DEU,DEU,RKI,Confirmed cases,report_plotting,9159,NA
+2021-05-04,DEU,DEU,RKI,Confirmed cases,report_plotting,20997,NA
+2021-05-05,DEU,DEU,RKI,Confirmed cases,report_plotting,20859,NA
+2021-05-06,DEU,DEU,RKI,Confirmed cases,report_plotting,17168,NA
+2021-05-07,DEU,DEU,RKI,Confirmed cases,report_plotting,15482,NA
+2021-05-08,DEU,DEU,RKI,Confirmed cases,report_plotting,12026,NA
+2021-05-09,DEU,DEU,RKI,Confirmed cases,report_plotting,5322,NA
+2021-05-10,DEU,DEU,RKI,Confirmed cases,report_plotting,7431,NA
+2021-05-11,DEU,DEU,RKI,Confirmed cases,report_plotting,16782,NA
+2021-05-12,DEU,DEU,RKI,Confirmed cases,report_plotting,16485,NA
+2021-05-13,DEU,DEU,RKI,Confirmed cases,report_plotting,9669,NA
+2021-05-14,DEU,DEU,RKI,Confirmed cases,report_plotting,7623,NA
+2021-05-15,DEU,DEU,RKI,Confirmed cases,report_plotting,8592,NA
+2021-05-16,DEU,DEU,RKI,Confirmed cases,report_plotting,4281,NA
+2021-05-17,DEU,DEU,RKI,Confirmed cases,report_plotting,5279,NA
+2021-05-18,DEU,DEU,RKI,Confirmed cases,report_plotting,12342,NA
+2021-05-19,DEU,DEU,RKI,Confirmed cases,report_plotting,11298,NA
+2021-05-20,DEU,DEU,RKI,Confirmed cases,report_plotting,8433,NA
+2021-05-21,DEU,DEU,RKI,Confirmed cases,report_plotting,7584,NA
+2021-05-22,DEU,DEU,RKI,Confirmed cases,report_plotting,5811,NA
+2021-05-23,DEU,DEU,RKI,Confirmed cases,report_plotting,2000,NA
+2021-05-24,DEU,DEU,RKI,Confirmed cases,report_plotting,1804,NA
+2021-05-25,DEU,DEU,RKI,Confirmed cases,report_plotting,3671,NA
+2021-05-26,DEU,DEU,RKI,Confirmed cases,report_plotting,7148,NA
+2021-05-27,DEU,DEU,RKI,Confirmed cases,report_plotting,6820,NA
+2021-05-28,DEU,DEU,RKI,Confirmed cases,report_plotting,5163,NA
+2021-05-29,DEU,DEU,RKI,Confirmed cases,report_plotting,3687,NA
+2021-05-30,DEU,DEU,RKI,Confirmed cases,report_plotting,1603,NA
+2021-05-31,DEU,DEU,RKI,Confirmed cases,report_plotting,2448,NA
+2021-06-01,DEU,DEU,RKI,Confirmed cases,report_plotting,5119,NA
+2021-06-02,DEU,DEU,RKI,Confirmed cases,report_plotting,4494,NA
+2021-06-03,DEU,DEU,RKI,Confirmed cases,report_plotting,2942,NA
+2021-06-04,DEU,DEU,RKI,Confirmed cases,report_plotting,2273,NA
+2021-06-05,DEU,DEU,RKI,Confirmed cases,report_plotting,2306,NA
+2021-06-06,DEU,DEU,RKI,Confirmed cases,report_plotting,1123,NA
+2021-06-07,DEU,DEU,RKI,Confirmed cases,report_plotting,1706,NA
+2021-06-08,DEU,DEU,RKI,Confirmed cases,report_plotting,3532,NA
+2021-06-09,DEU,DEU,RKI,Confirmed cases,report_plotting,2864,NA
+2021-06-10,DEU,DEU,RKI,Confirmed cases,report_plotting,2271,NA
+2021-06-11,DEU,DEU,RKI,Confirmed cases,report_plotting,1845,NA
+2021-06-12,DEU,DEU,RKI,Confirmed cases,report_plotting,1299,NA
+2021-06-13,DEU,DEU,RKI,Confirmed cases,report_plotting,510,NA
+2021-06-14,DEU,DEU,RKI,Confirmed cases,report_plotting,933,NA
+2021-06-15,DEU,DEU,RKI,Confirmed cases,report_plotting,1699,NA
+2021-06-16,DEU,DEU,RKI,Confirmed cases,report_plotting,1440,NA
+2021-06-17,DEU,DEU,RKI,Confirmed cases,report_plotting,1148,NA
+2021-06-18,DEU,DEU,RKI,Confirmed cases,report_plotting,1023,NA
+2021-06-19,DEU,DEU,RKI,Confirmed cases,report_plotting,739,NA
+2021-06-20,DEU,DEU,RKI,Confirmed cases,report_plotting,272,NA
+2021-06-21,DEU,DEU,RKI,Confirmed cases,report_plotting,599,NA
+2021-06-22,DEU,DEU,RKI,Confirmed cases,report_plotting,1052,NA
+2021-06-23,DEU,DEU,RKI,Confirmed cases,report_plotting,896,NA
+2021-06-24,DEU,DEU,RKI,Confirmed cases,report_plotting,821,NA
+2021-06-25,DEU,DEU,RKI,Confirmed cases,report_plotting,736,NA
+2021-06-26,DEU,DEU,RKI,Confirmed cases,report_plotting,483,NA
+2021-06-27,DEU,DEU,RKI,Confirmed cases,report_plotting,221,NA
+2021-06-28,DEU,DEU,RKI,Confirmed cases,report_plotting,507,NA
+2021-06-29,DEU,DEU,RKI,Confirmed cases,report_plotting,895,NA
+2021-06-30,DEU,DEU,RKI,Confirmed cases,report_plotting,855,NA
+2021-07-01,DEU,DEU,RKI,Confirmed cases,report_plotting,700,NA
+2021-07-02,DEU,DEU,RKI,Confirmed cases,report_plotting,668,NA
+2021-07-03,DEU,DEU,RKI,Confirmed cases,report_plotting,509,NA
+2021-07-04,DEU,DEU,RKI,Confirmed cases,report_plotting,207,NA
+2021-07-05,DEU,DEU,RKI,Confirmed cases,report_plotting,551,NA
+2021-07-06,DEU,DEU,RKI,Confirmed cases,report_plotting,1054,NA
+2021-07-07,DEU,DEU,RKI,Confirmed cases,report_plotting,960,NA
+2021-07-08,DEU,DEU,RKI,Confirmed cases,report_plotting,954,NA
+2021-07-09,DEU,DEU,RKI,Confirmed cases,report_plotting,944,NA

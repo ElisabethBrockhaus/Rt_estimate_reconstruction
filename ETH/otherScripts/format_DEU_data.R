@@ -131,7 +131,9 @@ confirmed_case_data <- confirmed_case_data %>%
   arrange(region, data_type, date_type, date)
 ## end of remove
 
-DEU_data <- rbind(confirmed_case_data, plotting_confirmed_case_data)
+# EB: change column value confirmed -> Confirmed cases for consistency in later scripts
+DEU_data <- rbind(confirmed_case_data, plotting_confirmed_case_data) %>%
+  mutate(data_type = replace(data_type, data_type == "confirmed", "Confirmed cases"))
 
 write_csv(DEU_data, path = file.path(outDir, "incidence_data_DEU.csv"))
 

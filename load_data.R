@@ -332,6 +332,9 @@ ETH_load_countryData <- function(country="Germany", region="DEU", data_source = 
       HMDtemp = "Rt_estimate_reconstruction/ETH/data/temp/HMDdata.csv",
       tReload = 300)
     
+  } else if (data_source == "_RKI_2021_07_10") {
+    countryData <- read_csv("Rt_estimate_reconstruction/ETH/data/DEU/incidence_data_DEU.csv")
+    
   } else if (data_source == "JHU") {
     # load time series of confirmed cases publihsed by JHU
     confirmed_global <- read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv")
@@ -389,6 +392,8 @@ ETH_load_countryData <- function(country="Germany", region="DEU", data_source = 
   if (data_source == "") {
     countryDataPath <- file.path(basePath, str_c(region, "-Data.rds"))
     saveRDS(countryData, file = countryDataPath)
+  } else if (data_source == "_RKI_2021_07_10"){
+    saveRDS(countryData, file = file.path(basePath, str_c(region, "-Data_RKI_2021_07_10.rds")))
   } else if (data_source == "_simpleRKI"){
     saveRDS(countryData, file = file.path(basePath, str_c(region, "-Data_simpleRKI.rds")))
   }
