@@ -1,7 +1,7 @@
 # Rt_estimate_reconstruction #
 
 The Script *parameter_influence_EpiEstim.R* runs the estimations using EpiEstim with different parameters and data.
-The Script *compare_parameters_combinations.R* runs the estimations using different estimation methods with different levels of adjustment.
+The Script *compare_parameters_combinations.R* runs the estimations using different estimation methods with different levels of adjustment. To plot the results from this script run *plot_final_estimates.R*.
 Some estimations have to be performed outside of this script, either in Python (globalrt, rtlive) or in a more time-intensive script (epiforecasts). Those estimates are contained in this repo and do not have to be calculated again. For all but rtlive, it is possible, though.
 - **epiforecasts**: Run *epiforecasts/epinow_estimation.R*. Takes multiple hours depending on the length of input data.
 - **globalrt**: Run *ArroyoMarioli/input_output_dataset/estimate_R_filter_and_smoother.py* (Might want to change the import between *dataset.csv* and *dataset_final.csv*. The former is the data used originally for the globalrt estimates. The latter is the correctly formatted aggregated version of the RKI line list data.)
