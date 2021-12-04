@@ -19,30 +19,23 @@ min_adjAll <- min(colMin(estimates_adjAll %>% dplyr::filter(date>="2021-01-01", 
 ylim_adjWindow <- c(min(min_adjInputWindow, min_adjInputWindowGTD, min_adjAll), max(max_adjInputWindow, max_adjInputWindowGTD, max_adjAll))
 
 
+source("Rt_estimate_reconstruction/prepared_plots.R")
 plot_for_comparison(estimates_pub, org_methods, legend_name = "research group",
-                    col_palette = "Set1", start_col=1,
                     filenames = "_real-time.pdf", ylims = ylim_diffWindow, plot_diff_matrices=T)
 plot_for_comparison(estimates_adjInput, comp_methods,
-                    col_palette = "Set1", start_col=0,
                     filenames = "_adjInput.pdf", ylims = ylim_diffWindow, plot_diff_matrices=T)
 plot_for_comparison(estimates_adjInputWindow, comp_methods,
-                    col_palette = "Set1", start_col=0,
                     filenames = "_adjInputWindow.pdf", ylims = ylim_diffWindow, plot_diff_matrices=T)
 plot_for_comparison(estimates_adjInputWindowGTD, comp_methods,
-                    col_palette = "Set1", start_col=0,
                     filenames = "_adjInputWindowGTD.pdf", ylims = ylim_diffWindow, plot_diff_matrices=T)
 plot_for_comparison(estimates_adjAll, comp_methods,
-                    col_palette = "Set1", start_col=0,
                     filenames = "_adjAll.pdf", ylims = ylim_diffWindow, plot_diff_matrices=T)
 
 plot_for_comparison(estimates_adjInputWindow, comp_methods,
-                    col_palette = "Set1", start_col=0,
                     filenames = "_adjInputWindow_smallYlim.pdf", ylims = ylim_adjWindow)
 plot_for_comparison(estimates_adjInputWindowGTD, comp_methods,
-                    col_palette = "Set1", start_col=0,
                     filenames = "_adjInputWindowGTD_smallYlim.pdf", ylims = ylim_adjWindow)
 plot_for_comparison(estimates_adjAll, comp_methods,
-                    col_palette = "Set1", start_col=0,
                     filenames = "_adjAll_smallYlim.pdf", ylims = ylim_adjWindow)
 
 # same for CI plots
@@ -60,19 +53,15 @@ ylim_CI <- c(min(min_pub, min_adjInput, min_adjInputWindow, min_adjInputWindowGT
              max(max_pub, max_adjInput, max_adjInputWindow, max_adjInputWindowGTD, max_adjAll))
 
 
+source("Rt_estimate_reconstruction/prepared_plots.R")
 plot_for_comparison(estimates_pub_ci, org_methods, include_CI = T, legend_name = "research group",
-                    col_palette = "Set1", start_col=1,
                     filenames = "_CI_real-time.pdf", ylims = ylim_CI)
 plot_for_comparison(estimates_adjInput_CI, comp_CI, include_CI = T,
-                    col_palette = "Set1", start_col=0, skip_RKI=T,
                     filenames = "_CI_adjInput.pdf", ylims = ylim_CI)
 plot_for_comparison(estimates_adjInputWindow_CI, comp_CI, include_CI = T,
-                    col_palette = "Set1", start_col=0, skip_RKI=T,
                     filenames = "_CI_adjInputWindow.pdf", ylims = ylim_CI)
 plot_for_comparison(estimates_adjInputWindowGTD_CI, comp_CI, include_CI = T,
-                    col_palette = "Set1", start_col=0, skip_RKI=T,
                     filenames = "_CI_adjInputWindowGTD.pdf", ylims = ylim_CI)
 plot_for_comparison(estimates_adjAll_CI, comp_CI, include_CI = T,
-                    col_palette = "Set1", start_col=0, skip_RKI=T,
                     filenames = "_CI_adjAll.pdf", ylims = ylim_CI)
 

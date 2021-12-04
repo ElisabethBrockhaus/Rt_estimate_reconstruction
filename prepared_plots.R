@@ -2,12 +2,28 @@ library(reshape2)
 library(ggplot2)
 library(cowplot)
 library(viridis)
+library(scales)
 library(RColorBrewer)
 library(pheatmap)
 library(tidyverse)
 
 # set system locale time to English for correct labelling of x axes
 Sys.setlocale("LC_TIME", "English")
+
+get_colors <- function(methods){
+  cols <- c("#E41A1C", # red
+            "#000000", # black
+            "#ff8b00", # orange
+            "#00d333", # light green
+            "#00922c", # dark green
+            "#0397d8", # light blue
+            "#1502a0", # dark blue
+            "#bb2881", # berry
+            "#7c007c") # violett
+  names(cols) <- c("AGES", "consensus", "epiforecasts", "ETH", "globalrt", "Ilmenau", "RKI", "rtlive", "SDSC")
+  #show_col(cols, ncol = 9, labels = F)
+  return(cols[methods])
+}
 
 # function for saving pheatmap
 save_pheatmap_pdf <- function(x, filename, width=9, height=5) {
@@ -75,8 +91,6 @@ plot_multiple_estimates <- function(estimates, legend_name,
       mutate_at(vars("model"), as.factor)
   }
   
-  num_est <- length(unique(R_est$model))
-
   # plot
   R_plot <- ggplot(data = R_est, aes(x = date, y = R)) +
     geom_hline(aes(yintercept = 1)) +
@@ -96,20 +110,23 @@ plot_multiple_estimates <- function(estimates, legend_name,
       panel.background = element_rect(fill = "transparent")
       )
   
+  plotted_models <- unique(R_est$model)
+  num_est <- length(plotted_models)
+  
+  if (all(plotted_models %in% c("AGES", "consensus", "epiforecasts", "ETH", "globalrt", "Ilmenau", "RKI", "rtlive", "SDSC"))){
+    col_values <- get_colors(plotted_models)
+  } else {
+    col_values <- brewer.pal(name=col_palette,n=num_est+start_col)[start_col+(1:num_est)]
+  }
+  
   if (include_CI){
-    if (skip_RKI){
-      col_values <- brewer.pal(name=col_palette,n=num_est+start_col+1)[c(start_col+(1:6),
-                                                                         start_col+(8:(num_est+start_col+1)))]
-    } else {
-      col_values <- brewer.pal(name=col_palette,n=num_est+start_col)[start_col+(1:num_est)]
-    }
     R_plot <-  R_plot +
-      geom_ribbon(aes(ymin = lower, ymax = upper, fill = model), alpha = .3) +
+      geom_ribbon(aes(ymin = lower, ymax = upper, fill = model), alpha = .25) +
       scale_fill_manual(values=col_values, name=legend_name)
   } else {
     R_plot <-  R_plot +
       geom_line(aes(group = model, color=model)) +
-      scale_color_manual(values=brewer.pal(name=col_palette,n=num_est+start_col)[start_col+(1:num_est)], name=legend_name)
+      scale_color_manual(values=col_values, name=legend_name)
   }
   
   return(R_plot)
