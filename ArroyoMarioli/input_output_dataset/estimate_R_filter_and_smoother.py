@@ -104,6 +104,8 @@ if __name__ == "__main__":
         df_smoother_Bayesian["R"] = res_Bayes["R"]
         df_smoother_Bayesian["lb_95"] = res_Bayes["lb_95"]
         df_smoother_Bayesian["ub_95"] = res_Bayes["ub_95"]
+        df_smoother_Bayesian["lb_50"] = res_Bayes["lb_50"]
+        df_smoother_Bayesian["ub_50"] = res_Bayes["ub_50"]
         df_smoother_Bayesian.to_csv(
             "{}/bayesian_smoother_{}.csv".format(output_folder, days_infectious),
             index=False,
@@ -161,9 +163,10 @@ if __name__ == "__main__":
             df_temp["Date"] = df["Date"]
             res_filter_Bayesian.append(df_temp)
         df_filter_Bayesian = pd.concat(res_filter_Bayesian)
+        # EB: changed mean() to median()
         df_filter_Bayesian = (
             df_filter_Bayesian.groupby("Date")
-            .mean()[["R", "lb_95", "ub_95"]]
+            .median()[["R", "lb_95", "ub_95"]]
             .reset_index()
         )
         df_filter_Bayesian.to_csv(

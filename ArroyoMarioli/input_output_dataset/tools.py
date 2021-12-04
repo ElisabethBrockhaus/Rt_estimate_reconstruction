@@ -136,7 +136,8 @@ def estimate_R(
 
     # Collect results
     res = {}
-    res["R"] = 1 + 1 / gamma * fit_res["mu"].mean(axis=0)
+    # EB: changed mean() to median()
+    res["R"] = np.median(1 + 1 / gamma * fit_res["mu"], axis=0)
     for aa in sig_levels:
         ub = 1 + 1 / gamma * np.percentile(fit_res["mu"], axis=0, q=100 - aa / 2.0)
         lb = np.maximum(
