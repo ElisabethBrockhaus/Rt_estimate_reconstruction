@@ -555,12 +555,12 @@ get_infectivity_profile <- function(gt_type=c("empirical", "gamma", "exponential
           Choose from ['empirical', 'gamma', 'exponential', 'uniform', 'constant', 'lognorm']")
   }
   
-  ## make sure gt_dist[1] == 0
-  #if (gt_dist[1] != 0) {
-  #  print("Manually set gt_dist[1] = 0, i.e. the infectivity of an individual on the day of primary infection is zero.
-  #        Obligatory for estimation using EpiEstim.")
-  #  gt_dist[1] <- 0
-  #}
+  # make sure gt_dist[1] == 0
+  if (gt_dist[1] != 0) {
+    print("Manually set gt_dist[1] = 0, i.e. the infectivity of an individual on the day of primary infection is zero.
+          Obligatory for estimation using EpiEstim.")
+    gt_dist[1] <- 0
+  }
   
   gt_dist <- gt_dist / sum(gt_dist)
   
