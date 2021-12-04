@@ -1,13 +1,17 @@
 library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
 library(RColorBrewer)
 
-setwd("..")
-# needs to be the directory with the repos "Rt_estimate_reconstruction", "reproductive_numbers" 
-# and for SDSC method "covid-19-forecast" (https://renkulab.io/gitlab/covid-19/covid-19-forecast/-/tree/master)
+# set system locale time to English for correct labelling of x axes
+Sys.setlocale("LC_TIME", "English")
+
+setwd("../..")
+# needs to be the directory with the repos "Rt_estimate_reconstruction"
 getwd()
 
-source("Rt_estimate_reconstruction/load_data.R")
-source("Rt_estimate_reconstruction/prepared_plots.R")
+#source("Rt_estimate_reconstruction/load_data.R")
 
 # load incidence data used by research groups
 
@@ -75,8 +79,8 @@ R_plot <- ggplot(data = incid, aes(x = date, y = value)) +
     panel.background = element_rect(fill = "transparent")
   ) +
   geom_line(aes(group = variable, color = variable)) +
-  scale_colour_brewer(palette="Set1", name="group")
+  scale_color_manual(values=brewer.pal(name="Set1",n=5)[3:5], name="data source")
 
 print(R_plot)
 ggsave(R_plot, filename = "Figures/incidence_data.pdf",  bg = "transparent",
-       width = 13.1, height = 6.3)
+       width = 13.1, height = 5.8)
