@@ -1,4 +1,5 @@
 library(readr)
+library(RColorBrewer)
 
 setwd("..")
 # needs to be the directory with the repos "Rt_estimate_reconstruction", "reproductive_numbers" 
@@ -47,13 +48,13 @@ jhu_incid <- read_csv("Rt_estimate_reconstruction/incidence_data/jhu_incid_21_11
 incidence_data <- rki_incid %>%
   inner_join(who_incid, by = "date") %>%
   inner_join(jhu_incid, by = "date")
-names(incidence_data) <- c("date", "Ilmenau/rtlive", "epiforecasts", "SDSC/globalrt")
+names(incidence_data) <- c("date", "RKI", "WHO", "JHU")
 
 # reshape data
 incid  <- incidence_data %>%
   gather("variable", "value", 2:dim(incidence_data)[2]) %>%
-  filter(date >= as.Date("2021-02-01")) %>%
-  filter(date <= as.Date("2021-05-31"))
+  filter(date >= as.Date("2021-01-01")) %>%
+  filter(date <= as.Date("2021-06-10"))
 
 # plot
 R_plot <- ggplot(data = incid, aes(x = date, y = value)) +
@@ -74,7 +75,7 @@ R_plot <- ggplot(data = incid, aes(x = date, y = value)) +
     panel.background = element_rect(fill = "transparent")
   ) +
   geom_line(aes(group = variable, color = variable)) +
-  scale_colour_viridis_d(end = 0.9, name="group")
+  scale_colour_brewer(palette="Set1", name="group")
 
 print(R_plot)
 ggsave(R_plot, filename = "Figures/incidence_data.pdf",  bg = "transparent",
