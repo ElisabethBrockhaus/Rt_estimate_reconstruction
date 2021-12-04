@@ -2,6 +2,7 @@ library(reshape2)
 library(ggplot2)
 library(cowplot)
 library(viridis)
+library(RColorBrewer)
 library(pheatmap)
 library(tidyverse)
 
@@ -54,6 +55,7 @@ plot_published_vs_calculated <- function(published, calculated, method_name, dif
 
 
 plot_multiple_estimates <- function(estimates, legend_name,
+                                    col_palette="Set1", start_col=2, skip_RKI=FALSE,
                                     include_CI=F, sort_numerically=F) {
   
   # reshape data
@@ -73,6 +75,8 @@ plot_multiple_estimates <- function(estimates, legend_name,
       mutate_at(vars("model"), as.factor)
   }
   
+  num_est <- length(unique(R_est$model))
+
   # plot
   R_plot <- ggplot(data = R_est, aes(x = date, y = R)) +
     geom_hline(aes(yintercept = 1)) +
@@ -93,13 +97,19 @@ plot_multiple_estimates <- function(estimates, legend_name,
       )
   
   if (include_CI){
+    if (skip_RKI){
+      col_values <- brewer.pal(name=col_palette,n=num_est+start_col+1)[c(start_col+(1:6),
+                                                                         start_col+(8:(num_est+start_col+1)))]
+    } else {
+      col_values <- brewer.pal(name=col_palette,n=num_est+start_col)[start_col+(1:num_est)]
+    }
     R_plot <-  R_plot +
       geom_ribbon(aes(ymin = lower, ymax = upper, fill = model), alpha = .3) +
-      scale_fill_viridis_d(end = 0.9, name=legend_name)
+      scale_fill_manual(values=col_values, name=legend_name)
   } else {
     R_plot <-  R_plot +
       geom_line(aes(group = model, color=model)) +
-      scale_colour_viridis_d(end = 0.9, name=legend_name)
+      scale_color_manual(values=brewer.pal(name=col_palette,n=num_est+start_col)[start_col+(1:num_est)], name=legend_name)
   }
   
   return(R_plot)
@@ -163,7 +173,9 @@ plot_published_vs_calculated_95CI <- function(published, calculated, method_name
 
 plot_for_comparison <- function(estimates, comp_methods,
                                 start_date = "2021-01-01", end_date = "2021-06-10",
-                                legend_name="model", filenames = "latest_plot.png",
+                                legend_name="model",
+                                col_palette="Set1", start_col=2, skip_RKI=F,
+                                filenames = "latest_plot.png",
                                 include_CI=F, plot_diff_matrices=F, sort_numerically=F,
                                 ylims=c(0.2, 1.85)){
   if (length(comp_methods)*3 == dim(estimates)[2]-1){
@@ -187,6 +199,7 @@ plot_for_comparison <- function(estimates, comp_methods,
   #estimates <- estimates[rowSums(is.na(estimates)) == 0,]
 
   R_plot <- plot_multiple_estimates(estimates, legend_name,
+                                    col_palette = col_palette, start_col = start_col, skip_RKI = skip_RKI,
                                     include_CI = include_CI,
                                     sort_numerically = sort_numerically) + ylim(ylims)
 

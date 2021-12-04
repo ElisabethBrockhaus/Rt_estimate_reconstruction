@@ -2,8 +2,12 @@ library(readr)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(RColorBrewer)
 
-setwd("..")
+# set system locale time to English for correct labelling of x axes
+Sys.setlocale("LC_TIME", "English")
+
+setwd("../..")
 # needs to be the directory with the repos "Rt_estimate_reconstruction"
 getwd()
 
@@ -72,7 +76,7 @@ R_plot <- ggplot(data = incidence, aes(x = date, y = value)) +
     panel.background = element_rect(fill = "transparent")
   ) +
   geom_line(aes(group = variable, color = variable)) +
-  scale_colour_viridis_d(end = 0.9, name="preprocessing")
+  scale_color_manual(values=brewer.pal(name="Dark2",n=6)[3:6], name="data source")
 
 print(R_plot)
 ggsave(R_plot, filename = "Figures/preprocessed_incidence_data.pdf",  bg = "transparent",

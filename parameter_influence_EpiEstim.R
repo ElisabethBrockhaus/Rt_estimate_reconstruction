@@ -1,9 +1,11 @@
+library(lubridate)
+
 setwd("..")
 # needs to be the directory with the repos "Rt_estimate_reconstruction", "reproductive_numbers" 
 # and for SDSC method "covid-19-forecast" (https://renkulab.io/gitlab/covid-19/covid-19-forecast/-/tree/master)
 getwd()
 
-source("Rt_estimate_reconstruction/load_data.R")
+#source("Rt_estimate_reconstruction/load_data.R")
 source("Rt_estimate_reconstruction/calculate_estimates.R")
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
@@ -48,7 +50,7 @@ for (window in windows){
 max <- max(colMax(estimates_window %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(windows)))))
 min <- min(colMin(estimates_window %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(windows)))))
 # plot
-plot_for_comparison(estimates_window, comp_methods = windows,
+plot_for_comparison(estimates_window, comp_methods = windows, col_palette = "YlOrRd",
                     legend_name = "window size", filenames = "_influence_window.pdf",
                     sort_numerically = TRUE, ylims = c(min, max))
 
@@ -85,7 +87,7 @@ for (src in rownames(gtds)){
 max <- max(colMax(estimates_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(gtd_strs))))
 min <- min(colMin(estimates_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(gtd_strs))))
 # plot
-plot_for_comparison(estimates_gtd, comp_methods = gtd_strs,
+plot_for_comparison(estimates_gtd, comp_methods = gtd_strs, col_palette = "YlGn",
                     legend_name = "GTD", filenames = "_influence_GTD.pdf",
                     sort_numerically = FALSE, ylims = c(min, max))
 
@@ -123,7 +125,7 @@ for (data_src in data_sources){
 max <- max(colMax(estimates_input %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(data_sources))))
 min <- min(colMin(estimates_input %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(data_sources))))
 # plot
-plot_for_comparison(estimates_input, comp_methods = data_sources,
+plot_for_comparison(estimates_input, comp_methods = data_sources, col_palette = "Set1",
                     legend_name = "data source", filenames = "_influence_input_data.pdf",
                     sort_numerically = FALSE, ylims = c(min, max))
 
@@ -172,6 +174,7 @@ max <- max(colMax(estimates_preprocess %>% dplyr::filter(date>="2021-01-01", dat
 min <- min(colMin(estimates_preprocess %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(c(preprocessing, "R_calc")))))
 # plot
 plot_for_comparison(estimates_preprocess, comp_methods = c(preprocessing, "deconvolution (ETH)"),
+                    col_palette = "Dark2",
                     legend_name = "preprocessing", filenames = "_influence_preprocessing.pdf",
                     sort_numerically = FALSE, ylims = c(min, max))
 
@@ -204,6 +207,6 @@ for (sd in sds){
 max <- max(colMax(estimates_SD_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(sds)))))
 min <- min(colMin(estimates_SD_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(sds)))))
 # plot
-plot_for_comparison(estimates_SD_gtd, comp_methods = sds,
+plot_for_comparison(estimates_SD_gtd, comp_methods = sds, col_palette = "YlGn",
                     legend_name = "SD of the GTD", filenames = "_influence_SD_GTD.pdf",
                     sort_numerically = TRUE, ylims = c(min, max))
