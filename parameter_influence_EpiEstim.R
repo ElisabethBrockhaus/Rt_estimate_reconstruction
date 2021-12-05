@@ -1,11 +1,10 @@
 library(lubridate)
+library(dplyr)
 
 setwd("..")
-# needs to be the directory with the repos "Rt_estimate_reconstruction", "reproductive_numbers" 
-# and for SDSC method "covid-19-forecast" (https://renkulab.io/gitlab/covid-19/covid-19-forecast/-/tree/master)
+# needs to be the directory with the repos "Rt_estimate_reconstruction"
 getwd()
 
-#source("Rt_estimate_reconstruction/load_data.R")
 source("Rt_estimate_reconstruction/calculate_estimates.R")
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
@@ -47,12 +46,13 @@ for (window in windows){
   }
 }
 # find ylim
-max <- max(colMax(estimates_window %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(windows)))))
-min <- min(colMin(estimates_window %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(windows)))))
+ylim_window_l <- min(colMin(estimates_window %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(windows)))))
+ylim_window_u <- max(colMax(estimates_window %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(windows)))))
 # plot
-plot_for_comparison(estimates_window, comp_methods = windows, col_palette = "YlOrRd",
+plot_for_comparison(estimates_window, comp_methods = windows,
+                    col_palette = "YlOrRd", name_consensus = 7,
                     legend_name = "window size", filenames = "_influence_window.pdf",
-                    sort_numerically = TRUE, ylims = c(min, max))
+                    sort_numerically = TRUE, ylim_l = ylim_window_l, ylim_u = ylim_window_u)
 
 
 #####################################
@@ -84,12 +84,13 @@ for (src in rownames(gtds)){
   }
 }
 # find ylim
-max <- max(colMax(estimates_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(gtd_strs))))
-min <- min(colMin(estimates_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(gtd_strs))))
+ylim_gtd_l <- min(colMin(estimates_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(gtd_strs))))
+ylim_gtd_u <- max(colMax(estimates_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(gtd_strs))))
 # plot
-plot_for_comparison(estimates_gtd, comp_methods = gtd_strs, col_palette = "YlGn",
+plot_for_comparison(estimates_gtd, comp_methods = gtd_strs,
+                    col_palette = "YlGn", name_consensus = "4(4), gamma",
                     legend_name = "GTD", filenames = "_influence_GTD.pdf",
-                    sort_numerically = FALSE, ylims = c(min, max))
+                    sort_numerically = FALSE, ylim_l = ylim_gtd_l, ylim_u = ylim_gtd_u)
 
 
 ###################
@@ -122,12 +123,13 @@ for (data_src in data_sources){
   }
 }
 # find ylim
-max <- max(colMax(estimates_input %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(data_sources))))
-min <- min(colMin(estimates_input %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(data_sources))))
+ylim_input_l <- min(colMin(estimates_input %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(data_sources))))
+ylim_input_u <- max(colMax(estimates_input %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(data_sources))))
 # plot
-plot_for_comparison(estimates_input, comp_methods = data_sources, col_palette = "Set1",
+plot_for_comparison(estimates_input, comp_methods = data_sources,
+                    col_palette = "Set1", name_consensus = "RKI",
                     legend_name = "data source", filenames = "_influence_input_data.pdf",
-                    sort_numerically = FALSE, ylims = c(min, max))
+                    sort_numerically = FALSE, ylim_l = ylim_input_l, ylim_u = ylim_input_u)
 
 
 ######################
@@ -170,13 +172,13 @@ R_ETH$date <- R_ETH$date + 11 # mean delay of ETH estimates
 estimates_preprocess <- estimates_preprocess %>% full_join(R_ETH, by = "date")
 
 # find ylim
-max <- max(colMax(estimates_preprocess %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(c(preprocessing, "R_calc")))))
-min <- min(colMin(estimates_preprocess %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(c(preprocessing, "R_calc")))))
+ylim_preprocess_l <- min(colMin(estimates_preprocess %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(c(preprocessing, "R_calc")))))
+ylim_preprocess_u <- max(colMax(estimates_preprocess %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(c(preprocessing, "R_calc")))))
 # plot
 plot_for_comparison(estimates_preprocess, comp_methods = c(preprocessing, "deconvolution (ETH)"),
-                    col_palette = "Dark2",
+                    col_palette = "Dark2", name_consensus = "none",
                     legend_name = "preprocessing", filenames = "_influence_preprocessing.pdf",
-                    sort_numerically = FALSE, ylims = c(min, max))
+                    sort_numerically = FALSE, ylim_l = ylim_preprocess_l, ylim_u = ylim_preprocess_u)
 
 
 ###############################################################################
@@ -204,9 +206,10 @@ for (sd in sds){
   }
 }
 # find ylim
-max <- max(colMax(estimates_SD_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(sds)))))
-min <- min(colMin(estimates_SD_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(sds)))))
+#ylim_SD_gtd_l <- min(colMin(estimates_SD_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(sds)))))
+#ylim_SD_gtd_u <- max(colMax(estimates_SD_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(sds)))))
 # plot
-plot_for_comparison(estimates_SD_gtd, comp_methods = sds, col_palette = "YlGn",
+plot_for_comparison(estimates_SD_gtd, comp_methods = sds,
+                    col_palette = "YlGn", name_consensus = 4.0,
                     legend_name = "SD of the GTD", filenames = "_influence_SD_GTD.pdf",
-                    sort_numerically = TRUE, ylims = c(min, max))
+                    sort_numerically = TRUE, ylim_l = ylim_gtd_l, ylim_u = ylim_gtd_u)

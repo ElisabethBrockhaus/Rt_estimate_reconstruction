@@ -11,6 +11,8 @@ setwd("../..")
 # needs to be the directory with the repos "Rt_estimate_reconstruction"
 getwd()
 
+source("Rt_estimate_reconstruction/prepared_plots.R")
+
 
 ######################
 # get incidence data #
@@ -57,6 +59,9 @@ incidence  <- incidence_data %>%
   filter(date >= as.Date("2021-01-01")) %>%
   filter(date <= as.Date("2021-06-10"))
 
+col_values <- get_colors(c("nowcast (RKI)", "none", "smoothing (SDSC)", "deconvolution (ETH)"),
+                         palette = "Dark2", name_consensus = "none")
+
 # plot
 R_plot <- ggplot(data = incidence, aes(x = date, y = value)) +
   labs(x = NULL, y = "new infections") +
@@ -76,7 +81,7 @@ R_plot <- ggplot(data = incidence, aes(x = date, y = value)) +
     panel.background = element_rect(fill = "transparent")
   ) +
   geom_line(aes(group = variable, color = variable)) +
-  scale_color_manual(values=brewer.pal(name="Dark2",n=6)[3:6], name="data source")
+  scale_color_manual(values=col_values, name="data source")
 
 print(R_plot)
 ggsave(R_plot, filename = "Figures/preprocessed_incidence_data.pdf",  bg = "transparent",

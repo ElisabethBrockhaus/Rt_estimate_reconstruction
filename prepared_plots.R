@@ -44,7 +44,7 @@ get_colors <- function(methods, palette, name_consensus = "consensus"){
       cols <- brewer.pal(name=palette,n=num_est+start_col)[start_col+(1:num_est)]
       names(cols) <- methods
       # make consensus model color black
-      cols[name_consensus] <- "#000000"
+      cols[names(cols) == name_consensus] <- "#000000"
     }
   }
   
@@ -145,7 +145,9 @@ plot_multiple_estimates <- function(estimates, legend_name,
       scale_fill_manual(values=col_values, name=legend_name)
   } else {
     R_plot <-  R_plot +
-      geom_line(aes(group = model, color=model)) +
+      #geom_line(aes(group = model, color=model)) +
+      geom_line(data=R_est[R_est$model!=name_consensus,], aes(x = date, y = R, color=model), size = .5) +
+      geom_line(data=R_est[R_est$model==name_consensus,], aes(x = date, y = R, color=model), size = .8) +
       scale_color_manual(values=col_values, name=legend_name)
   }
   

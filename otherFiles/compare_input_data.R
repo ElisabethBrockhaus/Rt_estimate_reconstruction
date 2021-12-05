@@ -12,6 +12,7 @@ setwd("../..")
 getwd()
 
 #source("Rt_estimate_reconstruction/load_data.R")
+source("Rt_estimate_reconstruction/prepared_plots.R")
 
 # load incidence data used by research groups
 
@@ -60,6 +61,8 @@ incid  <- incidence_data %>%
   filter(date >= as.Date("2021-01-01")) %>%
   filter(date <= as.Date("2021-06-10"))
 
+col_values <- get_colors(c("JHU", "RKI", "WHO"), palette = "Set1", name_consensus = "RKI")
+
 # plot
 R_plot <- ggplot(data = incid, aes(x = date, y = value)) +
   labs(x = NULL, y = "new infections") +
@@ -79,7 +82,7 @@ R_plot <- ggplot(data = incid, aes(x = date, y = value)) +
     panel.background = element_rect(fill = "transparent")
   ) +
   geom_line(aes(group = variable, color = variable)) +
-  scale_color_manual(values=brewer.pal(name="Set1",n=5)[3:5], name="data source")
+  scale_color_manual(values=col_values, name="data source")
 
 print(R_plot)
 ggsave(R_plot, filename = "Figures/incidence_data.pdf",  bg = "transparent",
