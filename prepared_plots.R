@@ -10,19 +10,46 @@ library(tidyverse)
 # set system locale time to English for correct labelling of x axes
 Sys.setlocale("LC_TIME", "English")
 
-get_colors <- function(methods){
-  cols <- c("#E41A1C", # red
-            "#000000", # black
-            "#ff8b00", # orange
-            "#00d333", # light green
-            "#00922c", # dark green
-            "#0397d8", # light blue
-            "#1502a0", # dark blue
-            "#bb2881", # berry
-            "#7c007c") # violett
-  names(cols) <- c("AGES", "consensus", "epiforecasts", "ETH", "globalrt", "Ilmenau", "RKI", "rtlive", "SDSC")
-  #show_col(cols, ncol = 9, labels = F)
-  return(cols[methods])
+get_colors <- function(methods, palette, name_consensus = "consensus"){
+  all_methods <- c("AGES", "consensus", "epiforecasts", "ETH", "globalrt", "Ilmenau", "RKI", "rtlive", "SDSC")
+  num_est <- length(methods)
+  
+  # constant colors for different models
+  if (all(methods %in% all_methods)){
+    cols <- c("#E41A1C", # red
+              "#000000", # black
+              "#ff8b00", # orange
+              "#00d333", # light green
+              "#00922c", # dark green
+              "#0397d8", # light blue
+              "#1502a0", # dark blue
+              "#bb2881", # berry
+              "#7c007c") # violett
+    names(cols) <- all_methods
+    cols <- cols[methods]
+  
+  # if all EpiEstim use color palette
+  } else {
+    if (palette == "YlGn"){
+      # avoid problem of too short color palette
+      start_col <- 1
+      cols <- brewer.pal(name=palette,n=num_est+start_col)[start_col+(1:num_est)]
+      names(cols) <- methods
+      # make consensus model color black and shift rest of colors, such that lightest one is not needed
+      cols[1:(which(names(cols)==name_consensus)-1)] <- cols[2:which(names(cols)==name_consensus)]
+      cols[names(cols) == name_consensus] <- "#000000"
+
+    } else {
+      start_col <- 2
+      cols <- brewer.pal(name=palette,n=num_est+start_col)[start_col+(1:num_est)]
+      names(cols) <- methods
+      # make consensus model color black
+      cols[name_consensus] <- "#000000"
+    }
+  }
+  
+  #show_col(cols, ncol = num_est, labels = F)
+  return(cols)
 }
 
 # function for saving pheatmap
@@ -71,7 +98,7 @@ plot_published_vs_calculated <- function(published, calculated, method_name, dif
 
 
 plot_multiple_estimates <- function(estimates, legend_name,
-                                    col_palette="Set1", start_col=2, skip_RKI=FALSE,
+                                    col_palette="Set1", name_consensus="consensus",
                                     include_CI=F, sort_numerically=F) {
   
   # reshape data
@@ -110,14 +137,7 @@ plot_multiple_estimates <- function(estimates, legend_name,
       panel.background = element_rect(fill = "transparent")
       )
   
-  plotted_models <- unique(R_est$model)
-  num_est <- length(plotted_models)
-  
-  if (all(plotted_models %in% c("AGES", "consensus", "epiforecasts", "ETH", "globalrt", "Ilmenau", "RKI", "rtlive", "SDSC"))){
-    col_values <- get_colors(plotted_models)
-  } else {
-    col_values <- brewer.pal(name=col_palette,n=num_est+start_col)[start_col+(1:num_est)]
-  }
+  col_values <- get_colors(methods = unique(R_est$model), col_palette, name_consensus = name_consensus)
   
   if (include_CI){
     R_plot <-  R_plot +
@@ -131,8 +151,6 @@ plot_multiple_estimates <- function(estimates, legend_name,
   
   return(R_plot)
 }
-
-
 
 
 
@@ -188,13 +206,13 @@ plot_published_vs_calculated_95CI <- function(published, calculated, method_name
 # plots for final comparison #
 ##############################
 
-plot_for_comparison <- function(estimates, comp_methods,
+plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-03-12",
                                 start_date = "2021-01-01", end_date = "2021-06-10",
                                 legend_name="model",
-                                col_palette="Set1", start_col=2, skip_RKI=F,
+                                col_palette="Set1", name_consensus="consensus",
                                 filenames = "latest_plot.png",
                                 include_CI=F, plot_diff_matrices=F, sort_numerically=F,
-                                ylims=c(0.2, 1.85)){
+                                ylim_l=0, ylim_u=2.05){
   if (length(comp_methods)*3 == dim(estimates)[2]-1){
     names_ci <- rep(NA, length(comp_methods)*3)
     for (i in 1:length(comp_methods)){
@@ -211,14 +229,22 @@ plot_for_comparison <- function(estimates, comp_methods,
     names(estimates) <- c("date", names_R)
   }
   
-  estimates <- estimates %>%
-    dplyr::filter(date >=start_date, date <= end_date)
-  #estimates <- estimates[rowSums(is.na(estimates)) == 0,]
+  estimates_absdiff <- estimates %>%
+    dplyr::filter(date >= start_absdiff, date <= end_date)
+  estimates_plot <- estimates_absdiff %>%
+    dplyr::filter(date >= start_date)
+  estimates_absdiff <- estimates_absdiff[rowSums(is.na(estimates_absdiff)) == 0,]
+  print("Date range for median absolute difference calculation:")
+  print(min(estimates_absdiff$date))
+  print(max(estimates_absdiff$date))
+  print("Number of days in MAD:")
+  print(as.numeric(max(estimates_absdiff$date) - min(estimates_absdiff$date)))
 
-  R_plot <- plot_multiple_estimates(estimates, legend_name,
-                                    col_palette = col_palette, start_col = start_col, skip_RKI = skip_RKI,
+  R_plot <- plot_multiple_estimates(estimates_plot, legend_name,
+                                    col_palette = col_palette, name_consensus = name_consensus,
                                     include_CI = include_CI,
-                                    sort_numerically = sort_numerically) + ylim(ylims)
+                                    sort_numerically = sort_numerically) + scale_y_continuous(limits = c(ylim_l, ylim_u),
+                                                                                              expand = c(12e-3,12e-3))
 
   ggsave(R_plot, filename = paste0("Figures/estimates", filenames),  bg = "transparent",
          width = 13.1, height = 5.8)
@@ -232,23 +258,23 @@ plot_for_comparison <- function(estimates, comp_methods,
     
     for (method1 in comp_methods) {
       for (method2 in comp_methods){
-        estimates <- data.frame(estimates)
-        diff <- estimates[,paste0("R.", method1)] - estimates[,paste0("R.", method2)]
-        matr[method1, method2] <- mean(as.vector(abs(diff)))
-        corr[method1, method2] <- cor(estimates[,paste0("R.", method1)],
-                                      estimates[,paste0("R.", method2)])
+        estimates_absdiff <- data.frame(estimates_absdiff)
+        diff <- estimates_absdiff[,paste0("R.", method1)] - estimates_absdiff[,paste0("R.", method2)]
+        matr[method1, method2] <- median(as.vector(abs(diff)))
+        #corr[method1, method2] <- cor(estimates_absdiff[,paste0("R.", method1)],
+        #                              estimates_absdiff[,paste0("R.", method2)])
       }
     }
     
     df <- data.frame(matr)
     df <- df[order(row.names(df)), order(colnames(df))]
     
-    mean_abs_error <- pheatmap(df, color = viridis(100), breaks = seq(0,0.2,0.2/100),
-                               border_color = NA, display_numbers = TRUE,
-                               fontsize = 18, fontsize_number=22, number_color = "white",
-                               angle_col = 315, cluster_rows = FALSE, cluster_cols = FALSE,
-                               legend = FALSE)
-    save_pheatmap_pdf(mean_abs_error, paste0("Figures/mean_abs_error", filenames))
+    median_abs_diff <- pheatmap(df, color = viridis(100), breaks = seq(0,0.2,0.2/100),
+                                border_color = NA, display_numbers = TRUE,
+                                fontsize = 18, fontsize_number=22, number_color = "white",
+                                angle_col = 315, cluster_rows = FALSE, cluster_cols = FALSE,
+                                legend = FALSE)
+    save_pheatmap_pdf(median_abs_diff, paste0("Figures/median_abs_difference", filenames))
     
     #correlations <- pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0.25,1,0.75/100),
     #                         border_color = NA, display_numbers = TRUE,
