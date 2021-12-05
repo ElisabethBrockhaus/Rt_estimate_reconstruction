@@ -13,7 +13,7 @@ source("Rt_estimate_reconstruction/calculate_estimates.R")
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
 # parameter combinations used in papers
-gt_dist <- c("gamma", "constant", "empirical", "gamma", "gamma", "gamma", "lognorm", "exponential")
+gt_dist <- c("gamma", "constant", "ad hoc", "gamma", "gamma", "gamma", "lognorm", "exponential")
 mean_gt <- c(4.8,      4,          5.6,      4.8,    3.4,     3.6,     4.7,       7)
 sd_gt <-   c(2.3,      0,          4.2,      2.3,    1.8,     3.1,     2.9,       7)
 delay <-   c(11,       1,          7,        10,     0,       12,      12,        0)

@@ -163,7 +163,7 @@ estimate_ETH_R <- function(incid, window=3, gt_type="gamma", gt_mean=4.8, gt_sd=
 ###########################
 # estimate as in Hotz2020 #
 ###########################
-estimate_Ilmenau_R <- function(incid, window=1, gt_type="empirical",
+estimate_Ilmenau_R <- function(incid, window=1, gt_type="ad hoc",
                                gt_mean=5.61, gt_sd=4.24, delay=7, alpha = 0.05){
   
   # infectivity profile
@@ -519,10 +519,10 @@ repronum <- function(
 
 
 ### function to calculate infectivity profile given distribution type, mean and sd
-get_infectivity_profile <- function(gt_type=c("empirical", "gamma", "exponential", "uniform", "constant", "lognorm"),
+get_infectivity_profile <- function(gt_type=c("ad hoc", "gamma", "exponential", "uniform", "constant", "lognorm"),
                                     gt_mean, gt_sd, n_days = 1000){
   
-  if (gt_type == "empirical"){
+  if (gt_type == "ad hoc"){
     gt_dist <- c(0, (0:3)/3, 1, (5:0)/5, rep(0, n_days-12))
     names(gt_dist) <- seq_along(gt_dist)
     
@@ -552,7 +552,7 @@ get_infectivity_profile <- function(gt_type=c("empirical", "gamma", "exponential
                       sdlog = convert_to_logsd(gt_mean, gt_sd))
   } else {
     print("Type of generation time distribution not known.
-          Choose from ['empirical', 'gamma', 'exponential', 'uniform', 'constant', 'lognorm']")
+          Choose from ['ad hoc', 'gamma', 'exponential', 'uniform', 'constant', 'lognorm']")
   }
   
   # make sure gt_dist[1] == 0
