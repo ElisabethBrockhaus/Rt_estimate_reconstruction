@@ -18,7 +18,7 @@ output_path <- "Rt_estimate_reconstruction/epiforecasts/estimates/"
 # load incidence data as used by rtlive (RKI line list aggregated)
 incid <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid_21_07_10.csv")
 names(incid) <- c("date", "confirm")
-incid <- incid[incid$date >= "2020-12-01",]
+#incid <- incid[incid$date >= "2020-12-01",]
 
 # set date for file names to the date, when the data was loaded
 date_of_data <- "2021-07-10"
@@ -30,8 +30,7 @@ date_of_data <- "2021-07-10"
 calculacte_and_save_estimates <- function(reported_cases,
                                           generation_time,
                                           incubation_period,
-                                          reporting_delay,
-                                          variation){
+                                          reporting_delay){
   start_time <- Sys.time()
   print(start_time)
   
@@ -53,7 +52,6 @@ calculacte_and_save_estimates <- function(reported_cases,
                                            c("date", "type", "median", "mean", "sd",
                                              "lower_95", "lower_50", "upper_95", "upper_50")]
   
-  qsave(result, paste0(output_path, "R_calc_", date_of_data, "_final_", variation, ".qs"))
   #plot(result$date, result$mean, type="l", main=method, xlab="date", ylab="Rt estimate")
   return(result)
 }
@@ -72,8 +70,8 @@ generation_time <- readRDS(paste0(path, "generation_time.rds"))
 
 print("Start with estimation with adjusted input data")
 R_epiforecasts_adjInput <- calculacte_and_save_estimates(incid, generation_time,
-                                                         incubation_period, reporting_delay,
-                                                         variation = "adjInput")
+                                                         incubation_period, reporting_delay)
+qsave(R_epiforecasts_adjInput, paste0(output_path, "R_calc_", date_of_data, "_final_adjInput.qs"))
 
 # no window size to adjust, save the same estimates for the second level of adjustment
 qsave(R_epiforecasts_adjInput, paste0(output_path, "R_calc_", date_of_data, "_final_adjInputWindow.qs"))
@@ -84,8 +82,9 @@ generation_time$sd <- 4
 
 print("Start with estimation with adjusted input data and generation time distribution")
 R_epiforecasts_adjInputWindowGTD <- calculacte_and_save_estimates(incid, generation_time,
-                                                                  incubation_period, reporting_delay,
-                                                                  variation = "adjInputWindowGTD")
+                                                                  incubation_period, reporting_delay)
+
+qsave(R_epiforecasts_adjInputWindowGTD, paste0(output_path, "R_calc_", date_of_data, "_final_adjInputWindowGTD.qs"))
 
 # additionally adjust mean delay
 # first calculate mean delay considered in the estimation
