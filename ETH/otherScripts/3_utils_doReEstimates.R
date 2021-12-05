@@ -136,9 +136,15 @@ estimateRe <- function(
   }
 
   if (variationType == "step") {
-    R_mean <- unlist(lapply(seq_along(t_start),
+    # EB: changed to median
+    #R_mean <- unlist(lapply(seq_along(t_start),
+    #                        function(x) {
+    #                          rep(R_instantaneous$R$`Mean(R)`[x], t_end[x] - t_start[x] + 1)
+    #                        }
+    #))
+    R_median <- unlist(lapply(seq_along(t_start),
                             function(x) {
-                              rep(R_instantaneous$R$`Mean(R)`[x], t_end[x] - t_start[x] + 1)
+                              rep(R_instantaneous$R$`Median(R)`[x], t_end[x] - t_start[x] + 1)
                             }
     ))
     R_highHPD <- unlist(lapply(seq_along(t_start),
@@ -152,7 +158,8 @@ estimateRe <- function(
                               }
     ))
   } else {
-    R_mean <- R_instantaneous$R$`Mean(R)`
+    #R_mean <- R_instantaneous$R$`Mean(R)`
+    R_median <- R_instantaneous$R$`Median(R)`
     R_highHPD <- R_instantaneous$R$`Quantile.0.975(R)`
     R_lowHPD <- R_instantaneous$R$`Quantile.0.025(R)`
   }
@@ -163,7 +170,8 @@ estimateRe <- function(
     }
     originalLength <- length(outputDates)
     outputDates <- outputDates[-seq(originalLength, by = -1, length.out = rightTruncation)]
-    R_mean <- R_mean[-seq(originalLength, by = -1, length.out = rightTruncation)]
+    #R_mean <- R_mean[-seq(originalLength, by = -1, length.out = rightTruncation)]
+    R_median <- R_median[-seq(originalLength, by = -1, length.out = rightTruncation)]
     R_highHPD <- R_highHPD[-seq(originalLength, by = -1, length.out = rightTruncation)]
     R_lowHPD <- R_lowHPD[-seq(originalLength, by = -1, length.out = rightTruncation)]
   }
@@ -174,14 +182,16 @@ estimateRe <- function(
     }
     originalLength <- length(outputDates)
     outputDates <- outputDates[-seq(1, leftTruncation)]
-    R_mean <- R_mean[-seq(1, leftTruncation)]
+    #R_mean <- R_mean[-seq(1, leftTruncation)]
+    R_median <- R_median[-seq(1, leftTruncation)]
     R_highHPD <- R_highHPD[-seq(1, leftTruncation)]
     R_lowHPD <- R_lowHPD[-seq(1, leftTruncation)]
   }
 
   result <- data.frame(
     date = outputDates,
-    R_mean = R_mean,
+    #R_mean = R_mean,
+    R_median = R_median,
     R_highHPD = R_highHPD,
     R_lowHPD = R_lowHPD)
 
@@ -435,15 +445,17 @@ cleanCountryReEstimate <- function(countryEstimatesRaw, method = 'bootstrap',
       pivot_wider(names_from = "variable", values_from = "value") %>%
       dplyr::group_by(date, country, region, data_type, source, estimate_type) %>%
       dplyr::summarize(
-        median_R_mean = median(R_mean),
+        #median_R_mean = median(R_mean),
+        median_R_median = median(R_median),
         median_R_highHPD = median(R_highHPD),
         median_R_lowHPD = median(R_lowHPD),
-        mean_R_mean = mean(R_mean),
+        #mean_R_mean = mean(R_mean),
+        mean_R_median = mean(R_median),
         .groups = "keep"
       ) %>%
       dplyr::select(country, region, source, data_type, estimate_type, date,
-                    median_R_mean, median_R_highHPD, median_R_lowHPD,
-                    mean_R_mean) %>%
+                    #median_R_mean, median_R_highHPD, median_R_lowHPD, mean_R_mean) %>%
+                    median_R_median, median_R_highHPD, median_R_lowHPD, mean_R_median) %>%
       arrange(country, region, source, data_type, estimate_type, date) %>%
       ungroup()
     ReEstimates <- legacy_ReEstimates
@@ -455,7 +467,8 @@ cleanCountryReEstimate <- function(countryEstimatesRaw, method = 'bootstrap',
     orig_ReEstimate <- cleanEstimate %>%
       filter(replicate == 0 ) %>%
       pivot_wider(names_from = "variable", values_from = "value") %>%
-      rename(median_R_mean = R_mean)
+      #rename(median_R_mean = R_mean)
+      rename(median_R_median = R_median)
     # this is called median to be compatible with legacy code
 
     MM_ReEstimates <- cleanEstimate %>%
@@ -463,15 +476,18 @@ cleanCountryReEstimate <- function(countryEstimatesRaw, method = 'bootstrap',
       pivot_wider(names_from = "variable", values_from = "value") %>%
       dplyr::group_by(date, country, region, data_type, source, estimate_type) %>%
       dplyr::summarize(
-        sd_mean = sd(R_mean), #across all bootstrap replicates
+        #sd_mean = sd(R_mean), #across all bootstrap replicates
+        sd_median = sd(R_median), #across all bootstrap replicates
         #sd_highHPD = sd(R_highHPD), #across all bootstrap replicates
         #sd_lowHPD = sd(R_lowHPD), #across all bootstrap replicates
         .groups = "drop"
       ) %>%
       right_join(orig_ReEstimate, by = c('date', 'country', 'region',
                                          'data_type', 'source', 'estimate_type')) %>%
-      dplyr::mutate(median_R_highHPD = median_R_mean + qnorm(high_quan)*sd_mean,
-                    median_R_lowHPD = median_R_mean - qnorm(high_quan)*sd_mean#,
+      dplyr::mutate(#median_R_highHPD = median_R_mean + qnorm(high_quan)*sd_mean,
+                    #median_R_lowHPD = median_R_mean - qnorm(high_quan)*sd_mean#,
+                    median_R_highHPD = median_R_median + qnorm(high_quan)*sd_median,
+                    median_R_lowHPD = median_R_median - qnorm(high_quan)*sd_median#,
                     # R_highHPD_top = R_highHPD + qnorm(high_quan)*sd_highHPD,
                     # R_highHPD_bot = R_highHPD - qnorm(high_quan)*sd_highHPD,
                     # R_lowHPD_top = R_lowHPD + qnorm(high_quan)*sd_lowHPD,
@@ -491,7 +507,8 @@ cleanCountryReEstimate <- function(countryEstimatesRaw, method = 'bootstrap',
       left_join(orig_ReEstimate, by = c('date', 'country', 'region',
                                         'data_type', 'source', 'estimate_type')) %>%
       rowwise() %>%
-      mutate(median_R_mean = median_R_mean.x,
+      mutate(#median_R_mean = median_R_mean.x,
+             median_R_median = median_R_median.x,
              median_R_highHPD = max(median_R_highHPD, R_highHPD.y),
              median_R_lowHPD = min(median_R_lowHPD, R_lowHPD.y))#,
              #estimate_type = paste0(estimate_type, '_simple_Union'))
@@ -551,13 +568,15 @@ cleanCountryReEstimate <- function(countryEstimatesRaw, method = 'bootstrap',
     if (report_sd){
       ReEstimates <- unsortedReEstimates %>%
         dplyr::select(country, region, source, data_type, estimate_type, date,
-                      median_R_mean, median_R_highHPD, median_R_lowHPD, sd_mean) %>%
+                      #median_R_mean, median_R_highHPD, median_R_lowHPD, sd_mean) %>%
+                      median_R_median, median_R_highHPD, median_R_lowHPD, sd_median) %>%
         arrange(country, region, source, data_type, estimate_type, date) %>%
         ungroup()
     } else {
       ReEstimates <- unsortedReEstimates %>%
         dplyr::select(country, region, source, data_type, estimate_type, date,
-                      median_R_mean, median_R_highHPD, median_R_lowHPD) %>%
+                      #median_R_mean, median_R_highHPD, median_R_lowHPD) %>%
+                      median_R_median, median_R_highHPD, median_R_lowHPD) %>%
         arrange(country, region, source, data_type, estimate_type, date) %>%
         ungroup()
     }
