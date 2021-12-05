@@ -30,10 +30,10 @@ estimate_RKI_R <- function(incid, window=7, gt_type="constant", gt_mean=4, gt_sd
                              config = make_config(list(
                                t_start=start, t_end=end,
                                si_distr=gt_dist)))
-    len_est <- length(r_EpiEstim$R$`Mean(R)`)
+    len_est <- length(r_EpiEstim$R$`Median(R)`)
     
     # assign estimates to time points properly
-    estimate[window+0:(len_est-1), "R_calc"] <- r_EpiEstim$R$`Mean(R)`
+    estimate[window+0:(len_est-1), "R_calc"] <- r_EpiEstim$R$`Median(R)`
     estimate[window+0:(len_est-1), "lower"] <- r_EpiEstim$R$`Quantile.0.025(R)`
     estimate[window+0:(len_est-1), "upper"] <- r_EpiEstim$R$`Quantile.0.975(R)`
     
@@ -126,7 +126,7 @@ estimate_ETH_R <- function(incid, window=3, gt_type="gamma", gt_mean=4.8, gt_sd=
   gc()
   
   countryEstimates <- cleanCountryReEstimate(countryEstimatesRaw, method = 'bootstrap')
-  
+
   # add extra truncation of 4 days for all Swiss cantonal estimates due to consolidation
   if (region %in% c("CHE")) {
     days_truncated <- 4
@@ -152,7 +152,7 @@ estimate_ETH_R <- function(incid, window=3, gt_type="gamma", gt_mean=4.8, gt_sd=
   
   estimate <- full_join(unique(incid[, c("date")]),
                         countryEstimates,
-                        by="date")[, c("date", "median_R_mean", "median_R_lowHPD", "median_R_highHPD")]
+                        by="date")[, c("date", "median_R_median", "median_R_lowHPD", "median_R_highHPD")]
   names(estimate) <- c("date", "R_calc", "lower", "upper")
   
   return(estimate)
@@ -224,11 +224,11 @@ estimate_AGES_R <- function(incid, window = 13, gt_type="gamma", gt_mean = 3.37,
                                                        mean_prior=1, std_prior=5)))
   }
 
-  len_est <- length(r_EpiEstim$R$`Mean(R)`)
+  len_est <- length(r_EpiEstim$R$`Median(R)`)
   
   # assign estimates to time points properly
   estimate <- data.frame(date = incid$date,
-                         R_calc = c(rep(NA, (start_i+window-1)), r_EpiEstim$R$`Mean(R)`),
+                         R_calc = c(rep(NA, (start_i+window-1)), r_EpiEstim$R$`Median(R)`),
                          lower = c(rep(NA, (start_i+window-1)), r_EpiEstim$R$`Quantile.0.025(R)`),
                          upper = c(rep(NA, (start_i+window-1)), r_EpiEstim$R$`Quantile.0.975(R)`))
   # shift estimate by delay
@@ -346,7 +346,7 @@ estimate_SDSC_R <- function(incid, estimateOffsetting=7,
   ## offset dates to account for delay between infection and recorded event (testing, hospitalization, death...)
   outputDates <- outputDates - estimateOffsetting + shift
   
-  R_mean <- R_instantaneous$R$`Mean(R)`
+  R_median <- R_instantaneous$R$`Median(R)`
   R_highHPD <- R_instantaneous$R$`Quantile.0.975(R)`
   R_lowHPD <- R_instantaneous$R$`Quantile.0.025(R)`
   
@@ -358,7 +358,7 @@ estimate_SDSC_R <- function(incid, estimateOffsetting=7,
     
     originalLength <- length(outputDates)
     outputDates <- outputDates[-seq(originalLength, by=-1, length.out=rightTruncation)]
-    R_mean <- R_mean[-seq(originalLength, by=-1, length.out=rightTruncation)]
+    R_median <- R_median[-seq(originalLength, by=-1, length.out=rightTruncation)]
     R_highHPD <- R_highHPD[-seq(originalLength, by=-1, length.out=rightTruncation)]
     R_lowHPD <- R_lowHPD[-seq(originalLength, by=-1, length.out=rightTruncation)]
     
@@ -371,13 +371,13 @@ estimate_SDSC_R <- function(incid, estimateOffsetting=7,
     }
     originalLength <- length(outputDates)
     outputDates <- outputDates[-seq(1, leftTruncation)]
-    R_mean <- R_mean[-seq(1, leftTruncation)]
+    R_median <- R_median[-seq(1, leftTruncation)]
     R_highHPD <- R_highHPD[-seq(1, leftTruncation)]
     R_lowHPD <- R_lowHPD[-seq(1, leftTruncation)]
   }
   
   result <- data.frame(date=outputDates,
-                       R_mean=R_mean, 
+                       R_median=R_median, 
                        R_highHPD=R_highHPD,
                        R_lowHPD=R_lowHPD)
   

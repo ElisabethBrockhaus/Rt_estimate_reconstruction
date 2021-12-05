@@ -109,19 +109,19 @@ R_Ilmenau_adjInput <- estimate_Ilmenau_R(incid)
 
 path <- "Rt_estimate_reconstruction/epiforecasts/estimates/"
 R_epiforecasts_adjInput <- qread(paste0(path, "R_calc_2021-07-10_final_adjInput.qs"))
-R_epiforecasts_adjInput <- R_epiforecasts_adjInput[,c("date", "mean", "lower_95", "upper_95")]
+R_epiforecasts_adjInput <- R_epiforecasts_adjInput[,c("date", "median", "lower_95", "upper_95")]
 names(R_epiforecasts_adjInput) <- c("date", "R_calc", "lower", "upper")
 
 path <- "Rt_estimate_reconstruction/ArroyoMarioli/estimates/"
-R_globalrt_smoother_adjInput <- read_csv(paste0(path, "bayesian_smoother_7.csv"))
+R_globalrt_smoother_adjInput <- read_csv(paste0(path, "bayesian_smoother_7.csv"))[,c("Date", "R", "lb_95", "ub_95")]
 names(R_globalrt_smoother_adjInput) <- c("date", "R_calc", "lower", "upper")
-R_globalrt_filter_adjInput <- read_csv(paste0(path, "bayesian_filter_7.csv"))
-names(R_globalrt_filter_adjInput) <- c("date", "R_calc", "lower", "upper")
+#R_globalrt_filter_adjInput <- read_csv(paste0(path, "bayesian_filter_7.csv"))
+#names(R_globalrt_filter_adjInput) <- c("date", "R_calc", "lower", "upper")
 
 path <- "Rt_estimate_reconstruction/rtlive/summaries/"
 R_rtlive_adjInput <- read.csv(paste0(path, "DE_2021-07-10_all_trace_summary.csv")) %>%
-  dplyr::select(X, mean, X2.5., X97.5.) %>%
-  rename(c("date" = "X", "R_calc" = "mean", "lower" = "X2.5.", "upper" = "X97.5.")) %>%
+  dplyr::select(X, median, X2.5., X97.5.) %>%
+  rename(c("date" = "X", "R_calc" = "median", "lower" = "X2.5.", "upper" = "X97.5.")) %>%
   mutate(date = as_date(date))
 
 # merge estimates and plot for comparison
@@ -133,7 +133,7 @@ estimates_adjInput <- R_consensus_adjInput %>%
   full_join(R_Ilmenau_adjInput, by = "date") %>% 
   full_join(R_epiforecasts_adjInput, by = "date") %>%
   full_join(R_globalrt_smoother_adjInput, by = "date") %>%
-  #full_join(R_globalrt_filter_adjInput, by = "date") %>%
+  ##full_join(R_globalrt_filter_adjInput, by = "date") %>%
   full_join(R_rtlive_adjInput, by = "date") %>%
   arrange(date)
 
@@ -258,19 +258,19 @@ R_Ilmenau_adjInputWindowGTD <- estimate_Ilmenau_R(incid,
 
 path <- "Rt_estimate_reconstruction/epiforecasts/estimates/"
 R_epiforecasts_adjInputWindowGTD <- qread(paste0(path, "R_calc_2021-07-10_final_adjInputWindowGTD.qs"))
-R_epiforecasts_adjInputWindowGTD <- R_epiforecasts_adjInputWindowGTD[,c("date", "mean", "lower_95", "upper_95")]
+R_epiforecasts_adjInputWindowGTD <- R_epiforecasts_adjInputWindowGTD[,c("date", "median", "lower_95", "upper_95")]
 names(R_epiforecasts_adjInputWindowGTD) <- c("date", "R_calc", "lower", "upper")
 
 path <- "Rt_estimate_reconstruction/ArroyoMarioli/estimates/"
-R_globalrt_smoother_adjInputWindowGTD <- read_csv(paste0(path, "bayesian_smoother_4.csv"))
+R_globalrt_smoother_adjInputWindowGTD <- read_csv(paste0(path, "bayesian_smoother_4.csv"))[,c("Date", "R", "lb_95", "ub_95")]
 names(R_globalrt_smoother_adjInputWindowGTD) <- c("date", "R_calc", "lower", "upper")
-R_globalrt_filter_adjInputWindowGTD <- read_csv(paste0(path, "bayesian_filter_4.csv"))
-names(R_globalrt_filter_adjInputWindowGTD) <- c("date", "R_calc", "lower", "upper")
+#R_globalrt_filter_adjInputWindowGTD <- read_csv(paste0(path, "bayesian_filter_4.csv"))
+#names(R_globalrt_filter_adjInputWindowGTD) <- c("date", "R_calc", "lower", "upper")
 
 path <- "Rt_estimate_reconstruction/rtlive/summaries/"
 R_rtlive_adjInputWindowGTD <- read.csv(paste0(path, "gamma_4_de_2021-07-10_all_summary.csv")) %>%
-  dplyr::select(X, mean, X2.5., X97.5.) %>%
-  rename(c("date" = "X", "R_calc" = "mean", "lower" = "X2.5.", "upper" = "X97.5.")) %>%
+  dplyr::select(X, median, X2.5., X97.5.) %>%
+  rename(c("date" = "X", "R_calc" = "median", "lower" = "X2.5.", "upper" = "X97.5.")) %>%
   mutate(date = as_date(date))
 
 # merge estimates and plot for comparison
@@ -352,7 +352,7 @@ R_Ilmenau_adjAll <- estimate_Ilmenau_R(incid,
 path <- "Rt_estimate_reconstruction/epiforecasts/estimates/"
 file <- "R_calc_2021-07-10_final_AdjAll.qs"
 R_epiforecasts_adjAll <- qread(paste0(path, file))
-R_epiforecasts_adjAll <- R_epiforecasts_adjAll[,c("date", "mean", "lower_95", "upper_95")]
+R_epiforecasts_adjAll <- R_epiforecasts_adjAll[,c("date", "median", "lower_95", "upper_95")]
 names(R_epiforecasts_adjAll) <- c("date", "R_calc", "lower", "upper")
 
 R_globalrt_smoother_adjAll <- R_globalrt_smoother_adjInputWindowGTD
@@ -396,3 +396,4 @@ comp_CI <- c("consensus", "SDSC", "ETH",
              "globalrt", #"globalrt filter",
              "rtlive")
 #plot_for_comparison(estimates_adjAll_CI, comp_CI, include_CI = T, filenames = "_CI_adjAll.pdf")
+
