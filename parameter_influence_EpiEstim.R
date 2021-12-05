@@ -58,7 +58,7 @@ plot_for_comparison(estimates_window, comp_methods = windows,
 #####################################
 # vary generation time distribution #
 #####################################
-distrs <- c("gamma", "gamma", "constant", "gamma", "lognorm", "gamma", "empirical", "exponential")
+distrs <- c("gamma", "gamma", "constant", "gamma", "lognorm", "gamma", "ad hoc", "exponential")
 means <-  c(3.4,     3.6,     4.0,        4.0,     4.7,       4.8,     5.6,         7.0)
 sds <-    c(1.8,     3.1,     0.0,        4.0,     2.9,       2.3,     4.2,         7.0)
 gtds <- cbind("type"=distrs, "mean"=means, "sd"=sds)
