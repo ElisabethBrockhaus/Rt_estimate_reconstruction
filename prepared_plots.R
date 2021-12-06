@@ -235,12 +235,6 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
     dplyr::filter(date >= start_absdiff, date <= end_date)
   estimates_plot <- estimates_absdiff %>%
     dplyr::filter(date >= start_date)
-  estimates_absdiff <- estimates_absdiff[rowSums(is.na(estimates_absdiff)) == 0,]
-  print("Date range for median absolute difference calculation:")
-  print(min(estimates_absdiff$date))
-  print(max(estimates_absdiff$date))
-  print("Number of days in MAD:")
-  print(as.numeric(max(estimates_absdiff$date) - min(estimates_absdiff$date)))
 
   R_plot <- plot_multiple_estimates(estimates_plot, legend_name,
                                     col_palette = col_palette, name_consensus = name_consensus,
@@ -253,6 +247,13 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
   print(R_plot)
   
   if(plot_diff_matrices) {
+    estimates_absdiff <- estimates_absdiff[rowSums(is.na(estimates_absdiff)) == 0,]
+    print("Date range for median absolute difference calculation:")
+    print(min(estimates_absdiff$date))
+    print(max(estimates_absdiff$date))
+    print("Number of days in MAD:")
+    print(as.numeric(max(estimates_absdiff$date) - min(estimates_absdiff$date)))
+    
     n <- length(comp_methods)
     matr <- matrix(rep(rep(0,n), n), ncol=n)
     corr <- matrix(rep(rep(0,n), n), ncol=n)
