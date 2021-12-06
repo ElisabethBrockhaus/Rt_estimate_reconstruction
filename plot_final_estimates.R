@@ -1,6 +1,5 @@
 # find ylim
 colMax <- function(data) sapply(data, max, na.rm = TRUE)
-#colMin <- function(data) sapply(data, min, na.rm = TRUE)
 
 # for estimates with different window sizes
 max_pub <- max(colMax(estimates_pub %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(starts_with("R_pub"))))
@@ -20,7 +19,7 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 
 # plot median
 plot_for_comparison(estimates_pub, org_methods, legend_name = "research group",
-                    filenames = "_real-time.pdf", ylim_u = ylim_u, plot_diff_matrices=T)
+                    filenames = "_real-time.pdf", ylim_u = ylim_u)
 plot_for_comparison(estimates_adjInput, comp_methods,
                     filenames = "_adjInput.pdf", ylim_u = ylim_u, plot_diff_matrices=T)
 plot_for_comparison(estimates_adjInputWindow, comp_methods,
