@@ -1,3 +1,94 @@
+library(ggplot2)
+
+setwd("../..")
+getwd()
+
+source("Rt_estimate_reconstruction/prepared_plots.R")
+
+# for thesis
+# SIR case
+r_t <- seq(-0.5, 0.5, 10e-5)
+# upper bound
+calc_R_t <- function(w) {
+  R <- 1:length(r_t)
+  for (i in R) {
+    R[i] <- 1 + (c(w) * r_t[i])
+    if (R[i] <= 0) {
+      R[i] <- NA
+    }
+  }
+  return(R)
+}
+calc_max_R_t <- function(w) exp(w * r_t)
+R_t_3 <- calc_R_t(3)
+R_t_3_max <- calc_max_R_t(3)
+R_t_4 <- calc_R_t(4)
+R_t_4_max <- calc_max_R_t(4)
+R_t_5 <- calc_R_t(5)
+R_t_5_max <- calc_max_R_t(5)
+R_t_6 <- calc_R_t(6)
+R_t_6_max <- calc_max_R_t(6)
+R_t_7 <- calc_R_t(7)
+R_t_7_max <- calc_max_R_t(7)
+
+# lower bound
+R_t_min <- 1:length(r_t)
+for (i in R_t_min) {
+  if (r_t[i] < 0) {
+    R_t_min[i] <- 0
+  } else {
+    R_t_min[i] <- 1
+  }
+}
+
+# join R_t
+data <- data.frame(r = r_t, R3 = R_t_3, R4 = R_t_4, R5 = R_t_5, R6 = R_t_6, R7 = R_t_7)
+names(data) <- c("r", "3", "4", "5", "6", "7")
+data_max <- data.frame(r = r_t, R3 = R_t_3_max, R4 = R_t_4_max, R5 = R_t_5_max, R6 = R_t_6_max, R7 = R_t_7_max)
+names(data_max) <- c("r", "3", "4", "5", "6", "7")
+data_min <- data.frame(r = r_t, all = R_t_min)
+
+# reshape data
+data_reshaped  <- data %>% gather("variable", "value", 2:dim(data)[2])
+data_max_reshaped  <- data_max %>% gather("variable", "value", 2:dim(data_max)[2])
+data_min_reshaped  <- data_min %>% gather("variable", "value", 2:dim(data_min)[2])
+
+col_values <- get_colors(c("3", "4", "5", "6", "7", "all"), palette = "Dark2", name_consensus = "all")
+
+# plot
+R_plot <- ggplot(data = data_reshaped, aes(x = r, y = value)) +
+  labs(x = "growth rate r", y = "reproductive number R") +
+  theme_minimal() +
+  theme(
+    axis.text=element_text(size=16),
+    axis.title=element_text(size=18),
+    legend.text=element_text(size=16),
+    legend.title=element_text(size=18),
+    axis.line = element_line(),
+    axis.line.y.right = element_line(),
+    axis.line.x.top = element_line(),
+    legend.position = "bottom",
+    panel.background = element_rect(fill = "transparent")
+  ) +
+  geom_line(aes(group = variable, color = variable)) +
+  geom_line(data = data_max_reshaped, aes(group = variable, color = variable), linetype = "dashed") +
+  geom_line(data = data_min_reshaped, aes(group = variable, color = variable), linetype = "dotted") +
+  scale_color_manual(values=col_values, name="mean generation time") +
+  guides(colour = guide_legend(override.aes = list(linetype = c(rep("solid", 5), "dotted")))) +
+  coord_cartesian(ylim = c(-0.2, 10.2), expand = F) #+ scale_y_continuous(trans='log')
+
+print(R_plot)
+ggsave(R_plot, filename = "Figures/growthrate_vs_reproductivenumber.pdf",  bg = "transparent",
+       width = 13.1, height = 5.8)
+
+
+
+
+
+
+
+
+# for presenation slides
 R <- 1.07
 incidence <- data.frame(date=1:100, I=c(rep(1,10), rep(0,90)))
 for (t in 2:100) {
