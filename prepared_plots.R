@@ -208,7 +208,7 @@ plot_published_vs_calculated_95CI <- function(published, calculated, method_name
 # plots for final comparison #
 ##############################
 
-plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-03-12",
+plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-04-01",
                                 start_date = "2021-01-01", end_date = "2021-06-10",
                                 legend_name="model",
                                 col_palette="Set1", name_consensus="consensus",
@@ -231,24 +231,30 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
     names(estimates) <- c("date", names_R)
   }
   
-  estimates_absdiff <- estimates %>%
-    dplyr::filter(date >= start_absdiff, date <= end_date)
-  estimates_plot <- estimates_absdiff %>%
-    dplyr::filter(date >= start_date)
+  estimates_plot <- estimates %>%
+    dplyr::filter(date >= start_date, date <= end_date)
+  print("Date range for plotting:")
+  print(min(estimates_plot$date))
+  print(max(estimates_plot$date))
 
   R_plot <- plot_multiple_estimates(estimates_plot, legend_name,
                                     col_palette = col_palette, name_consensus = name_consensus,
                                     include_CI = include_CI,
-                                    sort_numerically = sort_numerically) + scale_y_continuous(limits = c(ylim_l, ylim_u),
-                                                                                              expand = c(12e-3,12e-3))
+                                    sort_numerically = sort_numerically) +
+    #scale_y_continuous(limits = c(ylim_l, ylim_u),
+    #                   expand = c(12e-3,12e-3)) +
+    coord_cartesian(ylim = c(ylim_l, ylim_u),
+                    expand = c(12e-3,12e-3))
 
   ggsave(R_plot, filename = paste0("Figures/estimates", filenames),  bg = "transparent",
          width = 13.1, height = 5.8)
   print(R_plot)
   
   if(plot_diff_matrices) {
+    estimates_absdiff <- estimates %>%
+      dplyr::filter(date >= start_absdiff, date <= end_date)
     estimates_absdiff <- estimates_absdiff[rowSums(is.na(estimates_absdiff)) == 0,]
-    print("Date range for median absolute difference calculation:")
+    print("Date range for mean absolute difference calculation:")
     print(min(estimates_absdiff$date))
     print(max(estimates_absdiff$date))
     print("Number of days in MAD:")
@@ -263,7 +269,7 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
       for (method2 in comp_methods){
         estimates_absdiff <- data.frame(estimates_absdiff)
         diff <- estimates_absdiff[,paste0("R.", method1)] - estimates_absdiff[,paste0("R.", method2)]
-        matr[method1, method2] <- median(as.vector(abs(diff)))
+        matr[method1, method2] <- mean(as.vector(abs(diff)))
         #corr[method1, method2] <- cor(estimates_absdiff[,paste0("R.", method1)],
         #                              estimates_absdiff[,paste0("R.", method2)])
       }
@@ -272,12 +278,12 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
     df <- data.frame(matr)
     df <- df[order(row.names(df)), order(colnames(df))]
     
-    median_abs_diff <- pheatmap(df, color = viridis(100), breaks = seq(0,0.2,0.2/100),
-                                border_color = NA, display_numbers = TRUE,
-                                fontsize = 18, fontsize_number=22, number_color = "white",
-                                angle_col = 315, cluster_rows = FALSE, cluster_cols = FALSE,
-                                legend = FALSE)
-    save_pheatmap_pdf(median_abs_diff, paste0("Figures/median_abs_difference", filenames))
+    mean_abs_diff <- pheatmap(df, color = viridis(100), breaks = seq(0,0.2,0.2/100),
+                              border_color = NA, display_numbers = TRUE,
+                              fontsize = 18, fontsize_number=22, number_color = "white",
+                              angle_col = 315, cluster_rows = FALSE, cluster_cols = FALSE,
+                              legend = FALSE)
+    save_pheatmap_pdf(mean_abs_diff, paste0("Figures/mean_abs_difference", filenames))
     
     #correlations <- pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0.25,1,0.75/100),
     #                         border_color = NA, display_numbers = TRUE,
