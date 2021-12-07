@@ -183,7 +183,7 @@ R_Ilmenau_adjInputWindow <- estimate_Ilmenau_R(incid, window = window)
 R_epiforecasts_adjInputWindow <- R_epiforecasts_adjInput
 
 R_globalrt_smoother_adjInputWindow <- R_globalrt_smoother_adjInput
-R_globalrt_filter_adjInputWindow <- R_globalrt_filter_adjInput
+#R_globalrt_filter_adjInputWindow <- R_globalrt_filter_adjInput
 
 R_rtlive_adjInputWindow <- R_rtlive_adjInput
 
@@ -356,7 +356,7 @@ R_epiforecasts_adjAll <- R_epiforecasts_adjAll[,c("date", "median", "lower_95", 
 names(R_epiforecasts_adjAll) <- c("date", "R_calc", "lower", "upper")
 
 R_globalrt_smoother_adjAll <- R_globalrt_smoother_adjInputWindowGTD
-R_globalrt_filter_adjAll <- R_globalrt_filter_adjInputWindowGTD
+#R_globalrt_filter_adjAll <- R_globalrt_filter_adjInputWindowGTD
 
 R_rtlive_adjAll <- R_rtlive_adjInputWindowGTD
 R_rtlive_adjAll$date <- R_rtlive_adjAll$date + params["rtlive", "delay"]
