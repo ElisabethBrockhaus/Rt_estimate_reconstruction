@@ -9,6 +9,9 @@ gtds <- data.frame(gtd=gt_dist, gt_mean=mean_gt, gt_sd=sd_gt)
 methods <- c("ETH", "RKI", "Ilmenau", "SDSC", "AGES", "epiforecasts", "rtlive", "globalrt", "consensus")
 rownames(gtds) <- methods
 
+ages_first <- c(4.46, 2.63)
+names(ages_first) <- c("gt_mean", "gt_sd")
+
 # plot assumed mean and sd of generation times
 gtd_scatterplot <- ggplot(data = gtds, aes(x = gt_mean, y = gt_sd)) +
   labs(x = "mean", y = "standard deviation") +
@@ -26,7 +29,13 @@ gtd_scatterplot <- ggplot(data = gtds, aes(x = gt_mean, y = gt_sd)) +
   geom_point(size = 2) +
   geom_text(label=c("ETH/SDSC", "RKI", "Ilmenau", "SDSC", "AGES", "epiforecasts", "rtlive", "globalrt", "consensus"),
             nudge_y = 0.3, check_overlap = TRUE, size = 5) + 
-  geom_point(data = data.frame(gt_mean=4, gt_sd=4), colour = "red", size = 3)
+  geom_point(data = data.frame(gt_mean=4, gt_sd=4), colour = "red", size = 3) + 
+  geom_point(data = data.frame(gt_mean=ages_first["gt_mean"], gt_sd=ages_first["gt_sd"]),
+             colour = "black", shape=21, size = 2) +
+  geom_segment(aes(x=ages_first["gt_mean"], y=ages_first["gt_sd"],
+                   xend=gtds["AGES","gt_mean"], yend=gtds["AGES","gt_sd"]),
+               arrow=arrow(length=unit(2.5, "mm")), color="black", size=0.01, linetype=2)
+
 print(gtd_scatterplot)
 ggsave(gtd_scatterplot, filename = "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Figures/gtd_scatterplot.pdf",  bg = "transparent",
        width = 8, height = 5)
