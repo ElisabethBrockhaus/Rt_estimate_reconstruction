@@ -259,13 +259,17 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
     print("Number of days in MAD:")
     print(as.numeric(max(estimates_absdiff$date) - min(estimates_absdiff$date)))
     
-    n <- length(comp_methods)
+    # adjust method names
+    methods_ <- comp_methods
+    for (i in c(" ", ",", "\\(", "\\)")) {methods_ <- gsub(i, ".", methods_)}
+    
+    n <- length(methods_)
     matr <- matrix(rep(rep(0,n), n), ncol=n)
     corr <- matrix(rep(rep(0,n), n), ncol=n)
-    colnames(matr) <- rownames(matr) <- colnames(corr) <- rownames(corr) <- comp_methods
+    colnames(matr) <- rownames(matr) <- colnames(corr) <- rownames(corr) <- methods_
     
-    for (method1 in comp_methods) {
-      for (method2 in comp_methods){
+    for (method1 in methods_) {
+      for (method2 in methods_){
         estimates_absdiff <- data.frame(estimates_absdiff)
         diff <- estimates_absdiff[,paste0("R.", method1)] - estimates_absdiff[,paste0("R.", method2)]
         matr[method1, method2] <- mean(as.vector(abs(diff)))
@@ -275,7 +279,13 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
     }
     
     df <- data.frame(matr)
-    df <- df[order(row.names(df)), order(colnames(df))]
+    row.names(df) <- colnames(df) <- format(comp_methods, width=19)
+
+    if (sort_numerically){
+      df <- df[order(as.numeric(row.names(df))), order(as.numeric(colnames(df)))]
+    } else{
+      df <- df[order(row.names(df)), order(colnames(df))]
+    }
     
     mean_abs_diff <- pheatmap(df, color = viridis(100), breaks = seq(0,0.2,0.2/100),
                               border_color = NA, display_numbers = TRUE,

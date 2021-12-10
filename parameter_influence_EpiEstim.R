@@ -49,10 +49,11 @@ for (window in windows){
 ylim_window_l <- min(colMin(estimates_window %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(windows)))))
 ylim_window_u <- max(colMax(estimates_window %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(windows)))))
 # plot
-plot_for_comparison(estimates_window, comp_methods = windows,
+plot_for_comparison(estimates_window, comp_methods = as.character(windows),
                     col_palette = "YlOrRd", name_consensus = 7,
                     legend_name = "window size", filenames = "_influence_window.pdf",
-                    sort_numerically = TRUE, ylim_l = ylim_window_l, ylim_u = ylim_window_u)
+                    sort_numerically = TRUE,  plot_diff_matrices=T,
+                    ylim_l = ylim_window_l, ylim_u = ylim_window_u)
 
 
 #####################################
@@ -90,7 +91,8 @@ ylim_gtd_u <- max(colMax(estimates_gtd %>% dplyr::filter(date>="2021-01-01", dat
 plot_for_comparison(estimates_gtd, comp_methods = gtd_strs,
                     col_palette = "YlGn", name_consensus = "4(4), gamma",
                     legend_name = "GTD", filenames = "_influence_GTD.pdf",
-                    sort_numerically = FALSE, ylim_l = ylim_gtd_l, ylim_u = ylim_gtd_u)
+                    sort_numerically = FALSE, plot_diff_matrices=T,
+                    ylim_l = ylim_gtd_l, ylim_u = ylim_gtd_u)
 
 
 ###################
@@ -129,7 +131,8 @@ ylim_input_u <- max(colMax(estimates_input %>% dplyr::filter(date>="2021-01-01",
 plot_for_comparison(estimates_input, comp_methods = data_sources,
                     col_palette = "Set1", name_consensus = "RKI",
                     legend_name = "data source", filenames = "_influence_input_data.pdf",
-                    sort_numerically = FALSE, ylim_l = ylim_input_l, ylim_u = ylim_input_u)
+                    sort_numerically = FALSE, plot_diff_matrices=T,
+                    ylim_l = ylim_input_l, ylim_u = ylim_input_u)
 
 
 ######################
@@ -178,7 +181,8 @@ ylim_preprocess_u <- max(colMax(estimates_preprocess %>% dplyr::filter(date>="20
 plot_for_comparison(estimates_preprocess, comp_methods = c(preprocessing, "deconvolution (ETH)"),
                     col_palette = "Dark2", name_consensus = "none",
                     legend_name = "preprocessing", filenames = "_influence_preprocessing.pdf",
-                    sort_numerically = FALSE, ylim_l = ylim_preprocess_l, ylim_u = ylim_preprocess_u)
+                    sort_numerically = FALSE, plot_diff_matrices=T,
+                    ylim_l = ylim_preprocess_l, ylim_u = ylim_preprocess_u)
 
 
 ###############################################################################
@@ -209,7 +213,9 @@ for (sd in sds){
 #ylim_SD_gtd_l <- min(colMin(estimates_SD_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(sds)))))
 #ylim_SD_gtd_u <- max(colMax(estimates_SD_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(sds)))))
 # plot
-plot_for_comparison(estimates_SD_gtd, comp_methods = sds,
+source("Rt_estimate_reconstruction/prepared_plots.R")
+plot_for_comparison(estimates_SD_gtd, comp_methods = as.character(sds),
                     col_palette = "YlGn", name_consensus = 4.0,
                     legend_name = "SD of the GTD", filenames = "_influence_SD_GTD.pdf",
-                    sort_numerically = TRUE, ylim_l = ylim_gtd_l, ylim_u = ylim_gtd_u)
+                    sort_numerically = TRUE, plot_diff_matrices=T,
+                    ylim_l = ylim_gtd_l, ylim_u = ylim_gtd_u)
