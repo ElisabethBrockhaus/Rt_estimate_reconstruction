@@ -81,8 +81,8 @@ R_plot <- ggplot(data = incidence, aes(x = date, y = value)) +
     panel.background = element_rect(fill = "transparent")
   ) +
   geom_line(aes(group = variable, color = variable)) +
-  scale_color_manual(values=col_values, name="data source")
+  scale_color_manual(values=col_values, name="preprocessing")
 
 print(R_plot)
 ggsave(R_plot, filename = "Figures/preprocessed_incidence_data.pdf",  bg = "transparent",
-       width = 13.1, height = 6.3)
+       width = 13.1, height = 5.8)
