@@ -60,6 +60,7 @@ plot_for_comparison(estimates_adjAll_CI, comp_CI, include_CI = T,
 ylim_u_long <- 4
 
 # some plots over more days
+source("Rt_estimate_reconstruction/prepared_plots.R")
 plot_for_comparison(estimates_adjInput, comp_methods,
                     #start_absdiff = "2020-03-16",
                     start_date = "2020-03-01", end_date = "2021-07-10",

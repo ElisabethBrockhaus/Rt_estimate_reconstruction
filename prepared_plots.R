@@ -135,7 +135,9 @@ plot_multiple_estimates <- function(estimates, legend_name,
       axis.line.x.top = element_line(),
       legend.position = "bottom",
       panel.background = element_rect(fill = "transparent")
-      )
+      ) +
+    geom_rect(data=NULL,aes(xmin=as_date("2020-03-01"), xmax=as_date("2020-03-31"), ymin=-Inf, ymax=Inf), fill="grey", alpha=0.01) +
+    geom_rect(data=NULL,aes(xmin=as_date("2021-06-11"), xmax=as_date("2021-07-09"), ymin=-Inf, ymax=Inf), fill="grey", alpha=0.01)
   
   col_values <- get_colors(methods = unique(R_est$model), col_palette, name_consensus = name_consensus)
   
@@ -241,11 +243,8 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
                                     col_palette = col_palette, name_consensus = name_consensus,
                                     include_CI = include_CI,
                                     sort_numerically = sort_numerically) +
-    #scale_y_continuous(limits = c(ylim_l, ylim_u),
-    #                   expand = c(12e-3,12e-3)) +
-    coord_cartesian(ylim = c(ylim_l, ylim_u),
-                    expand = c(12e-3,12e-3))
-
+    coord_cartesian(ylim = c(ylim_l-0.1, ylim_u+0.1), expand = FALSE)
+  
   ggsave(R_plot, filename = paste0("Figures/estimates", filenames),  bg = "transparent",
          width = 13.1, height = 5.8)
   print(R_plot)
