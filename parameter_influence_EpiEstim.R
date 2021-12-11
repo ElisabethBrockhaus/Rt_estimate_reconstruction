@@ -213,7 +213,6 @@ for (sd in sds){
 #ylim_SD_gtd_l <- min(colMin(estimates_SD_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(sds)))))
 #ylim_SD_gtd_u <- max(colMax(estimates_SD_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(sds)))))
 # plot
-source("Rt_estimate_reconstruction/prepared_plots.R")
 plot_for_comparison(estimates_SD_gtd, comp_methods = as.character(sds),
                     col_palette = "YlGn", name_consensus = 4.0,
                     legend_name = "SD of the GTD", filenames = "_influence_SD_GTD.pdf",

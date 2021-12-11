@@ -279,7 +279,7 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
     }
     
     df <- data.frame(matr)
-    row.names(df) <- colnames(df) <- format(comp_methods, width=19)
+    row.names(df) <- colnames(df) <- comp_methods
 
     if (sort_numerically){
       df <- df[order(as.numeric(row.names(df))), order(as.numeric(colnames(df)))]
@@ -288,7 +288,8 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
     }
     
     mean_abs_diff <- pheatmap(df, color = viridis(100), breaks = seq(0,0.2,0.2/100),
-                              border_color = NA, display_numbers = TRUE,
+                              border_color = NA, cellwidth = unit(2, "cm"), cellheight = unit(1, "cm"),
+                              display_numbers = TRUE,
                               fontsize = 18, fontsize_number=22, number_color = "white",
                               angle_col = 315, cluster_rows = FALSE, cluster_cols = FALSE,
                               legend = FALSE)
