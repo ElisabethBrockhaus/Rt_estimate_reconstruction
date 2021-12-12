@@ -183,6 +183,7 @@ load_ETH_data <- function(country = "Germany", region = "DEU", source = "",
 load_Ilmenau_data <- function(){
   
   # path to preprocessed RKI incidence data
+  # TODO: make sure that file exists
   path_incid <- "Rt_estimate_reconstruction/Ilmenau/data_ger_tot.qs"
   
   # load incidence data
@@ -261,6 +262,8 @@ load_epiforecasts_data <- function(country = "Germany") {
 # functions for preprocessing #
 ###############################
 
+# main parts of this method were copied from https://github.com/covid-19-Re/shiny-dailyRe
+# License: GPL-3.0
 ETH_load_countryData <- function(country="Germany", region="DEU", data_source = ""){
   source("Rt_estimate_reconstruction/ETH/otherScripts/1_utils_getRawData.R")
   source("Rt_estimate_reconstruction/ETH/otherScripts/utils.R")
@@ -401,6 +404,8 @@ ETH_load_countryData <- function(country="Germany", region="DEU", data_source = 
   
 }
 
+# main parts of this method were copied from https://github.com/covid-19-Re/shiny-dailyRe
+# License: GPL-3.0
 ETH_deconvolution <- function(country="Germany",
                               region="DEU",
                               data_source = "",
@@ -553,30 +558,3 @@ ETH_deconvolution <- function(country="Germany",
     saveRDS(deconvolvedCountryData, file = file.path(basePath, str_c(region, "-DeconvolutedData", data_source, delay_source, ".rds")))
   }
 }
-
-
-
-
-###################
-# additional data #
-###################
-
-download_OWID_data <- function(){
-  
-  # path to OWID incidence data
-  repo_incid <- "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/owid-covid-data.csv"
-  
-  # load data
-  data_raw <- read_csv(repo_incid)
-  
-  # extract relevant countries
-  owid_austria <- data_raw[data_raw$location=="Austria",]
-  owid_germany <- data_raw[data_raw$location=="Germany",]
-  owid_switzerland <- data_raw[data_raw$location=="Switzerland",]
-  
-  # write data as csv
-  write.csv(owid_austria, "Rt_estimate_reconstruction/incidence_data/OWID_Austria.csv")
-  write.csv(owid_germany, "Rt_estimate_reconstruction/incidence_data/OWID_Germany.csv")
-  write.csv(owid_switzerland, "Rt_estimate_reconstruction/incidence_data/OWID_Switzerland.csv")
-}
-

@@ -4,6 +4,8 @@ library(EpiNow2)
 ###########################
 # estimates as in RKI2020 #
 ###########################
+
+# parts of this method were copied from RKI (2020): "Erläuterung der Schätzung der zeitlich variierenden Reproduktionszahl"
 estimate_RKI_R <- function(incid, window=7, gt_type="constant", gt_mean=4, gt_sd=0, delay=1,
                            method="RKI"){
   
@@ -85,6 +87,9 @@ estimate_RKI_R <- function(incid, window=7, gt_type="constant", gt_mean=4, gt_sd
 ###############################
 # estimates as in Huisman2021 #
 ###############################
+
+# parts of this method were copied from https://github.com/covid-19-Re/shiny-dailyRe
+# License: GPL-3.0
 estimate_ETH_R <- function(incid, window=3, gt_type="gamma", gt_mean=4.8, gt_sd=2.3, shift=0){
   
   region <- unique(incid$region)
@@ -163,6 +168,9 @@ estimate_ETH_R <- function(incid, window=3, gt_type="gamma", gt_mean=4.8, gt_sd=
 ###########################
 # estimate as in Hotz2020 #
 ###########################
+
+# parts of this method were copied from https://github.com/Stochastik-TU-Ilmenau/COVID-19/tree/gh-pages
+# License: MIT
 estimate_Ilmenau_R <- function(incid, window=1, gt_type="ad hoc",
                                gt_mean=5.61, gt_sd=4.24, delay=7, alpha = 0.05){
   
@@ -242,6 +250,9 @@ estimate_AGES_R <- function(incid, window = 13, gt_type="gamma", gt_mean = 3.37,
 ###########################
 # estimate as in SDSC2020 #
 ###########################
+
+# this method was copied from https://renkulab.io/gitlab/covid-19/covid-19-forecast/-/tree/master
+# License: Creative Commons
 estimate_SDSC_R <- function(incid, estimateOffsetting=7,
                             rightTruncation=0, leftTruncation=5,
                             method="Cori", minimumCumul=5,
@@ -396,7 +407,8 @@ estimate_SDSC_R <- function(incid, estimateOffsetting=7,
 # additional functions #
 ########################
 
-### parts from ETH script ReCountry.R that calculates parameters for estimation
+# parts of this method were copied from https://github.com/covid-19-Re/shiny-dailyRe
+# License: GPL-3.0
 get_parameters_ETH <- function(deconvolvedCountryData, region, shift){
   
   stringencyDataPath <- file.path("Rt_estimate_reconstruction/ETH/data/countryData",
@@ -471,6 +483,9 @@ get_parameters_ETH <- function(deconvolvedCountryData, region, shift){
 
 
 ### function from Ilmenau repo for their Rt estimation
+
+# this method is copied from https://github.com/Stochastik-TU-Ilmenau/COVID-19/tree/gh-pages
+# License: MIT
 repronum <- function(
   new.cases, # I
   profile, # w
