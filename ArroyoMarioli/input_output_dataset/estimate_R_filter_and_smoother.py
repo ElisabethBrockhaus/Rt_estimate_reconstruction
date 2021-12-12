@@ -1,5 +1,5 @@
 import sys
-from pathlib import Path
+import os
 import pickle
 import numpy as np
 import pandas as pd
@@ -7,8 +7,7 @@ import statsmodels.api as sm
 import scipy
 from tools import estimate_R
 
-sys.path.append(Path(".").resolve())
-
+sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/" + "../.."))
 
 if __name__ == "__main__":
 
@@ -68,20 +67,15 @@ if __name__ == "__main__":
         )
 
         # Bayesian estimates
-
         # Load STAN models
-        stm_missing = pickle.load(
-            open(
-                "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/ArroyoMarioli/estimates/STAN_models/model_missing.pkl",
-                "rb",
-            )
-        )
-        stm_no_missing = pickle.load(
-            open(
-                "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/ArroyoMarioli/estimates/STAN_models/model_no_missing.pkl",
-                "rb",
-            )
-        )
+        p = "ArroyoMarioli/estimates/STAN_models/model_missing.pkl"
+        file = open(file=p, mode="rb")
+        stm_missing = pickle.load(file)
+
+        p = "ArroyoMarioli/estimates/STAN_models/model_no_missing.pkl"
+        file = open(file=p, mode="rb")
+        stm_no_missing = pickle.load(file)
+
         res_Bayes = estimate_R(
             y=df["gr_infected_{}".format(days_infectious)].values,
             gamma=1 / days_infectious,
