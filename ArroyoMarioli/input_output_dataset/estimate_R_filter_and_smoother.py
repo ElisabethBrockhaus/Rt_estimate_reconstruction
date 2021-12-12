@@ -62,7 +62,7 @@ if __name__ == "__main__":
         df_freq["R_filtered"] = 1 + gamma ** (-1) * res_freq.filtered_state[0]
         df_freq["R_smoothed"] = 1 + gamma ** (-1) * res_freq.smoothed_state[0]
         df_freq.to_csv(
-            "{}/frequentist_estimates_{}.csv".format(output_folder, days_infectious),
+            "{}frequentist_estimates_{}.csv".format(output_folder, days_infectious),
             index=False,
         )
 
@@ -99,7 +99,7 @@ if __name__ == "__main__":
         df_smoother_Bayesian["lb_50"] = res_Bayes["lb_50"]
         df_smoother_Bayesian["ub_50"] = res_Bayes["ub_50"]
         df_smoother_Bayesian.to_csv(
-            "{}/bayesian_smoother_{}.csv".format(output_folder, days_infectious),
+            "{}bayesian_smoother_{}.csv".format(output_folder, days_infectious),
             index=False,
         )
 
@@ -162,6 +162,6 @@ if __name__ == "__main__":
             .reset_index()
         )
         df_filter_Bayesian.to_csv(
-            "{}/bayesian_filter_{}.csv".format(output_folder, days_infectious),
+            "{}bayesian_filter_{}.csv".format(output_folder, days_infectious),
             index=False,
         )
