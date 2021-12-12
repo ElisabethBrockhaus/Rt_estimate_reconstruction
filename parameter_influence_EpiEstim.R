@@ -5,6 +5,10 @@ setwd("..")
 # needs to be the directory with the repos "Rt_estimate_reconstruction"
 getwd()
 
+
+# TODO: save estimates after calculations
+
+
 source("Rt_estimate_reconstruction/calculate_estimates.R")
 source("Rt_estimate_reconstruction/prepared_plots.R")
 

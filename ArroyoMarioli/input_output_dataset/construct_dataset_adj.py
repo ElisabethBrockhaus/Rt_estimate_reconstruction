@@ -1,14 +1,9 @@
-import os
 import sys
+from pathlib import Path
 import numpy as np
 import pandas as pd
 
-# sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/" + "../.."))
-sys.path.append(
-    os.path.abspath(
-        "d:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction"
-    )
-)
+sys.path.append(Path(".").resolve())
 
 
 def construct_dataset(file_name, var_name):
@@ -45,7 +40,7 @@ def construct_dataset(file_name, var_name):
 ##############
 
 # EB: change folder structure
-input_folder = "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/"
+input_folder = "ArroyoMarioli/input_output_dataset/"
 output_folder = input_folder
 min_cases = 100
 # EB: include value 4

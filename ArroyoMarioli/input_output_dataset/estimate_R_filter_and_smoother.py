@@ -1,5 +1,5 @@
-import os
 import sys
+from pathlib import Path
 import pickle
 import numpy as np
 import pandas as pd
@@ -7,12 +7,8 @@ import statsmodels.api as sm
 import scipy
 from tools import estimate_R
 
-# sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/" + "../.."))
-sys.path.append(
-    os.path.abspath(
-        "d:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction"
-    )
-)
+sys.path.append(Path(".").resolve())
+
 
 if __name__ == "__main__":
 
@@ -20,8 +16,10 @@ if __name__ == "__main__":
     # Parameters #
     ##############
 
-    output_folder = "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/ArroyoMarioli/estimates/"
-    input_folder = "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/ArroyoMarioli/input_output_dataset/"
+    # EB: change folder structure
+    input_folder = "ArroyoMarioli/input_output_dataset/"
+    output_folder = "ArroyoMarioli/estimates/"
+
     # EB: run for various mean serial intervals
     days_infectious_list = [4, 7]
     num_iter = 10000  # MCMC iterations

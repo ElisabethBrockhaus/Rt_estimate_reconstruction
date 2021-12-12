@@ -1,3 +1,5 @@
+setwd("../..")
+source("Rt_estimate_reconstruction/load_data.R")
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
 epiforecasts_07_10 <- load_published_R_estimates("epiforecasts")

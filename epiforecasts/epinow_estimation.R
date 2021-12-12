@@ -6,8 +6,7 @@ library(lubridate)
 library(qs)
 library(readr)
 
-#setwd("/home/brockhaus/reproductive_numbers")
-setwd("D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code")
+setwd("../..")
 output_path <- "Rt_estimate_reconstruction/epiforecasts/estimates/"
 
 

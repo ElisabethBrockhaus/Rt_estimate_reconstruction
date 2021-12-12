@@ -1,22 +1,19 @@
-import os
 import sys
+from pathlib import Path
 import pandas as pd
 import pystan
 import pickle
 
-# sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/" + "../.."))
-sys.path.append(
-    os.path.abspath(
-        "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction"
-    )
-)
+sys.path.append(Path(".").resolve())
+
 
 ##############
 # Parameters #
 ##############
 
-output_folder = "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/ArroyoMarioli/estimates/STAN_models"
-input_folder = "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/ArroyoMarioli/estimates"
+# EB: change folder structure
+input_folder = "ArroyoMarioli/estimates/"
+output_folder = "ArroyoMarioli/estimates/STAN_models/"
 min_T = 20
 inflation_factor = 1.0  # Factor by which variances are inflated for priors
 mean_mu0 = 0.25  # Prior for initial state: mean

@@ -1,3 +1,8 @@
+setwd("../..")
+source("Rt_estimate_reconstruction/load_data.R")
+source("Rt_estimate_reconstruction/prepared_plots.R")
+
+
 path <- "Rt_estimate_reconstruction/epiforecasts/estimates/"
 
 estimates_org <- load_published_R_estimates("epiforecasts")

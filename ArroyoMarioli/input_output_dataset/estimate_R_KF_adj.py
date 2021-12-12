@@ -1,17 +1,12 @@
-import os
 import sys
+from pathlib import Path
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 import scipy
 import warnings
 
-# sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/" + "../.."))
-sys.path.append(
-    os.path.abspath(
-        "d:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction"
-    )
-)
+sys.path.append(Path(".").resolve())
 
 
 def estimate_R(y, gamma, n_start_values_grid=0, maxiter=200):

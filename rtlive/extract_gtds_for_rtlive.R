@@ -1,5 +1,4 @@
-setwd("..")
-setwd("..")
+setwd("../..")
 # needs to be the directory with the repos "Rt_estimate_reconstruction"
 getwd()
 

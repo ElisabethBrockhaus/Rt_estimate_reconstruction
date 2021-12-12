@@ -1,6 +1,6 @@
 library(readr)
 
-setwd("D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code")
+setwd("../..")
 source("Rt_estimate_reconstruction/load_data.R")
 
 # load JHU data (has correct format)

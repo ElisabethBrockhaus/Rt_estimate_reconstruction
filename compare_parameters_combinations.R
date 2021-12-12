@@ -4,6 +4,9 @@ setwd("..")
 getwd()
 
 
+# TODO: save estimates after calculations
+
+
 ################################
 # get functions and parameters #
 ################################

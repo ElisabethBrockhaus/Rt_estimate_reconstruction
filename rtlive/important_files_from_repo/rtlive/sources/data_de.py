@@ -150,11 +150,13 @@ def get_positives_DE(run_date) -> pandas.DataFrame:
     # date_str = run_date.strftime("%Y-%m-%d")
     with tempfile.TemporaryDirectory() as td:
         # fp_tempfile = pathlib.Path(td, "data_arcgis.csv")
-        fp_tempfile = pathlib.Path(
-            "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/rtlive/rtlive-global/data/RKI_COVID19_.csv"
-        )
+        fp_tempfile = pathlib.Path("../../rtlive-global/data/RKI_COVID19_.csv")
+
         if run_date.date() == pandas.Timestamp(2021, 7, 10):
-            fp_tempfile = "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/incidence_data/RKI_COVID19_21_07_10.csv"
+            fp_tempfile = pathlib.Path(
+                "../../../incidence_data/RKI_COVID19_21_07_10.csv"
+            )
+            # "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/incidence_data/RKI_COVID19_21_07_10.csv"
             # _log.info("Loading German data from %s", release_url)
             # fp_tempfile = pandas.read_csv(release_url)
             encoding = "utf-8"
