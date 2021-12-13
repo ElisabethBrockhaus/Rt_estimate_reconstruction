@@ -6,6 +6,7 @@ library(scales)
 library(RColorBrewer)
 library(pheatmap)
 library(tidyverse)
+library(lubridate)
 
 # set system locale time to English for correct labelling of x axes
 Sys.setlocale("LC_TIME", "English")

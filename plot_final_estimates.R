@@ -1,4 +1,23 @@
-# TODO: source saved estimates
+library(readr)
+library(dplyr)
+
+setwd("..")
+getwd()
+
+# load estimates
+path_estimates <- "Rt_estimate_reconstruction/estimates/"
+{
+  estimates_pub <- read_csv(paste0(path_estimates, "R_pub_2021-07-10.csv"))
+  estimates_adjInput <- read_csv(paste0(path_estimates, "R_adjInput_2021-07-10.csv"))
+  estimates_adjInputWindow <- read_csv(paste0(path_estimates, "R_adjInputWindow_2021-07-10.csv"))
+  estimates_adjInputWindowGTD <- read_csv(paste0(path_estimates, "R_adjInputWindowGTD_2021-07-10.csv"))
+  estimates_adjAll <- read_csv(paste0(path_estimates, "R_adjInputWindowGTDDelays_2021-07-10.csv"))
+  estimates_pub_ci <- read_csv(paste0(path_estimates, "R_pub_ci_2021-07-10.csv"))
+  estimates_adjInput_ci <- read_csv(paste0(path_estimates, "R_adjInput_ci_2021-07-10.csv"))
+  estimates_adjInputWindow_ci <- read_csv(paste0(path_estimates, "R_adjInputWindow_ci_2021-07-10.csv"))
+  estimates_adjInputWindowGTD_ci <- read_csv(paste0(path_estimates, "R_adjInputWindowGTD_ci_2021-07-10.csv"))
+  estimates_adjAll_ci <- read_csv(paste0(path_estimates, "R_adjInputWindowGTDDelays_ci_2021-07-10.csv"))
+}
 
 org_methods <- c("RKI", "ETH", "Ilmenau", "SDSC", "globalrt", "epiforecasts", "rtlive")
 comp_methods <- c("consensus", "RKI", "SDSC", "ETH", "AGES", "Ilmenau",
@@ -9,16 +28,16 @@ comp_CI <- c("consensus", "SDSC", "ETH", "AGES", "Ilmenau",
 # find ylim
 colMax <- function(data) sapply(data, max, na.rm = TRUE)
 {
-  max_pub <- max(colMax(estimates_pub %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(starts_with("R_pub"))))
-  max_adjInput <- max(colMax(estimates_adjInput %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(starts_with("R_calc"))))
-  max_adjInputWindow <- max(colMax(estimates_adjInputWindow %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(starts_with("R_calc"))))
-  max_adjInputWindowGTD <- max(colMax(estimates_adjInputWindowGTD %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(starts_with("R_calc"))))
-  max_adjAll <- max(colMax(estimates_adjAll %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(starts_with("R_calc"))))
+  max_pub <- max(colMax(estimates_pub %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(!starts_with("date"))))
+  max_adjInput <- max(colMax(estimates_adjInput %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(!starts_with("date"))))
+  max_adjInputWindow <- max(colMax(estimates_adjInputWindow %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(!starts_with("date"))))
+  max_adjInputWindowGTD <- max(colMax(estimates_adjInputWindowGTD %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(!starts_with("date"))))
+  max_adjAll <- max(colMax(estimates_adjAll %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(!starts_with("date"))))
   max_pub_ci <- max(colMax(estimates_pub_ci %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(starts_with("upper"))))
-  max_adjInput_ci <- max(colMax(estimates_adjInput %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(starts_with("upper"))))
-  max_adjInputWindow_ci <- max(colMax(estimates_adjInputWindow %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(starts_with("upper"))))
-  max_adjInputWindowGTD_ci <- max(colMax(estimates_adjInputWindowGTD %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(starts_with("upper"))))
-  max_adjAll_ci <- max(colMax(estimates_adjAll %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(starts_with("upper"))))
+  max_adjInput_ci <- max(colMax(estimates_adjInput_ci %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(starts_with("upper"))))
+  max_adjInputWindow_ci <- max(colMax(estimates_adjInputWindow_ci %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(starts_with("upper"))))
+  max_adjInputWindowGTD_ci <- max(colMax(estimates_adjInputWindowGTD_ci %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(starts_with("upper"))))
+  max_adjAll_ci <- max(colMax(estimates_adjAll_ci %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(starts_with("upper"))))
   ylim_u <- max(max_pub, max_adjInput, max_adjInputWindow, max_adjInputWindowGTD, max_adjAll,
                 max_pub_ci, max_adjInput_ci, max_adjInputWindow_ci, max_adjInputWindowGTD_ci, max_adjAll_ci)
 }
