@@ -1,5 +1,10 @@
 # TODO: source saved estimates
 
+org_methods <- c("RKI", "ETH", "Ilmenau", "SDSC", "globalrt", "epiforecasts", "rtlive")
+comp_methods <- c("consensus", "RKI", "SDSC", "ETH", "AGES", "Ilmenau",
+                  "epiforecasts", "globalrt", "rtlive")
+comp_CI <- c("consensus", "SDSC", "ETH", "AGES", "Ilmenau",
+             "epiforecasts", "globalrt", "rtlive")
 
 # find ylim
 colMax <- function(data) sapply(data, max, na.rm = TRUE)
@@ -36,13 +41,13 @@ plot_for_comparison(estimates_adjAll, comp_methods,
 # plot CI
 plot_for_comparison(estimates_pub_ci, org_methods, include_CI = T, legend_name = "research group",
                     filenames = "_CI_real-time.pdf", ylim_u = ylim_u)
-plot_for_comparison(estimates_adjInput_CI, comp_CI, include_CI = T,
+plot_for_comparison(estimates_adjInput_ci, comp_CI, include_CI = T,
                     filenames = "_CI_adjInput.pdf", ylim_u = ylim_u)
-plot_for_comparison(estimates_adjInputWindow_CI, comp_CI, include_CI = T,
+plot_for_comparison(estimates_adjInputWindow_ci, comp_CI, include_CI = T,
                     filenames = "_CI_adjInputWindow.pdf", ylim_u = ylim_u)
-plot_for_comparison(estimates_adjInputWindowGTD_CI, comp_CI, include_CI = T,
+plot_for_comparison(estimates_adjInputWindowGTD_ci, comp_CI, include_CI = T,
                     filenames = "_CI_adjInputWindowGTD.pdf", ylim_u = ylim_u)
-plot_for_comparison(estimates_adjAll_CI, comp_CI, include_CI = T,
+plot_for_comparison(estimates_adjAll_ci, comp_CI, include_CI = T,
                     filenames = "_CI_adjAll.pdf", ylim_u = ylim_u)
 
 # find ylim for longer time period
