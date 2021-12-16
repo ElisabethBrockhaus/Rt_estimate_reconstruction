@@ -4,9 +4,16 @@ library(dplyr)
 setwd("..")
 getwd()
 
+source("Rt_estimate_reconstruction/prepared_plots.R")
+
 # load estimates
 path_estimates <- "Rt_estimate_reconstruction/estimates/"
 {
+  estimates_window <- read_csv(paste0(path_estimates, "R_cmp_Window_2021-07-10.csv"))
+  estimates_gtd <- read_csv(paste0(path_estimates, "R_cmp_GTD_2021-07-10.csv"))
+  estimates_input <- read_csv(paste0(path_estimates, "R_cmp_Input_2021-11-23.csv"))
+  estimates_preprocess <- read_csv(paste0(path_estimates, "R_cmp_Preprocess_2021-07-10.csv"))
+  estimates_SD_gtd <- read_csv(paste0(path_estimates, "R_cmp_GTD_SD_2021-07-10.csv"))
   estimates_pub <- read_csv(paste0(path_estimates, "R_pub_2021-07-10.csv"))
   estimates_adjInput <- read_csv(paste0(path_estimates, "R_adjInput_2021-07-10.csv"))
   estimates_adjInputWindow <- read_csv(paste0(path_estimates, "R_adjInputWindow_2021-07-10.csv"))
@@ -19,6 +26,95 @@ path_estimates <- "Rt_estimate_reconstruction/estimates/"
   estimates_adjAll_ci <- read_csv(paste0(path_estimates, "R_adjInputWindowGTDDelays_ci_2021-07-10.csv"))
 }
 
+# functions for extracting ylims
+colMax <- function(data) sapply(data, max, na.rm = TRUE)
+colMin <- function(data) sapply(data, min, na.rm = TRUE)
+
+
+##########################################
+# Influence of parameters and input data #
+##########################################
+
+# window size
+{
+  windows <- c(1, 3, 4, 7, 13)
+  # find ylim 
+  ylim_window_l <- min(colMin(estimates_window %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(windows)))))
+  ylim_window_u <- max(colMax(estimates_window %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(windows)))))
+  # plot
+  plot_for_comparison(estimates_window, comp_methods = as.character(windows),
+                      col_palette = "YlOrRd", name_consensus = 7,
+                      legend_name = "window size", filenames = "_influence_window.pdf",
+                      sort_numerically = TRUE,  plot_diff_matrices=T,
+                      ylim_l = ylim_window_l, ylim_u = ylim_window_u)
+}
+
+# generation time distribution
+{
+  distrs <- c("gamma", "gamma", "constant", "gamma", "lognorm", "gamma", "ad hoc", "gamma")
+  means <-  c(3.4,     3.6,     4.0,        4.0,     4.7,       4.8,     5.6,         7.0)
+  sds <-    c(1.8,     3.1,     0.0,        4.0,     2.9,       2.3,     4.2,         7.0)
+  gtds <- cbind("type"=distrs, "mean"=means, "sd"=sds)
+  rownames(gtds) <- c("AGES", "epiforecasts", "RKI", "consensus", "rtlive", "ETH/SDSC", "Ilmenau", "globalrt")
+  gtd_strs <- c()
+  for (src in rownames(gtds)){
+    gtd_str <- paste0(gtds[src, "mean"], "(", gtds[src, "sd"], "), ", gtds[src, "type"])
+    gtd_strs <- c(gtd_strs, gtd_str)
+  }
+  # find ylim
+  ylim_gtd_l <- min(colMin(estimates_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(gtd_strs))))
+  ylim_gtd_u <- max(colMax(estimates_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(gtd_strs))))
+  # plot
+  plot_for_comparison(estimates_gtd, comp_methods = gtd_strs,
+                      col_palette = "YlGn", name_consensus = "4(4), gamma",
+                      legend_name = "GTD", filenames = "_influence_GTD.pdf",
+                      sort_numerically = FALSE, plot_diff_matrices=T,
+                      ylim_l = ylim_gtd_l, ylim_u = ylim_gtd_u)
+  
+  # standard deviation of the GTD 
+  sds <- c(1.8, 3.1, 0.001, 4.0, 2.9, 2.3, 4.2, 7.0)
+  # plot
+  plot_for_comparison(estimates_SD_gtd, comp_methods = as.character(sds),
+                      col_palette = "YlGn", name_consensus = 4.0,
+                      legend_name = "SD of the GTD", filenames = "_influence_SD_GTD.pdf",
+                      sort_numerically = TRUE, plot_diff_matrices=T,
+                      ylim_l = ylim_gtd_l, ylim_u = ylim_gtd_u)
+}
+
+# input data
+{
+  data_sources <- c("RKI", "WHO", "JHU")
+  # find ylim
+  ylim_input_l <- min(colMin(estimates_input %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(data_sources))))
+  ylim_input_u <- max(colMax(estimates_input %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(data_sources))))
+  # plot
+  plot_for_comparison(estimates_input, comp_methods = data_sources,
+                      col_palette = "Set1", name_consensus = "RKI",
+                      legend_name = "data source", filenames = "_influence_input_data.pdf",
+                      sort_numerically = FALSE, plot_diff_matrices=T,
+                      ylim_l = ylim_input_l, ylim_u = ylim_input_u)
+}
+
+# preprocessing
+{
+  preprocessing <- c("none", "nowcast (RKI)", "smoothing (SDSC)", "deconvolution (ETH)")
+  # find ylim
+  ylim_preprocess_l <- min(colMin(estimates_preprocess %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(preprocessing))))
+  ylim_preprocess_u <- max(colMax(estimates_preprocess %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(preprocessing))))
+  # plot
+  plot_for_comparison(estimates_preprocess, comp_methods = preprocessing,
+                      col_palette = "Dark2", name_consensus = "none",
+                      legend_name = "preprocessing", filenames = "_influence_preprocessing.pdf",
+                      sort_numerically = FALSE, plot_diff_matrices=T,
+                      ylim_l = ylim_preprocess_l, ylim_u = ylim_preprocess_u)
+}
+
+
+
+####################################
+# Influence of the choice of model #
+####################################
+
 org_methods <- c("RKI", "ETH", "Ilmenau", "SDSC", "globalrt", "epiforecasts", "rtlive")
 comp_methods <- c("consensus", "RKI", "SDSC", "ETH", "AGES", "Ilmenau",
                   "epiforecasts", "globalrt", "rtlive")
@@ -26,7 +122,6 @@ comp_CI <- c("consensus", "SDSC", "ETH", "AGES", "Ilmenau",
              "epiforecasts", "globalrt", "rtlive")
 
 # find ylim
-colMax <- function(data) sapply(data, max, na.rm = TRUE)
 {
   max_pub <- max(colMax(estimates_pub %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(!starts_with("date"))))
   max_adjInput <- max(colMax(estimates_adjInput %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(!starts_with("date"))))
@@ -42,32 +137,34 @@ colMax <- function(data) sapply(data, max, na.rm = TRUE)
                 max_pub_ci, max_adjInput_ci, max_adjInputWindow_ci, max_adjInputWindowGTD_ci, max_adjAll_ci)
 }
 
-source("Rt_estimate_reconstruction/prepared_plots.R")
-
 # plot median
-plot_for_comparison(estimates_pub, org_methods, legend_name = "research group",
-                    filenames = "_real-time.pdf", ylim_u = ylim_u)
-plot_for_comparison(estimates_adjInput, comp_methods,
-                    filenames = "_adjInput.pdf", ylim_u = ylim_u, plot_diff_matrices=T)
-plot_for_comparison(estimates_adjInputWindow, comp_methods,
-                    filenames = "_adjInputWindow.pdf", ylim_u = ylim_u, plot_diff_matrices=T)
-plot_for_comparison(estimates_adjInputWindowGTD, comp_methods,
-                    filenames = "_adjInputWindowGTD.pdf", ylim_u = ylim_u, plot_diff_matrices=T)
-plot_for_comparison(estimates_adjAll, comp_methods,
-                    filenames = "_adjAll.pdf", ylim_u = ylim_u, plot_diff_matrices=T)
+{
+  plot_for_comparison(estimates_pub, org_methods, legend_name = "research group",
+                      filenames = "_real-time.pdf", ylim_u = ylim_u)
+  plot_for_comparison(estimates_adjInput, comp_methods,
+                      filenames = "_adjInput.pdf", ylim_u = ylim_u, plot_diff_matrices=T)
+  plot_for_comparison(estimates_adjInputWindow, comp_methods,
+                      filenames = "_adjInputWindow.pdf", ylim_u = ylim_u, plot_diff_matrices=T)
+  plot_for_comparison(estimates_adjInputWindowGTD, comp_methods,
+                      filenames = "_adjInputWindowGTD.pdf", ylim_u = ylim_u, plot_diff_matrices=T)
+  plot_for_comparison(estimates_adjAll, comp_methods,
+                      filenames = "_adjAll.pdf", ylim_u = ylim_u, plot_diff_matrices=T)
+}
 
 
 # plot CI
-plot_for_comparison(estimates_pub_ci, org_methods, include_CI = T, legend_name = "research group",
-                    filenames = "_CI_real-time.pdf", ylim_u = ylim_u)
-plot_for_comparison(estimates_adjInput_ci, comp_CI, include_CI = T,
-                    filenames = "_CI_adjInput.pdf", ylim_u = ylim_u)
-plot_for_comparison(estimates_adjInputWindow_ci, comp_CI, include_CI = T,
-                    filenames = "_CI_adjInputWindow.pdf", ylim_u = ylim_u)
-plot_for_comparison(estimates_adjInputWindowGTD_ci, comp_CI, include_CI = T,
-                    filenames = "_CI_adjInputWindowGTD.pdf", ylim_u = ylim_u)
-plot_for_comparison(estimates_adjAll_ci, comp_CI, include_CI = T,
-                    filenames = "_CI_adjAll.pdf", ylim_u = ylim_u)
+{
+  plot_for_comparison(estimates_pub_ci, org_methods, include_CI = T, legend_name = "research group",
+                      filenames = "_CI_real-time.pdf", ylim_u = ylim_u)
+  plot_for_comparison(estimates_adjInput_ci, comp_CI, include_CI = T,
+                      filenames = "_CI_adjInput.pdf", ylim_u = ylim_u)
+  plot_for_comparison(estimates_adjInputWindow_ci, comp_CI, include_CI = T,
+                      filenames = "_CI_adjInputWindow.pdf", ylim_u = ylim_u)
+  plot_for_comparison(estimates_adjInputWindowGTD_ci, comp_CI, include_CI = T,
+                      filenames = "_CI_adjInputWindowGTD.pdf", ylim_u = ylim_u)
+  plot_for_comparison(estimates_adjAll_ci, comp_CI, include_CI = T,
+                      filenames = "_CI_adjAll.pdf", ylim_u = ylim_u)
+}
 
 # find ylim for longer time period
 {
@@ -87,20 +184,21 @@ plot_for_comparison(estimates_adjAll_ci, comp_CI, include_CI = T,
 ylim_u_long <- 4
 
 # some plots over more days
-source("Rt_estimate_reconstruction/prepared_plots.R")
-plot_for_comparison(estimates_adjInput, comp_methods,
-                    #start_absdiff = "2020-03-16",
-                    start_date = "2020-03-01", end_date = "2021-07-10",
-                    filenames = "_adjInput_long.pdf", ylim_u = ylim_u_long, plot_diff_matrices=F)
-plot_for_comparison(estimates_adjInputWindow, comp_methods,
-                    #start_absdiff = "2020-03-16",
-                    start_date = "2020-03-01", end_date = "2021-07-10",
-                    filenames = "_adjInputWindow_long.pdf", ylim_u = ylim_u_long, plot_diff_matrices=F)
-plot_for_comparison(estimates_adjInputWindowGTD, comp_methods,
-                    #start_absdiff = "2020-03-16", 
-                    start_date = "2020-03-01", end_date = "2021-07-10",
-                    filenames = "_adjInputWindowGTD_long.pdf", ylim_u = ylim_u_long, plot_diff_matrices=F)
-plot_for_comparison(estimates_adjAll, comp_methods,
-                    #start_absdiff = "2020-03-16", 
-                    start_date = "2020-03-01", end_date = "2021-07-10",
-                    filenames = "_adjAll_long.pdf", ylim_u = ylim_u_long, plot_diff_matrices=F)
+{
+  plot_for_comparison(estimates_adjInput, comp_methods,
+                      #start_absdiff = "2020-03-16",
+                      start_date = "2020-03-01", end_date = "2021-07-10",
+                      filenames = "_adjInput_long.pdf", ylim_u = ylim_u_long, plot_diff_matrices=F)
+  plot_for_comparison(estimates_adjInputWindow, comp_methods,
+                      #start_absdiff = "2020-03-16",
+                      start_date = "2020-03-01", end_date = "2021-07-10",
+                      filenames = "_adjInputWindow_long.pdf", ylim_u = ylim_u_long, plot_diff_matrices=F)
+  plot_for_comparison(estimates_adjInputWindowGTD, comp_methods,
+                      #start_absdiff = "2020-03-16", 
+                      start_date = "2020-03-01", end_date = "2021-07-10",
+                      filenames = "_adjInputWindowGTD_long.pdf", ylim_u = ylim_u_long, plot_diff_matrices=F)
+  plot_for_comparison(estimates_adjAll, comp_methods,
+                      #start_absdiff = "2020-03-16", 
+                      start_date = "2020-03-01", end_date = "2021-07-10",
+                      filenames = "_adjAll_long.pdf", ylim_u = ylim_u_long, plot_diff_matrices=F)
+}

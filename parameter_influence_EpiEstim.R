@@ -5,8 +5,8 @@ setwd("..")
 # needs to be the directory with the repos "Rt_estimate_reconstruction"
 getwd()
 
-
-# TODO: save estimates after calculations
+# path for saving estimates
+path_estimates <- "Rt_estimate_reconstruction/estimates/"
 
 
 source("Rt_estimate_reconstruction/calculate_estimates.R")
@@ -63,7 +63,7 @@ plot_for_comparison(estimates_window, comp_methods = as.character(windows),
 #####################################
 # vary generation time distribution #
 #####################################
-distrs <- c("gamma", "gamma", "constant", "gamma", "lognorm", "gamma", "ad hoc", "exponential")
+distrs <- c("gamma", "gamma", "constant", "gamma", "lognorm", "gamma", "ad hoc", "gamma")
 means <-  c(3.4,     3.6,     4.0,        4.0,     4.7,       4.8,     5.6,         7.0)
 sds <-    c(1.8,     3.1,     0.0,        4.0,     2.9,       2.3,     4.2,         7.0)
 gtds <- cbind("type"=distrs, "mean"=means, "sd"=sds)
@@ -196,7 +196,6 @@ plot_for_comparison(estimates_preprocess, comp_methods = c(preprocessing, "decon
 # vary standard deviation of the GTD #
 ######################################
 sds <- c(1.8, 3.1, 0.001, 4.0, 2.9, 2.3, 4.2, 7.0)
-#sds <- 1:10
 
 if (exists("estimates_SD_gtd")) rm(estimates_SD_gtd)
 for (sd in sds){
@@ -222,3 +221,13 @@ plot_for_comparison(estimates_SD_gtd, comp_methods = as.character(sds),
                     legend_name = "SD of the GTD", filenames = "_influence_SD_GTD.pdf",
                     sort_numerically = TRUE, plot_diff_matrices=T,
                     ylim_l = ylim_gtd_l, ylim_u = ylim_gtd_u)
+
+
+##################
+# save estimates #
+##################
+write_csv(estimates_window, paste0(path_estimates, "R_cmp_Window_2021-07-10.csv"))
+write_csv(estimates_gtd, paste0(path_estimates, "R_cmp_GTD_2021-07-10.csv"))
+write_csv(estimates_input, paste0(path_estimates, "R_cmp_Input_2021-11-23.csv"))
+write_csv(estimates_preprocess, paste0(path_estimates, "R_cmp_Preprocess_2021-07-10.csv"))
+write_csv(estimates_SD_gtd, paste0(path_estimates, "R_cmp_GTD_SD_2021-07-10.csv"))
