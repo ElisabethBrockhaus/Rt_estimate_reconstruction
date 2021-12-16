@@ -1,5 +1,8 @@
 library(ggplot2)
 
+setwd("../..")
+getwd()
+
 # parameter combinations used in papers
 gt_dist <- c("gamma", "constant", "ad hoc", "gamma", "gamma", "gamma", "lognorm", "exponential", "gamma")
 mean_gt <- c(4.8,      4,          5.6,      4.8,    3.4,     3.6,     4.7,       7,             4)
@@ -11,6 +14,7 @@ rownames(gtds) <- methods
 
 ages_first <- c(4.46, 2.63)
 names(ages_first) <- c("gt_mean", "gt_sd")
+ages_data <- data.frame(gt_mean=ages_first["gt_mean"], gt_sd=ages_first["gt_sd"])
 
 # plot assumed mean and sd of generation times
 gtd_scatterplot <- ggplot(data = gtds, aes(x = gt_mean, y = gt_sd)) +
@@ -28,14 +32,15 @@ gtd_scatterplot <- ggplot(data = gtds, aes(x = gt_mean, y = gt_sd)) +
   ) +
   geom_point(size = 2) +
   geom_text(label=c("ETH/SDSC", "RKI", "Ilmenau", "SDSC", "AGES", "epiforecasts", "rtlive", "globalrt", "consensus"),
-            nudge_y = 0.3, check_overlap = TRUE, size = 5) + 
+            nudge_y = -0.28, check_overlap = TRUE, size = 5) + 
   geom_point(data = data.frame(gt_mean=4, gt_sd=4), colour = "red", size = 3) + 
-  geom_point(data = data.frame(gt_mean=ages_first["gt_mean"], gt_sd=ages_first["gt_sd"]),
-             colour = "black", shape=21, size = 2) +
+  geom_point(data = ages_data, colour = "black", shape=21, size = 2) +
+  geom_text(mapping = aes(x=ages_data$gt_mean, y=ages_data$gt_sd), label="(AGES)",
+            nudge_y = -0.25, check_overlap = TRUE, size = 3) +
   geom_segment(aes(x=ages_first["gt_mean"], y=ages_first["gt_sd"],
                    xend=gtds["AGES","gt_mean"], yend=gtds["AGES","gt_sd"]),
                arrow=arrow(length=unit(2.5, "mm")), color="black", size=0.01, linetype=2)
 
 print(gtd_scatterplot)
-ggsave(gtd_scatterplot, filename = "D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Figures/gtd_scatterplot.pdf",  bg = "transparent",
+ggsave(gtd_scatterplot, filename = "Figures/gtd_scatterplot.pdf",  bg = "transparent",
        width = 8, height = 5)
