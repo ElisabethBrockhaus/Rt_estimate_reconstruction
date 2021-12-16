@@ -12,6 +12,7 @@ To run the estimations based on the incidence data run *parameter_influence_EpiE
 - **globalrt**: Run the scripts from *ArroyoMarioli/input_output/dataset/* in the following order: *format_data_from_various_sources.R* -> *construct_dataset_adj.py* -> *construct_STAN_models.py* -> *estimate_R_filter_and_smoother.py*
 - **rtlive**: The incidence data used for the main comparison results from running the script *rtlive/important_files_from_repo/notebooks/data_aggregation.ipynb*.
 - **SDSC**: The smoothed data can be constructed using the script *SDSC/smoothing_example.ipynb*.
+
 Note that for the execution the RKI's line list data might be necessary. These are to large too be saved to this repository. Thus, they have to be sources from https://hub.arcgis.com/datasets/dd4580c810204019a7b8eb3e0b329dd6_0/explore. Older versions of these data can be obtained by filtering by "Meldedatum".
 
 ### Requirements ###
