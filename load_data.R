@@ -14,7 +14,7 @@ library(jsonlite)
 ##################################################
 load_published_R_estimates <- function(source, pub_date="2021-07-10",
                                        start=as.Date("2019-12-28"), end=Sys.Date(),
-                                       location="DE"){
+                                       location="DE", verbose = T){
   
   # define path where Rt estimates are located
   path <- paste0("reproductive_numbers/data-processed/", source, "/")
@@ -23,14 +23,15 @@ load_published_R_estimates <- function(source, pub_date="2021-07-10",
     file <- paste0(pub_date, "-", source, ".csv")
 
     # load estimates
-    print(paste("Loading estimates from file", file))
+    if (verbose) print(paste("Loading estimates from file", file))
     R_est <- read_csv(paste0(path, file), col_types = list(date = col_date()))
   }, error=function(e) {
-    print("Unmatched pub_date or source, try different pub_date and make sure source is one of:")
+    print(paste0("Unmatched pub_date (", pub_date, ") or source (", source, "), try different pub_date and make sure source is one of:"))
     # TODO resolve: directories sometimes have different names than files
     print(list.dirs("reproductive_numbers/data-processed/", full.names = F))
   })
   
+
   if (source != "zidatalab"){
     R_est <- R_est[R_est$location==location, c("date", "quantile", "type", "value")]
     R_est[R_est$type == "point", "quantile"] <- 0.5

@@ -3,9 +3,6 @@ setwd("..")
 # and for SDSC method "covid-19-forecast" (https://renkulab.io/gitlab/covid-19/covid-19-forecast/-/tree/master)
 getwd()
 
-# path for saving the estimates
-path_estimates <- "Rt_estimate_reconstruction/estimates/"
-
 
 
 ################################
@@ -13,43 +10,63 @@ path_estimates <- "Rt_estimate_reconstruction/estimates/"
 ################################
 
 source("Rt_estimate_reconstruction/load_data.R")
-source("Rt_estimate_reconstruction/calculate_estimates.R")
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
-# parameter combinations used in papers
-gt_dist <- c("gamma", "constant", "ad hoc", "gamma", "gamma", "gamma", "lognorm", "exponential")
-mean_gt <- c(4.8,      4,          5.6,      4.8,    3.4,     3.6,     4.7,       7)
-sd_gt <-   c(2.3,      0,          4.2,      2.3,    1.8,     3.1,     2.9,       7)
-delay <-   c(11,       1,          7,        10,     0,       12,      12,        0)
+# path of published estimates
+path_estimates <- "reproductive_numbers/data-processed/"
 
-params <- data.frame(gtd=gt_dist, gt_mean=mean_gt, gt_sd=sd_gt, delay=delay)
-methods <- c("ETH", "RKI", "Ilmenau", "SDSC", "AGES", "epiforecasts", "rtlive", "globalrt")
-rownames(params) <- methods
-
-# bring delays in a format usable for ETH estimation
-source("Rt_estimate_reconstruction/ETH/delays_for_ETH_estimation.R")
+# sources of published real-time estimates
+methods <- list.dirs(path_estimates, full.names = F)
+methods <- methods[!methods %in% c("", "AW_7day", "AW_WVday")]
+methods
 
 
-######################
-# get incidence data #
-######################
 
-# read RKI Nowcast data for RKI estimation
-#RKI_incid <- load_incidence_data(method = "RKI")
-#write_csv(RKI_incid, "Rt_estimate_reconstruction/incidence_data/RKI_nowcast_21_07_10.csv")
-RKI_incid <- read_csv("Rt_estimate_reconstruction/incidence_data/RKI_nowcast_21_07_10.csv")
-
-# read smoothed RKI incidence data for SDSC estimation
-SDSC_incid <-  read_csv("Rt_estimate_reconstruction/incidence_data/SDSC_incid_21_07_10.csv")
-
-# deconvolve RKI incidence data for ETH estimation
-#incid_for_ETH <- load_incidence_data(method = "ETHZ_sliding_window", source = "_RKI_2021_07_10",
-#                                     new_deconvolution = TRUE)
-#write_csv(incid_for_ETH, "Rt_estimate_reconstruction/incidence_data/rtlive_incid_for_ETH_21_07_10.csv")
-incid_for_ETH <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid_for_ETH_21_07_10.csv")
-
-# read incidence data used by rtlive (sourced from RKI line-list data) for other estimations
-incid <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid_21_07_10.csv")
+#################
+# get estimates #
+#################
+for (method in methods){
+  print(method)
+  pub_dates <- list.files(paste0(path_estimates, method),
+                          full.names = F) %>% substr(1, 10)
+  pub_dates <- pub_dates[length(pub_dates)-27:0]
+  end_date <- as_date(max(pub_dates))
+  for (country in c("DE", "AT", "CH")){
+    if (exists("R_est_ts")) rm(R_est_ts)
+    print(country)
+    tryCatch(
+      {
+        for (pub_date in pub_dates){
+          R_est <- load_published_R_estimates(method,
+                                              end = end_date,
+                                              pub_date = pub_date,
+                                              location = country,
+                                              verbose = F)
+          names(R_est) <- c("date", paste0("R_pub_", pub_date), paste0("lower_", pub_date), paste0("upper_", pub_date))
+          if (!exists("R_est_ts")){
+            R_est_ts <- R_est
+          } else{
+            R_est_ts <- R_est_ts %>% full_join(R_est, by="date")
+          }
+        }
+      },
+      error = function(c) {print(paste("No estimates from", method,
+                                       "for", country, "."))}
+    )
+    if (exists("R_est_ts")){
+      last_date <- max(R_est_ts[rowSums(!is.na(R_est_ts))>1, "date"])
+      plot_for_comparison(R_est_ts,
+                          comp_methods = pub_dates,
+                          start_date = last_date - 30,
+                          end_date = last_date,
+                          legend_name = "published on",
+                          plot_title = paste(method, country),
+                          col_palette = "Spectral",
+                          filenames = paste0("_realtime_", method, "_", country, ".png"),
+                          verbose = F)
+    }
+  }
+}
 
 
 

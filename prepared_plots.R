@@ -40,6 +40,14 @@ get_colors <- function(methods, palette, name_consensus = "consensus"){
       cols[1:(which(names(cols)==name_consensus)-1)] <- cols[2:which(names(cols)==name_consensus)]
       cols[names(cols) == name_consensus] <- "#000000"
 
+    } else if (palette == "Spectral"){
+      cols_weekdays <- brewer.pal(name="Spectral", n=10)[c(1:4, 8:10)]
+      num_weeks <- ceiling(num_est/7)
+      cols <- rep(cols_weekdays, num_weeks)[0:(7*num_weeks-num_est%%7)]
+      names(cols) <- methods
+      # make consensus model color black and shift rest of colors, such that lightest one is not needed
+      cols[names(cols) == name_consensus] <- "#000000"
+      
     } else {
       start_col <- 2
       cols <- brewer.pal(name=palette,n=num_est+start_col)[start_col+(1:num_est)]
@@ -98,7 +106,7 @@ plot_published_vs_calculated <- function(published, calculated, method_name, dif
 
 
 
-plot_multiple_estimates <- function(estimates, legend_name,
+plot_multiple_estimates <- function(estimates, legend_name, plot_title="",
                                     col_palette="Set1", name_consensus="consensus",
                                     include_CI=F, sort_numerically=F) {
   
@@ -137,6 +145,7 @@ plot_multiple_estimates <- function(estimates, legend_name,
       legend.position = "bottom",
       panel.background = element_rect(fill = "transparent")
       ) +
+    ggtitle(plot_title) + 
     geom_rect(data=NULL,aes(xmin=as_date("2020-03-01"), xmax=as_date("2020-03-31"), ymin=-Inf, ymax=Inf), fill="grey", alpha=0.01) +
     geom_rect(data=NULL,aes(xmin=as_date("2021-06-11"), xmax=as_date("2021-07-09"), ymin=-Inf, ymax=Inf), fill="grey", alpha=0.01)
   
@@ -213,11 +222,12 @@ plot_published_vs_calculated_95CI <- function(published, calculated, method_name
 
 plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-04-01",
                                 start_date = "2021-01-01", end_date = "2021-06-10",
-                                legend_name="model",
+                                legend_name="model", plot_title="",
                                 col_palette="Set1", name_consensus="consensus",
-                                filenames = "latest_plot.png",
+                                filenames = "_latest_plot.png",
                                 include_CI=F, plot_diff_matrices=F, sort_numerically=F,
-                                ylim_l=0, ylim_u=2.05){
+                                ylim_l=0, ylim_u=2.05,
+                                verbose = T){
   if (length(comp_methods)*3 == dim(estimates)[2]-1){
     names_ci <- rep(NA, length(comp_methods)*3)
     for (i in 1:length(comp_methods)){
@@ -236,11 +246,13 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
   
   estimates_plot <- estimates %>%
     dplyr::filter(date >= start_date, date <= end_date)
-  print("Date range for plotting:")
-  print(min(estimates_plot$date))
-  print(max(estimates_plot$date))
+  if (verbose){
+    print("Date range for plotting:")
+    print(min(estimates_plot$date))
+    print(max(estimates_plot$date))
+  }
 
-  R_plot <- plot_multiple_estimates(estimates_plot, legend_name,
+  R_plot <- plot_multiple_estimates(estimates_plot, legend_name, plot_title = plot_title,
                                     col_palette = col_palette, name_consensus = name_consensus,
                                     include_CI = include_CI,
                                     sort_numerically = sort_numerically) +
@@ -248,6 +260,7 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
   
   ggsave(R_plot, filename = paste0("Figures/estimates", filenames),  bg = "transparent",
          width = 13.1, height = 5.8)
+  print("saved plot")
   print(R_plot)
   
   if(plot_diff_matrices) {
