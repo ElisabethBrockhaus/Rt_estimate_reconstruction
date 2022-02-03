@@ -23,11 +23,11 @@ methods
 
 
 
-###########################
-# load and plot estimates #
-###########################
+#################################
+# plot estimates as time series #
+#################################
 
-for (method in methods[17]){
+for (method in methods){
   print(method)
   pub_dates <- list.files(paste0(path_estimates, method),
                           full.names = F) %>% substr(1, 10)
@@ -78,4 +78,47 @@ for (method in methods[17]){
 
 
 
+##############################################################
+# plot estimates over days between estimation and target day #
+##############################################################
+source("Rt_estimate_reconstruction/load_data.R")
+source("Rt_estimate_reconstruction/prepared_plots.R")
 
+for (method in methods[2]){
+  print(method)
+  # TODO: hier weiter
+  existing_dates <- list.files(paste0(path_estimates, method),
+                                   full.names = F) %>% substr(1, 10)
+  pub_dates <- as_date(existing_dates[length(existing_dates)]) - c(0,7,14,21)
+  end_date <- as_date(max(pub_dates))
+  for (country in c("DE", "AT", "CH")[1]){
+    if (exists("R_est_ts")) rm(R_est_ts)
+    if (exists("R_est")) rm(R_est)
+    print(country)
+    tryCatch(
+      {
+        for (pub_date in pub_dates){
+          R_est <- load_published_R_estimates(method,
+                                              end = end_date,
+                                              pub_date = pub_date,
+                                              location = country,
+                                              verbose = F)
+          names(R_est) <- c("date", paste0("R_pub_", pub_date), paste0("lower_", pub_date), paste0("upper_", pub_date))
+          if (!exists("R_est_ts")){
+            R_est_ts <- R_est
+          } else{
+            R_est_ts <- R_est_ts %>% full_join(R_est, by="date")
+          }
+        }
+      },
+      error = function(c) {print(paste("No estimates from", method,
+                                       "for", country, "."))}
+    )
+    if (exists("R_est_ts")){
+      last_date <- max(R_est_ts[rowSums(!is.na(R_est_ts))>1, "date"])
+      R_est_ts <- R_est_ts %>% dplyr::filter(date <= last_date,
+                                             date > last_date - 30)
+      View(R_est_ts)
+    }
+  }
+}

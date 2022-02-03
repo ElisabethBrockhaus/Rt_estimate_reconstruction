@@ -260,7 +260,6 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
   
   ggsave(R_plot, filename = paste0("Figures/estimates", filenames),  bg = "transparent",
          width = 13.1, height = 5.8)
-  print("saved plot")
   print(R_plot)
   
   if(plot_diff_matrices) {
