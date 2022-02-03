@@ -41,8 +41,13 @@ load_published_R_estimates <- function(source, pub_date="2021-07-10",
   } else {
     # no quantiles published by ZI
     R_est <- R_est[R_est$location==location, c("date", "value")]
-    names(R_est) <- c("date", "R_pub")
-    R_est <- R_est %>% add_column(lower = NA, upper = NA)
+    if(dim(R_est)[1]!=0){
+      names(R_est) <- c("date", "R_pub")
+      R_est <- R_est %>% add_column(lower = NA, upper = NA)
+    } else{
+      rm(R_est)
+    }
+    
   }
   
   # return available R estimates for time between start and end
