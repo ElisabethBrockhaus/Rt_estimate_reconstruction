@@ -44,6 +44,7 @@ get_colors <- function(methods, palette, name_consensus = "consensus"){
       cols_weekdays <- brewer.pal(name="Spectral", n=10)[c(1:4, 8:10)]
       num_weeks <- ceiling(num_est/7)
       cols <- rep(cols_weekdays, num_weeks)[0:(7*num_weeks-num_est%%7)]
+      print(length(names(cols)))
       names(cols) <- methods
       # make consensus model color black and shift rest of colors, such that lightest one is not needed
       cols[names(cols) == name_consensus] <- "#000000"
@@ -129,12 +130,23 @@ plot_multiple_estimates <- function(estimates, legend_name, plot_title="",
   
   # plot
   R_plot <- ggplot(data = R_est, aes(x = date, y = R)) +
-    geom_hline(aes(yintercept = 1)) +
-    labs(x = NULL, y = "Rt estimate") +
-    scale_x_date(limits = as.Date(c(min(estimates$date),max(estimates$date)-1)),
-                 date_labels = "%b %d", expand = c(0,1)) +
+    geom_hline(aes(yintercept = 1))
+  
+  if (class(R_est$date) == "Date") {
+    R_plot <- R_plot +
+      labs(x = NULL, y = "Rt estimate")
+      scale_x_date(limits = as.Date(c(min(estimates$date),max(estimates$date)-1)),
+                   date_labels = "%b %d", expand = c(0,1))
+  } else {
+    R_plot <- R_plot +
+      labs(x = "days between target date and estimation", y = "Rt estimate") +
+      scale_x_continuous()
+  }
+  
+  R_plot <- R_plot +
     theme_minimal() +
     theme(
+      plot.title = element_text(size=18),
       axis.text=element_text(size=16),
       axis.title=element_text(size=18),
       legend.text=element_text(size=16),
@@ -145,9 +157,13 @@ plot_multiple_estimates <- function(estimates, legend_name, plot_title="",
       legend.position = "bottom",
       panel.background = element_rect(fill = "transparent")
       ) +
-    ggtitle(plot_title) + 
-    geom_rect(data=NULL,aes(xmin=as_date("2020-03-01"), xmax=as_date("2020-03-31"), ymin=-Inf, ymax=Inf), fill="grey", alpha=0.01) +
-    geom_rect(data=NULL,aes(xmin=as_date("2021-06-11"), xmax=as_date("2021-07-09"), ymin=-Inf, ymax=Inf), fill="grey", alpha=0.01)
+    ggtitle(plot_title)
+  
+  if (class(R_est$date) == "Date") {
+    R_plot <- R_plot +
+      geom_rect(data=NULL,aes(xmin=as_date("2020-03-01"), xmax=as_date("2020-03-31"), ymin=-Inf, ymax=Inf), fill="grey", alpha=0.01) +
+      geom_rect(data=NULL,aes(xmin=as_date("2021-06-11"), xmax=as_date("2021-07-09"), ymin=-Inf, ymax=Inf), fill="grey", alpha=0.01)
+  }
   
   col_values <- get_colors(methods = unique(R_est$model), col_palette, name_consensus = name_consensus)
   
@@ -158,8 +174,10 @@ plot_multiple_estimates <- function(estimates, legend_name, plot_title="",
   } else {
     R_plot <-  R_plot +
       #geom_line(aes(group = model, color=model)) +
-      geom_line(data=R_est[R_est$model!=name_consensus,], aes(x = date, y = R, color=model), size = .5) +
-      geom_line(data=R_est[R_est$model==name_consensus,], aes(x = date, y = R, color=model), size = .8) +
+      geom_line(data=R_est[R_est$model!=name_consensus & !is.na(R_est$R),],
+                aes(x = date, y = R, color=model), size = .5, na.rm = T) +
+      geom_line(data=R_est[R_est$model==name_consensus,],
+                aes(x = date, y = R, color=model), size = .8) +
       scale_color_manual(values=col_values, name=legend_name)
   }
   
@@ -243,7 +261,7 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
     }
     names(estimates) <- c("date", names_R)
   }
-  
+
   estimates_plot <- estimates %>%
     dplyr::filter(date >= start_date, date <= end_date)
   if (verbose){
