@@ -158,7 +158,7 @@ plot_multiple_estimates <- function(estimates, legend_name, plot_title="",
       ) +
     ggtitle(plot_title)
   
-  if (class(R_est$date) == "Date") {
+  if (col_palette != "Spectral") {
     R_plot <- R_plot +
       geom_rect(data=NULL,aes(xmin=as_date("2020-03-01"), xmax=as_date("2020-03-31"), ymin=-Inf, ymax=Inf), fill="grey", alpha=0.01) +
       geom_rect(data=NULL,aes(xmin=as_date("2021-06-11"), xmax=as_date("2021-07-09"), ymin=-Inf, ymax=Inf), fill="grey", alpha=0.01)
