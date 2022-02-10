@@ -91,7 +91,7 @@ for (method in methods){
   pub_dates <- list.files(paste0(path_estimates, method),
                           full.names = F) %>% substr(1, 10)
   pub_dates <- pub_dates[which(pub_dates <= "2021-12-31")]
-  pub_dates <- pub_dates[length(pub_dates)-27:0]
+  pub_dates <- pub_dates[length(pub_dates)-55:0]
   end_date <- as_date(max(pub_dates))
   for (country in c("DE", "AT", "CH")[1]){
     print(country)
@@ -125,23 +125,34 @@ for (method in methods){
                                        "for", country, "."))}
     )
     if (exists("R_est_ts")){
-      R_est_ts <- R_est_ts[, c(TRUE, rep(FALSE, 19),
-                               (seq_len(ncol(R_est_ts)) %% 7 == 2)[21:(ncol(R_est_ts)-14)],
-                               rep(FALSE, 14))]
-      target_dates <- colnames(R_est_ts)[2:dim(R_est_ts)[2]] %>% substr(7, 16)
-      R_est_ts <- R_est_ts %>% rename(date = estimated_after)
-      plot_for_comparison(R_est_ts,
-                          comp_methods = target_dates,
-                          start_date = make_difftime(day = 0),
-                          end_date = make_difftime(day = 30),
-                          legend_name = "estimated R for",
-                          plot_title = paste(method, country),
-                          col_palette = "Spectral",
-                          filenames = paste0("_realtime_", method, "_", country, "_corrections_over_time.png"),
-                          verbose = F)
+      
+      tryCatch(
+        {
+        R_est_ts <- R_est_ts %>%
+          dplyr::filter(estimated_after <= make_difftime(day = 30)) %>%
+          dplyr::select("estimated_after", which((grep("R_pub_*", colnames(.)) %% 7) == 1))
+        
+        R_est_plot <- R_est_ts %>%
+          dplyr::select("estimated_after", which(colMeans(is.na(.)) < 0.5))       
+
+        target_dates <- colnames(R_est_plot)[2:dim(R_est_plot)[2]] %>% substr(7, 16)
+        R_est_plot <- R_est_plot %>% rename(date = estimated_after)
+        
+        plot_for_comparison(R_est_plot,
+                            comp_methods = target_dates,
+                            start_date = make_difftime(day = 0),
+                            end_date = make_difftime(day = 30),
+                            legend_name = "estimated R for",
+                            plot_title = paste(method, country),
+                            col_palette = "Spectral",
+                            filenames = paste0("_realtime_", method, "_", country, "_corrections_over_time.png"),
+                            verbose = F)
+        },
+        error = function(c) {cat("Too many estimates missing. \n Minimal proportion of NA values:",
+                                 min(colMeans(is.na(R_est_ts[,2:dim(R_est_ts)[2]]))), "\n")}
+      )
     }
   }
 }
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
-# TODO: Solve get_colors in prepared_plots.R line 43 ff.
