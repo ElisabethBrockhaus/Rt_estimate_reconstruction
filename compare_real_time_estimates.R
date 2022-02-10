@@ -18,7 +18,8 @@ path_estimates <- "reproductive_numbers/data-processed/"
 # sources of published real-time estimates
 methods <- list.dirs(path_estimates, full.names = F)
 methods <- methods[!methods %in% c("", "AW_7day", "AW_WVday",
-                                   "ETHZ_sliding_window_deaths", "ETHZ_step_deaths")]
+                                   "ETHZ_sliding_window_deaths", "ETHZ_step_deaths",
+                                   "ilmenau", "owid")]
 methods
 
 
@@ -83,25 +84,28 @@ for (method in methods){
 ##############################################################
 # plot estimates over days between estimation and target day #
 ##############################################################
-source("Rt_estimate_reconstruction/load_data.R")
-source("Rt_estimate_reconstruction/prepared_plots.R")
+
+# plot monthly
+#target_dates <- seq(as_date("2021-01-01"), by = "month", length.out = 12)
+
+# plot 4-weekly
+target_dates <- seq(as_date("2021-01-01"), as_date("2021-12-31"), by = "week")[1+4*(0:11)]  
 
 for (method in methods){
   print(method)
   pub_dates <- list.files(paste0(path_estimates, method),
                           full.names = F) %>% substr(1, 10)
-  pub_dates <- pub_dates[which(pub_dates <= "2021-12-31")]
-  pub_dates <- pub_dates[length(pub_dates)-55:0]
+  pub_dates <- pub_dates[which((pub_dates <= "2021-12-31") & (pub_dates >= "2021-01-01"))]
   end_date <- as_date(max(pub_dates))
-  for (country in c("DE", "AT", "CH")[1]){
+  for (country in c("DE", "AT", "CH")){
     print(country)
     if (exists("R_est_ts")) rm(R_est_ts)
-    if (exists("R_est")) rm(R_est)
+    if (exists("R_est_plot")) rm(R_est_plot)
     tryCatch(
       {
-        for (pub_date in pub_dates){
+        for (pub_date in pub_dates) {
           R_est <- load_published_R_estimates(method,
-                                              start = as_date(pub_date) - 40,
+                                              start = as_date(pub_date) - 30,
                                               end = as_date(pub_date),
                                               pub_date = pub_date,
                                               location = country,
@@ -109,11 +113,15 @@ for (method in methods){
             dplyr::select("date", "R_pub") %>%
             mutate(estimated_after = as_date(pub_date) - date) %>%
             reshape(idvar = "estimated_after", timevar = "date", direction = "wide") %>%
-            rename_with(~ gsub(".", "_", .x, fixed = TRUE))
-            
+            rename_with(~ gsub(".", "_", .x, fixed = TRUE)) %>%
+            dplyr::select("estimated_after",
+                          which((colnames(.) %>%
+                                   substr(7, 16) %>%
+                                   as_date()) %in% target_dates))
+
           if (!exists("R_est_ts")){
             R_est_ts <- R_est
-          } else{
+          } else {
             R_est_ts <- R_est_ts %>% merge(R_est, all = T) %>%
               group_by(estimated_after) %>%
               summarise_all(list(~ mean(., na.rm = T)))
@@ -121,32 +129,30 @@ for (method in methods){
           }
         }
       },
-      error = function(c) {print(paste("No estimates from", method,
-                                       "for", country, "."))}
+      error = function(c) {cat("An error occurred: Possibly there are no estimates from", method, "for", country, "\n")}
     )
     if (exists("R_est_ts")){
       
+      R_est_plot <- R_est_ts %>%
+        dplyr::select("estimated_after", which(colMeans(is.na(.)) < 0.5))       
+      
+      R_est_plot <- R_est_plot %>% rename(date = estimated_after)
+      
       tryCatch(
         {
-        R_est_ts <- R_est_ts %>%
-          dplyr::filter(estimated_after <= make_difftime(day = 30)) %>%
-          dplyr::select("estimated_after", which((grep("R_pub_*", colnames(.)) %% 7) == 1))
-        
-        R_est_plot <- R_est_ts %>%
-          dplyr::select("estimated_after", which(colMeans(is.na(.)) < 0.5))       
-
-        target_dates <- colnames(R_est_plot)[2:dim(R_est_plot)[2]] %>% substr(7, 16)
-        R_est_plot <- R_est_plot %>% rename(date = estimated_after)
-        
-        plot_for_comparison(R_est_plot,
-                            comp_methods = target_dates,
-                            start_date = make_difftime(day = 0),
-                            end_date = make_difftime(day = 30),
-                            legend_name = "estimated R for",
-                            plot_title = paste(method, country),
-                            col_palette = "Spectral",
-                            filenames = paste0("_realtime_", method, "_", country, "_corrections_over_time.png"),
-                            verbose = F)
+          resulted_target_dates <- intersect(target_dates,
+                                             colnames(R_est_plot[2:dim(R_est_plot)[2]]) %>%
+                                               substr(7, 16) %>%
+                                               as_date()) %>% as_date()
+          plot_for_comparison(R_est_plot,
+                              comp_methods = resulted_target_dates,
+                              start_date = make_difftime(day = 0),
+                              end_date = make_difftime(day = 30),
+                              legend_name = "estimated R for",
+                              plot_title = paste(method, country),
+                              col_palette = "Spectral",
+                              filenames = paste0("_realtime_", method, "_", country, "_corrections_over_time.png"),
+                              verbose = F)
         },
         error = function(c) {cat("Too many estimates missing. \n Minimal proportion of NA values:",
                                  min(colMeans(is.na(R_est_ts[,2:dim(R_est_ts)[2]]))), "\n")}
@@ -156,3 +162,10 @@ for (method in methods){
 }
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
+
+# TODO: fix errors for
+# globalrt CH, AT
+# epiforecasts CH
+# 
+
+# TODO: complete ETHZ_sliding_window and ETHZ_step data
