@@ -17,7 +17,7 @@ path_estimates <- "reproductive_numbers/data-processed/"
 
 # sources of published real-time estimates
 methods <- list.dirs(path_estimates, full.names = F)
-methods <- methods[!methods %in% c("", "AW_7day", "AW_WVday", "owid",
+methods <- methods[!methods %in% c("", "AW_7day", "AW_WVday", "owid", "ETH_step",
                                    "ETHZ_sliding_window_deaths", "ETHZ_step_deaths")]
 methods
 
@@ -33,7 +33,7 @@ for (method in methods){
   print(method)
   pub_dates <- list.files(paste0(path_estimates, method),
                           full.names = F) %>% substr(1, 10)
-  pub_dates <- pub_dates[which(pub_dates <= "2021-12-31")]
+  pub_dates <- pub_dates[which(pub_dates <= "2021-05-01")]
   pub_dates <- pub_dates[length(pub_dates)-27:0]
   end_date <- as_date(max(pub_dates))
   for (country in c("DE", "AT", "CH")){
@@ -42,17 +42,24 @@ for (method in methods){
       if (exists("R_est_ts")) rm(R_est_ts)
       if (exists("R_est")) rm(R_est)
       for (pub_date in pub_dates){
-        R_est <- load_published_R_estimates(method,
-                                            end = end_date,
-                                            pub_date = pub_date,
-                                            location = country,
-                                            verbose = F)
-        if (pub_date != end_date){
-          last <- max(R_est[rowSums(!is.na(R_est))>1, "date"])
-          R_est <- R_est %>% dplyr::filter(date <= last, date > last - 7)
-        }
-        names(R_est) <- c("date", paste0("R_pub_", pub_date),
-                          paste0("lower_", pub_date), paste0("upper_", pub_date))
+        tryCatch(
+          {
+            R_est <- load_published_R_estimates(method,
+                                                end = end_date,
+                                                pub_date = pub_date,
+                                                location = country,
+                                                verbose = F)
+            if (pub_date != end_date){
+              last <- max(R_est[rowSums(!is.na(R_est))>1, "date"])
+              R_est <- R_est %>% dplyr::filter(date <= last, date > last - 7)
+            }
+            names(R_est) <- c("date", paste0("R_pub_", pub_date),
+                              paste0("lower_", pub_date), paste0("upper_", pub_date))
+          },
+          error = function(e) {R_est <<- data.frame(date = seq(as_date("2019-12-28"),
+                                                               as_date(end_date),
+                                                               by = "day"))}
+        )
         if (!exists("R_est_ts")){
           R_est_ts <- R_est
         } else{
@@ -61,11 +68,15 @@ for (method in methods){
       }
       if (exists("R_est_ts")){
         last_date <- max(R_est_ts[rowSums(!is.na(R_est_ts))>1, "date"])
+        available_pub_dates <- intersect(pub_dates,
+                                         colnames(R_est_ts[2:dim(R_est_ts)[2]]) %>%
+                                           substr(7, 16)) %>% as_date()
         plot_for_comparison(R_est_ts,
-                            comp_methods = pub_dates,
+                            comp_methods = available_pub_dates,
                             start_date = last_date - 30,
                             end_date = last_date,
                             name_consensus = end_date,
+                            ylim_l=0.5, ylim_u=1.5,
                             legend_name = "published on",
                             plot_title = paste(method, country),
                             col_palette = "Spectral",
@@ -80,8 +91,6 @@ for (method in methods){
 
 # TODO: fix
 # ETH_sliding_window CH
-# ETH_step CH
-# ilmenau DE, AT, CH
 
 
 
@@ -93,15 +102,15 @@ for (method in methods){
 #target_dates <- seq(as_date("2021-01-01"), by = "month", length.out = 12)
 
 # plot 4-weekly
-target_dates <- seq(as_date("2021-01-01"), as_date("2021-12-31"), by = "week")[1+4*(0:11)]  
+target_dates <- seq(as_date("2020-08-01"), as_date("2021-07-31"), by = "week")[1+4*(0:11)]  
 
-for (method in methods){
+for (method in methods[11]){
   print(method)
   pub_dates <- list.files(paste0(path_estimates, method),
                           full.names = F) %>% substr(1, 10)
-  pub_dates <- pub_dates[which((pub_dates <= "2021-12-31") & (pub_dates >= "2021-01-01"))]
+  pub_dates <- pub_dates[which((pub_dates <= "2021-07-31") & (pub_dates >= "2020-08-01"))]
   end_date <- as_date(max(pub_dates))
-  for (country in c("DE", "AT", "CH")){
+  for (country in c("DE", "AT", "CH")[1]){
     print(country)
     if (available_countries[method, country]) {
       if (exists("R_est_ts")) rm(R_est_ts)
@@ -124,7 +133,7 @@ for (method in methods){
                                      substr(7, 16) %>%
                                      as_date()) %in% target_dates) + 1)
           },
-          error = function(e) {R_est <- data.frame(estimated_after = make_difftime(day = seq(0,30), units = "day"))}
+          error = function(e) {R_est <<- data.frame(estimated_after = make_difftime(day = seq(0,30), units = "day"))}
         )
         
         if (!exists("R_est_ts")){
@@ -153,6 +162,7 @@ for (method in methods){
                                 comp_methods = resulted_target_dates,
                                 start_date = make_difftime(day = 0),
                                 end_date = make_difftime(day = 30),
+                                ylim_l=0.5, ylim_u=1.5,
                                 legend_name = "estimated R for",
                                 plot_title = paste(method, country),
                                 col_palette = "Spectral",
@@ -171,7 +181,4 @@ for (method in methods){
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
 
-# TODO: fix errors for
-# ilmenau DE
-
-# TODO: complete ETHZ_sliding_window and ETHZ_step data
+# TODO: complete ETHZ_sliding_window data
