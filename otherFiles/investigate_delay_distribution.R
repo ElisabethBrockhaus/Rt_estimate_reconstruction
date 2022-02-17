@@ -1,7 +1,7 @@
 library(readr)
 library(EpiNow2)
 
-setwd("..")
+setwd("../..")
 getwd()
 
 #######
