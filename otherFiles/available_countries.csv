@@ -1,0 +1,17 @@
+"","DE","AT","CH"
+"AGES",FALSE,TRUE,FALSE
+"epiforecasts",TRUE,TRUE,TRUE
+"ETHZ_sliding_window",TRUE,TRUE,TRUE
+"ETHZ_step",TRUE,TRUE,TRUE
+"globalrt_10d",TRUE,TRUE,TRUE
+"globalrt_5d",TRUE,TRUE,TRUE
+"globalrt_6d",TRUE,TRUE,TRUE
+"globalrt_7d",TRUE,TRUE,TRUE
+"globalrt_8d",TRUE,TRUE,TRUE
+"globalrt_9d",TRUE,TRUE,TRUE
+"ilmenau",TRUE,TRUE,TRUE
+"RKI_4day",TRUE,FALSE,FALSE
+"RKI_7day",TRUE,FALSE,FALSE
+"rtlive",TRUE,FALSE,FALSE
+"SDSC",TRUE,TRUE,TRUE
+"zidatalab",TRUE,FALSE,FALSE
