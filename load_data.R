@@ -30,7 +30,6 @@ load_published_R_estimates <- function(source, pub_date="2021-07-10",
     # TODO resolve: directories sometimes have different names than files
     print(list.dirs("reproductive_numbers/data-processed/", full.names = F))
   })
-  
 
   if (source != "zidatalab"){
     R_est <- R_est[R_est$location==location, c("date", "quantile", "type", "value")]
