@@ -8,6 +8,7 @@ library(pheatmap)
 library(tidyverse)
 library(lubridate)
 
+
 # set system locale time to English for correct labelling of x axes
 Sys.setlocale("LC_TIME", "English")
 
@@ -42,9 +43,11 @@ get_colors <- function(methods, palette, name_consensus = "consensus"){
 
     } else if (palette == "Spectral"){
       cols_weekdays <- brewer.pal(name="Spectral", n=10)[c(1:4, 8:10)]
-      num_weeks <- ceiling(num_est/7)
-      cols <- rep(cols_weekdays, num_weeks)[0:num_est]
+      names(cols_weekdays) <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+      
+      cols <- cols_weekdays[weekdays(as_date(methods))]
       names(cols) <- methods
+      
       # make consensus model color black and shift rest of colors, such that lightest one is not needed
       cols[names(cols) == name_consensus] <- "#000000"
       
