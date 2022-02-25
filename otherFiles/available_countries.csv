@@ -1,8 +1,8 @@
 "","DE","AT","CH"
 "AGES",FALSE,TRUE,FALSE
+"Braunschweig",TRUE,FALSE,FALSE
 "epiforecasts",TRUE,TRUE,TRUE
 "ETHZ_sliding_window",TRUE,TRUE,TRUE
-"ETHZ_step",TRUE,TRUE,TRUE
 "globalrt_10d",TRUE,TRUE,TRUE
 "globalrt_5d",TRUE,TRUE,TRUE
 "globalrt_6d",TRUE,TRUE,TRUE
