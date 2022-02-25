@@ -17,7 +17,7 @@ path_estimates <- "reproductive_numbers/data-processed/"
 
 # sources of published real-time estimates
 methods <- list.dirs(path_estimates, full.names = F)
-methods <- methods[!methods %in% c("", "AW_7day", "AW_WVday", "owid", "ETH_step",
+methods <- methods[!methods %in% c("", "AW_7day", "AW_WVday", "owid", "ETHZ_step",
                                    "ETHZ_sliding_window_deaths", "ETHZ_step_deaths")]
 methods
 
@@ -89,9 +89,6 @@ for (method in methods){
   }
 }
 
-# TODO: fix
-# ETH_sliding_window CH
-
 
 
 ##############################################################
@@ -104,13 +101,13 @@ for (method in methods){
 # plot 4-weekly
 target_dates <- seq(as_date("2020-08-01"), as_date("2021-07-31"), by = "week")[1+4*(0:11)]  
 
-for (method in methods[11]){
+for (method in methods){
   print(method)
   pub_dates <- list.files(paste0(path_estimates, method),
                           full.names = F) %>% substr(1, 10)
   pub_dates <- pub_dates[which((pub_dates <= "2021-07-31") & (pub_dates >= "2020-08-01"))]
   end_date <- as_date(max(pub_dates))
-  for (country in c("DE", "AT", "CH")[1]){
+  for (country in c("DE", "AT", "CH")){
     print(country)
     if (available_countries[method, country]) {
       if (exists("R_est_ts")) rm(R_est_ts)
@@ -180,5 +177,3 @@ for (method in methods[11]){
 }
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
-
-# TODO: complete ETHZ_sliding_window data
