@@ -8,7 +8,7 @@ path_estimates <- "reproductive_numbers/data-processed/"
 
 # sources of published real-time estimates
 methods <- list.dirs(path_estimates, full.names = F)
-methods <- methods[!methods %in% c("", "AW_7day", "AW_WVday", "owid",
+methods <- methods[!methods %in% c("", "AW_7day", "AW_WVday", "owid", "ETHZ_step",
                                    "ETHZ_sliding_window_deaths", "ETHZ_step_deaths")]
 methods
 n <- length(methods)
@@ -37,8 +37,8 @@ for (method in methods){
           break
         },
         error = function(e) {
-          if (is.na(availabe_countries[method, country])) {
-            availabe_countries[method, country] <<- FALSE
+          if (is.na(available_countries[method, country])) {
+            available_countries[method, country] <<- FALSE
           }
         }
       )
