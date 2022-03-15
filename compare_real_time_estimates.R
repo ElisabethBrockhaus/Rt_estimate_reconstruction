@@ -96,10 +96,10 @@ for (method in methods){
 ##############################################################
 
 # plot monthly
-#target_dates <- seq(as_date("2021-01-01"), by = "month", length.out = 12)
+target_dates <- seq(as_date("2021-01-01"), by = "month", length.out = 12)
 
 # plot 4-weekly
-target_dates <- seq(as_date("2020-08-01"), as_date("2021-07-31"), by = "week")[1+4*(0:11)]  
+#target_dates <- seq(as_date("2020-08-01"), as_date("2021-07-31"), by = "week")[1+4*(0:11)]
 
 for (method in methods){
   print(method)
@@ -175,5 +175,99 @@ for (method in methods){
     }
   }
 }
-source("Rt_estimate_reconstruction/prepared_plots.R")
+
+
+
+#########
+# same plot with averages for weekdays
+#########
+
+# dates over which the mean is calculated
+start_date <- as_date("2020-04-01")
+end_date <- as_date("2021-07-31")
+target_dates <- seq(start_date, end_date, by = "day")
+
+for (method in methods){
+  print(method)
+  pub_dates <- list.files(paste0(path_estimates, method),
+                          full.names = F) %>% substr(1, 10)
+  pub_dates <- pub_dates[which((as_date(pub_dates) <= end_date) &
+                                 (as_date(pub_dates) >= start_date))]
+  for (country in c("DE", "AT", "CH")[1]){
+    print(country)
+    if (available_countries[method, country]) {
+      if (exists("R_est_ts")) rm(R_est_ts)
+      if (exists("R_est")) rm(R_est)
+      for (pub_date in pub_dates){
+        tryCatch(
+          {
+            R_est <- load_published_R_estimates(method,
+                                                start = as_date(pub_date) - 30,
+                                                end = as_date(pub_date),
+                                                pub_date = pub_date,
+                                                location = country,
+                                                verbose = F) %>%
+              dplyr::select("date", "R_pub") %>%
+              mutate(estimated_after = as_date(pub_date) - date) %>%
+              reshape(idvar = "estimated_after", timevar = "date", direction = "wide") %>%
+              rename_with(~ gsub(".", "_", .x, fixed = TRUE)) %>%
+              dplyr::select("estimated_after",
+                            which((colnames(.)[2:32] %>%
+                                     substr(7, 16) %>%
+                                     as_date()) %in% target_dates) + 1)
+          },
+          error = function(e) {R_est <<- data.frame(estimated_after = make_difftime(day = seq(0,30), units = "day"))}
+        )
+        
+        if (!exists("R_est_ts")){
+          R_est_ts <- R_est
+        } else {
+          R_est_ts <- R_est_ts %>% merge(R_est, all = T) %>%
+            group_by(estimated_after) %>%
+            summarise_all(list(~ mean(., na.rm = T)))
+          R_est_ts <- R_est_ts[order(colnames(R_est_ts))]
+        }
+      }
+      if (exists("R_est_ts")){
+        
+        # calculate mean over weekdays
+        org_names <- colnames(R_est_ts)[2:(dim(R_est_ts)[2])]
+        colnames(R_est_ts)[2:(dim(R_est_ts)[2])] <- weekdays(org_names %>%
+                                                                 substr(7, 16) %>%
+                                                                 as_date()) %>%
+          paste0(org_names)
+        
+        R_est_means <- R_est_ts["estimated_after"]
+        wds <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+        for (wd in wds) {
+          R_est_means[wd] <- R_est_ts %>%
+            dplyr::select(starts_with(wd)) %>%
+            apply(1, function(x) exp(mean(log(x), na.rm = TRUE)))
+        }
+
+        R_est_plot <- R_est_means %>% rename(date = estimated_after)
+        
+        tryCatch(
+          {
+            plot_for_comparison(R_est_plot,
+                                comp_methods = wds,
+                                start_date = make_difftime(day = 0),
+                                end_date = make_difftime(day = 30),
+                                ylim_l=0.5, ylim_u=1.5,
+                                legend_name = "mean estimate on",
+                                plot_title = paste(method, country),
+                                col_palette = "Spectral",
+                                filenames = paste0("_realtime_corrections_per_weekday/", method, "_", country, ".png"),
+                                verbose = F)
+          },
+          error = function(c) {cat("Too many estimates missing. \n Minimal proportion of NA values:",
+                                   min(colMeans(is.na(R_est_ts[,2:dim(R_est_ts)[2]]))), "\n")}
+        )
+      }
+    } else {
+      print(paste("No estimates from", method, "for", country, "."))
+    }
+  }
+}
+
 

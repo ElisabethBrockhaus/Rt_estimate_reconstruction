@@ -45,8 +45,12 @@ get_colors <- function(methods, palette, name_consensus = "consensus"){
       cols_weekdays <- brewer.pal(name="Spectral", n=10)[c(1:4, 8:10)]
       names(cols_weekdays) <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
       
-      cols <- cols_weekdays[weekdays(as_date(methods))]
-      names(cols) <- methods
+      if (length(intersect(methods, names(cols_weekdays))) == 0) {
+        cols <- cols_weekdays[weekdays(as_date(methods))]
+        names(cols) <- methods
+      } else {
+        cols <- cols_weekdays
+      }
       
       # make consensus model color black and shift rest of colors, such that lightest one is not needed
       cols[names(cols) == name_consensus] <- "#000000"
@@ -276,7 +280,7 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
                                     col_palette = col_palette, name_consensus = name_consensus,
                                     include_CI = include_CI,
                                     sort_numerically = sort_numerically) +
-    coord_cartesian(ylim = c(ylim_l-0.1, ylim_u+0.1), expand = FALSE)
+    coord_cartesian(ylim = c(ylim_l-0.05, ylim_u+0.05), expand = FALSE)
   
   ggsave(R_plot, filename = paste0("Figures/estimates", filenames),  bg = "transparent",
          width = 13.1, height = 5.8)
