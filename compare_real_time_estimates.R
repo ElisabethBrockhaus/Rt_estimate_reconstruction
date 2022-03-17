@@ -1,3 +1,5 @@
+library(data.table)
+
 setwd("..")
 # needs to be the directory with the repos "Rt_estimate_reconstruction", "reproductive_numbers" 
 # and for SDSC method "covid-19-forecast" (https://renkulab.io/gitlab/covid-19/covid-19-forecast/-/tree/master)
@@ -186,6 +188,7 @@ for (method in methods){
 start_date <- as_date("2020-04-01")
 end_date <- as_date("2021-07-31")
 target_dates <- seq(start_date, end_date, by = "day")
+wds <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
 for (method in methods){
   print(method)
@@ -193,7 +196,7 @@ for (method in methods){
                           full.names = F) %>% substr(1, 10)
   pub_dates <- pub_dates[which((as_date(pub_dates) <= end_date) &
                                  (as_date(pub_dates) >= start_date))]
-  for (country in c("DE", "AT", "CH")[1]){
+  for (country in c("DE", "AT", "CH")){
     print(country)
     if (available_countries[method, country]) {
       if (exists("R_est_ts")) rm(R_est_ts)
@@ -238,7 +241,6 @@ for (method in methods){
           paste0(org_names)
         
         R_est_means <- R_est_ts["estimated_after"]
-        wds <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
         for (wd in wds) {
           R_est_means[wd] <- R_est_ts %>%
             dplyr::select(starts_with(wd)) %>%
@@ -247,27 +249,99 @@ for (method in methods){
 
         R_est_plot <- R_est_means %>% rename(date = estimated_after)
         
-        tryCatch(
-          {
-            plot_for_comparison(R_est_plot,
-                                comp_methods = wds,
-                                start_date = make_difftime(day = 0),
-                                end_date = make_difftime(day = 30),
-                                ylim_l=0.5, ylim_u=1.5,
-                                legend_name = "mean estimate on",
-                                plot_title = paste(method, country),
-                                col_palette = "Spectral",
-                                filenames = paste0("_realtime_corrections_per_weekday/", method, "_", country, ".png"),
-                                verbose = F)
-          },
-          error = function(c) {cat("Too many estimates missing. \n Minimal proportion of NA values:",
-                                   min(colMeans(is.na(R_est_ts[,2:dim(R_est_ts)[2]]))), "\n")}
-        )
+        plot_for_comparison(R_est_plot,
+                            comp_methods = wds,
+                            start_date = make_difftime(day = 0),
+                            end_date = make_difftime(day = 30),
+                            ylim_l=0.5, ylim_u=1.5,
+                            legend_name = "mean estimate for",
+                            plot_title = paste(method, country),
+                            col_palette = "Spectral",
+                            filenames = paste0("_realtime_corrections_per_weekday/", method, "_", country, ".png"),
+                            verbose = F)
       }
     } else {
       print(paste("No estimates from", method, "for", country, "."))
     }
   }
 }
+
+
+
+############################
+# weekday effects averaged #
+############################
+
+# pub_dates
+start_date <- as_date("2020-04-01")
+end_date <- as_date("2021-07-31")
+wds <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+
+for (method in methods){
+  print(method)
+  pub_dates <- list.files(paste0(path_estimates, method),
+                          full.names = F) %>% substr(1, 10)
+  pub_dates <- pub_dates[which((as_date(pub_dates) <= end_date) &
+                                 (as_date(pub_dates) >= start_date))]
+  for (country in c("DE", "AT", "CH")[1]){
+    print(country)
+    if (available_countries[method, country]) {
+      if (exists("R_est_list")) rm(R_est_list)
+      if (exists("R_est")) rm(R_est)
+      
+      R_est_empty <- data.frame(target_weekday = wds,
+                                Monday = rep(NA, 7),
+                                Tuesday = rep(NA, 7),
+                                Wednesday = rep(NA, 7),
+                                Thursday = rep(NA, 7),
+                                Friday = rep(NA, 7),
+                                Saturday = rep(NA, 7),
+                                Sunday = rep(NA, 7))
+      
+      for (pub_date in pub_dates){
+        tryCatch(
+          {
+            R_est <- load_published_R_estimates(method,
+                                                start = as_date(pub_date) - 7,
+                                                end = as_date(pub_date) - 1,
+                                                pub_date = pub_date,
+                                                location = country,
+                                                verbose = F) %>%
+              mutate(target_weekday = weekdays(date)) %>%
+              dplyr::select("target_weekday", "R_pub")
+            R_est <- R_est[match(wds, R_est$target_weekday),]
+          },
+          error = function(e) {R_est <<- data.frame(estimated_after = make_difftime(day = seq(-7, -1),
+                                                                                    units = "day"),
+                                                    R_pub = rep(NA, 7))}
+        )
+        
+        weekday <- weekdays(as_date(pub_date))
+        R_est <- R_est_empty %>% mutate(!!weekday := R_est$R_pub)
+          
+        if (!exists("R_est_list")){
+          R_est_list <- R_est
+        } else {
+          R_est_list <- rbindlist(list(R_est_list, R_est))
+        }
+      }
+      if (exists("R_est_list")){
+        
+        R_est_mean <- R_est_list[, lapply(.SD, mean, na.rm = TRUE), by = .(target_weekday)]
+
+        plot_weekday_effects(R_est_mean,
+                             ylim_l=0.75, ylim_u=1.25,
+                             plot_title = paste0("Mean estimates in week previous to pub date (",
+                                                 method, " ", country, ")"),
+                             filenames = paste0(method, "_", country, ".png"),
+                             verbose = F)
+      }
+    } else {
+      print(paste("No estimates from", method, "for", country, "."))
+    }
+  }
+}
+
+source("Rt_estimate_reconstruction/prepared_plots.R")
 
 
