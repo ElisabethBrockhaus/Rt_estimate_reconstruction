@@ -143,7 +143,7 @@ plot_multiple_estimates <- function(estimates, legend_name, plot_title="",
       labs(x = NULL, y = "Rt estimate")
       scale_x_date(limits = as.Date(c(min(estimates$date),max(estimates$date)-1)),
                    date_labels = "%b %d", expand = c(0,1))
-  } else {
+  } else if (class(R_est$date) == "difftime") {
     R_plot <- R_plot +
       labs(x = "days between target date and estimation", y = "Rt estimate") +
       scale_x_continuous()
@@ -338,4 +338,55 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
     #                         angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE)
     #save_pheatmap_pdf(correlations, paste0("correlations", filenames))
   }
+}
+
+
+
+plot_weekday_effects <- function(estimates,
+                                 legend_name="estimated on",
+                                 plot_title="",
+                                 col_palette="Spectral",
+                                 filenames = "latest_plot.png",
+                                 ylim_l=0.5, ylim_u=1.5,
+                                 verbose = T){
+  # reshape data
+  R_est <- estimates %>%
+    gather("model", "mean_R", 2:dim(estimates)[2])
+  
+  # plot
+  R_plot <- ggplot(data = R_est, aes(x = target_weekday, y = mean_R)) +
+    geom_hline(aes(yintercept = 1))
+  
+  R_plot <- R_plot +
+    labs(x = "weekday (target date)", y = "Rt estimate") +
+    scale_x_discrete()
+  
+  R_plot <- R_plot +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size=18),
+      axis.text=element_text(size=16),
+      axis.title=element_text(size=18),
+      legend.text=element_text(size=16),
+      legend.title=element_text(size=18),
+      axis.line = element_line(),
+      axis.line.y.right = element_line(),
+      axis.line.x.top = element_line(),
+      legend.position = "bottom",
+      panel.background = element_rect(fill = "transparent")
+    ) +
+    ggtitle(plot_title)
+  
+  col_values <- get_colors(methods = unique(R_est$model), col_palette)
+  
+  R_plot <- R_plot +
+    geom_line(data=R_est, aes(x = target_weekday, y = mean_R, color=model, group = 1), size = .5, na.rm = T) +
+    scale_color_manual(values=col_values, name=legend_name)
+
+  R_plot <- R_plot +
+    coord_cartesian(ylim = c(ylim_l, ylim_u), expand = FALSE)
+  
+  ggsave(R_plot, filename = paste0("Figures/estimates_realtime_pub_weekday_influence/", filenames),  bg = "transparent",
+         width = 13.1, height = 5.8)
+  print(R_plot)
 }
