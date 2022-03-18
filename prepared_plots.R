@@ -344,17 +344,24 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
 
 plot_weekday_effects <- function(estimates,
                                  legend_name="estimated on",
-                                 plot_title="",
+                                 plot_title="Mean estimates in week previous to pub date",
                                  col_palette="Spectral",
                                  filenames = "latest_plot.png",
                                  ylim_l=0.5, ylim_u=1.5,
                                  verbose = T){
   # reshape data
   R_est <- estimates %>%
-    gather("model", "mean_R", 2:dim(estimates)[2])
+    gather("pub_weekday", "mean_R", 2:dim(estimates)[2])
+  
+  wds <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
   
   # plot
-  R_plot <- ggplot(data = R_est, aes(x = target_weekday, y = mean_R)) +
+  R_plot <- ggplot(data = R_est, aes(x = factor(target_weekday,
+                                                levels = wds),
+                                     y = mean_R,
+                                     group = pub_weekday,
+                                     color = pub_weekday)) +
+    geom_line() +
     geom_hline(aes(yintercept = 1))
   
   R_plot <- R_plot +
@@ -377,16 +384,57 @@ plot_weekday_effects <- function(estimates,
     ) +
     ggtitle(plot_title)
   
-  col_values <- get_colors(methods = unique(R_est$model), col_palette)
+  col_values <- get_colors(methods = unique(R_est$pub_weekday), col_palette)
   
   R_plot <- R_plot +
-    geom_line(data=R_est, aes(x = target_weekday, y = mean_R, color=model, group = 1), size = .5, na.rm = T) +
     scale_color_manual(values=col_values, name=legend_name)
 
   R_plot <- R_plot +
     coord_cartesian(ylim = c(ylim_l, ylim_u), expand = FALSE)
   
   ggsave(R_plot, filename = paste0("Figures/estimates_realtime_pub_weekday_influence/", filenames),  bg = "transparent",
+         width = 13.1, height = 5.8)
+  print(R_plot)
+  
+  
+  # plot with inverted legend and x-axis
+  R_plot <- ggplot(data = R_est, aes(x = factor(pub_weekday,
+                                                levels = wds),
+                                     y = mean_R,
+                                     group = target_weekday,
+                                     color = target_weekday)) +
+    geom_line() +
+    geom_hline(aes(yintercept = 1))
+  
+  R_plot <- R_plot +
+    labs(x = "weekday (pub date)", y = "Rt estimate") +
+    scale_x_discrete()
+  
+  R_plot <- R_plot +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size=18),
+      axis.text=element_text(size=16),
+      axis.title=element_text(size=18),
+      legend.text=element_text(size=16),
+      legend.title=element_text(size=18),
+      axis.line = element_line(),
+      axis.line.y.right = element_line(),
+      axis.line.x.top = element_line(),
+      legend.position = "bottom",
+      panel.background = element_rect(fill = "transparent")
+    ) +
+    ggtitle(plot_title)
+  
+  col_values <- get_colors(methods = unique(R_est$target_weekday), col_palette)
+  
+  R_plot <- R_plot +
+    scale_color_manual(values=col_values, name="weekday (target date)")
+  
+  R_plot <- R_plot +
+    coord_cartesian(ylim = c(ylim_l, ylim_u), expand = FALSE)
+  
+  ggsave(R_plot, filename = paste0("Figures/estimates_realtime_target_weekday_influence/", filenames),  bg = "transparent",
          width = 13.1, height = 5.8)
   print(R_plot)
 }
