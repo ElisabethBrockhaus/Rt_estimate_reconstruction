@@ -102,17 +102,23 @@ for (method in methods){
 # plot estimates over days between estimation and target day #
 ##############################################################
 
+start_date <- as_date("2020-04-01")
+end_date <- as_date("2021-07-31")
+
 # plot monthly
-target_dates <- seq(as_date("2020-08-01"), by = "month", length.out = 12)
+target_dates <- seq(start_date, end_date, by = "month")
 
 # plot 4-weekly
-#target_dates <- seq(as_date("2020-08-01"), as_date("2021-07-31"), by = "week")[1+4*(0:11)]
+#target_dates <- seq(start_date, end_date, by = "week")[1+4*(0:11)]
+
+num_days <- 7
 
 for (method in methods){
   print(method)
   pub_dates <- list.files(paste0(path_estimates, method),
                           full.names = F) %>% substr(1, 10)
-  pub_dates <- pub_dates[which((pub_dates <= "2021-07-31") & (pub_dates >= "2020-08-01"))]
+  pub_dates <- pub_dates[which((as_date(pub_dates) <= end_date) &
+                                 (as_date(pub_dates) >= start_date))]
   end_date <- as_date(max(pub_dates))
   for (country in c("DE", "AT", "CH")){
     print(country)
@@ -123,7 +129,7 @@ for (method in methods){
         tryCatch(
           {
             R_est <- load_published_R_estimates(method,
-                                                start = as_date(pub_date) - 30,
+                                                start = as_date(pub_date) - num_days,
                                                 end = as_date(pub_date),
                                                 pub_date = pub_date,
                                                 location = country,
@@ -133,11 +139,11 @@ for (method in methods){
               reshape(idvar = "estimated_after", timevar = "date", direction = "wide") %>%
               rename_with(~ gsub(".", "_", .x, fixed = TRUE)) %>%
               dplyr::select("estimated_after",
-                            which((colnames(.)[2:32] %>%
+                            which((colnames(.)[2+(0:num_days)] %>%
                                      substr(7, 16) %>%
                                      as_date()) %in% target_dates) + 1)
           },
-          error = function(e) {R_est <<- data.frame(estimated_after = make_difftime(day = seq(0,30), units = "day"))}
+          error = function(e) {R_est <<- data.frame(estimated_after = make_difftime(day = seq(0, num_days), units = "day"))}
         )
         
         if (!exists("R_est_ts")){
@@ -165,12 +171,12 @@ for (method in methods){
             plot_for_comparison(R_est_plot,
                                 comp_methods = resulted_target_dates,
                                 start_date = make_difftime(day = 0),
-                                end_date = make_difftime(day = 30),
+                                end_date = make_difftime(day = num_days),
                                 ylim_l=0.5, ylim_u=1.5,
                                 legend_name = "estimated R for",
                                 plot_title = paste(method, country),
                                 col_palette = "Spectral",
-                                filenames = paste0("_realtime_", method, "_", country, "_corrections_over_time.png"),
+                                filenames = paste0("_realtime_corrections_over_time/", method, "_", country, ".png"),
                                 verbose = F)
           },
           error = function(c) {cat("Too many estimates missing. \n Minimal proportion of NA values:",
