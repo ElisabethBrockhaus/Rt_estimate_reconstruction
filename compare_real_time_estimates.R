@@ -35,9 +35,14 @@ for (method in methods){
   print(method)
   pub_dates <- list.files(paste0(path_estimates, method),
                           full.names = F) %>% substr(1, 10)
-  pub_dates <- pub_dates[which(pub_dates <= "2021-05-01")]
-  pub_dates <- pub_dates[length(pub_dates)-27:0]
+  final_version <- max(pub_dates[substr(pub_dates, 1, 4) == "2021"])
+  
+  if (method == "epiforecasts") final_version <- "2021-07-27"
+  
+  pub_dates <- pub_dates[which(pub_dates <= "2021-05-01" &
+                                 pub_dates >= "2021-04-01")]
   end_date <- as_date(max(pub_dates))
+  pub_dates <- c(pub_dates, final_version)
   for (country in c("DE", "AT", "CH")){
     print(country)
     if (available_countries[method, country]) {
@@ -51,7 +56,7 @@ for (method in methods){
                                                 pub_date = pub_date,
                                                 location = country,
                                                 verbose = F)
-            if (pub_date != end_date){
+            if (pub_date != final_version){
               last <- max(R_est[rowSums(!is.na(R_est))>1, "date"])
               R_est <- R_est %>% dplyr::filter(date <= last, date > last - 7)
             }
@@ -59,7 +64,7 @@ for (method in methods){
                               paste0("lower_", pub_date), paste0("upper_", pub_date))
           },
           error = function(e) {R_est <<- data.frame(date = seq(as_date("2019-12-28"),
-                                                               as_date(end_date),
+                                                               as_date(final_version),
                                                                by = "day"))}
         )
         if (!exists("R_est_ts")){
@@ -77,12 +82,12 @@ for (method in methods){
                             comp_methods = available_pub_dates,
                             start_date = last_date - 30,
                             end_date = last_date,
-                            name_consensus = end_date,
+                            name_consensus = final_version,
                             ylim_l=0.5, ylim_u=1.5,
                             legend_name = "published on",
                             plot_title = paste(method, country),
                             col_palette = "Spectral",
-                            filenames = paste0("_realtime_", method, "_", country, ".png"),
+                            filenames = paste0("_realtime_raw/", method, "_", country, ".png"),
                             verbose = F)
       }
     } else {
@@ -98,7 +103,7 @@ for (method in methods){
 ##############################################################
 
 # plot monthly
-target_dates <- seq(as_date("2021-01-01"), by = "month", length.out = 12)
+target_dates <- seq(as_date("2020-08-01"), by = "month", length.out = 12)
 
 # plot 4-weekly
 #target_dates <- seq(as_date("2020-08-01"), as_date("2021-07-31"), by = "week")[1+4*(0:11)]
