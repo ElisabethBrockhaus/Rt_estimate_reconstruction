@@ -208,6 +208,9 @@ end_date <- as_date("2021-07-31")
 target_dates <- seq(start_date, end_date, by = "day")
 wds <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
+min_lag <- 0
+max_lag <- 30
+
 for (method in methods){
   print(method)
   pub_dates <- list.files(paste0(path_estimates, method),
@@ -223,8 +226,8 @@ for (method in methods){
         tryCatch(
           {
             R_est <- load_published_R_estimates(method,
-                                                start = as_date(pub_date) - 30,
-                                                end = as_date(pub_date),
+                                                start = as_date(pub_date) - max_lag,
+                                                end = as_date(pub_date) - min_lag,
                                                 pub_date = pub_date,
                                                 location = country,
                                                 verbose = F) %>%
@@ -237,7 +240,7 @@ for (method in methods){
                                      substr(7, 16) %>%
                                      as_date()) %in% target_dates) + 1)
           },
-          error = function(e) {R_est <<- data.frame(estimated_after = make_difftime(day = seq(0,30), units = "day"))}
+          error = function(e) {R_est <<- data.frame(estimated_after = make_difftime(day = seq(min_lag, max_lag), units = "day"))}
         )
         
         if (!exists("R_est_ts")){
@@ -251,13 +254,24 @@ for (method in methods){
       }
       if (exists("R_est_ts")){
         
-        # calculate mean over weekdays
+        min_lag_plot <- Inf
+        for (col in 2:dim(R_est_ts)[2]) {
+          min_lag_plot <- min(min_lag_plot, which(!is.na(R_est_ts[,col]))[1] - 1, na.rm = TRUE)
+        }
+        max_lag_plot <- min(min_lag_plot + 6, max_lag)
+        
+        R_est_ts <- R_est_ts %>%
+          dplyr::filter((estimated_after >= min_lag_plot) &
+                          (estimated_after <= max_lag_plot))
+        
+        # extract weekdays from target dates
         org_names <- colnames(R_est_ts)[2:(dim(R_est_ts)[2])]
         colnames(R_est_ts)[2:(dim(R_est_ts)[2])] <- weekdays(org_names %>%
                                                                  substr(7, 16) %>%
                                                                  as_date()) %>%
           paste0(org_names)
         
+        # calculate mean over weekdays
         R_est_means <- R_est_ts["estimated_after"]
         for (wd in wds) {
           R_est_means[wd] <- R_est_ts %>%
@@ -269,8 +283,8 @@ for (method in methods){
         
         plot_for_comparison(R_est_plot,
                             comp_methods = wds,
-                            start_date = make_difftime(day = 0),
-                            end_date = make_difftime(day = 30),
+                            start_date = make_difftime(day = min_lag_plot),
+                            end_date = make_difftime(day = max_lag_plot),
                             ylim_l=0.5, ylim_u=1.5,
                             legend_name = "mean estimate for",
                             plot_title = paste(method, country),
@@ -301,7 +315,7 @@ for (method in methods){
                           full.names = F) %>% substr(1, 10)
   pub_dates <- pub_dates[which((as_date(pub_dates) <= end_date) &
                                  (as_date(pub_dates) >= start_date))]
-  for (country in c("DE", "AT", "CH")[1]){
+  for (country in c("DE", "AT", "CH")){
     print(country)
     if (available_countries[method, country]) {
       if (exists("R_est_list")) rm(R_est_list)
@@ -329,8 +343,7 @@ for (method in methods){
               dplyr::select("target_weekday", "R_pub")
             R_est <- R_est[match(wds, R_est$target_weekday),]
           },
-          error = function(e) {R_est <<- data.frame(estimated_after = make_difftime(day = seq(-7, -1),
-                                                                                    units = "day"),
+          error = function(e) {R_est <<- data.frame(target_weekday = wds,
                                                     R_pub = rep(NA, 7))}
         )
         
@@ -345,7 +358,7 @@ for (method in methods){
       }
       if (exists("R_est_list")){
         
-        R_est_mean <- R_est_list[, lapply(.SD, mean, na.rm = TRUE), by = .(target_weekday)]
+        R_est_mean <- R_est_list[, lapply(.SD, function(x) exp(mean(log(x), na.rm = TRUE))), by = .(target_weekday)]
 
         plot_weekday_effects(R_est_mean,
                              ylim_l=0.75, ylim_u=1.25,
@@ -360,6 +373,5 @@ for (method in methods){
   }
 }
 
-source("Rt_estimate_reconstruction/prepared_plots.R")
 
 
