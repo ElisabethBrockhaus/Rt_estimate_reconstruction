@@ -236,7 +236,7 @@ for (method in methods){
               reshape(idvar = "estimated_after", timevar = "date", direction = "wide") %>%
               rename_with(~ gsub(".", "_", .x, fixed = TRUE)) %>%
               dplyr::select("estimated_after",
-                            which((colnames(.)[2:32] %>%
+                            which((colnames(.)[2+(0:(max_lag-min_lag))] %>%
                                      substr(7, 16) %>%
                                      as_date()) %in% target_dates) + 1)
           },
