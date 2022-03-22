@@ -208,7 +208,7 @@ end_date <- as_date("2021-07-31")
 target_dates <- seq(start_date, end_date, by = "day")
 wds <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
-min_lag <- 0
+min_lag <- 1
 max_lag <- 30
 
 for (method in methods){
