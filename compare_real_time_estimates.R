@@ -102,7 +102,7 @@ for (method in methods){
 # plot estimates over days between estimation and target day #
 ##############################################################
 
-start_date <- as_date("2020-04-01")
+start_date <- as_date("2021-01-01")
 end_date <- as_date("2021-07-31")
 
 # plot monthly
@@ -111,7 +111,8 @@ target_dates <- seq(start_date, end_date, by = "month")
 # plot 4-weekly
 #target_dates <- seq(start_date, end_date, by = "week")[1+4*(0:11)]
 
-num_days <- 7
+min_lag <- 0
+max_lag <- 30
 
 for (method in methods){
   print(method)
@@ -129,8 +130,8 @@ for (method in methods){
         tryCatch(
           {
             R_est <- load_published_R_estimates(method,
-                                                start = as_date(pub_date) - num_days,
-                                                end = as_date(pub_date),
+                                                start = as_date(pub_date) - max_lag,
+                                                end = as_date(pub_date) - min_lag,
                                                 pub_date = pub_date,
                                                 location = country,
                                                 verbose = F) %>%
@@ -139,11 +140,11 @@ for (method in methods){
               reshape(idvar = "estimated_after", timevar = "date", direction = "wide") %>%
               rename_with(~ gsub(".", "_", .x, fixed = TRUE)) %>%
               dplyr::select("estimated_after",
-                            which((colnames(.)[2+(0:num_days)] %>%
+                            which((colnames(.)[2+(0:(max_lag-min_lag))] %>%
                                      substr(7, 16) %>%
                                      as_date()) %in% target_dates) + 1)
           },
-          error = function(e) {R_est <<- data.frame(estimated_after = make_difftime(day = seq(0, num_days), units = "day"))}
+          error = function(e) {R_est <<- data.frame(estimated_after = make_difftime(day = seq(min_lag, max_lag), units = "day"))}
         )
         
         if (!exists("R_est_ts")){
@@ -158,7 +159,7 @@ for (method in methods){
       if (exists("R_est_ts")){
         
         R_est_plot <- R_est_ts %>%
-          dplyr::select("estimated_after", which(colMeans(is.na(.)) < 0.5))       
+          dplyr::select("estimated_after", which(colMeans(is.na(.)) < 0.67))       
         
         R_est_plot <- R_est_plot %>% rename(date = estimated_after)
         
@@ -168,10 +169,16 @@ for (method in methods){
                                                colnames(R_est_plot[2:dim(R_est_plot)[2]]) %>%
                                                  substr(7, 16) %>%
                                                  as_date()) %>% as_date()
+            min_lag_plot <- Inf
+            for (col in 2:dim(R_est_plot)[2]) {
+              min_lag_plot <- min(min_lag_plot, which(!is.na(R_est_plot[,col]))[1] - 1)
+            }
+            max_lag_plot <- min(min_lag_plot + 6, max_lag)
+            
             plot_for_comparison(R_est_plot,
                                 comp_methods = resulted_target_dates,
-                                start_date = make_difftime(day = 0),
-                                end_date = make_difftime(day = num_days),
+                                start_date = make_difftime(day = min_lag_plot),
+                                end_date = make_difftime(day = max_lag_plot),
                                 ylim_l=0.5, ylim_u=1.5,
                                 legend_name = "estimated R for",
                                 plot_title = paste(method, country),

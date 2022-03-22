@@ -145,7 +145,7 @@ plot_multiple_estimates <- function(estimates, legend_name, plot_title="",
                    date_labels = "%b %d", expand = c(0,1))
   } else if (class(R_est$date) == "difftime") {
     R_plot <- R_plot +
-      labs(x = "days between target date and estimation", y = "Rt estimate") +
+      labs(x = "pub_date - target date", y = "Rt estimate") +
       scale_x_continuous()
   }
   
