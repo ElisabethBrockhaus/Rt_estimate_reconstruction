@@ -31,19 +31,22 @@ available_countries <- read.csv("Rt_estimate_reconstruction/otherFiles/available
 # plot estimates as time series #
 #################################
 
-for (method in methods){
+source("Rt_estimate_reconstruction/prepared_plots.R")
+
+for (method in methods[3]){
   print(method)
   pub_dates <- list.files(paste0(path_estimates, method),
                           full.names = F) %>% substr(1, 10)
-  final_version <- max(pub_dates[substr(pub_dates, 1, 4) == "2021"])
+
+  final_version <- "2021-07-16"
   
-  if (method == "epiforecasts") final_version <- "2021-07-27"
+  if (method == "Braunschweig") final_version <- "2021-07-18"
   
   pub_dates <- pub_dates[which(pub_dates <= "2021-05-01" &
                                  pub_dates >= "2021-04-01")]
   end_date <- as_date(max(pub_dates))
   pub_dates <- c(pub_dates, final_version)
-  for (country in c("DE", "AT", "CH")){
+  for (country in c("DE", "AT", "CH")[1]){
     print(country)
     if (available_countries[method, country]) {
       if (exists("R_est_ts")) rm(R_est_ts)
@@ -102,8 +105,8 @@ for (method in methods){
 # plot estimates over days between estimation and target day #
 ##############################################################
 
-start_date <- as_date("2021-01-01")
-end_date <- as_date("2021-07-31")
+start_date <- as_date("2020-11-16")
+end_date <- as_date("2021-07-16")
 
 # plot monthly
 target_dates <- seq(start_date, end_date, by = "month")
@@ -198,13 +201,16 @@ for (method in methods){
 
 
 
+
+
+
 #########
 # same plot with averages for weekdays
 #########
 
 # dates over which the mean is calculated
-start_date <- as_date("2020-04-01")
-end_date <- as_date("2021-07-31")
+start_date <- as_date("2020-11-16")
+end_date <- as_date("2021-07-16")
 target_dates <- seq(start_date, end_date, by = "day")
 wds <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
@@ -305,8 +311,8 @@ for (method in methods){
 ############################
 
 # pub_dates
-start_date <- as_date("2020-04-01")
-end_date <- as_date("2021-07-31")
+start_date <- as_date("2020-11-16")
+end_date <- as_date("2021-07-16")
 wds <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
 for (method in methods){
