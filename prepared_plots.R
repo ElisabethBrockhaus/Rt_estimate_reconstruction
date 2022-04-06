@@ -48,6 +48,10 @@ get_colors <- function(methods, palette, name_consensus = "consensus"){
       if (length(intersect(methods, names(cols_weekdays))) == 0) {
         cols <- cols_weekdays[weekdays(as_date(methods))]
         names(cols) <- methods
+      } else if (methods[num_est] == name_consensus) {
+        cols <- c(cols_weekdays[methods[-num_est]], "#000000")
+        names(cols)[num_est] <- name_consensus
+        cols <- na.omit(cols[c(names(cols_weekdays), name_consensus)])
       } else {
         cols <- cols_weekdays
       }
@@ -134,22 +138,18 @@ plot_multiple_estimates <- function(estimates, legend_name, plot_title="",
       mutate_at(vars("model"), as.factor)
   }
   
-  # plot
-  R_plot <- ggplot(data = R_est, aes(x = date, y = R)) +
-    geom_hline(aes(yintercept = 1))
-  
   if (class(R_est$date) == "Date") {
-    R_plot <- R_plot +
-      labs(x = NULL, y = "Rt estimate")
-      scale_x_date(limits = as.Date(c(min(estimates$date),max(estimates$date)-1)),
-                   date_labels = "%b %d", expand = c(0,1))
-  } else if (class(R_est$date) == "difftime") {
-    R_plot <- R_plot +
-      labs(x = "pub date - target date", y = "Rt estimate") +
-      scale_x_continuous()
+    R_est$weekday <- weekdays(as_date(R_est$model))
+    R_plot <- ggplot(data = R_est, aes(x = date, y = R), group = weekday)
+  } else {
+    R_plot <- ggplot(data = R_est, aes(x = date, y = R))
   }
   
+  View(R_est)
+  
+  # plot
   R_plot <- R_plot +
+    geom_hline(aes(yintercept = 1)) +
     theme_minimal() +
     theme(
       plot.title = element_text(size=18),
@@ -161,14 +161,35 @@ plot_multiple_estimates <- function(estimates, legend_name, plot_title="",
       axis.line.y.right = element_line(),
       axis.line.x.top = element_line(),
       legend.position = "bottom",
-      panel.background = element_rect(fill = "transparent")
-      ) +
+      panel.background = element_rect(fill = "transparent"),
+      panel.grid.major = element_line(),
+      panel.grid.minor = element_blank()
+    ) +
     ggtitle(plot_title)
+  
+  if (class(R_est$date) == "Date") {
+    R_plot <- R_plot +
+      labs(x = NULL, y = "Rt estimate") +
+      scale_x_date(limits = as.Date(c(min(estimates$date),max(estimates$date)-1)),
+                   date_labels = "%b %d", expand = c(0,1),
+                   breaks = date_breaks("1 week")) +
+      scale_colour_discrete(name="weekday (pub date)",
+                          breaks=unique(estimates$date)[1:7],
+                          labels=c("Monday", "Tuesday", "Wednesday", "Thursday",
+                                   "Friday", "Saturday", "Sunday"))
+      
+  } else if (class(R_est$date) == "difftime") {
+    R_plot <- R_plot +
+      labs(x = "pub date - target date", y = "Rt estimate") +
+      scale_x_continuous()
+  }
   
   if (col_palette != "Spectral") {
     R_plot <- R_plot +
-      geom_rect(data=NULL,aes(xmin=as_date("2020-03-01"), xmax=as_date("2020-03-31"), ymin=-Inf, ymax=Inf), fill="grey", alpha=0.01) +
-      geom_rect(data=NULL,aes(xmin=as_date("2021-06-11"), xmax=as_date("2021-07-09"), ymin=-Inf, ymax=Inf), fill="grey", alpha=0.01)
+      geom_rect(data=NULL,aes(xmin=as_date("2020-03-01"), xmax=as_date("2020-03-31"),
+                              ymin=-Inf, ymax=Inf), fill="grey", alpha=0.01) +
+      geom_rect(data=NULL,aes(xmin=as_date("2021-06-11"), xmax=as_date("2021-07-09"),
+                              ymin=-Inf, ymax=Inf), fill="grey", alpha=0.01)
   }
   
   col_values <- get_colors(methods = unique(R_est$model), col_palette, name_consensus = name_consensus)
@@ -338,6 +359,74 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
     #                         angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE)
     #save_pheatmap_pdf(correlations, paste0("correlations", filenames))
   }
+}
+
+
+
+plot_real_time_estimates <- function(estimates,
+                                     start_date = "2021-04-01", end_date = "2021-05-01",
+                                     legend_name="weekday (pub date)", plot_title="",
+                                     name_consensus="2021-07-16",
+                                     filenames = "_latest_plot.png",
+                                     ylim_l=0.5, ylim_u=1.5) {
+  
+  estimates <- estimates %>%
+    dplyr::filter(date >= start_date, date <= end_date)
+  
+  # reshape data
+  R_est  <- estimates %>%
+    gather("variable", "value", 2:dim(estimates)[2]) %>%
+    separate(variable,
+             into = c("type", "model"),
+             sep = "[.]",
+             extra = "merge",
+             remove = TRUE) %>%
+    spread(type, value)
+  
+  R_est$weekday <- weekdays(as_date(R_est$model))
+
+  # plot
+  R_plot <- ggplot(data = R_est, aes(x = date, y = R), color = weekday) +
+    geom_hline(aes(yintercept = 1)) +
+    
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size=18),
+      axis.text=element_text(size=16),
+      axis.title=element_text(size=18),
+      legend.text=element_text(size=16),
+      legend.title=element_text(size=18),
+      axis.line = element_line(),
+      axis.line.y.right = element_line(),
+      axis.line.x.top = element_line(),
+      legend.position = "bottom",
+      panel.background = element_rect(fill = "transparent"),
+      panel.grid.major = element_line(),
+      panel.grid.minor = element_blank()
+    ) +
+    ggtitle(plot_title) +
+    
+    labs(x = NULL, y = "Rt estimate") +
+    scale_x_date(limits = as.Date(c(min(estimates$date),max(estimates$date)-1)),
+                 date_labels = "%b %d", expand = c(0,1),
+                 breaks = date_breaks("1 week"))
+  
+  col_values <- get_colors(methods = c(unique(R_est$weekday), name_consensus),
+                           "Spectral", name_consensus = name_consensus)
+
+  R_plot <-  R_plot +
+    geom_line(data=R_est[R_est$model!=name_consensus & !is.na(R_est$R),],
+              aes(x = date, y = R, group=model, color=weekday), size = .5, na.rm = T) +
+    geom_line(data=R_est[R_est$model==name_consensus,],
+              aes(x = date, y = R, color=model), size = .8) +
+    scale_color_manual(values=col_values, name=legend_name)
+  
+  R_plot <- R_plot +
+    coord_cartesian(ylim = c(ylim_l-0.05, ylim_u+0.05), expand = FALSE)
+  
+  ggsave(R_plot, filename = paste0("Figures/estimates", filenames),  bg = "transparent",
+         width = 13.1, height = 5.8)
+  print(R_plot)
 }
 
 
