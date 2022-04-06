@@ -414,6 +414,8 @@ plot_real_time_estimates <- function(estimates,
 plot_weekday_effects <- function(estimates,
                                  legend_name="estimated on",
                                  plot_title="Mean estimates in week previous to pub date",
+                                 min_lag = 1,
+                                 max_lag = 7,
                                  col_palette="Spectral",
                                  filenames = "latest_plot.png",
                                  ylim_l=0.5, ylim_u=1.5,
@@ -434,7 +436,8 @@ plot_weekday_effects <- function(estimates,
     geom_hline(aes(yintercept = 1))
   
   R_plot <- R_plot +
-    labs(x = "weekday (target date)", y = "Rt estimate") +
+    labs(x = "weekday (target date)", y = "Rt estimate",
+         subtitle = paste(min_lag, "-", max_lag, "days previous to pub date")) +
     scale_x_discrete()
   
   R_plot <- R_plot +
@@ -476,7 +479,8 @@ plot_weekday_effects <- function(estimates,
     geom_hline(aes(yintercept = 1))
   
   R_plot <- R_plot +
-    labs(x = "weekday (pub date)", y = "Rt estimate") +
+    labs(x = "weekday (pub date)", y = "Rt estimate",
+         subtitle = paste(min_lag, "-", max_lag, "days previous to publishing")) +
     scale_x_discrete()
   
   R_plot <- R_plot +
