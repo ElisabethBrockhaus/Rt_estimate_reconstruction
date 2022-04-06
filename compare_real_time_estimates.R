@@ -31,8 +31,6 @@ available_countries <- read.csv("Rt_estimate_reconstruction/otherFiles/available
 # plot estimates as time series #
 #################################
 
-source("Rt_estimate_reconstruction/prepared_plots.R")
-
 for (method in methods){
   print(method)
   pub_dates <- list.files(paste0(path_estimates, method),
@@ -210,13 +208,15 @@ wds <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Su
 min_lag <- 1
 max_lag <- 30
 
+source("Rt_estimate_reconstruction/prepared_plots.R")
+
 for (method in methods){
   print(method)
   pub_dates <- list.files(paste0(path_estimates, method),
                           full.names = F) %>% substr(1, 10)
   pub_dates <- pub_dates[which((as_date(pub_dates) <= end_date) &
                                  (as_date(pub_dates) >= start_date))]
-  for (country in c("DE", "AT", "CH")){
+  for (country in c("DE", "AT", "CH")[1]){
     print(country)
     if (available_countries[method, country]) {
       if (exists("R_est_ts")) rm(R_est_ts)
@@ -255,7 +255,9 @@ for (method in methods){
         
         min_lag_plot <- Inf
         for (col in 2:dim(R_est_ts)[2]) {
-          min_lag_plot <- min(min_lag_plot, which(!is.na(R_est_ts[,col]))[1] - 1, na.rm = TRUE)
+          min_lag_plot <- min(min_lag_plot,
+                              as.numeric(R_est_ts[which(!is.na(R_est_ts[,col]))[1], "estimated_after"]),
+                              na.rm = TRUE)
         }
         max_lag_plot <- min(min_lag_plot + 6, max_lag)
         
