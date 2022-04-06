@@ -33,7 +33,7 @@ available_countries <- read.csv("Rt_estimate_reconstruction/otherFiles/available
 
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
-for (method in methods[3]){
+for (method in methods){
   print(method)
   pub_dates <- list.files(paste0(path_estimates, method),
                           full.names = F) %>% substr(1, 10)
@@ -63,8 +63,8 @@ for (method in methods[3]){
               last <- max(R_est[rowSums(!is.na(R_est))>1, "date"])
               R_est <- R_est %>% dplyr::filter(date <= last, date > last - 7)
             }
-            names(R_est) <- c("date", paste0("R_pub_", pub_date),
-                              paste0("lower_", pub_date), paste0("upper_", pub_date))
+            names(R_est) <- c("date", paste0("R.", pub_date),
+                              paste0("lower.", pub_date), paste0("upper.", pub_date))
           },
           error = function(e) {R_est <<- data.frame(date = seq(as_date("2019-12-28"),
                                                                as_date(final_version),
@@ -78,20 +78,13 @@ for (method in methods[3]){
       }
       if (exists("R_est_ts")){
         last_date <- max(R_est_ts[rowSums(!is.na(R_est_ts))>1, "date"])
-        available_pub_dates <- intersect(pub_dates,
-                                         colnames(R_est_ts[2:dim(R_est_ts)[2]]) %>%
-                                           substr(7, 16)) %>% as_date()
-        plot_for_comparison(R_est_ts,
-                            comp_methods = available_pub_dates,
-                            start_date = last_date - 30,
-                            end_date = last_date,
-                            name_consensus = final_version,
-                            ylim_l=0.5, ylim_u=1.5,
-                            legend_name = "published on",
-                            plot_title = paste(method, country),
-                            col_palette = "Spectral",
-                            filenames = paste0("_realtime_raw/", method, "_", country, ".png"),
-                            verbose = F)
+        
+        plot_real_time_estimates(R_est_ts,
+                                 start_date = last_date - 30,
+                                 end_date = last_date,
+                                 plot_title = paste(method, country),
+                                 name_consensus = final_version,
+                                 filenames = paste0("_realtime_raw/", method, "_", country, ".png"))
       }
     } else {
       print(paste("No estimates from", method, "for", country, "."))
