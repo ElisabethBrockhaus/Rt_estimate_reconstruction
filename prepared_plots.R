@@ -138,17 +138,8 @@ plot_multiple_estimates <- function(estimates, legend_name, plot_title="",
       mutate_at(vars("model"), as.factor)
   }
   
-  if (class(R_est$date) == "Date") {
-    R_est$weekday <- weekdays(as_date(R_est$model))
-    R_plot <- ggplot(data = R_est, aes(x = date, y = R), group = weekday)
-  } else {
-    R_plot <- ggplot(data = R_est, aes(x = date, y = R))
-  }
-  
-  View(R_est)
-  
   # plot
-  R_plot <- R_plot +
+  R_plot <- ggplot(data = R_est, aes(x = date, y = R)) +
     geom_hline(aes(yintercept = 1)) +
     theme_minimal() +
     theme(
@@ -167,18 +158,7 @@ plot_multiple_estimates <- function(estimates, legend_name, plot_title="",
     ) +
     ggtitle(plot_title)
   
-  if (class(R_est$date) == "Date") {
-    R_plot <- R_plot +
-      labs(x = NULL, y = "Rt estimate") +
-      scale_x_date(limits = as.Date(c(min(estimates$date),max(estimates$date)-1)),
-                   date_labels = "%b %d", expand = c(0,1),
-                   breaks = date_breaks("1 week")) +
-      scale_colour_discrete(name="weekday (pub date)",
-                          breaks=unique(estimates$date)[1:7],
-                          labels=c("Monday", "Tuesday", "Wednesday", "Thursday",
-                                   "Friday", "Saturday", "Sunday"))
-      
-  } else if (class(R_est$date) == "difftime") {
+  if (class(R_est$date) == "difftime") {
     R_plot <- R_plot +
       labs(x = "pub date - target date", y = "Rt estimate") +
       scale_x_continuous()
@@ -384,7 +364,7 @@ plot_real_time_estimates <- function(estimates,
     spread(type, value)
   
   R_est$weekday <- weekdays(as_date(R_est$model))
-
+  
   # plot
   R_plot <- ggplot(data = R_est, aes(x = date, y = R), color = weekday) +
     geom_hline(aes(yintercept = 1)) +
@@ -413,7 +393,7 @@ plot_real_time_estimates <- function(estimates,
   
   col_values <- get_colors(methods = c(unique(R_est$weekday), name_consensus),
                            "Spectral", name_consensus = name_consensus)
-
+  
   R_plot <-  R_plot +
     geom_line(data=R_est[R_est$model!=name_consensus & !is.na(R_est$R),],
               aes(x = date, y = R, group=model, color=weekday), size = .5, na.rm = T) +
