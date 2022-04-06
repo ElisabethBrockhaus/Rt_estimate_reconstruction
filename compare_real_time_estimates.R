@@ -1,8 +1,7 @@
 library(data.table)
 
 setwd("..")
-# needs to be the directory with the repos "Rt_estimate_reconstruction", "reproductive_numbers" 
-# and for SDSC method "covid-19-forecast" (https://renkulab.io/gitlab/covid-19/covid-19-forecast/-/tree/master)
+# needs to be the directory with the repos "Rt_estimate_reconstruction", "reproductive_numbers"
 getwd()
 
 
@@ -24,7 +23,7 @@ methods <- methods[!methods %in% c("", "AW_7day", "AW_WVday", "owid", "ETHZ_step
 methods
 
 available_countries <- read.csv("Rt_estimate_reconstruction/otherFiles/available_countries.csv", row.names = 1)
-
+pub_delays <- read.csv("Rt_estimate_reconstruction/otherFiles/pub_delays.csv", row.names = 1)
 
 
 #################################
@@ -37,7 +36,6 @@ for (method in methods){
                           full.names = F) %>% substr(1, 10)
 
   final_version <- "2021-07-16"
-  
   if (method == "Braunschweig") final_version <- "2021-07-18"
   
   pub_dates <- pub_dates[which(pub_dates <= "2021-05-01" &
@@ -82,7 +80,8 @@ for (method in methods){
                                  end_date = last_date,
                                  plot_title = paste(method, country),
                                  name_consensus = final_version,
-                                 filenames = paste0("_realtime_raw/", method, "_", country, ".png"))
+                                 filenames = paste0("_realtime_raw/",
+                                                    method, "_", country, ".png"))
       }
     } else {
       print(paste("No estimates from", method, "for", country, "."))
@@ -201,14 +200,12 @@ for (method in methods){
 
 # dates over which the mean is calculated
 start_date <- as_date("2020-11-16")
-end_date <- as_date("2021-07-16")
+end_date <- as_date("2021-05-01")
 target_dates <- seq(start_date, end_date, by = "day")
 wds <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
 min_lag <- 1
 max_lag <- 30
-
-source("Rt_estimate_reconstruction/prepared_plots.R")
 
 for (method in methods){
   print(method)
@@ -239,7 +236,10 @@ for (method in methods){
                                      substr(7, 16) %>%
                                      as_date()) %in% target_dates) + 1)
           },
-          error = function(e) {R_est <<- data.frame(estimated_after = make_difftime(day = seq(min_lag, max_lag), units = "day"))}
+          error = function(e) {
+            R_est <<- data.frame(estimated_after = make_difftime(day = seq(min_lag, max_lag),
+                                                                 units = "day"))
+            }
         )
         
         if (!exists("R_est_ts")){
@@ -253,12 +253,13 @@ for (method in methods){
       }
       if (exists("R_est_ts")){
         
-        min_lag_plot <- Inf
-        for (col in 2:dim(R_est_ts)[2]) {
-          min_lag_plot <- min(min_lag_plot,
-                              as.numeric(R_est_ts[which(!is.na(R_est_ts[,col]))[1], "estimated_after"]),
-                              na.rm = TRUE)
-        }
+        #min_lag_plot <- Inf
+        #for (col in 2:dim(R_est_ts)[2]) {
+        #  min_lag_plot <- min(min_lag_plot,
+        #                      as.numeric(R_est_ts[which(!is.na(R_est_ts[,col]))[1], "estimated_after"]),
+        #                      na.rm = TRUE)
+        #}
+        min_lag_plot <- pub_delays[method, country]
         max_lag_plot <- min(min_lag_plot + 6, max_lag)
         
         R_est_ts <- R_est_ts %>%
@@ -290,7 +291,8 @@ for (method in methods){
                             legend_name = "mean estimate for",
                             plot_title = paste(method, country),
                             col_palette = "Spectral",
-                            filenames = paste0("_realtime_corrections_per_weekday/", method, "_", country, ".png"),
+                            filenames = paste0("_realtime_corrections_per_weekday/",
+                                               method, "_", country, ".png"),
                             verbose = F)
       }
     } else {
@@ -307,7 +309,7 @@ for (method in methods){
 
 # pub_dates
 start_date <- as_date("2020-11-16")
-end_date <- as_date("2021-07-16")
+end_date <- as_date("2021-05-01")
 wds <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
 for (method in methods){
@@ -316,8 +318,13 @@ for (method in methods){
                           full.names = F) %>% substr(1, 10)
   pub_dates <- pub_dates[which((as_date(pub_dates) <= end_date) &
                                  (as_date(pub_dates) >= start_date))]
-  for (country in c("DE", "AT", "CH")){
+    
+  for (country in c("DE", "AT", "CH")[1]){
     print(country)
+    
+    min_lag <- pub_delays[method, country]
+    max_lag <- min_lag + 6
+    
     if (available_countries[method, country]) {
       if (exists("R_est_list")) rm(R_est_list)
       if (exists("R_est")) rm(R_est)
@@ -335,8 +342,8 @@ for (method in methods){
         tryCatch(
           {
             R_est <- load_published_R_estimates(method,
-                                                start = as_date(pub_date) - 7,
-                                                end = as_date(pub_date) - 1,
+                                                start = as_date(pub_date) - max_lag,
+                                                end = as_date(pub_date) - min_lag,
                                                 pub_date = pub_date,
                                                 location = country,
                                                 verbose = F) %>%
@@ -359,12 +366,14 @@ for (method in methods){
       }
       if (exists("R_est_list")){
         
-        R_est_mean <- R_est_list[, lapply(.SD, function(x) exp(mean(log(x), na.rm = TRUE))), by = .(target_weekday)]
-
+        R_est_mean <- R_est_list[, lapply(.SD, function(x) exp(mean(log(x), na.rm = TRUE))),
+                                 by = .(target_weekday)]
+        
         plot_weekday_effects(R_est_mean,
                              ylim_l=0.75, ylim_u=1.25,
-                             plot_title = paste0("Mean estimates in week previous to pub date (",
+                             plot_title = paste0("Mean over latest 7 estimates per pub date (",
                                                  method, " ", country, ")"),
+                             min_lag = min_lag, max_lag = max_lag,
                              filenames = paste0(method, "_", country, ".png"),
                              verbose = F)
       }
