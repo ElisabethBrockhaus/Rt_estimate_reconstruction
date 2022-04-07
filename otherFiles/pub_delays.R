@@ -9,7 +9,8 @@ path_estimates <- "reproductive_numbers/data-processed/"
 # sources of published real-time estimates
 methods <- list.dirs(path_estimates, full.names = F)
 methods <- methods[!methods %in% c("", "AW_7day", "AW_WVday", "owid", "ETHZ_step",
-                                   "ETHZ_sliding_window_deaths", "ETHZ_step_deaths")]
+                                   "ETHZ_sliding_window_deaths", "ETHZ_step_deaths",
+                                   "zidatalab")]
 methods
 
 n <- length(methods)
@@ -110,4 +111,18 @@ for (method in methods){
 pub_delays_list
 saveRDS(pub_delays_list, file="Rt_estimate_reconstruction/otherFiles/pub_delays_list.RData")
 min_pub_delays_list <- readRDS("Rt_estimate_reconstruction/otherFiles/pub_delays_list.RData")
-          
+min_pub_delays_list          
+
+for (method in methods){
+  for (country in c("DE", "AT", "CH")){
+    max.row <- which.max(min_pub_delays_list[[method]][, country])
+    pub_delays[method, country] <- row.names(min_pub_delays_list[[method]])[max.row]
+  }
+}
+
+pub_delays
+write.csv(pub_delays, "Rt_estimate_reconstruction/otherFiles/pub_delays_mode.csv")
+
+
+
+
