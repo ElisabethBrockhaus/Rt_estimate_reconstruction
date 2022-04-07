@@ -23,7 +23,7 @@ methods <- methods[!methods %in% c("", "AW_7day", "AW_WVday", "owid", "ETHZ_step
 methods
 
 available_countries <- read.csv("Rt_estimate_reconstruction/otherFiles/available_countries.csv", row.names = 1)
-pub_delays <- read.csv("Rt_estimate_reconstruction/otherFiles/pub_delays.csv", row.names = 1)
+pub_delays <- read.csv("Rt_estimate_reconstruction/otherFiles/pub_delays_mode.csv", row.names = 1)
 
 
 #############################################
@@ -35,10 +35,10 @@ end_date <- as_date("2021-05-01")
 country <- "DE"
 
 n <- length(methods)
-CI_coverage <- data.frame(matrix(rep(NA, n*26), nrow = n), row.names = methods)
-colnames(CI_coverage) <- c(0:22, "num_CIs", "min_pub_date", "max_pub_date")
+CI_coverage <- data.frame(matrix(rep(NA, n*24), nrow = n), row.names = methods)
+colnames(CI_coverage) <- c(0:20, "num_CIs", "min_pub_date", "max_pub_date")
 
-for (method in methods[14]){
+for (method in methods){
   print(method)
   pub_dates <- list.files(paste0(path_estimates, method),
                           full.names = F) %>% substr(1, 10)
@@ -118,5 +118,52 @@ for (method in methods[14]){
 }
 
 View(CI_coverage)
+write.csv(CI_coverage, "Rt_estimate_reconstruction/otherFiles/CI_coverage.csv")
+
+
+CI_coverage <- read_csv("Rt_estimate_reconstruction/otherFiles/CI_coverage.csv") %>%
+  as.data.frame() %>%
+  column_to_rownames("...1")
+
+coverage_data <- CI_coverage[,1:21] %>%
+  rownames_to_column("method") %>%
+  dplyr::filter(!(method %in% methods[c(1,5,6,7,9,10)])) %>% # drop AGES and most of globalrt variations
+  mutate(method = plyr::mapvalues(method,
+                                  c("ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
+                                  c("ETH", "globalrt", "Ilmenau", "RKI"))) %>%
+  arrange(method)
+
+coverage_data <- coverage_data %>%
+  gather("variable", "value", 2:dim(coverage_data)[2]) %>%
+  mutate(variable = -1 * as.numeric(variable))
+
+coverage_plot <- ggplot() +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size=18),
+    axis.text=element_text(size=16),
+    axis.title=element_text(size=18),
+    legend.text=element_text(size=16),
+    legend.title=element_text(size=18),
+    axis.line = element_line(),
+    axis.line.y.right = element_line(),
+    axis.line.x.top = element_line(),
+    legend.position = "bottom",
+    panel.background = element_rect(fill = "transparent"),
+    panel.grid.major = element_line(),
+    panel.grid.minor = element_blank()
+  ) +
+  ggtitle("95%-CI coverage rates") +
+  labs(x = "target date - pub date", y = "coverage rate")
+
+col_values <- get_colors(methods = unique(coverage_data$method), palette = "methods")
+
+coverage_plot <- coverage_plot + 
+  geom_line(data=coverage_data,
+            aes(x = variable, y = value, color = method),
+            size = .8, na.rm = T) +
+  scale_color_manual(values=col_values, name="method")
+
+print(coverage_plot)
 
 
