@@ -13,18 +13,20 @@ library(lubridate)
 Sys.setlocale("LC_TIME", "English")
 
 get_colors <- function(methods, palette, name_consensus = "consensus"){
-  all_methods <- c("AGES", "consensus", "epiforecasts", "ETH", "globalrt", "Ilmenau", "RKI", "rtlive", "SDSC")
+  all_methods <- c("AGES", "Braunschweig", "consensus", "epiforecasts", "ETH", "globalrt", "Ilmenau", "RKI", "RKI_4day", "rtlive", "SDSC")
   num_est <- length(methods)
   
   # constant colors for different models
   if (all(methods %in% all_methods)){
     cols <- c("#E41A1C", # red
+              "#f0bc00", # yellow
               "#000000", # black
               "#ff8b00", # orange
               "#00d333", # light green
               "#00922c", # dark green
               "#0397d8", # light blue
-              "#1502a0", # dark blue
+              "#1502a0", # medium blue
+              "#230082", # dark blue 
               "#bb2881", # berry
               "#7c007c") # violett
     names(cols) <- all_methods
