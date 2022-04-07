@@ -513,3 +513,55 @@ plot_weekday_effects <- function(estimates,
          width = 13.1, height = 5.8)
   print(R_plot)
 }
+
+
+
+plot_CI_coverage_rates <- function(conf_level = "95"){
+  methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
+               "ilmenau", "RKI_7day", "RKI_4day", "rtlive", "SDSC")
+  
+  CI_coverage <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/", conf_level, "_CI_coverage.csv")) %>%
+    as.data.frame() %>%
+    column_to_rownames("...1")
+  
+  coverage_data <- CI_coverage[,1:21] %>%
+    rownames_to_column("method") %>%
+    dplyr::filter(method %in% methods) %>%
+    mutate(method = plyr::mapvalues(method,
+                                    c("ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
+                                    c("ETH", "globalrt", "Ilmenau", "RKI"))) %>%
+    arrange(method)
+  
+  coverage_data <- coverage_data %>%
+    gather("variable", "value", 2:dim(coverage_data)[2]) %>%
+    mutate(variable = -1 * as.numeric(variable))
+  
+  coverage_plot <- ggplot() +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size=18),
+      axis.text=element_text(size=16),
+      axis.title=element_text(size=18),
+      legend.text=element_text(size=16),
+      legend.title=element_text(size=18),
+      axis.line = element_line(),
+      axis.line.y.right = element_line(),
+      axis.line.x.top = element_line(),
+      legend.position = "bottom",
+      panel.background = element_rect(fill = "transparent"),
+      panel.grid.major = element_line(),
+      panel.grid.minor = element_blank()
+    ) +
+    ggtitle(paste0(conf_level, "%-CI coverage rates")) +
+    labs(x = "target date - pub date", y = "coverage rate")
+  
+  col_values <- get_colors(methods = unique(coverage_data$method), palette = "methods")
+  
+  coverage_plot <- coverage_plot + 
+    geom_line(data=coverage_data,
+              aes(x = variable, y = value, color = method),
+              size = .8, na.rm = T) +
+    scale_color_manual(values=col_values, name="method")
+  
+  print(coverage_plot)
+}
