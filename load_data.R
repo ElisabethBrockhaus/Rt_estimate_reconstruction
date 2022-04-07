@@ -12,9 +12,19 @@ library(jsonlite)
 ##################################################
 # load estimates from git (reproductive_numbers) #
 ##################################################
-load_published_R_estimates <- function(source, pub_date="2021-07-10",
-                                       start=as.Date("2019-12-28"), end=Sys.Date(),
-                                       location="DE", verbose = T){
+load_published_R_estimates <- function(source,
+                                       pub_date = "2021-07-10",
+                                       start = as.Date("2019-12-28"),
+                                       end = Sys.Date(),
+                                       location = "DE",
+                                       conf_level = "95",
+                                       verbose = T){
+  
+  if (conf_level == "95") {
+    columns <- c("date", "0.5", "0.025", "0.975")
+  } else if (conf_level == "50") {
+    columns <- c("date", "0.5", "0.25", "0.75")
+  }
   
   # define path where Rt estimates are located
   path <- paste0("reproductive_numbers/data-processed/", source, "/")
@@ -35,7 +45,7 @@ load_published_R_estimates <- function(source, pub_date="2021-07-10",
     R_est <- R_est[R_est$location==location, c("date", "quantile", "type", "value")]
     R_est[R_est$type == "point", "quantile"] <- 0.5
     R_est <- pivot_wider(R_est[,c("date", "quantile", "value")], names_from = c(quantile))
-    R_est <- R_est[, c("date", "0.5", "0.025", "0.975")]
+    R_est <- R_est[, columns]
     names(R_est) <- c("date", "R_pub", "lower", "upper")
   } else {
     # no quantiles published by ZI
