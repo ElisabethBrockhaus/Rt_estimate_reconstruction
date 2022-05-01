@@ -518,7 +518,7 @@ plot_weekday_effects <- function(estimates,
 
 plot_CI_coverage_rates <- function(conf_level = "95"){
   methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
-               "ilmenau", "RKI_7day", "RKI_4day", "rtlive", "SDSC")
+               "ilmenau", "RKI_7day", "rtlive", "SDSC")
   
   CI_coverage <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/", conf_level, "_CI_coverage.csv")) %>%
     as.data.frame() %>%
@@ -555,13 +555,23 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
     ggtitle(paste0(conf_level, "%-CI coverage rates")) +
     labs(x = "target date - pub date", y = "coverage rate")
   
-  col_values <- get_colors(methods = unique(coverage_data$method), palette = "methods")
+  methods_legend <- unique(coverage_data$method)
+  col_values <- get_colors(methods = methods_legend, palette = "methods")
+  line_types <- rep(1, length(methods_legend))
+  names(line_types) <- methods_legend
+  if (("rtlive" %in% methods_legend) &
+      ("globalrt" %in% methods_legend) &
+      (conf_level == "95")) line_types["rtlive"] <- 2
   
   coverage_plot <- coverage_plot + 
     geom_line(data=coverage_data,
-              aes(x = variable, y = value, color = method),
+              aes(x = variable,
+                  y = value,
+                  color = method,
+                  linetype = method),
               size = .8, na.rm = T) +
-    scale_color_manual(values=col_values, name="method")
+    scale_color_manual(values=col_values, name="method") +
+    scale_linetype_manual(values=line_types)
   
   print(coverage_plot)
 }
