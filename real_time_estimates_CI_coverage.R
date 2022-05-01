@@ -1,6 +1,5 @@
 setwd("..")
 # needs to be the directory with the repos "Rt_estimate_reconstruction", "reproductive_numbers" 
-# and for SDSC method "covid-19-forecast" (https://renkulab.io/gitlab/covid-19/covid-19-forecast/-/tree/master)
 getwd()
 
 
@@ -19,7 +18,7 @@ methods <- methods[!methods %in% c("", "AW_7day", "AW_WVday", "owid", "ETHZ_step
 methods
 
 available_countries <- read.csv("Rt_estimate_reconstruction/otherFiles/available_countries.csv", row.names = 1)
-pub_delays <- read.csv("Rt_estimate_reconstruction/otherFiles/pub_delays_mode.csv", row.names = 1)
+pub_delays <- read.csv("Rt_estimate_reconstruction/otherFiles/pub_delays.csv", row.names = 1)
 
 
 #############################################
@@ -31,13 +30,14 @@ calc_CI_coverages <- function(methods,
                               start_date = as_date("2020-11-16"),
                               end_date = as_date("2021-05-01"),
                               conf_level = "95",
-                              path_estimates = "reproductive_numbers/data-processed/",
-                              save_csv = F) {
+                              path_estimates = "reproductive_numbers/data-processed/") {
   
   n <- length(methods)
   CI_coverage <- data.frame(matrix(rep(NA, n*24), nrow = n), row.names = methods)
   colnames(CI_coverage) <- c(0:20, "num_CIs", "min_pub_date", "max_pub_date")
-
+  CI_width_mean <- data.frame(matrix(rep(NA, n*24), nrow = n), row.names = methods)
+  colnames(CI_width_mean) <- c(0:20, "num_CIs", "min_pub_date", "max_pub_date")
+  
   for (method in methods){
     print(method)
     pub_dates <- list.files(paste0(path_estimates, method),
@@ -49,8 +49,8 @@ calc_CI_coverages <- function(methods,
     if (method == "Braunschweig") final_version <- "2021-07-18"
     
     if (available_countries[method, country]) {
-      if (exists("R_est_ts")) rm(R_est_ts)
-      if (exists("R_est")) rm(R_est)
+      if (exists("R_est_ts")) {rm(R_est_ts)}
+      if (exists("R_est")) {rm(R_est)}
       
       min_lag <- pub_delays[method, country]
       max_lag <- min_lag + 6
@@ -84,11 +84,14 @@ calc_CI_coverages <- function(methods,
                                                   location = country,
                                                   conf_level = conf_level,
                                                   verbose = F) %>%
-                dplyr::select("date", "lower", "upper")
+                dplyr::select("date", "lower", "upper") %>%
+                mutate(width = upper - lower)
               
               names(R_est) <- c("date",
-                                paste0("02.5q_", pub_date),
-                                paste0("97.5q_", pub_date))
+                                paste0("lower_", pub_date),
+                                paste0("upper_", pub_date),
+                                paste0("width_", pub_date))
+              
             },
             error = function(e) {R_est <<- data.frame(date = seq(as_date(pub_date) - max_lag,
                                                                  as_date(pub_date),
@@ -104,24 +107,36 @@ calc_CI_coverages <- function(methods,
           R_covered <- data.frame(date = R_est_ts$date)
           R_covered_difftime <- data.frame(estimated_after = make_difftime(day = seq(min_lag, max_lag),
                                                                            units = "day"))
+          CI_width <- data.frame(estimated_after = make_difftime(day = seq(max_lag, min_lag),
+                                                                 units = "day"))
           
           for (pd in available_pub_dates){
-            R_covered[pd] <- ifelse(is.na(R_est_ts[, paste0("02.5q_", pd)]), NA,
-                                    ifelse((R_est_ts$R_final >= R_est_ts[, paste0("02.5q_", pd)]) &
-                                             (R_est_ts$R_final <= R_est_ts[, paste0("97.5q_", pd)]),
+            R_covered[pd] <- ifelse(is.na(R_est_ts[, paste0("lower_", pd)]), NA,
+                                    ifelse((R_est_ts$R_final >= R_est_ts[, paste0("lower_", pd)]) &
+                                             (R_est_ts$R_final <= R_est_ts[, paste0("upper_", pd)]),
                                            TRUE,
                                            FALSE))
             if (dim(na.omit(R_covered[pd]))[1] == 7) {
-              R_covered_difftime[pd] <- na.omit(R_covered[pd])
+              ea <- difftime(as.Date(pd), R_covered[,1], units = "day")
+              indices <- which(!is.na(R_covered[pd]))
+              R_covered_difftime[R_covered_difftime$estimated_after %in% ea[indices], pd] <- na.omit(R_covered[pd])
+              CI_width[R_covered_difftime$estimated_after %in% ea[indices], pd] <- na.omit(R_est_ts[, paste0("width_", pd)])
             }
           }
-          
-          ea <- R_covered_difftime$estimated_after
-          CI_coverage[method, as.character(ea)] <- rowMeans(R_covered_difftime[,-1])
+          R_covered_difftime <- R_covered_difftime %>%
+            column_to_rownames(var = "estimated_after")
+          CI_width <- CI_width %>%
+            column_to_rownames(var = "estimated_after")
+            
+          CI_coverage[method, rownames(R_covered_difftime)] <- rowMeans(R_covered_difftime)
           CI_coverage[method, "num_CIs"] <- dim(R_covered_difftime)[2]
-          CI_coverage[method, "min_pub_date"] <- min(colnames(R_covered_difftime[,-1]))
-          CI_coverage[method, "max_pub_date"] <- max(colnames(R_covered_difftime[,-1]))
-    
+          CI_coverage[method, "min_pub_date"] <- min(colnames(R_covered_difftime))
+          CI_coverage[method, "max_pub_date"] <- max(colnames(R_covered_difftime))
+          
+          CI_width_mean[method, rownames(CI_width)] <- rowMeans(CI_width)
+          CI_width_mean[method, "num_CIs"] <- dim(CI_width)[2]
+          CI_width_mean[method, "min_pub_date"] <- min(colnames(CI_width))
+          CI_width_mean[method, "max_pub_date"] <- max(colnames(CI_width))
         }
       }
     } else {
@@ -130,16 +145,25 @@ calc_CI_coverages <- function(methods,
   }
   
   View(CI_coverage)
-  return(CI_coverage)
+  View(CI_width_mean)
+  return(list(CI_coverage, CI_width_mean))
 }
 
-CI_coverage_95 <- calc_CI_coverages(methods)
-write.csv(CI_coverage_95, "Rt_estimate_reconstruction/otherFiles/95_CI_coverage.csv")
-
-CI_coverage_50 <- calc_CI_coverages(methods[c(2,3,4,8,11,12,13,14,15)], conf_level = 50)
-write.csv(CI_coverage_50, "Rt_estimate_reconstruction/otherFiles/50_CI_coverage.csv")
+CI_eval <- calc_CI_coverages(c("Braunschweig", "epiforecasts", "ETHZ_sliding_window",
+                               "globalrt_7d", "ilmenau", "RKI_7day", "rtlive", "SDSC"))
+write.csv(CI_eval[[1]], "Rt_estimate_reconstruction/otherFiles/95_CI_coverage.csv")
+write.csv(CI_eval[[2]], "Rt_estimate_reconstruction/otherFiles/95_CI_width.csv")
 
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
 plot_CI_coverage_rates()
+plot_CI_widths()
+
+CI_coverage_50 <- calc_CI_coverages(c("Braunschweig", "epiforecasts", "rtlive"),
+                                    conf_level = 50)
+write.csv(CI_coverage_50[[1]], "Rt_estimate_reconstruction/otherFiles/50_CI_coverage.csv")
+write.csv(CI_coverage_50[[2]], "Rt_estimate_reconstruction/otherFiles/50_CI_width.csv")
+
 plot_CI_coverage_rates("50")
+plot_CI_widths("50")
+

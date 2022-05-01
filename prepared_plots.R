@@ -575,3 +575,57 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
   
   print(coverage_plot)
 }
+
+
+plot_CI_widths <- function(conf_level = "95"){
+  methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
+               "ilmenau", "RKI_7day", "rtlive", "SDSC")
+  
+  CI_width <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/", conf_level, "_CI_width.csv")) %>%
+    as.data.frame() %>%
+    column_to_rownames("...1")
+  
+  width_data <- CI_width[,1:21] %>%
+    rownames_to_column("method") %>%
+    dplyr::filter(method %in% methods) %>%
+    mutate(method = plyr::mapvalues(method,
+                                    c("ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
+                                    c("ETH", "globalrt", "Ilmenau", "RKI"))) %>%
+    arrange(method)
+  
+  width_data <- width_data %>%
+    gather("variable", "value", 2:dim(width_data)[2]) %>%
+    mutate(variable = -1 * as.numeric(variable))
+  
+  width_plot <- ggplot() +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size=18),
+      axis.text=element_text(size=16),
+      axis.title=element_text(size=18),
+      legend.text=element_text(size=16),
+      legend.title=element_text(size=18),
+      axis.line = element_line(),
+      axis.line.y.right = element_line(),
+      axis.line.x.top = element_line(),
+      legend.position = "bottom",
+      panel.background = element_rect(fill = "transparent"),
+      panel.grid.major = element_line(),
+      panel.grid.minor = element_blank()
+    ) +
+    ggtitle(paste0("Mean width of ", conf_level, "%-CI")) +
+    labs(x = "target date - pub date", y = "width")
+  
+  methods_legend <- unique(width_data$method)
+  col_values <- get_colors(methods = methods_legend, palette = "methods")
+  
+  width_plot <- width_plot + 
+    geom_line(data=width_data,
+              aes(x = variable,
+                  y = value,
+                  color = method),
+              size = .8, na.rm = T) +
+    scale_color_manual(values=col_values, name="method")
+
+  print(width_plot)
+}
