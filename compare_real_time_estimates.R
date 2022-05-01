@@ -30,6 +30,12 @@ pub_delays <- read.csv("Rt_estimate_reconstruction/otherFiles/pub_delays.csv", r
 # plot estimates as time series #
 #################################
 
+#start <- "2021-04-01"
+#end <- "2021-05-01"
+
+start <- "2021-02-16"
+end <- "2021-03-18"
+
 for (method in methods){
   print(method)
   pub_dates <- list.files(paste0(path_estimates, method),
@@ -37,9 +43,10 @@ for (method in methods){
 
   final_version <- "2021-07-16"
   if (method == "Braunschweig") final_version <- "2021-07-18"
+  if (method == "epiforecasts") final_version <- as.character(as.Date(start) + 106)
   
-  pub_dates <- pub_dates[which(pub_dates <= "2021-05-01" &
-                                 pub_dates >= "2021-04-01")]
+  pub_dates <- pub_dates[which(pub_dates <= end &
+                                 pub_dates >= start)]
   end_date <- as_date(max(pub_dates))
   pub_dates <- c(pub_dates, final_version)
   for (country in c("DE", "AT", "CH")[1]){
@@ -75,12 +82,18 @@ for (method in methods){
       if (exists("R_est_ts")){
         last_date <- max(R_est_ts[rowSums(!is.na(R_est_ts))>1, "date"])
         
+        folder_ending <- paste0("_realtime_raw/", end, "/")
+        folder <- paste0("Figures/estimates", folder_ending)
+        if (!file.exists(folder)) {
+          dir.create(folder)
+        }
+        
         plot_real_time_estimates(R_est_ts,
                                  start_date = last_date - 30,
                                  end_date = last_date,
                                  plot_title = paste(method, country),
                                  name_consensus = final_version,
-                                 filenames = paste0("_realtime_raw/",
+                                 filenames = paste0(folder_ending,
                                                     method, "_", country, ".png"))
       }
     } else {
@@ -114,7 +127,7 @@ for (method in methods){
   pub_dates <- pub_dates[which((as_date(pub_dates) <= end_date) &
                                  (as_date(pub_dates) >= start_date))]
   end_date <- as_date(max(pub_dates))
-  for (country in c("DE", "AT", "CH")){
+  for (country in c("DE", "AT", "CH")[1]){
     print(country)
     if (available_countries[method, country]) {
       if (exists("R_est_ts")) rm(R_est_ts)
