@@ -15,49 +15,6 @@ methods
 
 n <- length(methods)
 init <- rep(NA, n)
-pub_delays <- data.frame(DE = init, AT = init, CH = init, row.names = methods)
-
-for (method in methods){
-  print(method)
-  pub_dates <- list.files(paste0(path_estimates, method),
-                          full.names = F) %>% substr(1, 10)
-  pub_dates <- pub_dates[which((pub_dates <= "2021-07-18") & (pub_dates >= "2020-11-16"))]
-
-  for (country in c("DE", "AT", "CH")){
-    print(country)
-    min_lag <- 0
-    
-    if (available_countries[method, country]) {
-      if (exists("R_est")) rm(R_est)
-      for (pub_date in pub_dates){
-        tryCatch(
-          {
-            R_est <- load_published_R_estimates(method,
-                                                start = as_date(pub_date) - 30,
-                                                end = as_date(pub_date) - min_lag,
-                                                pub_date = pub_date,
-                                                location = country,
-                                                verbose = F) %>%
-              dplyr::select("date", "R_pub") %>%
-              mutate(estimated_after = as_date(pub_date) - date) %>%
-              dplyr::select("estimated_after", "R_pub") %>%
-              arrange(estimated_after)
-            
-            min_lag <- as.numeric(R_est[which(!is.na(R_est[,"R_pub"]))[1], "estimated_after"])
-
-          },
-          error = function(e) {}
-        )
-      }
-      pub_delays[method, country] <- min_lag
-    }
-  }
-}
-
-pub_delays
-write.csv(pub_delays, "Rt_estimate_reconstruction/otherFiles/pub_delays.csv")
-
-
 
 pub_delays_list <- list()
 for (method in methods) {
@@ -110,19 +67,25 @@ for (method in methods){
 
 pub_delays_list
 saveRDS(pub_delays_list, file="Rt_estimate_reconstruction/otherFiles/pub_delays_list.RData")
+
+# summarize pub_delays: one value per method and country
 min_pub_delays_list <- readRDS("Rt_estimate_reconstruction/otherFiles/pub_delays_list.RData")
-min_pub_delays_list          
+min_pub_delays_list
+
+pub_delays <- data.frame(DE = init, AT = init, CH = init, row.names = methods)
 
 for (method in methods){
   for (country in c("DE", "AT", "CH")){
-    max.row <- which.max(min_pub_delays_list[[method]][, country])
-    pub_delays[method, country] <- row.names(min_pub_delays_list[[method]])[max.row]
+    num.est <- sum(min_pub_delays_list[[method]][, country])
+    if(num.est > 0){
+      cum.num.est <- cumsum(min_pub_delays_list[[method]][, country])
+      min.index <- which.max(cum.num.est/num.est >= 0.95)
+      pub_delays[method, country] <- row.names(min_pub_delays_list[[method]])[min.index]
+    }
   }
 }
 
 pub_delays
-write.csv(pub_delays, "Rt_estimate_reconstruction/otherFiles/pub_delays_mode.csv")
-
-
+write.csv(pub_delays, "Rt_estimate_reconstruction/otherFiles/pub_delays.csv")
 
 
