@@ -53,7 +53,8 @@ calc_CI_coverages <- function(methods,
       if (exists("R_est")) {rm(R_est)}
       
       min_lag <- pub_delays[method, country]
-      max_lag <- min_lag + 6
+      #max_lag <- min_lag + 6
+      max_lag <- 20
       
       CI_not_available <- tryCatch(
         {
@@ -105,7 +106,7 @@ calc_CI_coverages <- function(methods,
             unique()
           
           R_covered <- data.frame(date = R_est_ts$date)
-          R_covered_difftime <- data.frame(estimated_after = make_difftime(day = seq(min_lag, max_lag),
+          R_covered_difftime <- data.frame(estimated_after = make_difftime(day = seq(max_lag, min_lag),
                                                                            units = "day"))
           CI_width <- data.frame(estimated_after = make_difftime(day = seq(max_lag, min_lag),
                                                                  units = "day"))
@@ -116,11 +117,17 @@ calc_CI_coverages <- function(methods,
                                              (R_est_ts$R_final <= R_est_ts[, paste0("upper_", pd)]),
                                            TRUE,
                                            FALSE))
-            if (dim(na.omit(R_covered[pd]))[1] == 7) {
+            
+            if (dim(na.omit(R_covered[pd]))[1] == (max_lag - min_lag + 1)) {
+              
               ea <- difftime(as.Date(pd), R_covered[,1], units = "day")
               indices <- which(!is.na(R_covered[pd]))
-              R_covered_difftime[R_covered_difftime$estimated_after %in% ea[indices], pd] <- na.omit(R_covered[pd])
-              CI_width[R_covered_difftime$estimated_after %in% ea[indices], pd] <- na.omit(R_est_ts[, paste0("width_", pd)])
+              
+              R_covered_difftime[R_covered_difftime$estimated_after
+                                 %in% ea[indices], pd] <- na.omit(R_covered[pd])
+              
+              CI_width[R_covered_difftime$estimated_after
+                       %in% ea[indices], pd] <- na.omit(R_est_ts[, paste0("width_", pd)])
             }
           }
           R_covered_difftime <- R_covered_difftime %>%
