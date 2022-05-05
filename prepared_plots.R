@@ -349,7 +349,7 @@ plot_real_time_estimates <- function(estimates,
                                      start_date = "2021-04-01", end_date = "2021-05-01",
                                      legend_name="weekday (pub date)", plot_title="",
                                      name_consensus="2021-07-16",
-                                     filenames = "_latest_plot.png",
+                                     filenames = "_latest_plot.pdf",
                                      ylim_l=0.5, ylim_u=1.5) {
   
   estimates <- estimates %>%

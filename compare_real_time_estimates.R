@@ -94,7 +94,7 @@ for (method in methods){
                                  plot_title = paste(method, country),
                                  name_consensus = final_version,
                                  filenames = paste0(folder_ending,
-                                                    method, "_", country, ".png"))
+                                                    method, "_", country, ".pdf"))
       }
     } else {
       print(paste("No estimates from", method, "for", country, "."))
@@ -189,7 +189,8 @@ for (method in methods){
                                 legend_name = "estimated R for",
                                 plot_title = paste(method, country),
                                 col_palette = "Spectral",
-                                filenames = paste0("_realtime_corrections_over_time/", method, "_", country, ".png"),
+                                filenames = paste0("_realtime_corrections_over_time/",
+                                                   method, "_", country, ".pdf"),
                                 verbose = F)
           },
           error = function(c) {cat("Too many estimates missing. \n Minimal proportion of NA values:",
@@ -305,7 +306,7 @@ for (method in methods){
                             plot_title = paste(method, country),
                             col_palette = "Spectral",
                             filenames = paste0("_realtime_corrections_per_weekday/",
-                                               method, "_", country, ".png"),
+                                               method, "_", country, ".pdf"),
                             verbose = F)
       }
     } else {
@@ -387,7 +388,7 @@ for (method in methods){
                              plot_title = paste0("Mean over latest 7 estimates per pub date (",
                                                  method, " ", country, ")"),
                              min_lag = min_lag, max_lag = max_lag,
-                             filenames = paste0(method, "_", country, ".png"),
+                             filenames = paste0(method, "_", country, ".pdf"),
                              verbose = F)
       }
     } else {
