@@ -33,10 +33,10 @@ calc_CI_coverages <- function(methods,
                               path_estimates = "reproductive_numbers/data-processed/") {
   
   n <- length(methods)
-  CI_coverage <- data.frame(matrix(rep(NA, n*24), nrow = n), row.names = methods)
-  colnames(CI_coverage) <- c(0:20, "num_CIs", "min_pub_date", "max_pub_date")
-  CI_width_mean <- data.frame(matrix(rep(NA, n*24), nrow = n), row.names = methods)
-  colnames(CI_width_mean) <- c(0:20, "num_CIs", "min_pub_date", "max_pub_date")
+  CI_coverage <- data.frame(matrix(rep(NA, n*25), nrow = n), row.names = methods)
+  colnames(CI_coverage) <- c(0:20, "num_CIs", "min_lag", "min_pub_date", "max_pub_date")
+  CI_width_mean <- data.frame(matrix(rep(NA, n*25), nrow = n), row.names = methods)
+  colnames(CI_width_mean) <- c(0:20, "num_CIs", "min_lag", "min_pub_date", "max_pub_date")
   
   for (method in methods){
     print(method)
@@ -136,11 +136,13 @@ calc_CI_coverages <- function(methods,
             column_to_rownames(var = "estimated_after")
             
           CI_coverage[method, rownames(R_covered_difftime)] <- rowMeans(R_covered_difftime)
+          CI_coverage[method, "min_lag"] <- min_lag
           CI_coverage[method, "num_CIs"] <- dim(R_covered_difftime)[2]
           CI_coverage[method, "min_pub_date"] <- min(colnames(R_covered_difftime))
           CI_coverage[method, "max_pub_date"] <- max(colnames(R_covered_difftime))
           
           CI_width_mean[method, rownames(CI_width)] <- rowMeans(CI_width)
+          CI_width_mean[method, "min_lag"] <- min_lag
           CI_width_mean[method, "num_CIs"] <- dim(CI_width)[2]
           CI_width_mean[method, "min_pub_date"] <- min(colnames(CI_width))
           CI_width_mean[method, "max_pub_date"] <- max(colnames(CI_width))
