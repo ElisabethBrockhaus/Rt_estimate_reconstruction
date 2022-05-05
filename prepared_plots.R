@@ -573,6 +573,8 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
     scale_color_manual(values=col_values, name="method") +
     scale_linetype_manual(values=line_types)
   
+  ggsave(coverage_plot, filename = paste0("Figures/CI/", conf_level, "_coverage_rates.pdf"),
+         bg = "transparent", width = 8, height = 5.8)
   print(coverage_plot)
 }
 
@@ -627,5 +629,7 @@ plot_CI_widths <- function(conf_level = "95"){
               size = .8, na.rm = T) +
     scale_color_manual(values=col_values, name="method")
 
+  ggsave(width_plot, filename = paste0("Figures/CI/", conf_level, "_CI_widths.pdf"),
+         bg = "transparent", width = 8, height = 5.8)
   print(width_plot)
 }
