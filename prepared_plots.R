@@ -121,7 +121,7 @@ plot_published_vs_calculated <- function(published, calculated, method_name, dif
 
 plot_multiple_estimates <- function(estimates, legend_name, plot_title="",
                                     col_palette="Set1", name_consensus="consensus",
-                                    include_CI=F, sort_numerically=F) {
+                                    include_CI=F, sort_numerically=F, long_time_frame = F) {
   
   # reshape data
   R_est  <- estimates %>%
@@ -166,7 +166,7 @@ plot_multiple_estimates <- function(estimates, legend_name, plot_title="",
       scale_x_continuous()
   }
   
-  if (col_palette != "Spectral") {
+  if (long_time_frame) {
     R_plot <- R_plot +
       geom_rect(data=NULL,aes(xmin=as_date("2020-03-01"), xmax=as_date("2020-03-31"),
                               ymin=-Inf, ymax=Inf), fill="grey", alpha=0.01) +
@@ -253,6 +253,7 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
                                 col_palette="Set1", name_consensus="consensus",
                                 filenames = "_latest_plot.png",
                                 include_CI=F, plot_diff_matrices=F, sort_numerically=F,
+                                long_time_frame = F,
                                 ylim_l=0, ylim_u=2.05,
                                 verbose = T){
   if (length(comp_methods)*3 == dim(estimates)[2]-1){
@@ -282,7 +283,8 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
   R_plot <- plot_multiple_estimates(estimates_plot, legend_name, plot_title = plot_title,
                                     col_palette = col_palette, name_consensus = name_consensus,
                                     include_CI = include_CI,
-                                    sort_numerically = sort_numerically) +
+                                    sort_numerically = sort_numerically,
+                                    long_time_frame = long_time_frame) +
     coord_cartesian(ylim = c(ylim_l-0.05, ylim_u+0.05), expand = FALSE)
   
   ggsave(R_plot, filename = paste0("Figures/estimates", filenames),  bg = "transparent",
@@ -520,11 +522,12 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
   methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
                "ilmenau", "RKI_7day", "rtlive", "SDSC")
   
-  CI_coverage <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/", conf_level, "_CI_coverage.csv")) %>%
+  CI_coverage <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/",
+                                 conf_level, "_CI_coverage.csv")) %>%
     as.data.frame() %>%
     column_to_rownames("...1")
   
-  coverage_data <- CI_coverage[,1:21] %>%
+  coverage_data <- CI_coverage[, c(as.character(0:20), "min_lag")] %>%
     rownames_to_column("method") %>%
     dplyr::filter(method %in% methods) %>%
     mutate(method = plyr::mapvalues(method,
@@ -533,8 +536,14 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
     arrange(method)
   
   coverage_data <- coverage_data %>%
-    gather("variable", "value", 2:dim(coverage_data)[2]) %>%
+    gather("variable", "value", 2:(dim(coverage_data)[2] - 1)) %>%
     mutate(variable = -1 * as.numeric(variable))
+  
+  # split coverage data in latest 7 estimates and rest
+  coverage_data_latest <- coverage_data %>%
+    dplyr::filter(-1 * min_lag - 6 <= variable)
+  coverage_data_rest <- coverage_data %>%
+    dplyr::filter(-1 * min_lag - 6 >= variable)
   
   coverage_plot <- ggplot() +
     theme_minimal() +
@@ -552,8 +561,9 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
-    ggtitle(paste0(conf_level, "%-CI coverage rates")) +
-    labs(x = "target date - pub date", y = "coverage rate")
+    #ggtitle(paste0(conf_level, "%-CI coverage rates")) +
+    labs(x = "target date - pub date", y = "coverage rate") +
+    coord_cartesian(xlim = c(-20, 0), ylim = c(-0.03, 1.03), expand = FALSE)
   
   methods_legend <- unique(coverage_data$method)
   col_values <- get_colors(methods = methods_legend, palette = "methods")
@@ -564,7 +574,7 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
       (conf_level == "95")) line_types["rtlive"] <- 2
   
   coverage_plot <- coverage_plot + 
-    geom_line(data=coverage_data,
+    geom_line(data=coverage_data_latest,
               aes(x = variable,
                   y = value,
                   color = method,
@@ -573,6 +583,14 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
     scale_color_manual(values=col_values, name="method") +
     scale_linetype_manual(values=line_types)
   
+  coverage_plot <- coverage_plot + 
+    geom_line(data=coverage_data_rest,
+              aes(x = variable,
+                  y = value,
+                  color = method,
+                  linetype = method),
+              size = .8, na.rm = T, alpha = 0.3)
+
   ggsave(coverage_plot, filename = paste0("Figures/CI/", conf_level, "_coverage_rates.pdf"),
          bg = "transparent", width = 8, height = 5.8)
   print(coverage_plot)
@@ -587,7 +605,7 @@ plot_CI_widths <- function(conf_level = "95"){
     as.data.frame() %>%
     column_to_rownames("...1")
   
-  width_data <- CI_width[,1:21] %>%
+  width_data <- CI_width[, c(as.character(0:20), "min_lag")] %>%
     rownames_to_column("method") %>%
     dplyr::filter(method %in% methods) %>%
     mutate(method = plyr::mapvalues(method,
@@ -596,8 +614,14 @@ plot_CI_widths <- function(conf_level = "95"){
     arrange(method)
   
   width_data <- width_data %>%
-    gather("variable", "value", 2:dim(width_data)[2]) %>%
+    gather("variable", "value", 2:(dim(width_data)[2] - 1)) %>%
     mutate(variable = -1 * as.numeric(variable))
+  
+  # split width data in latest 7 estimates and rest
+  width_data_latest <- width_data %>%
+    dplyr::filter(-1 * min_lag - 6 <= variable)
+  width_data_rest <- width_data %>%
+    dplyr::filter(-1 * min_lag - 6 >= variable)
   
   width_plot <- ggplot() +
     theme_minimal() +
@@ -615,19 +639,27 @@ plot_CI_widths <- function(conf_level = "95"){
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
-    ggtitle(paste0("Mean width of ", conf_level, "%-CI")) +
-    labs(x = "target date - pub date", y = "width")
+    #ggtitle(paste0("Mean width of ", conf_level, "%-CI")) +
+    labs(x = "target date - pub date", y = "width") +
+    coord_cartesian(xlim = c(-20, 0), ylim = c(-0.03, 0.85), expand = FALSE)
   
   methods_legend <- unique(width_data$method)
   col_values <- get_colors(methods = methods_legend, palette = "methods")
   
   width_plot <- width_plot + 
-    geom_line(data=width_data,
+    geom_line(data=width_data_latest,
               aes(x = variable,
                   y = value,
                   color = method),
               size = .8, na.rm = T) +
     scale_color_manual(values=col_values, name="method")
+  
+  width_plot <- width_plot + 
+    geom_line(data=width_data_rest,
+              aes(x = variable,
+                  y = value,
+                  color = method),
+              size = .8, na.rm = T, alpha = 0.3)
 
   ggsave(width_plot, filename = paste0("Figures/CI/", conf_level, "_CI_widths.pdf"),
          bg = "transparent", width = 8, height = 5.8)
