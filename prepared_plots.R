@@ -13,7 +13,7 @@ library(lubridate)
 Sys.setlocale("LC_TIME", "English")
 
 get_colors <- function(methods, palette, name_consensus = "consensus"){
-  all_methods <- c("AGES", "Braunschweig", "consensus", "epiforecasts", "ETH", "globalrt", "Ilmenau", "RKI", "RKI_4day", "rtlive", "SDSC")
+  all_methods <- c("AGES", "HZI", "consensus", "epiforecasts", "ETH", "globalrt", "Ilmenau", "RKI", "RKI_4day", "rtlive", "SDSC")
   num_est <- length(methods)
   
   # constant colors for different models
@@ -250,7 +250,8 @@ plot_published_vs_calculated_95CI <- function(published, calculated, method_name
 plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-04-01",
                                 start_date = "2021-01-01", end_date = "2021-06-10",
                                 legend_name="model", plot_title="",
-                                col_palette="Set1", name_consensus="consensus",
+                                col_palette="Set1",
+                                include_consensus = T, name_consensus="consensus",
                                 filenames = "_latest_plot.png",
                                 include_CI=F, plot_diff_matrices=F, sort_numerically=F,
                                 long_time_frame = F,
@@ -271,9 +272,15 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
     }
     names(estimates) <- c("date", names_R)
   }
+  
+  
+  if (!include_consensus) {
+    estimates <- dplyr::select(estimates, !contains(name_consensus))
+  }
 
   estimates_plot <- estimates %>%
     dplyr::filter(date >= start_date, date <= end_date)
+  
   if (verbose){
     print("Date range for plotting:")
     print(min(estimates_plot$date))
@@ -302,7 +309,11 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
     print(as.numeric(max(estimates_absdiff$date) - min(estimates_absdiff$date)))
     
     # adjust method names
-    methods_ <- comp_methods
+    if (include_consensus){
+      methods_ <- comp_methods
+    } else {
+      methods_ <- comp_methods[!comp_methods %in% c(name_consensus)]
+    }
     for (i in c(" ", ",", "\\(", "\\)")) {methods_ <- gsub(i, ".", methods_)}
     
     n <- length(methods_)
@@ -321,7 +332,7 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
     }
     
     df <- data.frame(matr)
-    row.names(df) <- colnames(df) <- comp_methods
+    row.names(df) <- colnames(df) <- methods_
 
     if (sort_numerically){
       df <- df[order(as.numeric(row.names(df))), order(as.numeric(colnames(df)))]
@@ -531,8 +542,8 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
     rownames_to_column("method") %>%
     dplyr::filter(method %in% methods) %>%
     mutate(method = plyr::mapvalues(method,
-                                    c("ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
-                                    c("ETH", "globalrt", "Ilmenau", "RKI"))) %>%
+                                    c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
+                                    c("HZI",          "ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
     arrange(method)
   
   coverage_data <- coverage_data %>%
@@ -609,8 +620,8 @@ plot_CI_widths <- function(conf_level = "95"){
     rownames_to_column("method") %>%
     dplyr::filter(method %in% methods) %>%
     mutate(method = plyr::mapvalues(method,
-                                    c("ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
-                                    c("ETH", "globalrt", "Ilmenau", "RKI"))) %>%
+                                    c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
+                                    c("HZI",          "ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
     arrange(method)
   
   width_data <- width_data %>%
