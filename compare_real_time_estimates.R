@@ -42,7 +42,7 @@ for (method in methods){
                           full.names = F) %>% substr(1, 10)
 
   final_version <- "2021-07-16"
-  if (method == "Braunschweig") final_version <- "2021-07-18"
+  if (method == "Braunschweig") final_version <- "2021-07-20"
   if (method == "epiforecasts") final_version <- as.character(as.Date(start) + 106)
   
   pub_dates <- pub_dates[which(pub_dates <= end &
