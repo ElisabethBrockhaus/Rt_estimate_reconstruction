@@ -479,7 +479,7 @@ plot_weekday_effects <- function(estimates,
   R_plot <- R_plot +
     coord_cartesian(ylim = c(ylim_l, ylim_u), expand = FALSE)
   
-  ggsave(R_plot, filename = paste0("Figures/estimates_realtime_pub_weekday_influence/", filenames),  bg = "transparent",
+  ggsave(R_plot, filename = paste0("Figures/estimates_realtime_target_date_influence/", filenames),  bg = "transparent",
          width = 13.1, height = 5.8)
   print(R_plot)
   
@@ -522,7 +522,7 @@ plot_weekday_effects <- function(estimates,
   R_plot <- R_plot +
     coord_cartesian(ylim = c(ylim_l, ylim_u), expand = FALSE)
   
-  ggsave(R_plot, filename = paste0("Figures/estimates_realtime_target_weekday_influence/", filenames),  bg = "transparent",
+  ggsave(R_plot, filename = paste0("Figures/estimates_realtime_pub_date_influence/", filenames),  bg = "transparent",
          width = 13.1, height = 5.8)
   print(R_plot)
 }
