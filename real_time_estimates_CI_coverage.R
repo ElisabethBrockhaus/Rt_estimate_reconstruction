@@ -46,7 +46,7 @@ calc_CI_coverages <- function(methods,
                                    as_date(pub_dates) >= start_date)]
     
     final_version <- "2021-07-16"
-    if (method == "Braunschweig") final_version <- "2021-07-18"
+    if (method == "Braunschweig") final_version <- "2021-07-20"
     
     if (available_countries[method, country]) {
       if (exists("R_est_ts")) {rm(R_est_ts)}
