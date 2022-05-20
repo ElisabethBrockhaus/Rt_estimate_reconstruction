@@ -66,7 +66,7 @@ SDSC_R_pub <- load_published_R_estimates("sdsc")
 globalrt_R_pub <- load_published_R_estimates("globalrt_7d")
 epiforecasts_R_pub <- load_published_R_estimates("epiforecasts")
 rtlive_R_pub <- load_published_R_estimates("rtlive")
-HZI_R_pub <- load_published_R_estimates("Braunschweig", pub_date = "2021-07-08")
+HZI_R_pub <- load_published_R_estimates("Braunschweig", pub_date = "2021-07-11")
 
 # merge estimates and plot for comparison
 estimates_pub <- RKI_R_pub[,c("date", "R_pub")] %>% rename(RKI = R_pub) %>%
@@ -255,7 +255,7 @@ R_rtlive_adjInputWindowGTD <- read.csv(paste0(path, "gamma_4_de_2021-07-10_all_s
   rename(c("date" = "X", "R_calc" = "median", "lower" = "X2.5.", "upper" = "X97.5.")) %>%
   mutate(date = as_date(date))
 
-R_HZI_adjInputWindowGTD <- read.csv("Rt_estimate_reconstruction/Braunschweig/R_adjInputWindowGTD_2021-07-08.csv") %>%
+R_HZI_adjInputWindowGTD <- read.csv("Rt_estimate_reconstruction/Braunschweig/R_adjInputWindowGTD_2021-07-20.csv") %>%
   mutate(date = as_date(date))
 
 estimates_adjInputWindowGTD <- R_consensus_adjInputWindowGTD[,c("date", "R_calc")] %>% rename(consensus = R_calc) %>%
@@ -335,6 +335,7 @@ R_rtlive_adjAll <- R_rtlive_adjInputWindowGTD
 R_rtlive_adjAll$date <- R_rtlive_adjAll$date + params["rtlive", "delay"]
 
 R_HZI_adjAll <- R_HZI_adjInputWindowGTD
+R_HZI_adjAll$date <- R_HZI_adjAll$date + params["HZI", "delay"]
 
 estimates_adjAll <- R_consensus_adjAll[,c("date", "R_calc")] %>% rename(consensus = R_calc) %>%
   full_join(R_RKI_adjAll[,c("date", "R_calc")] %>% rename(RKI = R_calc), by = "date") %>% 
