@@ -4,7 +4,7 @@ getwd()
 source("Rt_estimate_reconstruction/load_data.R")
 
 mapping <- read.csv("Rt_estimate_reconstruction/Braunschweig/mapping_hzi_to_consensus.csv")
-braunschweig_R_pub <- load_published_R_estimates("Braunschweig", pub_date = "2021-07-08")
+braunschweig_R_pub <- load_published_R_estimates("Braunschweig", pub_date = "2021-07-11")
 
 get_mapped_R <- function(R_HZI){
   if (is.na(R_HZI)){
@@ -22,5 +22,5 @@ estimate <- braunschweig_R_pub %>%
          upper = sapply(upper, get_mapped_R))
 
 write.csv(estimate[,c("date", "R_calc", "lower", "upper")],
-          "Rt_estimate_reconstruction/Braunschweig/R_adjInputWindowGTD_2021-07-08.csv",
+          "Rt_estimate_reconstruction/Braunschweig/R_adjInputWindowGTD_2021-07-11.csv",
           row.names = F)
