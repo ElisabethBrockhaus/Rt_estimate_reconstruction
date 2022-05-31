@@ -550,12 +550,6 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
     gather("variable", "value", 2:(dim(coverage_data)[2] - 1)) %>%
     mutate(variable = -1 * as.numeric(variable))
   
-  # split coverage data in latest 7 estimates and rest
-  coverage_data_latest <- coverage_data %>%
-    dplyr::filter(-1 * min_lag - 6 <= variable)
-  coverage_data_rest <- coverage_data %>%
-    dplyr::filter(-1 * min_lag - 6 >= variable)
-  
   coverage_plot <- ggplot() +
     theme_minimal() +
     theme(
@@ -585,7 +579,7 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
       (conf_level == "95")) line_types["rtlive"] <- 2
   
   coverage_plot <- coverage_plot + 
-    geom_line(data=coverage_data_latest,
+    geom_line(data=coverage_data,
               aes(x = variable,
                   y = value,
                   color = method,
@@ -594,14 +588,6 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
     scale_color_manual(values=col_values, name="method") +
     scale_linetype_manual(values=line_types)
   
-  coverage_plot <- coverage_plot + 
-    geom_line(data=coverage_data_rest,
-              aes(x = variable,
-                  y = value,
-                  color = method,
-                  linetype = method),
-              size = .8, na.rm = T, alpha = 0.3)
-
   ggsave(coverage_plot, filename = paste0("Figures/CI/", conf_level, "_coverage_rates.pdf"),
          bg = "transparent", width = 8, height = 5.8)
   print(coverage_plot)
@@ -628,12 +614,6 @@ plot_CI_widths <- function(conf_level = "95"){
     gather("variable", "value", 2:(dim(width_data)[2] - 1)) %>%
     mutate(variable = -1 * as.numeric(variable))
   
-  # split width data in latest 7 estimates and rest
-  width_data_latest <- width_data %>%
-    dplyr::filter(-1 * min_lag - 6 <= variable)
-  width_data_rest <- width_data %>%
-    dplyr::filter(-1 * min_lag - 6 >= variable)
-  
   width_plot <- ggplot() +
     theme_minimal() +
     theme(
@@ -658,19 +638,12 @@ plot_CI_widths <- function(conf_level = "95"){
   col_values <- get_colors(methods = methods_legend, palette = "methods")
   
   width_plot <- width_plot + 
-    geom_line(data=width_data_latest,
+    geom_line(data=width_data,
               aes(x = variable,
                   y = value,
                   color = method),
               size = .8, na.rm = T) +
     scale_color_manual(values=col_values, name="method")
-  
-  width_plot <- width_plot + 
-    geom_line(data=width_data_rest,
-              aes(x = variable,
-                  y = value,
-                  color = method),
-              size = .8, na.rm = T, alpha = 0.3)
 
   ggsave(width_plot, filename = paste0("Figures/CI/", conf_level, "_CI_widths.pdf"),
          bg = "transparent", width = 8, height = 5.8)
