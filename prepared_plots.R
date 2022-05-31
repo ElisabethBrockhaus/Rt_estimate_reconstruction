@@ -587,6 +587,9 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
               size = .8, na.rm = T) +
     scale_color_manual(values=col_values, name="method") +
     scale_linetype_manual(values=line_types)
+    
+  coverage_plot <- coverage_plot +
+    geom_hline(yintercept=0.95, linetype="dashed")
   
   ggsave(coverage_plot, filename = paste0("Figures/CI/", conf_level, "_coverage_rates.pdf"),
          bg = "transparent", width = 8, height = 5.8)
