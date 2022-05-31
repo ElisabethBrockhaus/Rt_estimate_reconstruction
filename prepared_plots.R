@@ -635,7 +635,7 @@ plot_CI_widths <- function(conf_level = "95"){
     ) +
     #ggtitle(paste0("Mean width of ", conf_level, "%-CI")) +
     labs(x = "target date - pub date", y = "width") +
-    coord_cartesian(xlim = c(-20, 0), ylim = c(-0.03, 0.85), expand = FALSE)
+    coord_cartesian(xlim = c(-20, 0), ylim = c(0.015, 0.9), expand = FALSE)
   
   methods_legend <- unique(width_data$method)
   col_values <- get_colors(methods = methods_legend, palette = "methods")
@@ -646,6 +646,7 @@ plot_CI_widths <- function(conf_level = "95"){
                   y = value,
                   color = method),
               size = .8, na.rm = T) +
+    scale_y_log10(breaks = trans_breaks(identity, identity)) +
     scale_color_manual(values=col_values, name="method")
 
   ggsave(width_plot, filename = paste0("Figures/CI/", conf_level, "_CI_widths.pdf"),
