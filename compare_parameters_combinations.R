@@ -1,6 +1,5 @@
 setwd("..")
 # needs to be the directory with the repos "Rt_estimate_reconstruction", "reproductive_numbers" 
-# and for SDSC method "covid-19-forecast" (https://renkulab.io/gitlab/covid-19/covid-19-forecast/-/tree/master)
 getwd()
 
 # path for saving the estimates
@@ -17,13 +16,13 @@ source("Rt_estimate_reconstruction/calculate_estimates.R")
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
 # parameter combinations used in papers
-gt_dist <- c("gamma", "constant", "ad hoc", "gamma", "gamma", "gamma", "lognorm", "exponential", "?")
-mean_gt <- c(4.8,      4,          5.6,      4.8,    3.4,     3.6,     4.7,       7,             10.5)
-sd_gt <-   c(2.3,      0,          4.2,      2.3,    1.8,     3.1,     2.9,       7,             8)
-delay <-   c(11,       1,          7,        10,     0,       12,      12,        0,             0)
+methods <- c("ETH",   "RKI",      "Ilmenau", "SDSC",  "AGES",  "epiforecasts", "rtlive",  "globalrt",    "HZI")
+gt_dist <- c("gamma", "constant", "ad hoc",  "gamma", "gamma", "gamma",        "lognorm", "exponential", "?")
+mean_gt <- c(4.8,      4,          5.6,       4.8,     3.4,     3.6,            4.7,       7,             10.5)
+sd_gt <-   c(2.3,      0,          4.2,       2.3,     1.8,     3.1,            2.9,       7,             8)
+delay <-   c(11,       1,          7,         10,      0,       12,             12,        0,             0)
 
 params <- data.frame(gtd=gt_dist, gt_mean=mean_gt, gt_sd=sd_gt, delay=delay)
-methods <- c("ETH", "RKI", "Ilmenau", "SDSC", "AGES", "epiforecasts", "rtlive", "globalrt", "HZI")
 rownames(params) <- methods
 
 # bring delays in a format usable for ETH estimation
