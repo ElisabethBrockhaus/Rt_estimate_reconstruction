@@ -117,7 +117,7 @@ wds <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Su
 min_lag <- 1
 max_lag <- 30
 
-for (method in methods[3]){
+for (method in methods){
   print(method)
   pub_dates <- list.files(paste0(path_estimates, method),
                           full.names = F) %>% substr(1, 10)
@@ -248,8 +248,10 @@ for (method in methods){
         tryCatch(
           {
             R_est <- load_published_R_estimates(method,
-                                                start = as_date(pub_date) - max_lag,
-                                                end = as_date(pub_date) - min_lag,
+                                                start = max(as_date(min(pub_dates)) - min_lag,
+                                                            as_date(pub_date) - max_lag),
+                                                end = min(as_date(max(pub_dates)) - max_lag,
+                                                          as_date(pub_date) - min_lag),
                                                 pub_date = pub_date,
                                                 location = country,
                                                 verbose = F) %>%
