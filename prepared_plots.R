@@ -646,7 +646,7 @@ plot_CI_widths <- function(conf_level = "95"){
                   y = value,
                   color = method),
               size = .8, na.rm = T) +
-    scale_y_log10(breaks = trans_breaks(identity, identity)) +
+    #scale_y_log10(breaks = trans_breaks(identity, identity)) +
     scale_color_manual(values=col_values, name="method")
 
   ggsave(width_plot, filename = paste0("Figures/CI/", conf_level, "_CI_widths.pdf"),
