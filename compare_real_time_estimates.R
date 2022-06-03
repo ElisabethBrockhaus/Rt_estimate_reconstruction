@@ -19,7 +19,8 @@ path_estimates <- "reproductive_numbers/data-processed/"
 # sources of published real-time estimates
 methods <- list.dirs(path_estimates, full.names = F)
 methods <- methods[!methods %in% c("", "AW_7day", "AW_WVday", "owid", "ETHZ_step",
-                                   "ETHZ_sliding_window_deaths", "ETHZ_step_deaths")]
+                                   "ETHZ_sliding_window_deaths", "ETHZ_step_deaths",
+                                   "zidatalab")]
 methods
 
 available_countries <- read.csv("Rt_estimate_reconstruction/otherFiles/available_countries.csv", row.names = 1)
@@ -220,6 +221,12 @@ wds <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Su
 
 for (method in methods){
   print(method)
+  
+  if (method == "Braunschweig") {
+    print("Method handled manually due to irregular pub dates.")
+    next
+  }
+  
   pub_dates <- list.files(paste0(path_estimates, method),
                           full.names = F) %>% substr(1, 10)
   pub_dates <- pub_dates[which((as_date(pub_dates) <= end_date) &
@@ -291,5 +298,106 @@ for (method in methods){
   }
 }
 
+# Braunschweig: mean over pub weekdays, otherwise estimates not published often enough
+{
+  method <- "Braunschweig"
+  country <- "DE"
+  print(method)
+  print(country)
+    
+  pub_dates <- list.files(paste0(path_estimates, method),
+                          full.names = F) %>% substr(1, 10)
+  pub_dates <- pub_dates[which((as_date(pub_dates) <= end_date) &
+                                 (as_date(pub_dates) >= start_date))]
+  
+  
+    
+  min_lag <- pub_delays[method, country]
+  max_lag <- min_lag + 6
+  
+  if (exists("R_est_list")) rm(R_est_list)
+  if (exists("R_est")) rm(R_est)
+  
+  R_est_empty <- data.frame(target_weekday = wds,
+                            R_pub = rep(NA, 7))
+  
+  for (pub_date in pub_dates){
+    tryCatch(
+      {
+        R_est <- load_published_R_estimates(method,
+                                            start = max(as_date(min(pub_dates)) - min_lag,
+                                                        as_date(pub_date) - max_lag),
+                                            end = min(as_date(max(pub_dates)) - max_lag,
+                                                      as_date(pub_date) - min_lag),
+                                            pub_date = pub_date,
+                                            location = country,
+                                            verbose = F) %>%
+          mutate(target_weekday = weekdays(date)) %>%
+          dplyr::select("target_weekday", "R_pub")
+        R_est <- R_est[match(wds, R_est$target_weekday),]
+      },
+      error = function(e) {R_est <<- data.frame(target_weekday = wds,
+                                                R_pub = rep(NA, 7))}
+    )
+    
+    if (!exists("R_est_list")){
+      R_est_list <- R_est
+    } else {
+      R_est_list <- rbindlist(list(R_est_list, R_est))
+    }
+  }
+  if (exists("R_est_list")){
+    
+    R_est_list <- R_est_list %>% na.omit()
+    
+    R_est_mean <- R_est_list[, lapply(.SD, function(x) exp(mean(log(x), na.rm = TRUE))),
+                             by = .(target_weekday)]
+    
+    plot_title <- paste0("Mean over latest 7 estimates per pub date (",
+                         method, " ", country, ")")
+    filenames <- paste0(method, "_", country, ".pdf")
+    ylim_l <- 0.75
+    ylim_u <- 1.25
 
-
+    R_est <- R_est_mean %>%
+      rename(mean_R = R_pub)
+    
+    wds <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+    
+    # plot
+    R_plot <- ggplot(data = R_est, aes(x = factor(target_weekday,
+                                                  levels = wds),
+                                       y = mean_R,
+                                       group = 1)) +
+      geom_line() +
+      geom_hline(aes(yintercept = 1))
+    
+    R_plot <- R_plot +
+      labs(x = "weekday (target date)", y = "Rt estimate",
+           subtitle = paste(min_lag, "-", max_lag, "days previous to pub date")) +
+      scale_x_discrete()
+    
+    R_plot <- R_plot +
+      theme_minimal() +
+      theme(
+        plot.title = element_text(size=18),
+        axis.text=element_text(size=16),
+        axis.title=element_text(size=18),
+        legend.text=element_text(size=16),
+        legend.title=element_text(size=18),
+        axis.line = element_line(),
+        axis.line.y.right = element_line(),
+        axis.line.x.top = element_line(),
+        legend.position = "none",
+        panel.background = element_rect(fill = "transparent")
+      ) +
+      ggtitle(plot_title)
+    
+    R_plot <- R_plot +
+      coord_cartesian(ylim = c(ylim_l, ylim_u), expand = FALSE)
+    
+    ggsave(R_plot, filename = paste0("Figures/estimates_realtime_target_date_influence/", filenames),  bg = "transparent",
+           width = 13.1, height = 5.8)
+    print(R_plot)
+  }
+}
