@@ -117,7 +117,7 @@ wds <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Su
 min_lag <- 1
 max_lag <- 30
 
-for (method in methods){
+for (method in methods[3]){
   print(method)
   pub_dates <- list.files(paste0(path_estimates, method),
                           full.names = F) %>% substr(1, 10)
@@ -132,8 +132,10 @@ for (method in methods){
         tryCatch(
           {
             R_est <- load_published_R_estimates(method,
-                                                start = as_date(pub_date) - max_lag,
-                                                end = as_date(pub_date) - min_lag,
+                                                start = max(as_date(min(pub_dates)) - pub_delays[method, country],
+                                                            as_date(pub_date) - max_lag),
+                                                end = min(as_date(max(pub_dates)) - pub_delays[method, country] - 6,
+                                                          as_date(pub_date) - min_lag),
                                                 pub_date = pub_date,
                                                 location = country,
                                                 verbose = F) %>%
@@ -142,7 +144,7 @@ for (method in methods){
               reshape(idvar = "estimated_after", timevar = "date", direction = "wide") %>%
               rename_with(~ gsub(".", "_", .x, fixed = TRUE)) %>%
               dplyr::select("estimated_after",
-                            which((colnames(.)[2+(0:(max_lag-min_lag))] %>%
+                            which((colnames(.)[-1] %>%
                                      substr(7, 16) %>%
                                      as_date()) %in% target_dates) + 1)
           },
@@ -163,12 +165,6 @@ for (method in methods){
       }
       if (exists("R_est_ts")){
         
-        #min_lag_plot <- Inf
-        #for (col in 2:dim(R_est_ts)[2]) {
-        #  min_lag_plot <- min(min_lag_plot,
-        #                      as.numeric(R_est_ts[which(!is.na(R_est_ts[,col]))[1], "estimated_after"]),
-        #                      na.rm = TRUE)
-        #}
         min_lag_plot <- pub_delays[method, country]
         max_lag_plot <- min(min_lag_plot + 6, max_lag)
         
