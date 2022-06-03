@@ -589,7 +589,8 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
     scale_linetype_manual(values=line_types)
     
   coverage_plot <- coverage_plot +
-    geom_hline(yintercept=0.95, linetype="dashed")
+    geom_hline(yintercept=0.95, linetype="dashed") +
+    annotate("text", label = "nominal level: 95%", x = -2.5, y = 0.92, size = 5)
   
   ggsave(coverage_plot, filename = paste0("Figures/CI/", conf_level, "_coverage_rates.pdf"),
          bg = "transparent", width = 8, height = 5.8)
@@ -635,7 +636,7 @@ plot_CI_widths <- function(conf_level = "95"){
     ) +
     #ggtitle(paste0("Mean width of ", conf_level, "%-CI")) +
     labs(x = "target date - pub date", y = "width") +
-    coord_cartesian(xlim = c(-20, 0), ylim = c(0.015, 0.9), expand = FALSE)
+    coord_cartesian(xlim = c(-20, 0), ylim = c(-0.01, 0.85), expand = FALSE)
   
   methods_legend <- unique(width_data$method)
   col_values <- get_colors(methods = methods_legend, palette = "methods")
