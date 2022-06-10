@@ -134,10 +134,18 @@ plot_multiple_estimates <- function(estimates, legend_name, plot_title="",
     spread(type, value)
 
   if (sort_numerically) {
-    R_est <- R_est %>%
-      mutate_at(vars("model"), as.numeric) %>%
-      arrange(date, model) %>%
-      mutate_at(vars("model"), as.factor)
+    if(all(grepl("(", unique(R_est$model), fixed = T))) {
+      R_est <- R_est %>%
+        mutate(sort_by_model = as.numeric(str_match(model, "(.*?)[(](.*?)")[,2])) %>%
+        arrange(date, sort_by_model) %>%
+        dplyr::select(-sort_by_model)
+
+    } else {
+      R_est <- R_est %>%
+        mutate(model = as.numeric(model)) %>%
+        arrange(date, model) %>%
+        mutate(model = as.factor(model))
+    }
   }
   
   # plot
@@ -293,7 +301,7 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
                                     sort_numerically = sort_numerically,
                                     long_time_frame = long_time_frame) +
     coord_cartesian(ylim = c(ylim_l-0.05, ylim_u+0.05), expand = FALSE)
-  
+
   ggsave(R_plot, filename = paste0("Figures/estimates", filenames),  bg = "transparent",
          width = 13.1, height = 5.8)
   print(R_plot)
@@ -310,32 +318,36 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
     
     # adjust method names
     if (include_consensus){
-      methods_ <- comp_methods
+      methods_legend <- comp_methods
     } else {
-      methods_ <- comp_methods[!comp_methods %in% c(name_consensus)]
+      methods_legend <- comp_methods[!comp_methods %in% c(name_consensus)]
     }
+    methods_ <- methods_legend
     for (i in c(" ", ",", "\\(", "\\)")) {methods_ <- gsub(i, ".", methods_)}
     
     n <- length(methods_)
     matr <- matrix(rep(rep(0,n), n), ncol=n)
-    corr <- matrix(rep(rep(0,n), n), ncol=n)
-    colnames(matr) <- rownames(matr) <- colnames(corr) <- rownames(corr) <- methods_
+    colnames(matr) <- rownames(matr) <- methods_legend
     
-    for (method1 in methods_) {
-      for (method2 in methods_){
+    for (m1 in seq_along(methods_)) {
+      for (m2 in seq_along(methods_)){
         estimates_absdiff <- data.frame(estimates_absdiff)
-        diff <- estimates_absdiff[,paste0("R.", method1)] - estimates_absdiff[,paste0("R.", method2)]
-        matr[method1, method2] <- mean(as.vector(abs(diff)))
-        #corr[method1, method2] <- cor(estimates_absdiff[,paste0("R.", method1)],
-        #                              estimates_absdiff[,paste0("R.", method2)])
+        diff <- estimates_absdiff[,paste0("R.", methods_[m1])] - estimates_absdiff[,paste0("R.", methods_[m2])]
+        matr[methods_legend[m1], methods_legend[m2]] <- mean(as.vector(abs(diff)))
       }
     }
     
     df <- data.frame(matr)
-    row.names(df) <- colnames(df) <- methods_
-
+    row.names(df) <- colnames(df) <- methods_legend
+    
     if (sort_numerically){
-      df <- df[order(as.numeric(row.names(df))), order(as.numeric(colnames(df)))]
+      if(all(grepl("(", c(row.names(df), colnames(df)), fixed = T))) {
+        df <- df[order(as.numeric(str_match(row.names(df), "(.*?)[(](.*?)")[,2]),
+                       as.numeric(str_match(colnames(df), "(.*?)[(](.*?)")[,2]))]
+      } else {
+        df <- df[order(as.numeric(row.names(df))), order(as.numeric(colnames(df)))]
+      }
+      
     } else{
       df <- df[order(row.names(df)), order(colnames(df))]
     }
@@ -347,12 +359,6 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
                               angle_col = 315, cluster_rows = FALSE, cluster_cols = FALSE,
                               legend = FALSE)
     save_pheatmap_pdf(mean_abs_diff, paste0("Figures/mean_abs_difference", filenames))
-    
-    #correlations <- pheatmap(corr, color = viridis(100, direction = -1), breaks = seq(0.25,1,0.75/100),
-    #                         border_color = NA, display_numbers = TRUE,
-    #                         fontsize = 18, fontsize_number=22, number_color = "white",
-    #                         angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE, legend = FALSE)
-    #save_pheatmap_pdf(correlations, paste0("correlations", filenames))
   }
 }
 

@@ -1,4 +1,4 @@
-date,none,none.lower,none.upper,nowcast (RKI),nowcast (RKI).lower,nowcast (RKI).upper,smoothing (SDSC),smoothing (SDSC).lower,smoothing (SDSC).upper,R_calc,lower,upper
+date,none,none.lower,none.upper,RKI,RKI.lower,RKI.upper,SDSC,SDSC.lower,SDSC.upper,R_calc,lower,upper
 2020-03-03,NA,NA,NA,NA,NA,NA,NA,NA,NA,2.2287691225084547,2.0469875024112576,2.421007399370461
 2020-03-04,NA,NA,NA,NA,NA,NA,NA,NA,NA,2.1171404007600256,1.963090370033997,2.279046592532547
 2020-03-05,NA,NA,NA,NA,NA,NA,NA,NA,NA,2.02507406653347,1.8925625415907401,2.1636313712751654

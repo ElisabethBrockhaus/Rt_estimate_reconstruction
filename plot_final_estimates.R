@@ -37,7 +37,7 @@ colMin <- function(data) sapply(data, min, na.rm = TRUE)
 
 # window size
 {
-  windows <- c(1, 3, 4, 7, 13)
+  windows <- c(1, 3, 4, 7, 9)
   # find ylim 
   ylim_window_l <- min(colMin(estimates_window %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(windows)))))
   ylim_window_u <- max(colMax(estimates_window %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(windows)))))
@@ -51,14 +51,15 @@ colMin <- function(data) sapply(data, min, na.rm = TRUE)
 
 # generation time distribution
 {
-  distrs <- c("gamma", "gamma", "constant", "gamma", "lognorm", "gamma", "ad hoc", "gamma")
-  means <-  c(3.4,     3.6,     4.0,        4.0,     4.7,       4.8,     5.6,         7.0)
-  sds <-    c(1.8,     3.1,     0.0,        4.0,     2.9,       2.3,     4.2,         7.0)
+  methods_gtd <- c("epiforecasts", "RKI",      "consensus", "rtlive",  "ETH/SDSC", "Ilmenau", "globalrt", "HZI")
+  distrs <-      c("gamma",        "constant", "gamma",     "lognorm", "gamma",    "ad hoc",  "gamma",    "?")
+  means <-       c( 3.6,            4.0,        4.0,         4.7,       4.8,        5.6,       7.0,        10.5)
+  sds <-         c( 3.1,            0.0,        4.0,         2.9,       2.3,        4.2,       7.0,        8.0)
   gtds <- cbind("type"=distrs, "mean"=means, "sd"=sds)
-  rownames(gtds) <- c("AGES", "epiforecasts", "RKI", "consensus", "rtlive", "ETH/SDSC", "Ilmenau", "globalrt")
+  rownames(gtds) <- methods_gtd
   gtd_strs <- c()
   for (src in rownames(gtds)){
-    gtd_str <- paste0(gtds[src, "mean"], "(", gtds[src, "sd"], "), ", gtds[src, "type"])
+    gtd_str <- paste0(gtds[src, "mean"], "(", gtds[src, "sd"], ")")
     gtd_strs <- c(gtd_strs, gtd_str)
   }
   # find ylim
@@ -66,13 +67,13 @@ colMin <- function(data) sapply(data, min, na.rm = TRUE)
   ylim_gtd_u <- max(colMax(estimates_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(gtd_strs))))
   # plot
   plot_for_comparison(estimates_gtd, comp_methods = gtd_strs,
-                      col_palette = "YlGn", name_consensus = "4(4), gamma",
+                      col_palette = "YlGn", name_consensus = "4(4)",
                       legend_name = "GTD", filenames = "_influence_GTD.pdf",
-                      sort_numerically = FALSE, plot_diff_matrices=T,
+                      sort_numerically = TRUE, plot_diff_matrices=T,
                       ylim_l = ylim_gtd_l, ylim_u = ylim_gtd_u)
   
   # standard deviation of the GTD 
-  sds <- c(1.8, 3.1, 0.001, 4.0, 2.9, 2.3, 4.2, 7.0)
+  sds <- c(3.1, 0.001, 4.0, 2.9, 2.3, 4.2, 7.0, 8.0)
   # plot
   plot_for_comparison(estimates_SD_gtd, comp_methods = as.character(sds),
                       col_palette = "YlGn", name_consensus = 4.0,
@@ -97,7 +98,7 @@ colMin <- function(data) sapply(data, min, na.rm = TRUE)
 
 # preprocessing
 {
-  preprocessing <- c("none", "nowcast (RKI)", "smoothing (SDSC)", "deconvolution (ETH)")
+  preprocessing <- c("none", "RKI", "SDSC", "ETH")
   # find ylim
   ylim_preprocess_l <- min(colMin(estimates_preprocess %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(preprocessing))))
   ylim_preprocess_u <- max(colMax(estimates_preprocess %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(preprocessing))))

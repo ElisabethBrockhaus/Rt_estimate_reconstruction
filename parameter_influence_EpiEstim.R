@@ -33,7 +33,7 @@ colMin <- function(data) sapply(data, min, na.rm = TRUE)
 ####################
 # vary window size #
 ####################
-windows <- c(1, 3, 4, 7, 13)
+windows <- c(1, 3, 4, 7, 9)
 if (exists("estimates_window")) rm(estimates_window)
 for (window in windows){
   R_est <- estimate_RKI_R(RKI_incid, method = "EpiEstim",
@@ -50,8 +50,12 @@ for (window in windows){
   }
 }
 # find ylim
-ylim_window_l <- min(colMin(estimates_window %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(windows)))))
-ylim_window_u <- max(colMax(estimates_window %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(windows)))))
+ylim_window_l <- min(colMin(estimates_window %>%
+                              dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>%
+                              dplyr::select(ends_with(as.character(windows)))))
+ylim_window_u <- max(colMax(estimates_window %>%
+                              dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>%
+                              dplyr::select(ends_with(as.character(windows)))))
 # plot
 plot_for_comparison(estimates_window, comp_methods = as.character(windows),
                     col_palette = "YlOrRd", name_consensus = 7,
@@ -63,21 +67,22 @@ plot_for_comparison(estimates_window, comp_methods = as.character(windows),
 #####################################
 # vary generation time distribution #
 #####################################
-distrs <- c("gamma", "gamma", "constant", "gamma", "lognorm", "gamma", "ad hoc", "gamma")
-means <-  c(3.4,     3.6,     4.0,        4.0,     4.7,       4.8,     5.6,         7.0)
-sds <-    c(1.8,     3.1,     0.0,        4.0,     2.9,       2.3,     4.2,         7.0)
+methods_gtd <- c("epiforecasts", "RKI",      "consensus", "rtlive",  "ETH/SDSC", "Ilmenau", "globalrt", "HZI")
+distrs <-      c("gamma",        "constant", "gamma",     "lognorm", "gamma",    "ad hoc",  "gamma",    "?")
+means <-       c( 3.6,            4.0,        4.0,         4.7,       4.8,        5.6,       7.0,        10.5)
+sds <-         c( 3.1,            0.0,        4.0,         2.9,       2.3,        4.2,       7.0,        8.0)
 gtds <- cbind("type"=distrs, "mean"=means, "sd"=sds)
-rownames(gtds) <- c("AGES", "epiforecasts", "RKI", "consensus", "rtlive", "ETH/SDSC", "Ilmenau", "globalrt")
+rownames(gtds) <- methods_gtd
 gtd_strs <- c()
 
 if (exists("estimates_gtd")) rm(estimates_gtd)
 for (src in rownames(gtds)){
-  gtd_str <- paste0(gtds[src, "mean"], "(", gtds[src, "sd"], "), ", gtds[src, "type"])
+  gtd_str <- paste0(gtds[src, "mean"], "(", gtds[src, "sd"], ")")
   print(gtd_str)
   gtd_strs <- c(gtd_strs, gtd_str)
   R_est <- estimate_RKI_R(RKI_incid, method = "EpiEstim",
                           window = 7,
-                          gt_type = gtds[src, "type"],
+                          gt_type = ifelse(src == "RKI", "constant", "gamma"),
                           gt_mean = as.numeric(gtds[src, "mean"]),
                           gt_sd = as.numeric(gtds[src, "sd"]),
                           delay = 0)
@@ -89,13 +94,18 @@ for (src in rownames(gtds)){
   }
 }
 # find ylim
-ylim_gtd_l <- min(colMin(estimates_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(gtd_strs))))
-ylim_gtd_u <- max(colMax(estimates_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(gtd_strs))))
+ylim_gtd_l <- min(colMin(estimates_gtd %>%
+                           dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>%
+                           dplyr::select(ends_with(gtd_strs))))
+ylim_gtd_u <- max(colMax(estimates_gtd %>%
+                           dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>%
+                           dplyr::select(ends_with(gtd_strs))))
 # plot
+source("Rt_estimate_reconstruction/prepared_plots.R")
 plot_for_comparison(estimates_gtd, comp_methods = gtd_strs,
-                    col_palette = "YlGn", name_consensus = "4(4), gamma",
+                    col_palette = "YlGn", name_consensus = "4(4)",
                     legend_name = "GTD", filenames = "_influence_GTD.pdf",
-                    sort_numerically = FALSE, plot_diff_matrices=T,
+                    sort_numerically = TRUE, plot_diff_matrices=T,
                     ylim_l = ylim_gtd_l, ylim_u = ylim_gtd_u)
 
 
@@ -129,8 +139,12 @@ for (data_src in data_sources){
   }
 }
 # find ylim
-ylim_input_l <- min(colMin(estimates_input %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(data_sources))))
-ylim_input_u <- max(colMax(estimates_input %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(data_sources))))
+ylim_input_l <- min(colMin(estimates_input %>% 
+                             dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>%
+                             dplyr::select(ends_with(data_sources))))
+ylim_input_u <- max(colMax(estimates_input %>%
+                             dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>%
+                             dplyr::select(ends_with(data_sources))))
 # plot
 plot_for_comparison(estimates_input, comp_methods = data_sources,
                     col_palette = "Set1", name_consensus = "RKI",
@@ -145,7 +159,7 @@ plot_for_comparison(estimates_input, comp_methods = data_sources,
 incids <- RKI_incid %>%
   inner_join(RKI_nowcast, by = "date") %>%
   inner_join(SDSC_smoothed, by = "date")
-preprocessing <- c("none", "nowcast (RKI)", "smoothing (SDSC)")
+preprocessing <- c("none", "RKI", "SDSC")
 colnames(incids) <- c("date", preprocessing)
 
 if (exists("estimates_preprocess")) rm(estimates_preprocess)
@@ -159,7 +173,7 @@ for (type in preprocessing){
                           delay = 0)
   names(R_est) <- c("date", type, paste0(type, ".lower"), paste0(type, ".upper"))
   
-  if (type == "nowcast (RKI)"){
+  if (type == "RKI"){
     R_est$date <- R_est$date + 3 # mean onset-to-reporting delay in RKI line list data
   }
   
@@ -179,10 +193,14 @@ R_ETH$date <- R_ETH$date + 11 # mean delay of ETH estimates
 estimates_preprocess <- estimates_preprocess %>% full_join(R_ETH, by = "date")
 
 # find ylim
-ylim_preprocess_l <- min(colMin(estimates_preprocess %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(c(preprocessing, "R_calc")))))
-ylim_preprocess_u <- max(colMax(estimates_preprocess %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(c(preprocessing, "R_calc")))))
+ylim_preprocess_l <- min(colMin(estimates_preprocess %>%
+                                  dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>%
+                                  dplyr::select(ends_with(c(preprocessing, "R_calc")))))
+ylim_preprocess_u <- max(colMax(estimates_preprocess %>%
+                                  dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>%
+                                  dplyr::select(ends_with(c(preprocessing, "R_calc")))))
 # plot
-plot_for_comparison(estimates_preprocess, comp_methods = c(preprocessing, "deconvolution (ETH)"),
+plot_for_comparison(estimates_preprocess, comp_methods = c(preprocessing, "ETH"),
                     col_palette = "Dark2", name_consensus = "none",
                     legend_name = "preprocessing", filenames = "_influence_preprocessing.pdf",
                     sort_numerically = FALSE, plot_diff_matrices=T,
@@ -195,7 +213,7 @@ plot_for_comparison(estimates_preprocess, comp_methods = c(preprocessing, "decon
 ######################################
 # vary standard deviation of the GTD #
 ######################################
-sds <- c(1.8, 3.1, 0.001, 4.0, 2.9, 2.3, 4.2, 7.0)
+sds <- c(3.1, 0.001, 4.0, 2.9, 2.3, 4.2, 7.0, 8.0)
 
 if (exists("estimates_SD_gtd")) rm(estimates_SD_gtd)
 for (sd in sds){
