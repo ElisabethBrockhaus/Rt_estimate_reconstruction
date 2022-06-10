@@ -5,10 +5,10 @@ setwd("../..")
 getwd()
 
 # parameter combinations used in papers
-methods <- c("ETH(CH)", "RKI",      "Ilmenau", "SDSC",  "AT",    "epiforecasts", "rtlive",  "globalrt",    "HZI", "FR",    "IT",    "NO", "DK", "SE", "PT",  "BE", "NL",    "consensus")
-gt_dist <- c("gamma",   "constant", "ad hoc",  "gamma", "gamma", "gamma",        "lognorm", "exponential", "?",   "gamma", "gamma", "?",  "?",  "?",  "?",   "?",  "gamma", "gamma")
-mean_gt <- c(4.8,        4,          5.6,       4.8,     3.4,     3.6,            4.7,       7,             10.5,  7,       6.7,     7.5,  4.7,  4.8,  3.96,  4.7,  3.5,     4)
-sd_gt <-   c(2.3,        0,          4.2,       2.3,     1.8,     3.1,            2.9,       7,             8,     4.5,     4.9,     2.9,  2.9,  2.3,  4.74,  2.9,  1.75,    4)
+methods <- c("ETH(CH)", "RKI",      "Ilmenau", "SDSC",  "AT",    "epiforecasts", "rtlive",  "globalrt",    "HZI", "FR",    "IT",    "NO", "DK", "SE", "PT",  "BE", "NL",    "CZ",      "SCT",   "SI",    "consensus")
+gt_dist <- c("gamma",   "constant", "ad hoc",  "gamma", "gamma", "gamma",        "lognorm", "exponential", "?",   "gamma", "gamma", "?",  "?",  "?",  "?",   "?",  "gamma", "uniform", "gamma", "gamma", "gamma")
+mean_gt <- c(4.8,        4,          5.6,       4.8,     3.4,     3.6,            4.7,       7,             10.5,  7,       6.7,     7.5,  4.7,  4.8,  3.96,  4.7,  3.5,     5.5,       6.5,     6.5,     4)
+sd_gt <-   c(2.3,        0,          4.2,       2.3,     1.8,     3.1,            2.9,       7,             8,     4.5,     4.9,     2.9,  2.9,  2.3,  4.74,  2.9,  1.75,    1.12,      4.11,    4.11,    4)
 
 gtds <- data.frame(gtd=gt_dist, gt_mean=mean_gt, gt_sd=sd_gt)
 rownames(gtds) <- methods
@@ -20,7 +20,7 @@ gtd_scatter <- gtds %>%
   mutate(groups = paste0(group, collapse = "/")) %>%
   dplyr::select(!group) %>%
   distinct() %>%
-  mutate(grey = (nchar(groups)==2)) %>%
+  mutate(grey = (nchar(groups)==2 | groups=="SCT/SI")) %>%
   tibble::column_to_rownames(var = "groups")
 
 AT_first <- data.frame(gt_mean=4.46, gt_sd=2.63)
