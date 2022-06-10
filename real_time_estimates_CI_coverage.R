@@ -222,6 +222,8 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 
 plot_CI_coverage_rates()
 plot_CI_widths()
+plot_abs_diff_first()
+plot_abs_diff_prev()
 
 CI_coverage_50 <- calc_CI_coverages(c("Braunschweig", "epiforecasts", "rtlive"),
                                     conf_level = 50)
