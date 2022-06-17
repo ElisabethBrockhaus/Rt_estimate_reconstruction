@@ -7,8 +7,8 @@ getwd()
 # parameter combinations used in papers
 methods <- c("ETH(CH)", "RKI",      "Ilmenau", "SDSC",  "AT",    "epiforecasts", "rtlive",  "globalrt",    "HZI", "FR",    "IT",    "NO", "DK", "SE", "PT",  "BE", "NL",    "CZ",      "SCT",   "SI",    "consensus")
 gt_dist <- c("gamma",   "constant", "ad hoc",  "gamma", "gamma", "gamma",        "lognorm", "exponential", "?",   "gamma", "gamma", "?",  "?",  "?",  "?",   "?",  "gamma", "uniform", "gamma", "gamma", "gamma")
-mean_gt <- c(4.8,        4,          5.6,       4.8,     3.4,     3.6,            4.7,       7,             10.5,  7,       6.7,     7.5,  4.7,  4.8,  3.96,  4.7,  3.5,     5.5,       6.5,     6.5,     4)
-sd_gt <-   c(2.3,        0,          4.2,       2.3,     1.8,     3.1,            2.9,       7,             8,     4.5,     4.9,     2.9,  2.9,  2.3,  4.74,  2.9,  1.75,    1.12,      4.11,    4.11,    4)
+mean_gt <- c(4.8,        4,          5.6,       4.8,     3.4,     3.6,            4.7,       7,             10.3,  7,       6.7,     7.5,  4.7,  4.8,  3.96,  4.7,  3.5,     5.5,       6.5,     6.5,     4)
+sd_gt <-   c(2.3,        0,          4.2,       2.3,     1.8,     3.1,            2.9,       7,             7.6,   4.5,     4.9,     2.9,  2.9,  2.3,  4.74,  2.9,  1.75,    1.12,      4.11,    4.11,    4)
 
 gtds <- data.frame(gtd=gt_dist, gt_mean=mean_gt, gt_sd=sd_gt)
 rownames(gtds) <- methods
@@ -65,7 +65,7 @@ gtd_scatterplot <- ggplot(data = gtd_scatter, aes(x = gt_mean, y = gt_sd, color 
                    xend=gtds["NL","gt_mean"], yend=gtds["NL","gt_sd"]),
                arrow=arrow(length=unit(2.5, "mm")), color="#909090", size=0.01, linetype=5) +
   
-  coord_cartesian(xlim=c(0,10.7), ylim=c(-0.2,8.2), expand=F)
+  coord_cartesian(xlim=c(0,10.6), ylim=c(-0.2,7.9), expand=F)
 
 print(gtd_scatterplot)
 
