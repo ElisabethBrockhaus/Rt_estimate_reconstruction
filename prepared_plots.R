@@ -670,7 +670,7 @@ plot_abs_diff_first <- function() {
     as.data.frame() %>%
     column_to_rownames("...1")
   
-  diff_data <- diff_to_first[, c(as.character(0:20), "min_lag")] %>%
+  diff_data <- diff_to_first %>%
     rownames_to_column("method") %>%
     dplyr::filter(method %in% methods) %>%
     mutate(method = plyr::mapvalues(method,
@@ -679,8 +679,8 @@ plot_abs_diff_first <- function() {
     arrange(method)
   
   diff_data <- diff_data %>%
-    gather("variable", "value", 2:(dim(diff_data)[2] - 1)) %>%
-    mutate(variable = -1 * as.numeric(variable))
+    gather("variable", "value", as.character(0:20)) %>%
+    mutate(variable = as.numeric(variable))
   
   diff_plot <- ggplot() +
     theme_minimal() +
@@ -698,8 +698,8 @@ plot_abs_diff_first <- function() {
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
-    labs(x = "lag between estimation and target day", y = "MAD to first estimate") +
-    coord_cartesian(xlim = c(-20, 0), ylim = c(-0.01, 0.37), expand = FALSE)
+    labs(x = "time since first estimate", y = "MAD to first estimate") +
+    coord_cartesian(xlim = c(0,20), ylim = c(-0.01, 0.37), expand = FALSE)
   
   methods_legend <- unique(diff_data$method)
   col_values <- get_colors(methods = methods_legend, palette = "methods")
