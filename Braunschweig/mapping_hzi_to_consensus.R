@@ -19,7 +19,8 @@ get_mapped_R <- function(R_HZI){
 estimate <- braunschweig_R_pub %>%
   mutate(R_calc = sapply(R_pub, get_mapped_R),
          lower = sapply(lower, get_mapped_R),
-         upper = sapply(upper, get_mapped_R))
+         upper = sapply(upper, get_mapped_R)) %>%
+  na.omit()
 
 write.csv(estimate[,c("date", "R_calc", "lower", "upper")],
           "Rt_estimate_reconstruction/Braunschweig/R_adjInputWindowGTD_2021-07-11.csv",
