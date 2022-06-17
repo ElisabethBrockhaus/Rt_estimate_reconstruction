@@ -72,14 +72,14 @@ calc_CI_coverages <- function(methods,
       CI_not_available <- tryCatch(
         {
           R_est_ts <- load_published_R_estimates(method,
-                                                 start = start_date - max_lag,
+                                                 start = min(as_date(pub_dates)) - max_lag,
                                                  end = as_date(final_version),
                                                  pub_date = final_version,
                                                  location = country,
                                                  conf_level = conf_level,
                                                  verbose = F) %>%
-            dplyr::select("date", "R_pub")
-          names(R_est_ts)[2] <- "R_final"
+            dplyr::select("date", "R_pub") %>%
+            rename(R_final = R_pub)
         },
         error = function(e) e
       )
