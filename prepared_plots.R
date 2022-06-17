@@ -573,7 +573,7 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
       panel.grid.minor = element_blank()
     ) +
     #ggtitle(paste0(conf_level, "%-CI coverage rates")) +
-    labs(x = "target date - pub date", y = "coverage rate") +
+    labs(x = "lag between estimation and target day", y = "coverage rate") +
     coord_cartesian(xlim = c(-20, 0), ylim = c(-0.03, 1.03), expand = FALSE)
   
   methods_legend <- unique(coverage_data$method)
@@ -641,7 +641,7 @@ plot_CI_widths <- function(conf_level = "95"){
       panel.grid.minor = element_blank()
     ) +
     #ggtitle(paste0("Mean width of ", conf_level, "%-CI")) +
-    labs(x = "target date - pub date", y = "width") +
+    labs(x = "lag between estimation and target day", y = "width") +
     coord_cartesian(xlim = c(-20, 0), ylim = c(-0.01, 0.85), expand = FALSE)
   
   methods_legend <- unique(width_data$method)
@@ -698,7 +698,7 @@ plot_abs_diff_first <- function() {
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
-    labs(x = "target date - pub date", y = "absolute difference") +
+    labs(x = "lag between estimation and target day", y = "MAD to first estimate") +
     coord_cartesian(xlim = c(-20, 0), ylim = c(-0.01, 0.37), expand = FALSE)
   
   methods_legend <- unique(diff_data$method)
@@ -754,7 +754,7 @@ plot_abs_diff_prev <- function() {
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
-    labs(x = "target date - pub date", y = "absolute difference") +
+    labs(x = "lag between estimation and target day", y = "MAD to estimate from previous day") +
     coord_cartesian(xlim = c(-20, 0), ylim = c(-0.01, 0.3), expand = FALSE)
   
   methods_legend <- unique(diff_data$method)
