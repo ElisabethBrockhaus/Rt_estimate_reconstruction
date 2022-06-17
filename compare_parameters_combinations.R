@@ -254,7 +254,7 @@ R_rtlive_adjInputWindowGTD <- read.csv(paste0(path, "gamma_4_de_2021-07-10_all_s
   rename(c("date" = "X", "R_calc" = "median", "lower" = "X2.5.", "upper" = "X97.5.")) %>%
   mutate(date = as_date(date))
 
-R_HZI_adjInputWindowGTD <- read.csv("Rt_estimate_reconstruction/Braunschweig/R_adjInputWindowGTD_2021-07-20.csv") %>%
+R_HZI_adjInputWindowGTD <- read.csv("Rt_estimate_reconstruction/Braunschweig/R_adjInputWindowGTD_2021-07-11.csv") %>%
   mutate(date = as_date(date))
 
 estimates_adjInputWindowGTD <- R_consensus_adjInputWindowGTD[,c("date", "R_calc")] %>% rename(consensus = R_calc) %>%
