@@ -37,8 +37,8 @@ calc_CI_coverages <- function(methods,
   colnames(CI_coverage) <- c(0:20, "num_CIs", "min_lag", "min_pub_date", "max_pub_date")
   CI_width_mean <- data.frame(matrix(rep(NA, n*25), nrow = n), row.names = methods)
   colnames(CI_width_mean) <- c(0:20, "num_CIs", "min_lag", "min_pub_date", "max_pub_date")
-  diff_first_mean <- data.frame(matrix(rep(NA, n*25), nrow = n), row.names = methods)
-  colnames(diff_first_mean) <- c(0:20, "num_datapoints", "min_lag", "min_pub_date", "max_pub_date")
+  diff_first_mean <- data.frame(matrix(rep(NA, n*21), nrow = n), row.names = methods)
+  colnames(diff_first_mean) <- c(0:20)
   diff_prev_mean <- data.frame(matrix(rep(NA, n*25), nrow = n), row.names = methods)
   colnames(diff_prev_mean) <- c(0:20, "num_datapoints", "min_lag", "min_pub_date", "max_pub_date")
   
@@ -123,11 +123,10 @@ calc_CI_coverages <- function(methods,
           R_covered <- data.frame(date = R_est_ts$date)
           R_covered_difftime <-
             CI_width <-
-            abs_diff_first <-
             abs_diff_prev <-
             data.frame(estimated_after = make_difftime(day = seq(max_lag, min_lag),
                                                        units = "day"))
-          
+
           for (i in seq_along(available_pub_dates)){
             pd <- available_pub_dates[i]
             R_covered[pd] <- ifelse(is.na(R_est_ts[, paste0("lower_", pd)]), NA,
@@ -149,16 +148,6 @@ calc_CI_coverages <- function(methods,
               
               j <- as_date(pd) - min(as_date(available_pub_dates)) + 1
               
-              for (k in 0:(max_lag-min_lag)) {
-                first <- as_date(pd) - k
-                
-                if (first %in% as_date(available_pub_dates_long)) {
-                  abs_diff_first[max_lag-min_lag+1-k, pd] <-
-                  abs(R_est_ts[j+max_lag-min_lag-k, paste0("R_pub_", pd)] -
-                        R_est_ts[j+max_lag-min_lag-k, paste0("R_pub_", first)])
-                }
-              }
-              
               prev <- as_date(pd) - 1
               if (prev %in% as_date(available_pub_dates_long)) {
                 abs_diff_prev[abs_diff_prev$estimated_after
@@ -172,8 +161,6 @@ calc_CI_coverages <- function(methods,
           R_covered_difftime <- R_covered_difftime %>%
             column_to_rownames(var = "estimated_after")
           CI_width <- CI_width %>%
-            column_to_rownames(var = "estimated_after")
-          abs_diff_first <- abs_diff_first %>%
             column_to_rownames(var = "estimated_after")
           abs_diff_prev <- abs_diff_prev %>%
             column_to_rownames(var = "estimated_after")
@@ -190,17 +177,58 @@ calc_CI_coverages <- function(methods,
           CI_width_mean[method, "min_pub_date"] <- min(colnames(CI_width))
           CI_width_mean[method, "max_pub_date"] <- max(colnames(CI_width))
           
-          diff_first_mean[method, rownames(abs_diff_first)] <- rowMeans(abs_diff_first, na.rm = TRUE)
-          diff_first_mean[method, "min_lag"] <- min_lag
-          diff_first_mean[method, "num_datapoints"] <- dim(abs_diff_first)[2]
-          diff_first_mean[method, "min_pub_date"] <- min(colnames(abs_diff_first))
-          diff_first_mean[method, "max_pub_date"] <- max(colnames(abs_diff_first))
-          
           diff_prev_mean[method, rownames(abs_diff_prev)] <- rowMeans(abs_diff_prev, na.rm = TRUE)
           diff_prev_mean[method, "min_lag"] <- min_lag
           diff_prev_mean[method, "num_datapoints"] <- dim(abs_diff_prev)[2]
           diff_prev_mean[method, "min_pub_date"] <- min(colnames(abs_diff_prev))
           diff_prev_mean[method, "max_pub_date"] <- max(colnames(abs_diff_prev))
+          
+          ######
+          # MAD to first estimate...
+
+          # for each target date extract date and value of first estimate
+          R_pub <- R_est_ts %>%
+            dplyr::select(starts_with("R_pub_") | date) %>%
+            column_to_rownames("date")
+          first_est <- R_est_ts %>%
+            dplyr::select(date) %>%
+            rename(target_date = date)
+          first_est$first_date <- apply(R_pub, 1,
+                                        function(x) names(which(!is.na(x)))[1]) %>%
+            substr(7, 16)
+          first_est$first_R <- apply(R_pub, 1,
+                                     function(x) x[which(!is.na(x))][1])
+          first_est <- first_est %>% na.omit()
+          
+          abs_diff_first <- R_est_ts %>%
+            dplyr::select(date | starts_with("R_pub_")) %>%
+            # only use rows for which the first published R value is in "first_est"
+            dplyr::filter(date %in% first_est$target_date) %>%
+            # calculate absolute difference to first published estimate for the target_date
+            mutate(across(!date, function(x) abs(x - first_est$first_R))) %>%
+            # add columns with difference between pub_dates
+            mutate(across(!date, list(lag = ~ {as_date(substr(cur_column(), 7, 16)) -
+                as_date(first_est[first_est$target_date == date, "first_date"])} ))) %>%
+            # order columns alphabetically
+            dplyr::select(colnames(.)[order(colnames(.))]) %>%
+            column_to_rownames("date") %>%
+            # select columns corresponding to pub_dates after start_date
+            dplyr::select(colnames(.)[as_date(substr(colnames(.), 7, 16)) >= start_date])
+          
+          # reshape wide to long
+          cols <- colnames(dplyr::select(abs_diff_first, !ends_with("_lag")))
+          abs_diff_first_long <- data.frame()
+          for (col in cols){
+            df <- abs_diff_first[,c(col, paste0(col, "_lag"))] %>% setNames(c("diff", "lag"))
+            abs_diff_first_long <- bind_rows(df, abs_diff_first_long)
+          }
+          abs_diff_first_long <- na.omit(abs_diff_first_long)
+          abs_diff_first_mean <- abs_diff_first_long %>%
+            group_by(lag) %>%
+            summarise(diff = mean(diff))
+          
+          diff_first_mean[method, as.character(abs_diff_first_mean$lag)] <- abs_diff_first_mean$diff
+      
         }
       }
     } else {
