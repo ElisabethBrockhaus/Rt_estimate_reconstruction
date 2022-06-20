@@ -37,7 +37,7 @@ colMin <- function(data) sapply(data, min, na.rm = TRUE)
 
 # window size
 {
-  windows <- c(1, 3, 4, 7, 9)
+  windows <- c(1, 3, 4, 7, 10)
   # find ylim 
   ylim_window_l <- min(colMin(estimates_window %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(windows)))))
   ylim_window_u <- max(colMax(estimates_window %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(as.character(windows)))))
@@ -53,8 +53,8 @@ colMin <- function(data) sapply(data, min, na.rm = TRUE)
 {
   methods_gtd <- c("epiforecasts", "RKI",      "consensus", "rtlive",  "ETH/SDSC", "Ilmenau", "globalrt", "HZI")
   distrs <-      c("gamma",        "constant", "gamma",     "lognorm", "gamma",    "ad hoc",  "gamma",    "?")
-  means <-       c( 3.6,            4.0,        4.0,         4.7,       4.8,        5.6,       7.0,        10.5)
-  sds <-         c( 3.1,            0.0,        4.0,         2.9,       2.3,        4.2,       7.0,        8.0)
+  means <-       c( 3.6,            4.0,        4.0,         4.7,       4.8,        5.6,       7.0,        10.3)
+  sds <-         c( 3.1,            0.0,        4.0,         2.9,       2.3,        4.2,       7.0,        7.6)
   gtds <- cbind("type"=distrs, "mean"=means, "sd"=sds)
   rownames(gtds) <- methods_gtd
   gtd_strs <- c()
@@ -73,7 +73,7 @@ colMin <- function(data) sapply(data, min, na.rm = TRUE)
                       ylim_l = ylim_gtd_l, ylim_u = ylim_gtd_u)
   
   # standard deviation of the GTD 
-  sds <- c(3.1, 0.001, 4.0, 2.9, 2.3, 4.2, 7.0, 8.0)
+  sds <- c(3.1, 0.001, 4.0, 2.9, 2.3, 4.2, 7.0, 7.6)
   # plot
   plot_for_comparison(estimates_SD_gtd, comp_methods = as.character(sds),
                       col_palette = "YlGn", name_consensus = 4.0,
