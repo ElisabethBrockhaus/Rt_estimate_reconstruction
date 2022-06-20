@@ -536,7 +536,7 @@ plot_weekday_effects <- function(estimates,
 
 
 plot_CI_coverage_rates <- function(conf_level = "95"){
-  methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
+  methods <- c("epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
                "ilmenau", "RKI_7day", "rtlive", "SDSC")
   
   CI_coverage <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/",
@@ -548,8 +548,8 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
     rownames_to_column("method") %>%
     dplyr::filter(method %in% methods) %>%
     mutate(method = plyr::mapvalues(method,
-                                    c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
-                                    c("HZI",          "ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
+                                    c("ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
+                                    c("ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
     arrange(method)
   
   coverage_data <- coverage_data %>%
@@ -605,7 +605,7 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
 
 
 plot_CI_widths <- function(conf_level = "95"){
-  methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
+  methods <- c("epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
                "ilmenau", "RKI_7day", "rtlive", "SDSC")
   
   CI_width <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/", conf_level, "_CI_width.csv")) %>%
@@ -616,8 +616,8 @@ plot_CI_widths <- function(conf_level = "95"){
     rownames_to_column("method") %>%
     dplyr::filter(method %in% methods) %>%
     mutate(method = plyr::mapvalues(method,
-                                    c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
-                                    c("HZI",          "ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
+                                    c("ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
+                                    c("ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
     arrange(method)
   
   width_data <- width_data %>%
