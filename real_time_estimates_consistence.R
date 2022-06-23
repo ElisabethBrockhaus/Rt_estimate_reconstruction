@@ -10,13 +10,6 @@ getwd()
 
 source("Rt_estimate_reconstruction/load_data.R")
 
-# sources of published real-time estimates
-methods <- list.dirs(path_estimates, full.names = F)
-methods <- methods[!methods %in% c("", "AW_7day", "AW_WVday", "owid", "ETHZ_step",
-                                   "ETHZ_sliding_window_deaths", "ETHZ_step_deaths",
-                                   "zidatalab")]
-methods
-
 available_countries <- read.csv("Rt_estimate_reconstruction/otherFiles/available_countries.csv", row.names = 1)
 pub_delays <- read.csv("Rt_estimate_reconstruction/otherFiles/pub_delays.csv", row.names = 1)
 
@@ -32,15 +25,17 @@ calc_CI_coverages <- function(methods,
                               conf_level = "95",
                               path_estimates = "reproductive_numbers/data-processed/") {
   
+  methods_CI <- methods[methods!="Braunschweig"]
+  n_CI <- length(methods_CI)
   n <- length(methods)
-  CI_coverage <- data.frame(matrix(rep(NA, n*25), nrow = n), row.names = methods)
+  CI_coverage <- data.frame(matrix(rep(NA, n_CI*25), nrow = n_CI), row.names = methods_CI)
   colnames(CI_coverage) <- c(0:20, "num_CIs", "min_lag", "min_pub_date", "max_pub_date")
-  CI_width_mean <- data.frame(matrix(rep(NA, n*25), nrow = n), row.names = methods)
+  CI_width_mean <- data.frame(matrix(rep(NA, n_CI*25), nrow = n_CI), row.names = methods_CI)
   colnames(CI_width_mean) <- c(0:20, "num_CIs", "min_lag", "min_pub_date", "max_pub_date")
   diff_first_mean <- data.frame(matrix(rep(NA, n*21), nrow = n), row.names = methods)
   colnames(diff_first_mean) <- c(0:20)
-  diff_prev_mean <- data.frame(matrix(rep(NA, n*25), nrow = n), row.names = methods)
-  colnames(diff_prev_mean) <- c(0:20, "num_datapoints", "min_lag", "min_pub_date", "max_pub_date")
+  diff_prev_mean <- data.frame(matrix(rep(NA, n*21), nrow = n), row.names = methods)
+  colnames(diff_prev_mean) <- c(0:20)
   
   for (method in methods){
     print(method)
@@ -91,6 +86,8 @@ calc_CI_coverages <- function(methods,
         for (pub_date in pub_dates){
           tryCatch(
             {
+              cols <- c(date = NA, R_pub = NA, lower = NA, upper = NA)
+                
               R_est <- load_published_R_estimates(method,
                                                   start = as_date(pub_date) - max_lag,
                                                   end = as_date(pub_date) - min_lag,
@@ -98,14 +95,12 @@ calc_CI_coverages <- function(methods,
                                                   location = country,
                                                   conf_level = conf_level,
                                                   verbose = F) %>%
-                dplyr::select("date", "R_pub", "lower", "upper") %>%
-                mutate(width = upper - lower)
+                dplyr::select(any_of(names(cols)))
               
-              names(R_est) <- c("date",
-                                paste0("R_pub_", pub_date),
-                                paste0("lower_", pub_date),
-                                paste0("upper_", pub_date),
-                                paste0("width_", pub_date))
+              R_est <- R_est %>%
+                add_column(!!!cols[setdiff(names(cols), names(R_est))]) %>%
+                mutate(width = upper - lower) %>%
+                rename_with(~ paste0(.x, "_", pub_date), !date)
               
             },
             error = function(e) {R_est <<- data.frame(date = seq(as_date(pub_date) - max_lag,
@@ -119,69 +114,57 @@ calc_CI_coverages <- function(methods,
             substr(7, 16) %>%
             unique()
           available_pub_dates <- available_pub_dates_long[as_date(available_pub_dates_long) >= start_date]
-
-          R_covered <- data.frame(date = R_est_ts$date)
-          R_covered_difftime <-
-            CI_width <-
-            abs_diff_prev <-
-            data.frame(estimated_after = make_difftime(day = seq(max_lag, min_lag),
-                                                       units = "day"))
-
-          for (i in seq_along(available_pub_dates)){
-            pd <- available_pub_dates[i]
-            R_covered[pd] <- ifelse(is.na(R_est_ts[, paste0("lower_", pd)]), NA,
-                                    ifelse((R_est_ts$R_final >= R_est_ts[, paste0("lower_", pd)]) &
-                                             (R_est_ts$R_final <= R_est_ts[, paste0("upper_", pd)]),
-                                           TRUE,
-                                           FALSE))
-            
-            if (dim(na.omit(R_covered[pd]))[1] == (max_lag - min_lag + 1)) {
+          
+          
+          ######
+          # CI coverage rates and width...
+          
+          # if CIs are available calculate mean coverage rates and widths
+          if (dim(R_est_ts %>% dplyr::select(starts_with("lower")) %>% na.omit)[1] > 0){
+            R_covered <- data.frame(date = R_est_ts$date)
+            R_covered_difftime <-
+              CI_width <-
+              data.frame(estimated_after = make_difftime(day = seq(max_lag, min_lag),
+                                                         units = "day"))
+  
+            for (pd in available_pub_dates){
+              R_covered[pd] <- ifelse(is.na(R_est_ts[, paste0("lower_", pd)]), NA,
+                                      ifelse((R_est_ts$R_final >= R_est_ts[, paste0("lower_", pd)]) &
+                                               (R_est_ts$R_final <= R_est_ts[, paste0("upper_", pd)]),
+                                             TRUE,
+                                             FALSE))
               
-              ea <- difftime(as.Date(pd), R_covered[,1], units = "day")
-              indices <- which(!is.na(R_covered[pd]))
-              
-              R_covered_difftime[R_covered_difftime$estimated_after
-                                 %in% ea[indices], pd] <- na.omit(R_covered[pd])
-              
-              CI_width[CI_width$estimated_after
-                       %in% ea[indices], pd] <- na.omit(R_est_ts[, paste0("width_", pd)])
-              
-              j <- as_date(pd) - min(as_date(available_pub_dates)) + 1
-              
-              prev <- as_date(pd) - 1
-              if (prev %in% as_date(available_pub_dates_long)) {
-                abs_diff_prev[abs_diff_prev$estimated_after
-                              %in% ea[indices], pd] <-
-                  abs(R_est_ts[j+0:(max_lag-min_lag), paste0("R_pub_", pd)] -
-                        R_est_ts[j+0:(max_lag-min_lag), paste0("R_pub_", prev)])
+              if (dim(na.omit(R_covered[pd]))[1] == (max_lag - min_lag + 1)) {
+                
+                ea <- difftime(as.Date(pd), R_covered[,1], units = "day")
+                indices <- which(!is.na(R_covered[pd]))
+                
+                R_covered_difftime[R_covered_difftime$estimated_after
+                                   %in% ea[indices], pd] <- na.omit(R_covered[pd])
+                
+                CI_width[CI_width$estimated_after
+                         %in% ea[indices], pd] <- na.omit(R_est_ts[, paste0("width_", pd)])
               }
             }
+            
+            R_covered_difftime <- R_covered_difftime %>%
+              column_to_rownames(var = "estimated_after")
+            CI_width <- CI_width %>%
+              column_to_rownames(var = "estimated_after")
+              
+            CI_coverage[method, rownames(R_covered_difftime)] <- rowMeans(R_covered_difftime)
+            CI_coverage[method, "min_lag"] <- min_lag
+            CI_coverage[method, "num_CIs"] <- dim(R_covered_difftime)[2]
+            CI_coverage[method, "min_pub_date"] <- min(colnames(R_covered_difftime))
+            CI_coverage[method, "max_pub_date"] <- max(colnames(R_covered_difftime))
+            
+            CI_width_mean[method, rownames(CI_width)] <- rowMeans(CI_width)
+            CI_width_mean[method, "min_lag"] <- min_lag
+            CI_width_mean[method, "num_CIs"] <- dim(CI_width)[2]
+            CI_width_mean[method, "min_pub_date"] <- min(colnames(CI_width))
+            CI_width_mean[method, "max_pub_date"] <- max(colnames(CI_width))
           }
           
-          R_covered_difftime <- R_covered_difftime %>%
-            column_to_rownames(var = "estimated_after")
-          CI_width <- CI_width %>%
-            column_to_rownames(var = "estimated_after")
-          abs_diff_prev <- abs_diff_prev %>%
-            column_to_rownames(var = "estimated_after")
-            
-          CI_coverage[method, rownames(R_covered_difftime)] <- rowMeans(R_covered_difftime)
-          CI_coverage[method, "min_lag"] <- min_lag
-          CI_coverage[method, "num_CIs"] <- dim(R_covered_difftime)[2]
-          CI_coverage[method, "min_pub_date"] <- min(colnames(R_covered_difftime))
-          CI_coverage[method, "max_pub_date"] <- max(colnames(R_covered_difftime))
-          
-          CI_width_mean[method, rownames(CI_width)] <- rowMeans(CI_width)
-          CI_width_mean[method, "min_lag"] <- min_lag
-          CI_width_mean[method, "num_CIs"] <- dim(CI_width)[2]
-          CI_width_mean[method, "min_pub_date"] <- min(colnames(CI_width))
-          CI_width_mean[method, "max_pub_date"] <- max(colnames(CI_width))
-          
-          diff_prev_mean[method, rownames(abs_diff_prev)] <- rowMeans(abs_diff_prev, na.rm = TRUE)
-          diff_prev_mean[method, "min_lag"] <- min_lag
-          diff_prev_mean[method, "num_datapoints"] <- dim(abs_diff_prev)[2]
-          diff_prev_mean[method, "min_pub_date"] <- min(colnames(abs_diff_prev))
-          diff_prev_mean[method, "max_pub_date"] <- max(colnames(abs_diff_prev))
           
           ######
           # MAD to first estimate...
@@ -229,6 +212,27 @@ calc_CI_coverages <- function(methods,
           
           diff_first_mean[method, as.character(abs_diff_first_mean$lag)] <- abs_diff_first_mean$diff
       
+          
+          ######
+          # MAD to previous estimate...
+          
+          R_pub <- R_pub %>%
+            rename_with(~ substr(.x, 7, 16))
+          abs_diff_prev <- data.frame(estimated_after = make_difftime(day = seq(max_lag, min_lag),
+                                                                      units = "day")) %>%
+            column_to_rownames(var = "estimated_after")
+          
+          for (c in colnames(R_pub)){
+            if ((as_date(c) - 1) %in% as_date(colnames(R_pub))){
+              j <- which(as_date(colnames(R_pub)) == as_date(c) - 1)
+              abs_diff <- abs(R_pub[,c] - R_pub[,j])
+              abs_diff_prev[as.character(as_date(c) -
+                              as_date(rownames(R_pub[which(!is.na(abs_diff)),]))),
+                            c] <- abs_diff %>% na.omit
+            }
+          }
+          
+          diff_prev_mean[method, rownames(abs_diff_prev)] <- rowMeans(abs_diff_prev, na.rm = TRUE)
         }
       }
     } else {
