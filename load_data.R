@@ -20,10 +20,16 @@ load_published_R_estimates <- function(source,
                                        conf_level = "95",
                                        verbose = T){
   
+  if (source %in% c("Braunschweig", "zidatalab")) {
+    conf_level <- "None"
+  }
+  
   if (conf_level == "95") {
     columns <- c("date", "0.5", "0.025", "0.975")
   } else if (conf_level == "50") {
     columns <- c("date", "0.5", "0.25", "0.75")
+  } else if (conf_level == "None") {
+    columns <- c("date", "0.5", "", "")
   }
   
   # define path where Rt estimates are located
@@ -37,27 +43,16 @@ load_published_R_estimates <- function(source,
     R_est <- read_csv(paste0(path, file), col_types = list(date = col_date()))
   }, error=function(e) {
     print(paste0("Unmatched pub_date (", pub_date, ") or source (", source, "), try different pub_date and make sure source is one of:"))
-    # TODO resolve: directories sometimes have different names than files
     print(list.dirs("reproductive_numbers/data-processed/", full.names = F))
   })
-
-  if (source != "zidatalab"){
-    R_est <- R_est[R_est$location==location, c("date", "quantile", "type", "value")]
-    R_est[R_est$type == "point", "quantile"] <- 0.5
-    R_est <- pivot_wider(R_est[,c("date", "quantile", "value")], names_from = c(quantile))
-    R_est <- R_est[, columns]
-    names(R_est) <- c("date", "R_pub", "lower", "upper")
-  } else {
-    # no quantiles published by ZI
-    R_est <- R_est[R_est$location==location, c("date", "value")]
-    if(dim(R_est)[1]!=0){
-      names(R_est) <- c("date", "R_pub")
-      R_est <- R_est %>% add_column(lower = NA, upper = NA)
-    } else{
-      rm(R_est)
-    }
-    
-  }
+  
+  R_est <- R_est %>%
+    dplyr::filter(location==!!location) %>%
+    mutate(quantile = replace_na(quantile, 0.5)) %>%
+    dplyr::select(date, quantile, value) %>%
+    pivot_wider(names_from = c(quantile)) %>%
+    dplyr::select(any_of(columns)) %>%
+    rename(any_of(c(R_pub = "0.5", lower = columns[3], upper = columns[4])))
   
   # return available R estimates for time between start and end
   dates <- data.frame(date=seq(start, end, by ="day"))
