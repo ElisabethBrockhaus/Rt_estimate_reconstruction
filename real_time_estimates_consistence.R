@@ -14,6 +14,14 @@ available_countries <- read.csv("Rt_estimate_reconstruction/otherFiles/available
 pub_delays <- read.csv("Rt_estimate_reconstruction/otherFiles/pub_delays.csv", row.names = 1)
 
 
+methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window",
+             "globalrt_7d", "ilmenau", "RKI_7day", "rtlive", "SDSC")
+country = "DE"
+start_date_min = as_date("2020-11-16")
+end_date = as_date("2021-05-01")
+conf_level = "95"
+path_estimates = "reproductive_numbers/data-processed/"
+
 #############################################
 # plot coverage of 95% confidence intervals #
 #############################################
@@ -51,6 +59,7 @@ calc_CI_coverages <- function(methods,
     }
     
     pub_dates <- list.files(paste0(path_estimates, method),
+                            pattern = "\\d{4}-\\d{2}-\\d{2}",
                             full.names = F) %>% substr(1, 10)
     pub_dates <- pub_dates[which(as_date(pub_dates) <= end_date &
                                    as_date(pub_dates) >= start_date - max_lag)]
@@ -89,7 +98,7 @@ calc_CI_coverages <- function(methods,
               cols <- c(date = NA, R_pub = NA, lower = NA, upper = NA)
                 
               R_est <- load_published_R_estimates(method,
-                                                  start = as_date(pub_date) - max_lag,
+                                                  start = min(as_date(pub_dates)) - max_lag,
                                                   end = as_date(pub_date) - min_lag,
                                                   pub_date = pub_date,
                                                   location = country,
@@ -134,16 +143,17 @@ calc_CI_coverages <- function(methods,
                                              TRUE,
                                              FALSE))
               
-              if (dim(na.omit(R_covered[pd]))[1] == (max_lag - min_lag + 1)) {
-                
+              if (dim(na.omit(R_covered[pd]))[1] >= (max_lag - min_lag + 1)) {
                 ea <- difftime(as.Date(pd), R_covered[,1], units = "day")
-                indices <- which(!is.na(R_covered[pd]))
+                ea_wanted <- ea[ea <= max_lag & ea >= min_lag]
                 
                 R_covered_difftime[R_covered_difftime$estimated_after
-                                   %in% ea[indices], pd] <- na.omit(R_covered[pd])
+                                   %in% ea_wanted, pd] <- R_covered[which(ea <= max_lag & ea >= min_lag), pd]
                 
                 CI_width[CI_width$estimated_after
-                         %in% ea[indices], pd] <- na.omit(R_est_ts[, paste0("width_", pd)])
+                         %in% ea_wanted, pd] <- R_est_ts[R_est_ts$date %in%
+                                                           R_covered[which(ea <= max_lag & ea >= min_lag), "date"],
+                                                         paste0("width_", pd)]
               }
             }
             
@@ -243,8 +253,10 @@ calc_CI_coverages <- function(methods,
   return(list(CI_coverage, CI_width_mean, diff_first_mean, diff_prev_mean))
 }
 
-CI_eval <- calc_CI_coverages(c("Braunschweig", "epiforecasts", "ETHZ_sliding_window",
-                               "globalrt_7d", "ilmenau", "RKI_7day", "rtlive", "SDSC"))
+methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window",
+             "globalrt_7d", "ilmenau", "RKI_7day", "rtlive", "SDSC")
+
+CI_eval <- calc_CI_coverages(methods)
 write.csv(CI_eval[[1]], "Rt_estimate_reconstruction/otherFiles/95_CI_coverage.csv")
 write.csv(CI_eval[[2]], "Rt_estimate_reconstruction/otherFiles/95_CI_width.csv")
 write.csv(CI_eval[[3]], "Rt_estimate_reconstruction/otherFiles/diff_to_first.csv")
