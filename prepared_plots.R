@@ -713,7 +713,7 @@ plot_abs_diff_first <- function(max_lag = 20) {
     scale_color_manual(values=col_values, name="method")
   
   ggsave(diff_plot, filename = paste0("Figures/CI/diff_to_first.pdf"),
-         bg = "transparent", width = 8, height = 5.8)
+         bg = "transparent", width = 14, height = 7)
   print(diff_plot)
 }
 
