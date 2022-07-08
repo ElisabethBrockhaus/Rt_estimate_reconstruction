@@ -16,6 +16,7 @@ pub_delays <- read.csv("Rt_estimate_reconstruction/otherFiles/pub_delays.csv", r
 
 methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window",
              "globalrt_7d", "ilmenau", "RKI_7day", "rtlive", "SDSC")
+method <- methods[3]
 country = "DE"
 start_date_min = as_date("2020-11-16")
 end_date = as_date("2021-05-01")
@@ -44,6 +45,8 @@ calc_CI_coverages <- function(methods,
   colnames(diff_first_mean) <- c(0:20)
   diff_prev_mean <- data.frame(matrix(rep(NA, n*21), nrow = n), row.names = methods)
   colnames(diff_prev_mean) <- c(0:20)
+  diff_final_mean <- data.frame(matrix(rep(NA, n*21), nrow = n), row.names = methods)
+  colnames(diff_final_mean) <- c(0:20)
   
   for (method in methods){
     print(method)
@@ -51,8 +54,11 @@ calc_CI_coverages <- function(methods,
     max_lag <- 20
     
     if (method == "epiforecasts") {
-      start_date <- max(start_date_min, as_date("2021-04-14"))
+      # why?
+      #start_date <- max(start_date_min, as_date("2021-04-14"))
+      start_date <- start_date_min
     } else if (method == "globalrt_7d") {
+      # for globalrt no estimates available before 2021-02-15
       start_date <- max(start_date_min, as_date("2021-02-15"))
     } else {
       start_date <- start_date_min
@@ -129,7 +135,7 @@ calc_CI_coverages <- function(methods,
           # CI coverage rates and width...
           
           # if CIs are available calculate mean coverage rates and widths
-          if (dim(R_est_ts %>% dplyr::select(starts_with("lower")) %>% na.omit)[1] > 0){
+          if (sum(!is.na(R_est_ts %>% dplyr::select(starts_with("lower")))) > 0){
             R_covered <- data.frame(date = R_est_ts$date)
             R_covered_difftime <-
               CI_width <-
@@ -243,6 +249,38 @@ calc_CI_coverages <- function(methods,
           }
           
           diff_prev_mean[method, rownames(abs_diff_prev)] <- rowMeans(abs_diff_prev, na.rm = TRUE)
+          
+          
+          ######
+          # MAD to final estimate...
+          
+          abs_diff_final <- R_est_ts %>%
+            dplyr::select(date | R_final | starts_with("R_pub_")) %>%
+            #column_to_rownames("date") %>%
+            # calculate absolute difference to "final" estimate
+            mutate(across(!c(date,R_final), function(x) abs(x - R_final))) %>%
+            dplyr::select(!R_final) %>%
+            # add columns with difference between pub_date and target_date
+            mutate(across(!date, list(lag = ~ {as_date(substr(cur_column(), 7, 16)) - date}))) %>%
+            # order columns alphabetically
+            dplyr::select(colnames(.)[order(colnames(.))]) %>%
+            column_to_rownames("date") %>%          
+            # select columns corresponding to pub_dates after start_date
+            dplyr::select(colnames(.)[as_date(substr(colnames(.), 7, 16)) >= start_date])
+          
+          # reshape wide to long
+          cols <- colnames(dplyr::select(abs_diff_final, !ends_with("_lag")))
+          abs_diff_final_long <- data.frame()
+          for (col in cols){
+            df <- abs_diff_final[,c(col, paste0(col, "_lag"))] %>% setNames(c("diff", "lag"))
+            abs_diff_final_long <- bind_rows(df, abs_diff_final_long)
+          }
+          abs_diff_final_long <- na.omit(abs_diff_final_long)
+          abs_diff_final_mean <- abs_diff_final_long %>%
+            group_by(lag) %>%
+            summarise(diff = mean(diff))
+          
+          diff_final_mean[method, as.character(abs_diff_final_mean$lag)] <- abs_diff_final_mean$diff
         }
       }
     } else {
@@ -250,7 +288,7 @@ calc_CI_coverages <- function(methods,
     }
   }
   
-  return(list(CI_coverage, CI_width_mean, diff_first_mean, diff_prev_mean))
+  return(list(CI_coverage, CI_width_mean, diff_first_mean, diff_prev_mean, diff_final_mean))
 }
 
 methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window",
@@ -261,6 +299,7 @@ write.csv(CI_eval[[1]], "Rt_estimate_reconstruction/otherFiles/95_CI_coverage.cs
 write.csv(CI_eval[[2]], "Rt_estimate_reconstruction/otherFiles/95_CI_width.csv")
 write.csv(CI_eval[[3]], "Rt_estimate_reconstruction/otherFiles/diff_to_first.csv")
 write.csv(CI_eval[[4]], "Rt_estimate_reconstruction/otherFiles/diff_to_prev.csv")
+write.csv(CI_eval[[5]], "Rt_estimate_reconstruction/otherFiles/diff_to_final.csv")
 
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
