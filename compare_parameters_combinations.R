@@ -85,8 +85,7 @@ estimates_pub_ci <- RKI_R_pub %>% rename(R.RKI = R_pub, lower.RKI = lower, upper
   full_join(SDSC_R_pub %>% rename(R.SDSC = R_pub, lower.SDSC = lower, upper.SDSC = upper), by = "date") %>%
   full_join(globalrt_R_pub %>% rename(R.globalrt = R_pub, lower.globalrt = lower, upper.globalrt = upper), by = "date") %>%
   full_join(epiforecasts_R_pub %>% rename(R.epiforecasts = R_pub, lower.epiforecasts = lower, upper.epiforecasts = upper), by = "date") %>%
-  full_join(rtlive_R_pub %>% rename(R.rtlive = R_pub, lower.rtlive = lower, upper.rtlive = upper), by = "date") %>%
-  full_join(HZI_R_pub %>% rename(R.HZI = R_pub, lower.HZI = lower, upper.HZI = upper), by = "date")
+  full_join(rtlive_R_pub %>% rename(R.rtlive = R_pub, lower.rtlive = lower, upper.rtlive = upper), by = "date")
 
 write_csv(estimates_pub_ci, paste0(path_estimates, "R_pub_CI_2021-07-10.csv"))
 
@@ -147,8 +146,7 @@ estimates_adjInput_ci <- R_consensus_adjInput %>% rename(R.consensus = R_calc, l
   full_join(R_Ilmenau_adjInput %>% rename(R.Ilmenau = R_calc, lower.Ilmenau = lower, upper.Ilmenau = upper), by = "date") %>%
   full_join(R_epiforecasts_adjInput %>% rename(R.epiforecasts = R_calc, lower.epiforecasts = lower, upper.epiforecasts = upper), by = "date") %>%
   full_join(R_globalrt_smoother_adjInput %>% rename(R.globalrt = R_calc, lower.globalrt = lower, upper.globalrt = upper), by = "date") %>%
-  full_join(R_rtlive_adjInput %>% rename(R.rtlive = R_calc, lower.rtlive = lower, upper.rtlive = upper), by = "date") %>%
-  full_join(R_HZI_adjInput %>% rename(R.HZI = R_calc, lower.HZI = lower, upper.HZI = upper), by = "date")
+  full_join(R_rtlive_adjInput %>% rename(R.rtlive = R_calc, lower.rtlive = lower, upper.rtlive = upper), by = "date")
 
 write_csv(estimates_adjInput_ci, paste0(path_estimates, "R_adjInput_CI_2021-07-10.csv"))
 
@@ -201,8 +199,7 @@ estimates_adjInputWindow_ci <- R_consensus_adjInputWindow %>% rename(R.consensus
   full_join(R_Ilmenau_adjInputWindow %>% rename(R.Ilmenau = R_calc, lower.Ilmenau = lower, upper.Ilmenau = upper), by = "date") %>%
   full_join(R_epiforecasts_adjInputWindow %>% rename(R.epiforecasts = R_calc, lower.epiforecasts = lower, upper.epiforecasts = upper), by = "date") %>%
   full_join(R_globalrt_smoother_adjInputWindow %>% rename(R.globalrt = R_calc, lower.globalrt = lower, upper.globalrt = upper), by = "date") %>%
-  full_join(R_rtlive_adjInputWindow %>% rename(R.rtlive = R_calc, lower.rtlive = lower, upper.rtlive = upper), by = "date") %>%
-  full_join(R_HZI_adjInputWindow %>% rename(R.HZI = R_calc, lower.HZI = lower, upper.HZI = upper), by = "date")
+  full_join(R_rtlive_adjInputWindow %>% rename(R.rtlive = R_calc, lower.rtlive = lower, upper.rtlive = upper), by = "date")
 
 write_csv(estimates_adjInputWindow_ci, paste0(path_estimates, "R_adjInputWindow_CI_2021-07-10.csv"))
 
@@ -278,8 +275,7 @@ estimates_adjInputWindowGTD_ci <- R_consensus_adjInputWindowGTD %>% rename(R.con
   full_join(R_Ilmenau_adjInputWindowGTD %>% rename(R.Ilmenau = R_calc, lower.Ilmenau = lower, upper.Ilmenau = upper), by = "date") %>%
   full_join(R_epiforecasts_adjInputWindowGTD %>% rename(R.epiforecasts = R_calc, lower.epiforecasts = lower, upper.epiforecasts = upper), by = "date") %>%
   full_join(R_globalrt_smoother_adjInputWindowGTD %>% rename(R.globalrt = R_calc, lower.globalrt = lower, upper.globalrt = upper), by = "date") %>%
-  full_join(R_rtlive_adjInputWindowGTD %>% rename(R.rtlive = R_calc, lower.rtlive = lower, upper.rtlive = upper), by = "date") %>%
-  full_join(R_HZI_adjInputWindowGTD %>% rename(R.HZI = R_calc, lower.HZI = lower, upper.HZI = upper), by = "date")
+  full_join(R_rtlive_adjInputWindowGTD %>% rename(R.rtlive = R_calc, lower.rtlive = lower, upper.rtlive = upper), by = "date")
 
 write_csv(estimates_adjInputWindowGTD_ci, paste0(path_estimates, "R_adjInputWindowGTD_CI_2021-07-10.csv"))
 
@@ -357,8 +353,7 @@ estimates_adjAll_ci <- R_consensus_adjAll %>% rename(R.consensus = R_calc, lower
   full_join(R_Ilmenau_adjAll %>% rename(R.Ilmenau = R_calc, lower.Ilmenau = lower, upper.Ilmenau = upper), by = "date") %>%
   full_join(R_epiforecasts_adjAll %>% rename(R.epiforecasts = R_calc, lower.epiforecasts = lower, upper.epiforecasts = upper), by = "date") %>%
   full_join(R_globalrt_smoother_adjAll %>% rename(R.globalrt = R_calc, lower.globalrt = lower, upper.globalrt = upper), by = "date") %>%
-  full_join(R_rtlive_adjAll %>% rename(R.rtlive = R_calc, lower.rtlive = lower, upper.rtlive = upper), by = "date") %>%
-  full_join(R_HZI_adjAll %>% rename(R.HZI = R_calc, lower.HZI = lower, upper.HZI = upper), by = "date")
+  full_join(R_rtlive_adjAll %>% rename(R.rtlive = R_calc, lower.rtlive = lower, upper.rtlive = upper), by = "date")
 
 write_csv(estimates_adjAll_ci, paste0(path_estimates, "R_adjInputWindowGTDDelays_CI_2021-07-10.csv"))
 

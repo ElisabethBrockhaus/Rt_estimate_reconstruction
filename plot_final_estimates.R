@@ -117,10 +117,11 @@ colMin <- function(data) sapply(data, min, na.rm = TRUE)
 ####################################
 
 org_methods <- c("RKI", "ETH", "Ilmenau", "SDSC", "globalrt", "epiforecasts", "rtlive", "HZI")
+org_methods_CI <- c("RKI", "ETH", "Ilmenau", "SDSC", "globalrt", "epiforecasts", "rtlive")
 comp_methods <- c("consensus", "RKI", "SDSC", "ETH", #"AGES",
                   "Ilmenau", "epiforecasts", "globalrt", "rtlive", "HZI")
 comp_CI <- c("consensus", "SDSC", "ETH", #"AGES",
-             "Ilmenau", "epiforecasts", "globalrt", "rtlive", "HZI")
+             "Ilmenau", "epiforecasts", "globalrt", "rtlive")
 
 # find ylim
 {
@@ -161,7 +162,7 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 
 # plot CI
 {
-  plot_for_comparison(estimates_pub_ci, org_methods, include_CI = T, legend_name = "research group",
+  plot_for_comparison(estimates_pub_ci, org_methods_CI, include_CI = T, legend_name = "research group",
                       filenames = "_CI_real-time.pdf", ylim_u = ylim_u)
   plot_for_comparison(estimates_adjInput_ci, comp_CI, include_CI = T,
                       filenames = "_CI_adjInput.pdf", ylim_u = ylim_u,
