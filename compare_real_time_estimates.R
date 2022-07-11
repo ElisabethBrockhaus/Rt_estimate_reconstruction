@@ -17,7 +17,7 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 path_estimates <- "reproductive_numbers/data-processed/"
 
 # sources of published real-time estimates
-methods <- list.dirs(path_estimates, full.names = F)
+methods <- list.dirs(path_estimates, full.names = F, recursive = F)
 methods <- methods[!methods %in% c("", "AW_7day", "AW_WVday", "owid", "ETHZ_step",
                                    "ETHZ_sliding_window_deaths", "ETHZ_step_deaths",
                                    "zidatalab")]
@@ -36,6 +36,10 @@ pub_delays <- read.csv("Rt_estimate_reconstruction/otherFiles/pub_delays.csv", r
 
 start <- "2021-02-16"
 end <- "2021-03-18"
+
+# period for which RKI was criticized to correct always upwards
+#start <- "2020-09-21"
+#end <- "2020-11-09"
 
 for (method in methods){
   print(method)
