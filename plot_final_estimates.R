@@ -163,19 +163,19 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 # plot CI
 {
   plot_for_comparison(estimates_pub_ci, org_methods_CI, include_CI = T, legend_name = "research group",
-                      filenames = "_CI_real-time.pdf", ylim_u = ylim_u)
+                      filenames = "_CI_real-time.pdf", ylim_u = ylim_u, plot_width_diff_matrices=T)
   plot_for_comparison(estimates_adjInput_ci, comp_CI, include_CI = T,
                       filenames = "_CI_adjInput.pdf", ylim_u = ylim_u,
-                      include_consensus=F)
+                      include_consensus=F, plot_width_diff_matrices=T)
   plot_for_comparison(estimates_adjInputWindow_ci, comp_CI, include_CI = T,
                       filenames = "_CI_adjInputWindow.pdf", ylim_u = ylim_u,
-                      include_consensus=F)
+                      include_consensus=F, plot_width_diff_matrices=T)
   plot_for_comparison(estimates_adjInputWindowGTD_ci, comp_CI, include_CI = T,
                       filenames = "_CI_adjInputWindowGTD.pdf", ylim_u = ylim_u,
-                      include_consensus=F)
+                      include_consensus=F, plot_width_diff_matrices=T)
   plot_for_comparison(estimates_adjAll_ci, comp_CI, include_CI = T,
                       filenames = "_CI_adjAll.pdf", ylim_u = ylim_u,
-                      include_consensus=F)
+                      include_consensus=F, plot_width_diff_matrices=T)
 }
 
 # find ylim for longer time period

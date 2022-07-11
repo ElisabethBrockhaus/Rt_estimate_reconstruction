@@ -255,16 +255,20 @@ plot_published_vs_calculated_95CI <- function(published, calculated, method_name
 # plots for final comparison #
 ##############################
 
-plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-04-01",
-                                start_date = "2021-01-01", end_date = "2021-06-10",
+plot_for_comparison <- function(estimates, comp_methods,
+                                start_absdiff="2020-04-01",
+                                start_date="2021-01-01", end_date="2021-06-10",
                                 legend_name="model", plot_title="",
                                 col_palette="Set1",
-                                include_consensus = T, name_consensus="consensus",
-                                filenames = "_latest_plot.png",
-                                include_CI=F, plot_diff_matrices=F, sort_numerically=F,
-                                long_time_frame = F,
+                                include_consensus=T, name_consensus="consensus",
+                                filenames="_latest_plot.png",
+                                plot_diff_matrices=F,
+                                include_CI=F, plot_width_diff_matrices=F,
+                                sort_numerically=F,
+                                long_time_frame=F,
                                 ylim_l=0, ylim_u=2.05,
-                                verbose = T){
+                                verbose=T) {
+  
   if (length(comp_methods)*3 == dim(estimates)[2]-1){
     names_ci <- rep(NA, length(comp_methods)*3)
     for (i in 1:length(comp_methods)){
@@ -359,6 +363,72 @@ plot_for_comparison <- function(estimates, comp_methods, start_absdiff = "2020-0
                               angle_col = 315, cluster_rows = FALSE, cluster_cols = FALSE,
                               legend = FALSE)
     save_pheatmap_pdf(mean_abs_diff, paste0("Figures/mean_abs_difference", filenames))
+  }
+  
+  if(plot_width_diff_matrices) {
+    upper_bounds <- estimates %>%
+      dplyr::filter(date >= start_absdiff, date <= end_date) %>%
+      column_to_rownames("date") %>%
+      dplyr::select(starts_with("upper"))
+    lower_bounds <- estimates %>%
+      dplyr::filter(date >= start_absdiff, date <= end_date) %>%
+      column_to_rownames("date") %>%
+      dplyr::select(starts_with("lower"))
+    widths <- (upper_bounds - lower_bounds) %>%
+      rename(setNames(names(.), gsub("upper", "width", names(.)))) %>%
+      rownames_to_column("date") %>%
+      mutate(date = as_date(date))
+    widths <- widths[rowSums(is.na(widths)) == 0,]
+    
+    print("Date range for calculation of MAD of CI width:")
+    print(min(widths$date))
+    print(max(widths$date))
+    print("Number of days in MAD:")
+    print(as.numeric(max(widths$date) - min(widths$date)))
+    
+    # adjust method names
+    if (include_consensus){
+      methods_legend <- comp_methods
+    } else {
+      methods_legend <- comp_methods[!comp_methods %in% c(name_consensus)]
+    }
+    methods_ <- methods_legend
+    for (i in c(" ", ",", "\\(", "\\)")) {methods_ <- gsub(i, ".", methods_)}
+    
+    n <- length(methods_)
+    matr <- matrix(rep(rep(0,n), n), ncol=n)
+    colnames(matr) <- rownames(matr) <- methods_legend
+    
+    for (m1 in seq_along(methods_)) {
+      for (m2 in seq_along(methods_)){
+        widths <- data.frame(widths)
+        diff <- widths[,paste0("width.", methods_[m1])] - widths[,paste0("width.", methods_[m2])]
+        matr[methods_legend[m1], methods_legend[m2]] <- mean(as.vector(abs(diff)))
+      }
+    }
+    
+    df <- data.frame(matr)
+    row.names(df) <- colnames(df) <- methods_legend
+    
+    if (sort_numerically){
+      if(all(grepl("(", c(row.names(df), colnames(df)), fixed = T))) {
+        df <- df[order(as.numeric(str_match(row.names(df), "(.*?)[(](.*?)")[,2]),
+                       as.numeric(str_match(colnames(df), "(.*?)[(](.*?)")[,2]))]
+      } else {
+        df <- df[order(as.numeric(row.names(df))), order(as.numeric(colnames(df)))]
+      }
+      
+    } else{
+      df <- df[order(row.names(df)), order(colnames(df))]
+    }
+    
+    width_MAD <- pheatmap(df, color = viridis(100), breaks = seq(0,0.2,0.2/100),
+                          border_color = NA, cellwidth = unit(2, "cm"), cellheight = unit(1, "cm"),
+                          display_numbers = TRUE,
+                          fontsize = 18, fontsize_number=22, number_color = "white",
+                          angle_col = 315, cluster_rows = FALSE, cluster_cols = FALSE,
+                          legend = FALSE)
+    save_pheatmap_pdf(width_MAD, paste0("Figures/width_MAD", filenames))
   }
 }
 
