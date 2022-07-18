@@ -162,6 +162,7 @@ plot_multiple_estimates <- function(estimates, legend_name, plot_title="",
       axis.line.y.right = element_line(),
       axis.line.x.top = element_line(),
       legend.position = "bottom",
+      panel.border = element_rect(fill = "transparent", size = 0.5),
       panel.background = element_rect(fill = "transparent"),
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
@@ -462,6 +463,7 @@ plot_real_time_estimates <- function(estimates,
     
     theme_minimal() +
     theme(
+      plot.margin = unit(c(2,10,1,2), "mm"),
       plot.title = element_text(size=18),
       axis.text=element_text(size=16),
       axis.title=element_text(size=18),
@@ -471,7 +473,7 @@ plot_real_time_estimates <- function(estimates,
       axis.line.y.right = element_line(),
       axis.line.x.top = element_line(),
       legend.position = "bottom",
-      panel.border = element_rect(fill = "transparent", size = 0.3),
+      panel.border = element_rect(fill = "transparent", size = 0.5),
       panel.background = element_rect(fill = "transparent"),
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
@@ -543,6 +545,7 @@ plot_weekday_effects <- function(estimates,
       axis.line.y.right = element_line(),
       axis.line.x.top = element_line(),
       legend.position = "bottom",
+      panel.border = element_rect(fill = "transparent", size = 0.5),
       panel.background = element_rect(fill = "transparent")
     ) +
     ggtitle(plot_title)
@@ -586,6 +589,7 @@ plot_weekday_effects <- function(estimates,
       axis.line.y.right = element_line(),
       axis.line.x.top = element_line(),
       legend.position = "bottom",
+      panel.border = element_rect(fill = "transparent", size = 0.5),
       panel.background = element_rect(fill = "transparent")
     ) +
     ggtitle(plot_title)
