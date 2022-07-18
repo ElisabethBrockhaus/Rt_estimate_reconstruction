@@ -471,14 +471,14 @@ plot_real_time_estimates <- function(estimates,
       axis.line.y.right = element_line(),
       axis.line.x.top = element_line(),
       legend.position = "bottom",
+      panel.border = element_rect(fill = "transparent", size = 0.3),
       panel.background = element_rect(fill = "transparent"),
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
     ggtitle(plot_title) +
-    
-    labs(x = NULL, y = "Rt estimate") +
-    scale_x_date(limits = as.Date(c(min(estimates$date),max(estimates$date)-1)),
+    labs(x = NULL, y = "R") +
+    scale_x_date(limits = as.Date(c(start_date,end_date)),
                  date_labels = "%b %d", expand = c(0,1),
                  breaks = date_breaks("1 week"))
   
@@ -497,7 +497,7 @@ plot_real_time_estimates <- function(estimates,
   
   ggsave(R_plot, filename = paste0("Figures/estimates", filenames),  bg = "transparent",
          width = 13.1, height = 5.8)
-  print(R_plot)
+  return(R_plot)
 }
 
 

@@ -1,4 +1,5 @@
 library(data.table)
+library(ggpubr)
 
 setwd("..")
 # needs to be the directory with the repos "Rt_estimate_reconstruction", "reproductive_numbers"
@@ -17,10 +18,12 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 path_estimates <- "reproductive_numbers/data-processed/"
 
 # sources of published real-time estimates
-methods <- list.dirs(path_estimates, full.names = F, recursive = F)
-methods <- methods[!methods %in% c("", "AW_7day", "AW_WVday", "owid", "ETHZ_step",
-                                   "ETHZ_sliding_window_deaths", "ETHZ_step_deaths",
-                                   "zidatalab")]
+# methods <- list.dirs(path_estimates, full.names = F, recursive = F)
+# methods <- methods[!methods %in% c("", "AW_7day", "AW_WVday", "owid", "ETHZ_step",
+#                                    "ETHZ_sliding_window_deaths", "ETHZ_step_deaths",
+#                                    "zidatalab")]
+methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window",
+             "globalrt_7d", "ilmenau", "RKI_7day", "rtlive", "SDSC")
 methods
 
 available_countries <- read.csv("Rt_estimate_reconstruction/otherFiles/available_countries.csv", row.names = 1)
@@ -34,14 +37,16 @@ pub_delays <- read.csv("Rt_estimate_reconstruction/otherFiles/pub_delays.csv", r
 #start <- "2021-04-01"
 #end <- "2021-05-01"
 
-start <- "2021-02-16"
-end <- "2021-03-18"
+#start <- "2021-02-16"
+#end <- "2021-03-18"
 
 # period for which RKI was criticized to correct always upwards
-#start <- "2020-09-21"
-#end <- "2020-11-09"
+start <- "2020-09-28"
+end <- "2020-12-07"
 
-for (method in methods){
+plots <- list()
+
+for (method in methods[methods!="globalrt_7d"]){
   print(method)
   pub_dates <- list.files(paste0(path_estimates, method),
                           full.names = F) %>% substr(1, 10)
@@ -66,13 +71,13 @@ for (method in methods){
                                                 end = end_date,
                                                 pub_date = pub_date,
                                                 location = country,
-                                                verbose = F)
+                                                verbose = F) %>%
+              dplyr::select(date, R_pub)
             if (pub_date != final_version){
               last <- max(R_est[rowSums(!is.na(R_est))>1, "date"])
               R_est <- R_est %>% dplyr::filter(date <= last, date > last - 7)
             }
-            names(R_est) <- c("date", paste0("R.", pub_date),
-                              paste0("lower.", pub_date), paste0("upper.", pub_date))
+            names(R_est) <- c("date", paste0("R.", pub_date))
           },
           error = function(e) {R_est <<- data.frame(date = seq(as_date("2019-12-28"),
                                                                as_date(final_version),
@@ -93,19 +98,38 @@ for (method in methods){
           dir.create(folder)
         }
         
-        plot_real_time_estimates(R_est_ts,
-                                 start_date = last_date - 30,
-                                 end_date = last_date,
-                                 plot_title = paste(method, country),
-                                 name_consensus = final_version,
-                                 filenames = paste0(folder_ending,
-                                                    method, "_", country, ".pdf"))
+        if (method == "ilmenau"){
+          ylim <- c(0.3, 2.15)
+        } else if(method == "Braunschweig"){
+          ylim <- c(0.9, 1.75)
+        } else {
+          ylim <- c(0.9, 1.5)
+        }
+        
+        plots[[method]] <- plot_real_time_estimates(R_est_ts,
+                                                    start_date = start,
+                                                    end_date = end,
+                                                    plot_title = method,
+                                                    name_consensus = final_version,
+                                                    filenames = paste0(folder_ending,
+                                                                       method, "_", country, ".pdf"),
+                                                    ylim_l = ylim[1], ylim_u = ylim[2])
       }
     } else {
       print(paste("No estimates from", method, "for", country, "."))
     }
   }
 }
+
+plots_arranged <- ggarrange(plots[[methods[1]]], plots[[methods[2]]], plots[[methods[3]]],
+                            plots[[methods[5]]], plots[[methods[6]]],
+                            plots[[methods[7]]], plots[[methods[8]]],
+                            ncol=1, nrow=7,
+                            common.legend = T, legend="bottom", legend.grob = get_legend(plots[["epiforecasts"]]))
+print(plots_arranged)
+ggsave(plots_arranged, filename = paste0("Figures/estimates", folder_ending,
+                                         "all_methods.pdf"),
+       bg = "transparent", width = 21, height = 29.7)
 
 
 
