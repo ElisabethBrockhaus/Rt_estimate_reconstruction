@@ -1,3 +1,5 @@
+library(ggpubr)
+
 setwd("..")
 # needs to be the directory with the repos "Rt_estimate_reconstruction", "reproductive_numbers" 
 getwd()
@@ -303,11 +305,19 @@ write.csv(CI_eval[[5]], "Rt_estimate_reconstruction/otherFiles/diff_to_final.csv
 
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
-plot_CI_coverage_rates()
-plot_CI_widths()
+plot1 <- plot_CI_coverage_rates()
+plot2 <- plot_CI_widths()
+plot3 <- plot_abs_diff_prev()
+plot4 <- plot_abs_diff_final()
+
+consistence_plot <- ggarrange(plot1, plot2, plot3, plot4, ncol=2, nrow=2,
+                              labels = list("A", "B", "C", "D"), font.label = list(size = 18, face = "bold"),
+                              common.legend = T, legend="bottom", legend.grob = get_legend(plot2))
+print(consistence_plot)
+ggsave(consistence_plot, filename = paste0("Figures/CI/consistence_plots.pdf"),
+       bg = "transparent", width = 16, height = 11.6)
+
 plot_abs_diff_first(max_lag=20)
-plot_abs_diff_prev()
-plot_abs_diff_final()
 
 CI_coverage_50 <- calc_CI_coverages(c("Braunschweig", "epiforecasts", "rtlive"),
                                     conf_level = 50)

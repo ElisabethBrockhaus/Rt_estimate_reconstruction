@@ -629,22 +629,22 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
   coverage_plot <- ggplot() +
     theme_minimal() +
     theme(
+      plot.margin = unit(c(3,14,2,3), "mm"),
       plot.title = element_text(size=18),
       axis.text=element_text(size=16),
-      axis.title=element_text(size=18),
+      axis.title.y=element_text(size=18),
+      axis.title.x = element_blank(),
       legend.text=element_text(size=16),
       legend.title=element_text(size=18),
-      axis.line = element_line(),
-      axis.line.y.right = element_line(),
-      axis.line.x.top = element_line(),
       legend.position = "bottom",
+      panel.border= element_rect(fill = "transparent", size = 0.5),
       panel.background = element_rect(fill = "transparent"),
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
-    #ggtitle(paste0(conf_level, "%-CI coverage rates")) +
-    labs(x = "lag between estimation and target day", y = "coverage rate") +
-    coord_cartesian(xlim = c(-20, 0), ylim = c(-0.03, 1.03), expand = FALSE)
+    ylab("proportion containing final estimate") +
+    coord_cartesian(xlim = c(-20, 0), ylim = c(-0.03, 1.03), expand = FALSE, clip = "off") +
+    scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
   
   methods_legend <- unique(coverage_data$method)
   col_values <- get_colors(methods = methods_legend, palette = "methods")
@@ -670,7 +670,7 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
   
   ggsave(coverage_plot, filename = paste0("Figures/CI/", conf_level, "_coverage_rates.pdf"),
          bg = "transparent", width = 8, height = 5.8)
-  print(coverage_plot)
+  return(coverage_plot)
 }
 
 
@@ -697,22 +697,22 @@ plot_CI_widths <- function(conf_level = "95"){
   width_plot <- ggplot() +
     theme_minimal() +
     theme(
+      plot.margin = unit(c(3,14,2,3), "mm"),
       plot.title = element_text(size=18),
       axis.text=element_text(size=16),
-      axis.title=element_text(size=18),
+      axis.title.y=element_text(size=18),
+      axis.title.x = element_blank(),
       legend.text=element_text(size=16),
       legend.title=element_text(size=18),
-      axis.line = element_line(),
-      axis.line.y.right = element_line(),
-      axis.line.x.top = element_line(),
       legend.position = "bottom",
+      panel.border= element_rect(fill = "transparent", size = 0.5),
       panel.background = element_rect(fill = "transparent"),
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
-    #ggtitle(paste0("Mean width of ", conf_level, "%-CI")) +
-    labs(x = "lag between estimation and target day", y = "width") +
-    coord_cartesian(xlim = c(-20, 0), ylim = c(-0.01, 0.85), expand = FALSE)
+    ylab("width of 95%-CI") +
+    coord_cartesian(xlim = c(-20, 0), ylim = c(-0.01, 0.875), expand = FALSE, clip = "off") +
+    scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
   
   methods_legend <- unique(width_data$method)
   col_values <- get_colors(methods = methods_legend, palette = "methods")
@@ -723,68 +723,11 @@ plot_CI_widths <- function(conf_level = "95"){
                   y = value,
                   color = method),
               size = .8, na.rm = T) +
-    #scale_y_log10(breaks = trans_breaks(identity, identity)) +
     scale_color_manual(values=col_values, name="method")
 
   ggsave(width_plot, filename = paste0("Figures/CI/", conf_level, "_CI_widths.pdf"),
          bg = "transparent", width = 8, height = 5.8)
-  print(width_plot)
-}
-
-
-plot_abs_diff_first <- function(max_lag = 20) {
-  methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
-               "ilmenau", "RKI_7day", "rtlive", "SDSC")
-  
-  diff_to_first <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/diff_to_first.csv")) %>%
-    as.data.frame() %>%
-    column_to_rownames("...1")
-  
-  diff_data <- diff_to_first %>%
-    rownames_to_column("method") %>%
-    dplyr::filter(method %in% methods) %>%
-    mutate(method = plyr::mapvalues(method,
-                                    c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
-                                    c("HZI",          "ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
-    arrange(method)
-  
-  diff_data <- diff_data %>%
-    gather("variable", "value", as.character(0:max_lag)) %>%
-    mutate(variable = as.numeric(variable))
-  
-  diff_plot <- ggplot() +
-    theme_minimal() +
-    theme(
-      plot.title = element_text(size=18),
-      axis.text=element_text(size=16),
-      axis.title=element_text(size=18),
-      legend.text=element_text(size=16),
-      legend.title=element_text(size=18),
-      axis.line = element_line(),
-      axis.line.y.right = element_line(),
-      axis.line.x.top = element_line(),
-      legend.position = "bottom",
-      panel.background = element_rect(fill = "transparent"),
-      panel.grid.major = element_line(),
-      panel.grid.minor = element_blank()
-    ) +
-    labs(x = "time since first estimate", y = "MAD to first estimate") +
-    coord_cartesian(xlim = c(0,max_lag), ylim = c(-0.01, 0.37), expand = FALSE)
-  
-  methods_legend <- unique(diff_data$method)
-  col_values <- get_colors(methods = methods_legend, palette = "methods")
-  
-  diff_plot <- diff_plot + 
-    geom_line(data=diff_data,
-              aes(x = variable,
-                  y = value,
-                  color = method),
-              size = .8, na.rm = T) +
-    scale_color_manual(values=col_values, name="method")
-  
-  ggsave(diff_plot, filename = paste0("Figures/CI/diff_to_first.pdf"),
-         bg = "transparent", width = 14, height = 7)
-  print(diff_plot)
+  return(width_plot)
 }
 
 
@@ -811,21 +754,22 @@ plot_abs_diff_prev <- function() {
   diff_plot <- ggplot() +
     theme_minimal() +
     theme(
+      plot.margin = unit(c(3,14,2,3), "mm"),
       plot.title = element_text(size=18),
       axis.text=element_text(size=16),
-      axis.title=element_text(size=18),
+      axis.title.y=element_text(size=18),
+      axis.title.x = element_blank(),
       legend.text=element_text(size=16),
       legend.title=element_text(size=18),
-      axis.line = element_line(),
-      axis.line.y.right = element_line(),
-      axis.line.x.top = element_line(),
       legend.position = "bottom",
+      panel.border= element_rect(fill = "transparent", size = 0.5),
       panel.background = element_rect(fill = "transparent"),
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
-    labs(x = "lag between estimation and target day", y = "MAD to estimate from previous day") +
-    coord_cartesian(xlim = c(-20, 0), ylim = c(-0.01, 0.3), expand = FALSE)
+    ylab("MAD to estimate from previous day") +
+    coord_cartesian(xlim = c(-20, 0), ylim = c(-0.01, 0.36), expand = FALSE, clip = "off") +
+    scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
   
   methods_legend <- unique(diff_data$method)
   col_values <- get_colors(methods = methods_legend, palette = "methods")
@@ -840,7 +784,7 @@ plot_abs_diff_prev <- function() {
   
   ggsave(diff_plot, filename = paste0("Figures/CI/diff_to_prev.pdf"),
          bg = "transparent", width = 8, height = 5.8)
-  print(diff_plot)
+  return(diff_plot)
 }
 
 
@@ -867,21 +811,22 @@ plot_abs_diff_final <- function() {
   diff_plot <- ggplot() +
     theme_minimal() +
     theme(
+      plot.margin = unit(c(3,14,2,3), "mm"),
       plot.title = element_text(size=18),
       axis.text=element_text(size=16),
-      axis.title=element_text(size=18),
+      axis.title.y=element_text(size=18),
+      axis.title.x = element_blank(),
       legend.text=element_text(size=16),
       legend.title=element_text(size=18),
-      axis.line = element_line(),
-      axis.line.y.right = element_line(),
-      axis.line.x.top = element_line(),
       legend.position = "bottom",
+      panel.border= element_rect(fill = "transparent", size = 0.5),
       panel.background = element_rect(fill = "transparent"),
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
-    labs(x = "lag between estimation and target day", y = "MAD to final estimate") +
-    coord_cartesian(xlim = c(-20, 0), ylim = c(-0.01, 0.3), expand = FALSE)
+    ylab("MAD to final estimate") +
+    coord_cartesian(xlim = c(-20, 0), ylim = c(-0.01, 0.36), expand = FALSE, clip = "off") +
+    scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
   
   methods_legend <- unique(diff_data$method)
   col_values <- get_colors(methods = methods_legend, palette = "methods")
@@ -896,5 +841,65 @@ plot_abs_diff_final <- function() {
   
   ggsave(diff_plot, filename = paste0("Figures/CI/diff_to_final.pdf"),
          bg = "transparent", width = 8, height = 5.8)
+  return(diff_plot)
+}
+
+
+plot_abs_diff_first <- function(max_lag = 20) {
+  methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
+               "ilmenau", "RKI_7day", "rtlive", "SDSC")
+  
+  diff_to_first <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/diff_to_first.csv")) %>%
+    as.data.frame() %>%
+    column_to_rownames("...1")
+  
+  diff_data <- diff_to_first %>%
+    rownames_to_column("method") %>%
+    dplyr::filter(method %in% methods) %>%
+    mutate(method = plyr::mapvalues(method,
+                                    c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
+                                    c("HZI",          "ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
+    arrange(method)
+  
+  diff_data <- diff_data %>%
+    gather("variable", "value", as.character(0:max_lag)) %>%
+    mutate(variable = as.numeric(variable))
+  
+  diff_plot <- ggplot() +
+    theme_minimal() +
+    theme(
+      plot.margin = unit(c(1,12,1,2), "mm"),
+      plot.title = element_text(size=18),
+      axis.text=element_text(size=16),
+      axis.title.y=element_text(size=18),
+      axis.title.x = element_blank(),
+      legend.text=element_text(size=16),
+      legend.title=element_text(size=18),
+      legend.position = "bottom",
+      panel.border= element_rect(fill = "transparent", size = 0.5),
+      panel.background = element_rect(fill = "transparent"),
+      panel.grid.major = element_line(),
+      panel.grid.minor = element_blank()
+    ) +
+    ylab("MAD to first estimate") +
+    coord_cartesian(xlim = c(0,max_lag), ylim = c(-0.01, 0.37), expand = FALSE, clip = "off") +
+    scale_x_continuous(labels = paste0(seq(0, max_lag, 5), "d later"))
+  
+  methods_legend <- unique(diff_data$method)
+  col_values <- get_colors(methods = methods_legend, palette = "methods")
+  
+  diff_plot <- diff_plot + 
+    geom_line(data=diff_data,
+              aes(x = variable,
+                  y = value,
+                  color = method),
+              size = .8, na.rm = T) +
+    scale_color_manual(values=col_values, name="method")
+  
+  ggsave(diff_plot, filename = paste0("Figures/CI/diff_to_first.pdf"),
+         bg = "transparent", width = 14, height = 7)
   print(diff_plot)
 }
+
+
+
