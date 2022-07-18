@@ -22,8 +22,8 @@ path_estimates <- "reproductive_numbers/data-processed/"
 # methods <- methods[!methods %in% c("", "AW_7day", "AW_WVday", "owid", "ETHZ_step",
 #                                    "ETHZ_sliding_window_deaths", "ETHZ_step_deaths",
 #                                    "zidatalab")]
-methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window",
-             "globalrt_7d", "ilmenau", "RKI_7day", "rtlive", "SDSC")
+methods <- c("Braunschweig", "ilmenau", "ETHZ_sliding_window", "RKI_7day",
+             "rtlive", "SDSC", "epiforecasts", "globalrt_7d")
 methods
 
 available_countries <- read.csv("Rt_estimate_reconstruction/otherFiles/available_countries.csv", row.names = 1)
@@ -34,20 +34,26 @@ pub_delays <- read.csv("Rt_estimate_reconstruction/otherFiles/pub_delays.csv", r
 # plot estimates as time series #
 #################################
 
-#start <- "2021-04-01"
-#end <- "2021-05-01"
-
-#start <- "2021-02-16"
-#end <- "2021-03-18"
-
 # period for which RKI was criticized to correct always upwards
-start <- "2020-09-28"
-end <- "2020-12-07"
+start_default <- "2020-09-28"
+end_default <- "2020-12-07"
+
+start_globalrt <- "2021-02-15"
+end_globalrt <- "2021-04-26"
 
 plots <- list()
 
-for (method in methods[methods!="globalrt_7d"]){
+for (method in methods){
   print(method)
+  
+  if (method == "globalrt_7d"){
+    start <- start_globalrt
+    end <- end_globalrt
+  } else {
+    start <- start_default
+    end <- end_default
+  }
+  
   pub_dates <- list.files(paste0(path_estimates, method),
                           full.names = F) %>% substr(1, 10)
 
@@ -106,10 +112,17 @@ for (method in methods[methods!="globalrt_7d"]){
           ylim <- c(0.9, 1.5)
         }
         
+        title <- ifelse(method == "Braunschweig", "HZI",
+                        ifelse(method == "ETHZ_sliding_window", "ETH",
+                               ifelse(method == "globalrt_7d", "globalrt",
+                                      ifelse(method == "ilmenau", "Ilmenau",
+                                             ifelse(method == "RKI_7day", "RKI",
+                                                    method)))))
+        
         plots[[method]] <- plot_real_time_estimates(R_est_ts,
                                                     start_date = start,
                                                     end_date = end,
-                                                    plot_title = method,
+                                                    plot_title = title,
                                                     name_consensus = final_version,
                                                     filenames = paste0(folder_ending,
                                                                        method, "_", country, ".pdf"),
@@ -122,14 +135,14 @@ for (method in methods[methods!="globalrt_7d"]){
 }
 
 plots_arranged <- ggarrange(plots[[methods[1]]], plots[[methods[2]]], plots[[methods[3]]],
-                            plots[[methods[5]]], plots[[methods[6]]],
+                            plots[[methods[4]]], plots[[methods[5]]], plots[[methods[6]]],
                             plots[[methods[7]]], plots[[methods[8]]],
-                            ncol=1, nrow=7,
-                            common.legend = T, legend="bottom", legend.grob = get_legend(plots[["epiforecasts"]]))
+                            ncol=1, nrow=8,
+                            common.legend = T, legend="bottom", legend.grob = get_legend(plots[["RKI_7day"]]))
 print(plots_arranged)
-ggsave(plots_arranged, filename = paste0("Figures/estimates", folder_ending,
-                                         "all_methods.pdf"),
-       bg = "transparent", width = 21, height = 29.7)
+ggsave(plots_arranged, filename = paste0("Figures/estimates_realtime_raw/", end_default,
+                                         "/all_methods.pdf"),
+       bg = "transparent", width = 17, height = 21)
 
 
 
