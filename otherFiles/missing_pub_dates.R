@@ -21,7 +21,7 @@ df_missing_dates <- data.frame(matrix(rep(NA, length(methods)*length(target_date
   setNames(methods)
 
 for (method in methods){
-  dates <- list.files(paste0(path_estimates, method)) %>%
+  dates <- list.files(paste0(path_estimates, method), pattern = "\\d{4}-\\d{2}-\\d{2}") %>%
     substr(1,10) %>%
     as_date
   dates <- dates[dates %in% target_dates]
@@ -48,21 +48,22 @@ plot_dates <- plot_dates %>%
 plot <- ggplot(data=plot_dates, aes(date, method, col=method)) +
   theme_minimal() +
   theme(
+    plot.margin = unit(c(1,9,1,2), "mm"),
     plot.title = element_text(size=18),
     axis.text=element_text(size=16),
     axis.title=element_blank(),
     legend.text=element_text(size=16),
     legend.title=element_text(size=18),
     axis.line = element_line(),
-    axis.line.y.right = element_line(),
-    axis.line.x.top = element_line(),
     legend.position = "None",
+    panel.border = element_rect(fill = "transparent"),
     panel.background = element_rect(fill = "transparent"),
     panel.grid.major = element_line(),
     panel.grid.minor = element_blank()
   ) +
   geom_point() +
-  scale_x_date(date_labels = "%b %y") +
+  scale_x_date(date_labels = "%b %y",
+               limits = c(start_date, end_date), expand = expansion(0.01)) +
   scale_color_manual(values=col_values, name="method")
 print(plot)
 ggsave(plot, filename = paste0("Figures/missing_pub_dates.pdf"),
