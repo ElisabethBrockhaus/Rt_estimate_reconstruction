@@ -139,42 +139,58 @@ wde_dummies <- read.csv("Rt_estimate_reconstruction/otherFiles/weekday_effects_w
 
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
-plot_data <- wde_dummies %>%
+plot_data <- wde_splines %>%
   rownames_to_column("weekday") %>%
   gather("method", "value", 2:(length(methods)+1)) %>%
   mutate(method = plyr::mapvalues(method,
                                   c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
                                   c("HZI",          "ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
-  arrange(method)
+  arrange(method) %>%
+  mutate(exp_value = exp(value))
 
 methods_legend <- unique(plot_data$method)
 col_values <- get_colors(methods = methods_legend, palette = "methods")
 
-plot <- ggplot(data=plot_data,
-               aes(x = factor(weekday, levels = wds),
-                   y = value,
-                   group = method,
-                   color = method),
-               size = .8, na.rm = T) +
+plot_raw <- ggplot() +
   theme_minimal() +
   theme(
     plot.margin = unit(c(3,14,2,3), "mm"),
     plot.title = element_text(size=18),
-    axis.text=element_text(size=16),
-    axis.title.y=element_text(size=18),
+    axis.text = element_text(size=16),
+    axis.title.y = element_text(size=18),
     axis.title.x = element_blank(),
-    legend.text=element_text(size=16),
-    legend.title=element_text(size=18),
+    legend.text = element_text(size=16),
+    legend.title = element_text(size=18),
     legend.position = "bottom",
-    panel.border= element_rect(fill = "transparent", size = 0.5),
+    panel.border = element_rect(fill = "transparent", size = 0.5),
     panel.background = element_rect(fill = "transparent"),
     panel.grid.major = element_line(),
     panel.grid.minor = element_blank()
-  ) +
-  ylab("coefficient of target date weekday") + 
-  geom_line() +
+  )
+
+plot <- plot_raw +
+  geom_line(data=plot_data,
+            aes(x = factor(weekday, levels = wds),
+                y = value,
+                group = method,
+                color = method),
+            size = .8, na.rm = T) +
   scale_x_discrete() + 
-  scale_color_manual(values=col_values, name="method")
+  scale_color_manual(values = col_values, name = "method") +
+  ylab("coefficient for target date weekday")
+
+print(plot)
+
+plot <- plot_raw +
+  geom_line(data=plot_data,
+            aes(x = factor(weekday, levels = wds),
+                y = exp_value,
+                group = method,
+                color = method),
+            size = .8, na.rm = T) +
+  scale_x_discrete() + 
+  scale_color_manual(values = col_values, name = "method") +
+  ylab("exp(coefficient) for target date weekday")
 
 print(plot)
 
