@@ -26,12 +26,13 @@ weekday_effects <- data.frame(matrix(rep(NA, length(methods)*7), nrow=7))
 colnames(weekday_effects) <- methods
 row.names(weekday_effects) <- wds
 
-# method <- methods[6]
 country <- "DE"
 start_date <- as_date("2020-11-16")
 end_date <- as_date("2021-05-01")
 path_estimates <- "reproductive_numbers/data-processed/"
 
+# choose whether to encode (estimation date - target date) as splines or dummies
+splines_for_difftime <- F
 
 for (method in methods){
   print(method)
@@ -49,7 +50,7 @@ for (method in methods){
                                     max(as_date(pub_dates)) - min_lag,
                                     by = "day"))
   
-  # read 7 most recent R values for all estimation dates
+  # read 7 most recent R values for all estimation dates (ed)
   for (pub_date in pub_dates){
     tryCatch(
       {
@@ -80,7 +81,7 @@ for (method in methods){
   # create filter for existing values in R_est_ts
   non_na_entries <- !(R_est_ts %>% dplyr::select(-target_date) %>% is.na())
   
-  #### first regressor: splines for target date
+  #### first regressor: splines for target date (td)
   # create splines of target_date
   target_dates <- R_est_ts %>%
     transmute(across(!target_date, list(td = ~ {target_date})))
@@ -91,11 +92,15 @@ for (method in methods){
   weekdays_td <- data.frame(lapply(target_dates, weekdays))[non_na_entries]
   weekdays_td <- relevel(as.factor(weekdays_td), ref = "Monday") # define baseline category
   
-  #### third regressor: splines for difference between estimation date and target date
+  #### third regressor: splines or dummies for difference between estimation date and target date
   time_diffs <- R_est_ts %>%
     # estimation date - target date
     transmute(across(!target_date, list(lag = ~ {as.numeric(difftime(as_date(substr(cur_column(), 13, 22)), target_date), units = "days")})))
-  splines_time_diff <- bs(time_diffs[non_na_entries])
+  if(splines_for_difftime) {
+    time_diff <- bs(time_diffs[non_na_entries])
+  } else {
+    time_diff <- as.factor(time_diffs[non_na_entries])
+  }
   
   #### optional fourth regressor: weekday of estimation date
   estimation_dates <- R_est_ts %>%
@@ -112,10 +117,10 @@ for (method in methods){
   # fit linear model #
   ####################
   
-  model <- lm(log_R ~ splines_td + weekdays_td + splines_time_diff)
+  model <- lm(log_R ~ splines_td + weekdays_td + time_diff)
   print(summary(model))
   
-  model2 <- lm(log_R ~ splines_td + weekdays_td + splines_time_diff + weekdays_ed)
+  model2 <- lm(log_R ~ splines_td + weekdays_td + time_diff + weekdays_ed)
   #summary(model2)
   
   wd_regressors <- paste0("weekdays_td", wds[2:7])
@@ -128,6 +133,51 @@ for (method in methods){
 }
 
 write.csv(weekday_effects, "Rt_estimate_reconstruction/otherFiles/weekday_effects.csv")
+
+wde_splines <- read.csv("Rt_estimate_reconstruction/otherFiles/weekday_effects_with_splines.csv", row.names = 1)
+wde_dummies <- read.csv("Rt_estimate_reconstruction/otherFiles/weekday_effects_with_dummies.csv", row.names = 1)
+
+source("Rt_estimate_reconstruction/prepared_plots.R")
+
+plot_data <- wde_dummies %>%
+  rownames_to_column("weekday") %>%
+  gather("method", "value", 2:(length(methods)+1)) %>%
+  mutate(method = plyr::mapvalues(method,
+                                  c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
+                                  c("HZI",          "ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
+  arrange(method)
+
+methods_legend <- unique(plot_data$method)
+col_values <- get_colors(methods = methods_legend, palette = "methods")
+
+plot <- ggplot(data=plot_data,
+               aes(x = factor(weekday, levels = wds),
+                   y = value,
+                   group = method,
+                   color = method),
+               size = .8, na.rm = T) +
+  theme_minimal() +
+  theme(
+    plot.margin = unit(c(3,14,2,3), "mm"),
+    plot.title = element_text(size=18),
+    axis.text=element_text(size=16),
+    axis.title.y=element_text(size=18),
+    axis.title.x = element_blank(),
+    legend.text=element_text(size=16),
+    legend.title=element_text(size=18),
+    legend.position = "bottom",
+    panel.border= element_rect(fill = "transparent", size = 0.5),
+    panel.background = element_rect(fill = "transparent"),
+    panel.grid.major = element_line(),
+    panel.grid.minor = element_blank()
+  ) +
+  ylab("coefficient of target date weekday") + 
+  geom_line() +
+  scale_x_discrete() + 
+  scale_color_manual(values=col_values, name="method")
+
+print(plot)
+
 
 
 
