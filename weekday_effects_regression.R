@@ -22,9 +22,10 @@ methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window",
              "globalrt_7d", "ilmenau", "RKI_7day", "rtlive", "SDSC")
 
 wds <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
-weekday_effects <- data.frame(matrix(rep(NA, length(methods)*7), nrow=7))
-colnames(weekday_effects) <- methods
-row.names(weekday_effects) <- wds
+weekday_effects_target_date <- data.frame(matrix(rep(NA, length(methods)*7), nrow=7))
+colnames(weekday_effects_target_date) <- methods
+row.names(weekday_effects_target_date) <- wds
+weekday_effects_estimation_date <- weekday_effects_target_date
 
 country <- "DE"
 start_date <- as_date("2020-11-16")
@@ -117,83 +118,79 @@ for (method in methods){
   # fit linear model #
   ####################
   
-  model <- lm(log_R ~ splines_td + weekdays_td + time_diff)
+  model <- lm(log_R ~ splines_td + weekdays_td + time_diff + weekdays_ed)
   print(summary(model))
   
-  model2 <- lm(log_R ~ splines_td + weekdays_td + time_diff + weekdays_ed)
-  #summary(model2)
+  wd_td_regressors <- paste0("weekdays_td", wds[2:7])
+  wd_ed_regressors <- paste0("weekdays_ed", wds[2:7])
   
-  wd_regressors <- paste0("weekdays_td", wds[2:7])
-  
-  wd_effects <- c(0, coef(model)[wd_regressors])
-  plot(wd_effects, type="l", main=method)
-  lines(c(0, coef(model2)[wd_regressors]), col="red", lty=4)
-  
-  weekday_effects[,method] <- wd_effects
+  weekday_effects_target_date[,method] <- c(0, coef(model)[wd_td_regressors])
+  weekday_effects_estimation_date[,method] <- c(0, coef(model)[wd_ed_regressors])
 }
 
-write.csv(weekday_effects, "Rt_estimate_reconstruction/otherFiles/weekday_effects.csv")
-
-wde_splines <- read.csv("Rt_estimate_reconstruction/otherFiles/weekday_effects_with_splines.csv", row.names = 1)
-wde_dummies <- read.csv("Rt_estimate_reconstruction/otherFiles/weekday_effects_with_dummies.csv", row.names = 1)
+write.csv(weekday_effects_target_date, "Rt_estimate_reconstruction/otherFiles/weekday_effects_target_date.csv")
+write.csv(weekday_effects_estimation_date, "Rt_estimate_reconstruction/otherFiles/weekday_effects_estimation_date.csv")
 
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
-plot_data <- wde_splines %>%
-  rownames_to_column("weekday") %>%
-  gather("method", "value", 2:(length(methods)+1)) %>%
-  mutate(method = plyr::mapvalues(method,
-                                  c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
-                                  c("HZI",          "ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
-  arrange(method) %>%
-  mutate(exp_value = exp(value))
-
-methods_legend <- unique(plot_data$method)
-col_values <- get_colors(methods = methods_legend, palette = "methods")
-
-plot_raw <- ggplot() +
-  theme_minimal() +
-  theme(
-    plot.margin = unit(c(3,14,2,3), "mm"),
-    plot.title = element_text(size=18),
-    axis.text = element_text(size=16),
-    axis.title.y = element_text(size=18),
-    axis.title.x = element_blank(),
-    legend.text = element_text(size=16),
-    legend.title = element_text(size=18),
-    legend.position = "bottom",
-    panel.border = element_rect(fill = "transparent", size = 0.5),
-    panel.background = element_rect(fill = "transparent"),
-    panel.grid.major = element_line(),
-    panel.grid.minor = element_blank()
-  )
-
-plot <- plot_raw +
-  geom_line(data=plot_data,
-            aes(x = factor(weekday, levels = wds),
-                y = value,
-                group = method,
-                color = method),
-            size = .8, na.rm = T) +
-  scale_x_discrete() + 
-  scale_color_manual(values = col_values, name = "method") +
-  ylab("coefficient for target date weekday")
-
-print(plot)
-
-plot <- plot_raw +
-  geom_line(data=plot_data,
-            aes(x = factor(weekday, levels = wds),
-                y = exp_value,
-                group = method,
-                color = method),
-            size = .8, na.rm = T) +
-  scale_x_discrete() + 
-  scale_color_manual(values = col_values, name = "method") +
-  ylab("exp(coefficient) for target date weekday")
-
-print(plot)
-
+for (date_type in c("target", "estimation")){
+  data <- read.csv(paste0("Rt_estimate_reconstruction/otherFiles/weekday_effects_", date_type, "_date.csv"), row.names = 1)
+  
+  plot_data <- data %>%
+    rownames_to_column("weekday") %>%
+    gather("method", "value", 2:(length(methods)+1)) %>%
+    mutate(method = plyr::mapvalues(method,
+                                    c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
+                                    c("HZI",          "ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
+    arrange(method) %>%
+    mutate(exp_value = exp(value))
+  
+  methods_legend <- unique(plot_data$method)
+  col_values <- get_colors(methods = methods_legend, palette = "methods")
+  
+  plot_raw <- ggplot() +
+    theme_minimal() +
+    theme(
+      plot.margin = unit(c(3,14,2,3), "mm"),
+      plot.title = element_text(size=18),
+      axis.text = element_text(size=16),
+      axis.title.y = element_text(size=18),
+      axis.title.x = element_blank(),
+      legend.text = element_text(size=16),
+      legend.title = element_text(size=18),
+      legend.position = "bottom",
+      panel.border = element_rect(fill = "transparent", size = 0.5),
+      panel.background = element_rect(fill = "transparent"),
+      panel.grid.major = element_line(),
+      panel.grid.minor = element_blank()
+    )
+  
+  plot <- plot_raw +
+    geom_line(data=plot_data,
+              aes(x = factor(weekday, levels = wds),
+                  y = value,
+                  group = method,
+                  color = method),
+              size = .8, na.rm = T) +
+    scale_x_discrete() + 
+    scale_color_manual(values = col_values, name = "method") +
+    ylab(paste("coefficient for", date_type, "date weekday"))
+  
+  print(plot)
+  
+  plot <- plot_raw +
+    geom_line(data=plot_data,
+              aes(x = factor(weekday, levels = wds),
+                  y = exp_value,
+                  group = method,
+                  color = method),
+              size = .8, na.rm = T) +
+    scale_x_discrete() + 
+    scale_color_manual(values = col_values, name = "method") +
+    ylab(paste("exp(coefficient) for", date_type, "date weekday"))
+  
+  print(plot)
+}
 
 
 
