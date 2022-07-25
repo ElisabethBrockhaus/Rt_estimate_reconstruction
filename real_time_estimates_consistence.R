@@ -258,7 +258,6 @@ calc_CI_coverages <- function(methods,
           
           abs_diff_final <- R_est_ts %>%
             dplyr::select(date | R_final | starts_with("R_pub_")) %>%
-            #column_to_rownames("date") %>%
             # calculate absolute difference to "final" estimate
             mutate(across(!c(date,R_final), function(x) abs(x - R_final))) %>%
             dplyr::select(!R_final) %>%
