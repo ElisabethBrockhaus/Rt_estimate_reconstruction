@@ -32,9 +32,6 @@ start_date <- as_date("2020-11-16")
 end_date <- as_date("2021-05-01")
 path_estimates <- "reproductive_numbers/data-processed/"
 
-# choose whether to encode (estimation date - target date) as splines or dummies
-splines_for_difftime <- F
-
 for (method in methods){
   print(method)
   
@@ -89,6 +86,13 @@ for (method in methods){
   
   splines_td <- bs(as_date(target_dates[non_na_entries]))
   
+  # check if splines are smooth
+  plot(as_date(target_dates[non_na_entries]), splines_td[,1], type="l",
+       ylab=NA, xlab=NA, main=paste0("Splines for target date (", method, ")"),
+       ylim=c(0,1))
+  lines(as_date(target_dates[non_na_entries]), splines_td[,2], col="blue")
+  lines(as_date(target_dates[non_na_entries]), splines_td[,3], col="darkred")
+
   #### second regressor: weekday of target date
   weekdays_td <- data.frame(lapply(target_dates, weekdays))[non_na_entries]
   weekdays_td <- relevel(as.factor(weekdays_td), ref = "Monday") # define baseline category
@@ -96,16 +100,16 @@ for (method in methods){
   #### third regressor: splines or dummies for difference between estimation date and target date
   time_diffs <- R_est_ts %>%
     # estimation date - target date
-    transmute(across(!target_date, list(lag = ~ {as.numeric(difftime(as_date(substr(cur_column(), 13, 22)), target_date), units = "days")})))
-  if(splines_for_difftime) {
-    time_diff <- bs(time_diffs[non_na_entries])
-  } else {
-    time_diff <- as.factor(time_diffs[non_na_entries])
-  }
+    transmute(across(!target_date,
+                     list(lag = ~ {as.numeric(difftime(as_date(substr(cur_column(), 13, 22)),
+                                                       target_date),
+                                              units = "days")})))
+  time_diff <- as.factor(time_diffs[non_na_entries])
   
-  #### optional fourth regressor: weekday of estimation date
+  #### fourth regressor: weekday of estimation date
   estimation_dates <- R_est_ts %>%
-    transmute(across(!target_date, list(td = ~ {as_date(substr(cur_column(), 13, 22))})))
+    transmute(across(!target_date,
+                     list(td = ~ {as_date(substr(cur_column(), 13, 22))})))
   weekdays_ed <- data.frame(lapply(estimation_dates, weekdays))[non_na_entries]
   weekdays_ed <- relevel(as.factor(weekdays_ed), ref = "Monday")
   
@@ -174,7 +178,7 @@ for (date_type in c("target", "estimation")){
               size = .8, na.rm = T) +
     scale_x_discrete() + 
     scale_color_manual(values = col_values, name = "method") +
-    ylab(paste("coefficient for", date_type, "date weekday"))
+    ylab(paste("coefficient for weekday of", date_type, "date"))
   
   print(plot)
   
@@ -187,8 +191,11 @@ for (date_type in c("target", "estimation")){
               size = .8, na.rm = T) +
     scale_x_discrete() + 
     scale_color_manual(values = col_values, name = "method") +
-    ylab(paste("exp(coefficient) for", date_type, "date weekday"))
+    ylab(paste("exp(coefficient) for weekday of", date_type, "date")) #+
+    #ylim(c(0.9,1.1))
   
+  ggsave(plot, filename = paste0("Figures/weekday_effects/influence_weekday_", date_type, ".pdf"),
+         bg = "transparent", width = 8, height = 5.8)
   print(plot)
 }
 
