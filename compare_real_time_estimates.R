@@ -74,7 +74,7 @@ for (method in methods){
         tryCatch(
           {
             R_est <- load_published_R_estimates(method,
-                                                end = end_date,
+                                                end = as_date(pub_date) - pub_delays[method, country],
                                                 pub_date = pub_date,
                                                 location = country,
                                                 verbose = F) %>%
