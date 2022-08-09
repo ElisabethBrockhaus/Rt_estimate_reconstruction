@@ -21,22 +21,31 @@ pub_delays <- read.csv("Rt_estimate_reconstruction/otherFiles/pub_delays.csv", r
 methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window",
              "globalrt_7d", "ilmenau", "RKI_7day", "rtlive", "SDSC")
 
+path_estimates <- "reproductive_numbers/data-processed/"
+
+country <- "DE"
+start_date <- as_date("2020-11-16")
+end_date <- as_date("2021-05-01")
+number_days <- 28
+
 wds <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 weekday_effects_target_date <- data.frame(matrix(rep(NA, length(methods)*3*7), nrow=7))
 colnames(weekday_effects_target_date) <- c(outer(methods, c("_coef", "_l", "_u"), FUN=paste0))
 row.names(weekday_effects_target_date) <- wds
 weekday_effects_estimation_date <- weekday_effects_target_date
-
-country <- "DE"
-start_date <- as_date("2020-11-16")
-end_date <- as_date("2021-05-01")
-path_estimates <- "reproductive_numbers/data-processed/"
+time_diff_effects <- data.frame(matrix(rep(NA, 3*length(methods)*
+                                             (max(pub_delays[,"DE"], na.rm=T) +
+                                                number_days + 1 -
+                                                min(pub_delays[,"DE"], na.rm=T))),
+                                       ncol = length(methods)*3))
+colnames(time_diff_effects) <- c(outer(methods, c("_coef", "_l", "_u"), FUN=paste0))
+row.names(time_diff_effects) <- min(pub_delays[,"DE"], na.rm=T) : (max(pub_delays[,"DE"], na.rm=T) + number_days)
 
 for (method in methods){
   print(method)
   
   min_lag <- pub_delays[method, country]
-  max_lag <- min_lag + 6
+  max_lag <- min_lag + number_days - 1
   
   pub_dates <- list.files(paste0(path_estimates, method),
                           pattern = "\\d{4}-\\d{2}-\\d{2}",
@@ -127,18 +136,28 @@ for (method in methods){
   
   wd_td_regressors <- paste0("weekdays_td", wds[2:7])
   wd_ed_regressors <- paste0("weekdays_ed", wds[2:7])
+  time_diff_regressors <- paste0("time_diff", (min_lag+1):max_lag)
   
   weekday_effects_target_date[,paste0(method, "_coef")] <- c(0, coef(model)[wd_td_regressors])
   weekday_effects_estimation_date[,paste0(method, "_coef")] <- c(0, coef(model)[wd_ed_regressors])
+  time_diff_effects[as.character(min_lag:max_lag),paste0(method, "_coef")] <- c(0, coef(model)[time_diff_regressors])
   
   weekday_effects_target_date[wds[2:7], paste0(method, "_l")] <- confint(model)[wd_td_regressors, "2.5 %"]
   weekday_effects_target_date[wds[2:7], paste0(method, "_u")] <- confint(model)[wd_td_regressors, "97.5 %"]
   weekday_effects_estimation_date[wds[2:7], paste0(method, "_l")] <- confint(model)[wd_ed_regressors, "2.5 %"]
   weekday_effects_estimation_date[wds[2:7], paste0(method, "_u")] <- confint(model)[wd_ed_regressors, "97.5 %"]
+  time_diff_effects[as.character((min_lag+1):max_lag),
+                    paste0(method, "_l")] <- confint(model)[time_diff_regressors, "2.5 %"]
+  time_diff_effects[as.character((min_lag+1):max_lag),
+                    paste0(method, "_u")] <- confint(model)[time_diff_regressors, "97.5 %"]
 }
 
-write.csv(weekday_effects_target_date, "Rt_estimate_reconstruction/otherFiles/weekday_effects_target_date.csv")
-write.csv(weekday_effects_estimation_date, "Rt_estimate_reconstruction/otherFiles/weekday_effects_estimation_date.csv")
+write.csv(weekday_effects_target_date,
+          paste0("Rt_estimate_reconstruction/otherFiles/weekday_effects_target_date_", number_days, ".csv"))
+write.csv(weekday_effects_estimation_date,
+          paste0("Rt_estimate_reconstruction/otherFiles/weekday_effects_estimation_date_", number_days, ".csv"))
+write.csv(time_diff_effects,
+          paste0("Rt_estimate_reconstruction/otherFiles/time_diff_effects_", number_days, ".csv"))
 
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
