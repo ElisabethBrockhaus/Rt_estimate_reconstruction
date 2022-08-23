@@ -162,77 +162,83 @@ write.csv(time_diff_effects,
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
 for (date_type in c("target", "estimation")){
-  data <- read.csv(paste0("Rt_estimate_reconstruction/otherFiles/weekday_effects_", date_type, "_date.csv"), row.names = 1)
-  
-  plot_data <- data %>%
-    rownames_to_column("weekday") %>%
-    gather(variable, value, -weekday) %>%
-    separate(variable,
-             into = c("method", "type"),
-             sep = "_(?!.*_)",
-             extra = "merge",
-             remove = TRUE) %>%
-    mutate(method = plyr::mapvalues(method,
-                                    c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
-                                    c("HZI",          "ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
-    arrange(method) %>%
-    pivot_wider(names_from = type, values_from = value) %>%
-    mutate(exp_coef = exp(coef), exp_l = exp(l), exp_u = exp(u))
-  
-  methods_legend <- unique(plot_data$method)
-  col_values <- get_colors(methods = methods_legend, palette = "methods")
-  
-  plot_raw <- ggplot(data=plot_data,
-                     aes(x = factor(weekday, levels = wds),
-                         group = method,
-                         color = method)) +
-    theme_minimal() +
-    theme(
-      plot.margin = unit(c(3,14,2,3), "mm"),
-      plot.title = element_text(size=18),
-      axis.text = element_text(size=16),
-      axis.title.y = element_text(size=18),
-      axis.title.x = element_blank(),
-      legend.text = element_text(size=16),
-      legend.title = element_text(size=18),
-      legend.position = "bottom",
-      panel.border = element_rect(fill = "transparent", size = 0.5),
-      panel.background = element_rect(fill = "transparent"),
-      panel.grid.major = element_line(),
-      panel.grid.minor = element_blank()
-    )
-  
-  plot <- plot_raw +
-    geom_line(aes(y = coef),
-              size = .8, na.rm = T) +
-    scale_x_discrete() + 
-    scale_color_manual(values = col_values, name = "method") +
-    ylab(paste("coefficient for weekday of", date_type, "date"))
-  
-  print(plot)
-  
-  ylim <- c(0.9,1.15)
-  
-  plot <- plot_raw +
-    geom_line(aes(y = exp_coef),
-              size = .8, na.rm = T) +
-    geom_text(data=subset(plot_data, exp_coef < ylim[1]),
-              aes(label = round(exp_coef, 2)),
-              y = ylim[1]) +
-    geom_text(data=subset(plot_data, exp_coef > ylim[2]),
-              aes(label = round(exp_coef, 2)),
-              y = ylim[2]) +
-    scale_color_manual(values = col_values, name = "method") +
-    geom_ribbon(aes(ymin = exp_l, ymax = exp_u, fill = method), alpha = .15, colour = NA) +
-    scale_fill_manual(values=col_values) +
-    scale_x_discrete() + 
-    ylab(paste("exp(coefficient) for weekday of", date_type, "date")) +
-    coord_cartesian(ylim=ylim) +
-    geom_hline(yintercept = 1, size=.8)
-  print(plot)
-  
-  ggsave(plot, filename = paste0("Figures/weekday_effects/influence_weekday_", date_type, ".pdf"),
-         bg = "transparent", width = 8, height = 5.8)
+  for (number_days in c(7,14,28)){
+    data <- read.csv(paste0("Rt_estimate_reconstruction/otherFiles/weekday_effects_",
+                            date_type, "_date_", number_days, ".csv"), row.names = 1)
+    
+    plot_data <- data %>%
+      rownames_to_column("weekday") %>%
+      gather(variable, value, -weekday) %>%
+      separate(variable,
+               into = c("method", "type"),
+               sep = "_(?!.*_)",
+               extra = "merge",
+               remove = TRUE) %>%
+      mutate(method = plyr::mapvalues(method,
+                                      c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
+                                      c("HZI",          "ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
+      arrange(method) %>%
+      pivot_wider(names_from = type, values_from = value) %>%
+      mutate(exp_coef = exp(coef), exp_l = exp(l), exp_u = exp(u))
+    
+    methods_legend <- unique(plot_data$method)
+    col_values <- get_colors(methods = methods_legend, palette = "methods")
+    
+    plot_raw <- ggplot(data=plot_data,
+                       aes(x = factor(weekday, levels = wds),
+                           group = method,
+                           color = method)) +
+      theme_minimal() +
+      theme(
+        plot.margin = unit(c(3,14,2,3), "mm"),
+        plot.title = element_text(size=18),
+        axis.text = element_text(size=16),
+        axis.title.y = element_text(size=18),
+        axis.title.x = element_blank(),
+        legend.text = element_text(size=16),
+        legend.title = element_text(size=18),
+        legend.position = "bottom",
+        panel.border = element_rect(fill = "transparent", size = 0.5),
+        panel.background = element_rect(fill = "transparent"),
+        panel.grid.major = element_line(),
+        panel.grid.minor = element_blank()
+      )
+    
+    plot <- plot_raw +
+      geom_line(aes(y = coef),
+                size = .8, na.rm = T) +
+      scale_x_discrete() + 
+      scale_color_manual(values = col_values, name = "method") +
+      ylab(paste0("coefficient for weekday of ",
+                  date_type, " date (", number_days, " days in regression)"))
+    
+    print(plot)
+    
+    ylim <- c(0.9,1.15)
+    
+    plot <- plot_raw +
+      geom_line(aes(y = exp_coef),
+                size = .8, na.rm = T) +
+      geom_text(data=subset(plot_data, exp_coef < ylim[1]),
+                aes(label = round(exp_coef, 2)),
+                y = ylim[1]) +
+      geom_text(data=subset(plot_data, exp_coef > ylim[2]),
+                aes(label = round(exp_coef, 2)),
+                y = ylim[2]) +
+      scale_color_manual(values = col_values, name = "method") +
+      geom_ribbon(aes(ymin = exp_l, ymax = exp_u, fill = method), alpha = .15, colour = NA) +
+      scale_fill_manual(values=col_values) +
+      scale_x_discrete() + 
+      ylab(paste0("exp(coefficient) for weekday of ",
+                  date_type, " date (", number_days, " days in regression)")) +
+      coord_cartesian(ylim=ylim) +
+      geom_hline(yintercept = 1, size=.8)
+    print(plot)
+    
+    ggsave(plot, filename = paste0("Figures/weekday_effects/influence_weekday_",
+                                   date_type, "_date_", number_days, ".pdf"),
+           bg = "transparent", width = 8, height = 5.8)
+  }
 }
 
 
