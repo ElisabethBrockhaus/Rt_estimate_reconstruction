@@ -49,6 +49,7 @@ epiforecasts/input_data/
 epiforecasts/backup_server/
 otherFiles/play_with_form_of_gtd.R
 Braunschweig/check_CI.R
+SDSC/plot_SDSC_real_time_estimates.R
 
 # old versions of estimates and code
 archive/
