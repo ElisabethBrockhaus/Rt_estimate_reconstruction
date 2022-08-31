@@ -29,26 +29,30 @@ path_estimates = "reproductive_numbers/data-processed/"
 # plot coverage of 95% confidence intervals #
 #############################################
 
-calc_CI_coverages <- function(methods,
-                              country = "DE",
-                              start_date_min = as_date("2020-11-16"),
-                              end_date = as_date("2021-05-01"),
-                              conf_level = "95",
-                              path_estimates = "reproductive_numbers/data-processed/") {
+calc_consistence_metrics <- function(methods,
+                                     country = "DE",
+                                     start_date_min = as_date("2020-11-16"),
+                                     end_date = as_date("2021-05-01"),
+                                     conf_level = "95",
+                                     path_estimates = "reproductive_numbers/data-processed/") {
   
   methods_CI <- methods[methods!="Braunschweig"]
   n_CI <- length(methods_CI)
   n <- length(methods)
-  CI_coverage <- data.frame(matrix(rep(NA, n_CI*25), nrow = n_CI), row.names = methods_CI)
-  colnames(CI_coverage) <- c(0:20, "num_CIs", "min_lag", "min_pub_date", "max_pub_date")
-  CI_width_mean <- data.frame(matrix(rep(NA, n_CI*25), nrow = n_CI), row.names = methods_CI)
-  colnames(CI_width_mean) <- c(0:20, "num_CIs", "min_lag", "min_pub_date", "max_pub_date")
-  diff_first_mean <- data.frame(matrix(rep(NA, n*21), nrow = n), row.names = methods)
-  colnames(diff_first_mean) <- c(0:20)
-  diff_prev_mean <- data.frame(matrix(rep(NA, n*21), nrow = n), row.names = methods)
-  colnames(diff_prev_mean) <- c(0:20)
-  diff_final_mean <- data.frame(matrix(rep(NA, n*21), nrow = n), row.names = methods)
-  colnames(diff_final_mean) <- c(0:20)
+  df_CI_coverage <- data.frame(matrix(rep(NA, n_CI*25), nrow = n_CI), row.names = methods_CI)
+  colnames(df_CI_coverage) <- c(0:20, "num_CIs", "min_lag", "min_pub_date", "max_pub_date")
+  df_CI_width <- data.frame(matrix(rep(NA, n_CI*25), nrow = n_CI), row.names = methods_CI)
+  colnames(df_CI_width) <- c(0:20, "num_CIs", "min_lag", "min_pub_date", "max_pub_date")
+  df_diff_to_first <- data.frame(matrix(rep(NA, n*21), nrow = n), row.names = methods)
+  colnames(df_diff_to_first) <- c(0:20)
+  df_diff_to_prev <- data.frame(matrix(rep(NA, n*21), nrow = n), row.names = methods)
+  colnames(df_diff_to_prev) <- c(0:20)
+  df_abs_diff_to_prev <- data.frame(matrix(rep(NA, n*21), nrow = n), row.names = methods)
+  colnames(df_abs_diff_to_prev) <- c(0:20)
+  df_diff_to_final <- data.frame(matrix(rep(NA, n*21), nrow = n), row.names = methods)
+  colnames(df_diff_to_final) <- c(0:20)
+  df_abs_diff_to_final <- data.frame(matrix(rep(NA, n*21), nrow = n), row.names = methods)
+  colnames(df_abs_diff_to_final) <- c(0:20)
   
   for (method in methods){
     print(method)
@@ -170,17 +174,17 @@ calc_CI_coverages <- function(methods,
             CI_width <- CI_width %>%
               column_to_rownames(var = "estimated_after")
               
-            CI_coverage[method, rownames(R_covered_difftime)] <- rowMeans(R_covered_difftime)
-            CI_coverage[method, "min_lag"] <- min_lag
-            CI_coverage[method, "num_CIs"] <- dim(R_covered_difftime)[2]
-            CI_coverage[method, "min_pub_date"] <- min(colnames(R_covered_difftime))
-            CI_coverage[method, "max_pub_date"] <- max(colnames(R_covered_difftime))
+            df_CI_coverage[method, rownames(R_covered_difftime)] <- rowMeans(R_covered_difftime)
+            df_CI_coverage[method, "min_lag"] <- min_lag
+            df_CI_coverage[method, "num_CIs"] <- dim(R_covered_difftime)[2]
+            df_CI_coverage[method, "min_pub_date"] <- min(colnames(R_covered_difftime))
+            df_CI_coverage[method, "max_pub_date"] <- max(colnames(R_covered_difftime))
             
-            CI_width_mean[method, rownames(CI_width)] <- rowMeans(CI_width)
-            CI_width_mean[method, "min_lag"] <- min_lag
-            CI_width_mean[method, "num_CIs"] <- dim(CI_width)[2]
-            CI_width_mean[method, "min_pub_date"] <- min(colnames(CI_width))
-            CI_width_mean[method, "max_pub_date"] <- max(colnames(CI_width))
+            df_CI_width[method, rownames(CI_width)] <- rowMeans(CI_width)
+            df_CI_width[method, "min_lag"] <- min_lag
+            df_CI_width[method, "num_CIs"] <- dim(CI_width)[2]
+            df_CI_width[method, "min_pub_date"] <- min(colnames(CI_width))
+            df_CI_width[method, "max_pub_date"] <- max(colnames(CI_width))
           }
           
           
@@ -228,38 +232,42 @@ calc_CI_coverages <- function(methods,
             group_by(lag) %>%
             summarise(diff = mean(diff))
           
-          diff_first_mean[method, as.character(abs_diff_first_mean$lag)] <- abs_diff_first_mean$diff
-      
+          idx <- as.character(intersect(0:max_lag, abs_diff_first_mean$lag))
+          df_diff_to_first[method, idx] <- abs_diff_first_mean %>%
+            dplyr::filter(as.character(lag) %in% idx) %>%
+            arrange(lag) %>%
+            dplyr::select(diff) %>% pull()
           
           ######
-          # MAD to previous estimate...
+          # M(A)D to previous estimate...
           
           R_pub <- R_pub %>%
             rename_with(~ substr(.x, 7, 16))
-          abs_diff_prev <- data.frame(estimated_after = make_difftime(day = seq(max_lag, min_lag),
-                                                                      units = "day")) %>%
+          diff_prev <- data.frame(estimated_after = make_difftime(day = seq(max_lag, min_lag),
+                                                                  units = "day")) %>%
             column_to_rownames(var = "estimated_after")
           
           for (c in colnames(R_pub)){
             if ((as_date(c) - 1) %in% as_date(colnames(R_pub))){
               j <- which(as_date(colnames(R_pub)) == as_date(c) - 1)
-              abs_diff <- abs(R_pub[,c] - R_pub[,j])
-              abs_diff_prev[as.character(as_date(c) -
-                              as_date(rownames(R_pub[which(!is.na(abs_diff)),]))),
-                            c] <- abs_diff %>% na.omit
+              diff <- R_pub[,c] - R_pub[,j]
+              diff_prev[as.character(as_date(c) -
+                                       as_date(rownames(R_pub[which(!is.na(diff)),]))),
+                        c] <- diff %>% na.omit
             }
           }
           
-          diff_prev_mean[method, rownames(abs_diff_prev)] <- rowMeans(abs_diff_prev, na.rm = TRUE)
-          
+          idx <- intersect(rownames(diff_prev), as.character(0:max_lag))
+          df_diff_to_prev[method, idx] <- rowMeans(diff_prev, na.rm = TRUE)[idx]
+          df_abs_diff_to_prev[method, idx] <- rowMeans(abs(diff_prev), na.rm = TRUE)[idx]
           
           ######
-          # MAD to final estimate...
+          # M(A)D to final estimate...
           
-          abs_diff_final <- R_est_ts %>%
+          diff_final <- R_est_ts %>%
             dplyr::select(date | R_final | starts_with("R_pub_")) %>%
-            # calculate absolute difference to "final" estimate
-            mutate(across(!c(date,R_final), function(x) abs(x - R_final))) %>%
+            # calculate difference to "final" estimate
+            mutate(across(!c(date,R_final), function(x) (R_final - x))) %>%
             dplyr::select(!R_final) %>%
             # add columns with difference between pub_date and target_date
             mutate(across(!date, list(lag = ~ {as_date(substr(cur_column(), 7, 16)) - date}))) %>%
@@ -270,18 +278,27 @@ calc_CI_coverages <- function(methods,
             dplyr::select(colnames(.)[as_date(substr(colnames(.), 7, 16)) >= start_date])
           
           # reshape wide to long
-          cols <- colnames(dplyr::select(abs_diff_final, !ends_with("_lag")))
-          abs_diff_final_long <- data.frame()
+          cols <- colnames(dplyr::select(diff_final, !ends_with("_lag")))
+          diff_final_long <- data.frame()
           for (col in cols){
-            df <- abs_diff_final[,c(col, paste0(col, "_lag"))] %>% setNames(c("diff", "lag"))
-            abs_diff_final_long <- bind_rows(df, abs_diff_final_long)
+            df <- diff_final[,c(col, paste0(col, "_lag"))] %>% setNames(c("diff", "lag"))
+            diff_final_long <- bind_rows(df, diff_final_long)
           }
-          abs_diff_final_long <- na.omit(abs_diff_final_long)
-          abs_diff_final_mean <- abs_diff_final_long %>%
-            group_by(lag) %>%
+          diff_final_long <- na.omit(diff_final_long) %>% group_by(lag)
+          diff_final_mean <- diff_final_long %>%
             summarise(diff = mean(diff))
+          abs_diff_final_mean <- diff_final_long %>%
+            summarise(diff = mean(abs(diff)))
           
-          diff_final_mean[method, as.character(abs_diff_final_mean$lag)] <- abs_diff_final_mean$diff
+          idx <- as.character(intersect(0:max_lag, diff_final_long$lag))
+          df_diff_to_final[method, idx] <- diff_final_mean %>%
+            dplyr::filter(as.character(lag) %in% idx) %>%
+            arrange(lag) %>%
+            dplyr::select(diff) %>% pull()
+          df_abs_diff_to_final[method, idx] <- abs_diff_final_mean %>%
+            dplyr::filter(as.character(lag) %in% idx) %>%
+            arrange(lag) %>%
+            dplyr::select(diff) %>% pull()
         }
       }
     } else {
@@ -289,36 +306,45 @@ calc_CI_coverages <- function(methods,
     }
   }
   
-  return(list(CI_coverage, CI_width_mean, diff_first_mean, diff_prev_mean, diff_final_mean))
+  return(list(df_CI_coverage, df_CI_width,
+              df_abs_diff_to_prev, df_abs_diff_to_final,
+              df_diff_to_prev, df_diff_to_final,
+              df_diff_to_first))
 }
 
 methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window",
              "globalrt_7d", "ilmenau", "RKI_7day", "rtlive", "SDSC")
 
-CI_eval <- calc_CI_coverages(methods)
+CI_eval <- calc_consistence_metrics(methods)
 write.csv(CI_eval[[1]], "Rt_estimate_reconstruction/otherFiles/95_CI_coverage.csv")
 write.csv(CI_eval[[2]], "Rt_estimate_reconstruction/otherFiles/95_CI_width.csv")
-write.csv(CI_eval[[3]], "Rt_estimate_reconstruction/otherFiles/diff_to_first.csv")
-write.csv(CI_eval[[4]], "Rt_estimate_reconstruction/otherFiles/diff_to_prev.csv")
-write.csv(CI_eval[[5]], "Rt_estimate_reconstruction/otherFiles/diff_to_final.csv")
+write.csv(CI_eval[[3]], "Rt_estimate_reconstruction/otherFiles/abs_diff_to_prev.csv")
+write.csv(CI_eval[[4]], "Rt_estimate_reconstruction/otherFiles/abs_diff_to_final.csv")
+write.csv(CI_eval[[5]], "Rt_estimate_reconstruction/otherFiles/diff_to_prev.csv")
+write.csv(CI_eval[[6]], "Rt_estimate_reconstruction/otherFiles/diff_to_final.csv")
+write.csv(CI_eval[[7]], "Rt_estimate_reconstruction/otherFiles/diff_to_first.csv")
 
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
 plot1 <- plot_CI_coverage_rates()
 plot2 <- plot_CI_widths()
-plot3 <- plot_abs_diff_prev()
-plot4 <- plot_abs_diff_final()
+plot3 <- plot_diff_prev(diff_type = "abs_diff")
+plot4 <- plot_diff_final(diff_type = "abs_diff")
+plot5 <- plot_diff_prev(diff_type = "diff")
+plot6 <- plot_diff_final(diff_type = "diff")
 
-consistence_plot <- ggarrange(plot1, plot2, plot3, plot4, ncol=2, nrow=2,
-                              labels = list("A", "B", "C", "D"), font.label = list(size = 18, face = "bold"),
-                              common.legend = T, legend="bottom", legend.grob = get_legend(plot2))
+consistence_plot <- ggarrange(plot1, plot2, plot3, plot4, plot5, plot6, ncol=2, nrow=3,
+                              labels = list("A", "B", "C", "D", "E", "F"),
+                              font.label = list(size = 18, face = "bold"),
+                              common.legend = T, legend="bottom",
+                              legend.grob = get_legend(plot2))
 print(consistence_plot)
 ggsave(consistence_plot, filename = paste0("Figures/CI/consistence_plots.pdf"),
        bg = "transparent", width = 16, height = 11.6)
 
 plot_abs_diff_first(max_lag=20)
 
-CI_coverage_50 <- calc_CI_coverages(c("Braunschweig", "epiforecasts", "rtlive"),
+CI_coverage_50 <- calc_consistence_metrics(c("Braunschweig", "epiforecasts", "rtlive"),
                                     conf_level = 50)
 write.csv(CI_coverage_50[[1]], "Rt_estimate_reconstruction/otherFiles/50_CI_coverage.csv")
 write.csv(CI_coverage_50[[2]], "Rt_estimate_reconstruction/otherFiles/50_CI_width.csv")

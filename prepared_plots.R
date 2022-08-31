@@ -735,11 +735,12 @@ plot_CI_widths <- function(conf_level = "95"){
 }
 
 
-plot_abs_diff_prev <- function() {
+plot_diff_prev <- function(diff_type = "abs_diff") {
   methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
                "ilmenau", "RKI_7day", "rtlive", "SDSC")
   
-  diff_to_prev <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/diff_to_prev.csv")) %>%
+  diff_to_prev <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/",
+                                  diff_type, "_to_prev.csv")) %>%
     as.data.frame() %>%
     column_to_rownames("...1")
   
@@ -771,7 +772,8 @@ plot_abs_diff_prev <- function() {
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
-    ylab("MAD to estimate from previous day") +
+    ylab(ifelse(diff_type == "diff", "mean difference to estimate from previous day",
+                "mean absolute difference to estimate from previous day")) +
     coord_cartesian(xlim = c(-20, 0), ylim = c(-0.01, 0.36), expand = FALSE, clip = "off") +
     scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
   
@@ -786,17 +788,18 @@ plot_abs_diff_prev <- function() {
               size = .8, na.rm = T) +
     scale_color_manual(values=col_values, name="method")
   
-  ggsave(diff_plot, filename = paste0("Figures/CI/diff_to_prev.pdf"),
+  ggsave(diff_plot, filename = paste0("Figures/CI/", diff_type, "_to_prev.pdf"),
          bg = "transparent", width = 8, height = 5.8)
   return(diff_plot)
 }
 
 
-plot_abs_diff_final <- function() {
+plot_diff_final <- function(diff_type = "abs_diff") {
   methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
                "ilmenau", "RKI_7day", "rtlive", "SDSC")
   
-  diff_to_final <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/diff_to_final.csv")) %>%
+  diff_to_final <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/",
+                                   diff_type, "_to_final.csv")) %>%
     as.data.frame() %>%
     column_to_rownames("...1")
   
@@ -828,7 +831,8 @@ plot_abs_diff_final <- function() {
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
-    ylab("MAD to final estimate") +
+    ylab(ifelse(diff_type == "diff", "mean difference to final estimate",
+                "mean absolute difference to final estimate")) +
     coord_cartesian(xlim = c(-20, 0), ylim = c(-0.01, 0.36), expand = FALSE, clip = "off") +
     scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
   
@@ -843,7 +847,7 @@ plot_abs_diff_final <- function() {
               size = .8, na.rm = T) +
     scale_color_manual(values=col_values, name="method")
   
-  ggsave(diff_plot, filename = paste0("Figures/CI/diff_to_final.pdf"),
+  ggsave(diff_plot, filename = paste0("Figures/CI/", diff_type, "_to_final.pdf"),
          bg = "transparent", width = 8, height = 5.8)
   return(diff_plot)
 }
