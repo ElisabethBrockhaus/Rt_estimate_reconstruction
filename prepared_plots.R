@@ -504,6 +504,79 @@ plot_real_time_estimates <- function(estimates,
 
 
 
+plot_real_time_estimates_with_CI <- function(estimates,
+                                             start_date = "2021-04-01", end_date = "2021-05-01",
+                                             legend_name="weekday (pub date)", plot_title="",
+                                             name_consensus="2021-07-16",
+                                             filenames = "_latest_plot.pdf",
+                                             ylim_l=0.5, ylim_u=1.5) {
+  
+  estimates <- estimates %>%
+    dplyr::filter(date >= start_date, date <= end_date)
+  
+  # reshape data
+  R_est  <- estimates %>%
+    gather("variable", "value", 2:dim(estimates)[2]) %>%
+    separate(variable,
+             into = c("type", "model"),
+             sep = "[.]",
+             extra = "merge",
+             remove = TRUE) %>%
+    spread(type, value)
+  
+  # plot
+  R_plot <- ggplot(data = R_est, aes(x = date, y = R), color = model) +
+    geom_hline(aes(yintercept = 1)) +
+    
+    theme_minimal() +
+    theme(
+      plot.margin = unit(c(2,10,1,2), "mm"),
+      plot.title = element_text(size=18),
+      axis.text=element_text(size=16),
+      axis.title=element_text(size=18),
+      legend.text=element_text(size=16),
+      legend.title=element_text(size=18),
+      axis.line = element_line(),
+      axis.line.y.right = element_line(),
+      axis.line.x.top = element_line(),
+      legend.position = "bottom",
+      panel.border = element_rect(fill = "transparent", size = 0.5),
+      panel.background = element_rect(fill = "transparent"),
+      panel.grid.major = element_line(),
+      panel.grid.minor = element_blank()
+    ) +
+    ggtitle(plot_title) +
+    labs(x = NULL, y = "R") +
+    scale_x_date(limits = as.Date(c(start_date,end_date)),
+                 date_labels = "%b %d", expand = c(0,1),
+                 breaks = date_breaks("1 week"))
+  
+  #col_values <- get_colors(methods = c(unique(R_est$weekday), name_consensus),
+  #                         "Spectral", name_consensus = name_consensus)
+  
+  R_plot <-  R_plot +
+    geom_line(data=R_est[R_est$model!=name_consensus & !is.na(R_est$R),],
+              aes(x = date, y = R, group=model, color=model), size = .5, na.rm = T) +
+    geom_ribbon(data=R_est[R_est$model!=name_consensus & !is.na(R_est$R),],
+                aes(ymin = l, ymax = u, fill = model), alpha = .25) +
+    #scale_fill_manual(values=col_values, name=legend_name) +
+    geom_vline(data=R_est[R_est$model!=name_consensus & !is.na(R_est$R),],
+               aes(xintercept=as_date(model), group=model, color=model),
+               size = .5, na.rm = T) + 
+    geom_line(data=R_est[R_est$model==name_consensus,],
+              aes(x = date, y = R), size = .8, color="black") #+
+    #scale_color_manual(values=col_values, name=legend_name)
+  
+  R_plot <- R_plot +
+    coord_cartesian(ylim = c(ylim_l-0.05, ylim_u+0.05), expand = FALSE)
+  
+  ggsave(R_plot, filename = paste0("Figures/estimates", filenames),  bg = "transparent",
+         width = 13.1, height = 5.8)
+  return(R_plot)
+}
+
+
+
 plot_weekday_effects <- function(estimates,
                                  legend_name="estimated on",
                                  plot_title="Mean estimates in week previous to pub date",
