@@ -845,7 +845,7 @@ plot_CI_widths <- function(conf_level = "95"){
 }
 
 
-plot_diff_prev <- function(diff_type = "abs_diff") {
+plot_diff_prev <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.15)) {
   methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
                "ilmenau", "RKI_7day", "rtlive", "SDSC")
   
@@ -884,7 +884,7 @@ plot_diff_prev <- function(diff_type = "abs_diff") {
     ) +
     ylab(ifelse(diff_type == "diff", "mean difference to estimate from previous day",
                 "mean absolute difference to estimate from previous day")) +
-    coord_cartesian(xlim = c(-20, 0), ylim = c(-0.01, 0.36), expand = FALSE, clip = "off") +
+    coord_cartesian(xlim = c(-20, 0), ylim = ylim, expand = FALSE) +
     scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
   
   methods_legend <- unique(diff_data$method)
@@ -896,7 +896,13 @@ plot_diff_prev <- function(diff_type = "abs_diff") {
                   y = value,
                   color = method),
               size = .8, na.rm = T) +
-    scale_color_manual(values=col_values, name="method")
+    geom_text(data=subset(diff_data, value > ylim[2]),
+              aes(label = round(value, 2),
+                  x = variable,
+                  y = ylim[2] - 0.03 * (ylim[2] + abs(ylim[1])),
+                  color = method),
+              show.legend = FALSE) +
+    scale_color_manual(values = col_values, name = "method")
   
   ggsave(diff_plot, filename = paste0("Figures/CI/", diff_type, "_to_prev.pdf"),
          bg = "transparent", width = 8, height = 5.8)
@@ -904,7 +910,7 @@ plot_diff_prev <- function(diff_type = "abs_diff") {
 }
 
 
-plot_diff_final <- function(diff_type = "abs_diff") {
+plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.15)) {
   methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
                "ilmenau", "RKI_7day", "rtlive", "SDSC")
   
@@ -943,7 +949,7 @@ plot_diff_final <- function(diff_type = "abs_diff") {
     ) +
     ylab(ifelse(diff_type == "diff", "mean difference to final estimate",
                 "mean absolute difference to final estimate")) +
-    coord_cartesian(xlim = c(-20, 0), ylim = c(-0.01, 0.36), expand = FALSE, clip = "off") +
+    coord_cartesian(xlim = c(-20, 0), ylim = ylim, expand = FALSE) +
     scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
   
   methods_legend <- unique(diff_data$method)
@@ -955,6 +961,18 @@ plot_diff_final <- function(diff_type = "abs_diff") {
                   y = value,
                   color = method),
               size = .8, na.rm = T) +
+    geom_text(data=subset(diff_data, value > ylim[2]),
+              aes(label = round(value, 2),
+                  x = variable,
+                  y = ylim[2] - 0.03 * (ylim[2] + abs(ylim[1])),
+                  color = method),
+              show.legend = FALSE) +
+    geom_text(data=subset(diff_data, value < ylim[1]),
+              aes(label = round(value, 2),
+                  x = variable,
+                  y = ylim[1] + 0.03 * (ylim[2] + abs(ylim[1])),
+                  color = method),
+              show.legend = FALSE) +
     scale_color_manual(values=col_values, name="method")
   
   ggsave(diff_plot, filename = paste0("Figures/CI/", diff_type, "_to_final.pdf"),

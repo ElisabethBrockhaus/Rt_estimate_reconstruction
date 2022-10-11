@@ -326,12 +326,12 @@ write.csv(CI_eval[[7]], "Rt_estimate_reconstruction/otherFiles/diff_to_first.csv
 
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
-plot1 <- plot_CI_coverage_rates()
-plot2 <- plot_CI_widths()
-plot3 <- plot_diff_prev(diff_type = "abs_diff")
-plot4 <- plot_diff_final(diff_type = "abs_diff")
-plot5 <- plot_diff_prev(diff_type = "diff")
-plot6 <- plot_diff_final(diff_type = "diff")
+plot1 <- plot_CI_coverage_rates(); plot1
+plot2 <- plot_CI_widths(); plot2
+plot3 <- plot_diff_prev(diff_type = "abs_diff"); plot3
+plot4 <- plot_diff_final(diff_type = "abs_diff"); plot4
+plot5 <- plot_diff_prev(diff_type = "diff", ylim = c(-0.025, 0.02)); plot5
+plot6 <- plot_diff_final(diff_type = "diff", ylim = c(-0.025, 0.02)); plot6
 
 consistence_plot <- ggarrange(plot1, plot2, plot3, plot4, plot5, plot6, ncol=2, nrow=3,
                               labels = list("A", "B", "C", "D", "E", "F"),
