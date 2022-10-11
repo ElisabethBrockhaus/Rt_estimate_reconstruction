@@ -17,9 +17,9 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 
 # parameter combinations used in papers
 methods <- c("ETH",   "RKI",      "Ilmenau", "SDSC",  "AGES",  "epiforecasts", "rtlive",  "globalrt",    "HZI")
-gt_dist <- c("gamma", "constant", "ad hoc",  "gamma", "gamma", "gamma",        "lognorm", "exponential", "?")
-mean_gt <- c(4.8,      4,          5.6,       4.8,     3.4,     3.6,            4.7,       7,             10.5)
-sd_gt <-   c(2.3,      0,          4.2,       2.3,     1.8,     3.1,            2.9,       7,             8)
+gt_dist <- c("gamma", "constant", "ad hoc",  "gamma", "gamma", "gamma",        "lognorm", "exponential", "convolution of exponential")
+mean_gt <- c(4.8,      4,          5.6,       4.8,     3.4,     3.6,            4.7,       7,             10.3)
+sd_gt <-   c(2.3,      0,          4.2,       2.3,     1.8,     3.1,            2.9,       7,             7.6)
 delay <-   c(11,       1,          7,         10,      0,       12,             12,        0,             0)
 
 params <- data.frame(gtd=gt_dist, gt_mean=mean_gt, gt_sd=sd_gt, delay=delay)
@@ -280,63 +280,97 @@ estimates_adjInputWindowGTD_ci <- R_consensus_adjInputWindowGTD %>% rename(R.con
 write_csv(estimates_adjInputWindowGTD_ci, paste0(path_estimates, "R_adjInputWindowGTD_CI_2021-07-10.csv"))
 
 
-############################################
-# adjust everything                        #
-# input data, window size, gtd, mean delay #
-############################################
+###################################################
+# adjust input data, window size, gtd, mean delay #
+###################################################
 window <- 7
 gt_type <- "gamma"
 gt_mean <- 4
 gt_sd <- 4
+mean_delay <- 7
 
 R_consensus_adjAll <- estimate_RKI_R(incid, method = "EpiEstim",
                                         window = window,
                                         gt_type = gt_type, gt_mean = gt_mean, gt_sd = gt_sd,
-                                        delay = 0)
+                                        delay = mean_delay)
 
 R_RKI_adjAll <- estimate_RKI_R(RKI_incid,
                                window = window,
                                gt_mean = gt_mean, # RKI always assumes constant generation time
-                               delay = -3) # account for delay in preprocessing
+                               delay = mean_delay-3) # account for delay in preprocessing
 
 R_SDSC_EpiEstim_adjAll <- estimate_SDSC_R(SDSC_incid,
                                           window = window,
                                           gt_type = gt_type, gt_mean = gt_mean, gt_sd = gt_sd,
-                                          estimateOffsetting = 0)
+                                          estimateOffsetting = mean_delay)
 
 R_ETH_EpiEstim_adjAll <- estimate_ETH_R(incid_for_ETH,
                                         window = window,
                                         gt_type = gt_type, gt_mean = gt_mean, gt_sd = gt_sd,
-                                        shift = params["ETH", "delay"])
-
-#R_AGES_EpiEstim_adjAll <- estimate_AGES_R(incid,
-#                                          window = window,
-#                                          gt_type = gt_type, gt_mean = gt_mean, gt_sd = gt_sd) # does not consider any delay
+                                        shift = params["ETH", "delay"] - mean_delay) # TODO: check sign
 
 R_Ilmenau_adjAll <- estimate_Ilmenau_R(incid,
                                        window = window,
                                        gt_type = gt_type, gt_mean = gt_mean, gt_sd = gt_sd,
-                                       delay = 0)
+                                       delay = mean_delay)
 
 path <- "Rt_estimate_reconstruction/epiforecasts/estimates/"
 file <- "R_calc_2021-07-10_final_AdjAll.qs"
 R_epiforecasts_adjAll <- qread(paste0(path, file))
 R_epiforecasts_adjAll <- R_epiforecasts_adjAll[,c("date", "median", "lower_95", "upper_95")]
 names(R_epiforecasts_adjAll) <- c("date", "R_calc", "lower", "upper")
+R_epiforecasts_adjAll$date <- R_epiforecasts_adjAll$date - mean_delay
 
-R_globalrt_smoother_adjAll <- R_globalrt_smoother_adjInputWindowGTD
+R_globalrt_smoother_adjInputWindowGTDDelay <- R_globalrt_smoother_adjInputWindowGTD
+R_globalrt_smoother_adjInputWindowGTDDelay$date <- R_globalrt_smoother_adjInputWindowGTDDelay$date - mean_delay
 
-R_rtlive_adjAll <- R_rtlive_adjInputWindowGTD
-R_rtlive_adjAll$date <- R_rtlive_adjAll$date + params["rtlive", "delay"]
+R_rtlive_adjInputWindowGTDDelay <- R_rtlive_adjInputWindowGTD
+R_rtlive_adjInputWindowGTDDelay$date <- R_rtlive_adjInputWindowGTDDelay$date + params["rtlive", "delay"] - mean_delay
 
 R_HZI_adjAll <- R_HZI_adjInputWindowGTD
-R_HZI_adjAll$date <- R_HZI_adjAll$date + params["HZI", "delay"]
+R_HZI_adjAll$date <- R_HZI_adjAll$date + params["HZI", "delay"] - mean_delay
+
+estimates_adjInputWindowGTDDelay <- R_consensus_adjAll[,c("date", "R_calc")] %>% rename(consensus = R_calc) %>%
+  full_join(R_RKI_adjAll[,c("date", "R_calc")] %>% rename(RKI = R_calc), by = "date") %>% 
+  full_join(R_SDSC_EpiEstim_adjAll[,c("date", "R_calc")] %>% rename(SDSC = R_calc), by = "date") %>% 
+  full_join(R_ETH_EpiEstim_adjAll[,c("date", "R_calc")] %>% rename(ETH = R_calc), by = "date") %>% 
+  full_join(R_Ilmenau_adjAll[,c("date", "R_calc")] %>% rename(Ilmenau = R_calc), by = "date") %>% 
+  full_join(R_epiforecasts_adjAll[,c("date", "R_calc")] %>% rename(epiforecasts = R_calc), by = "date") %>%
+  full_join(R_globalrt_smoother_adjInputWindowGTDDelay[,c("date", "R_calc")] %>% rename(globalrt = R_calc), by = "date") %>%
+  full_join(R_rtlive_adjInputWindowGTDDelay[,c("date", "R_calc")] %>% rename(rtlive = R_calc), by = "date") %>%
+  full_join(R_HZI_adjAll[,c("date", "R_calc")] %>% rename(HZI = R_calc), by = "date") %>%
+  arrange(date)
+
+write_csv(estimates_adjInputWindowGTDDelay, paste0(path_estimates, "R_adjInputWindowGTDDelays_2021-07-10.csv"))
+
+estimates_adjInputWindowGTDDelay_ci <- R_consensus_adjAll %>% rename(R.consensus = R_calc, lower.consensus = lower, upper.consensus = upper) %>%
+  full_join(R_SDSC_EpiEstim_adjAll %>% rename(R.SDSC = R_calc, lower.SDSC = lower, upper.SDSC = upper), by = "date") %>%
+  full_join(R_ETH_EpiEstim_adjAll %>% rename(R.ETH = R_calc, lower.ETH = lower, upper.ETH = upper), by = "date") %>%
+  full_join(R_Ilmenau_adjAll %>% rename(R.Ilmenau = R_calc, lower.Ilmenau = lower, upper.Ilmenau = upper), by = "date") %>%
+  full_join(R_epiforecasts_adjAll %>% rename(R.epiforecasts = R_calc, lower.epiforecasts = lower, upper.epiforecasts = upper), by = "date") %>%
+  full_join(R_globalrt_smoother_adjInputWindowGTDDelay %>% rename(R.globalrt = R_calc, lower.globalrt = lower, upper.globalrt = upper), by = "date") %>%
+  full_join(R_rtlive_adjInputWindowGTDDelay %>% rename(R.rtlive = R_calc, lower.rtlive = lower, upper.rtlive = upper), by = "date")
+
+write_csv(estimates_adjInputWindowGTDDelay_ci, paste0(path_estimates, "R_adjInputWindowGTDDelays_CI_2021-07-10.csv"))
+
+
+
+############################################################
+# adjust everything                                        #
+# input data, window size, gtd, mean delay, instant<->case #
+############################################################
+gt_mean <- 4
+
+R_globalrt_smoother_adjAll <- R_globalrt_smoother_adjInputWindowGTDDelay
+R_globalrt_smoother_adjAll$date <- R_globalrt_smoother_adjAll$date + gt_mean
+
+R_rtlive_adjAll <- R_rtlive_adjInputWindowGTDDelay
+R_rtlive_adjAll$date <- R_rtlive_adjAll$date + gt_mean
 
 estimates_adjAll <- R_consensus_adjAll[,c("date", "R_calc")] %>% rename(consensus = R_calc) %>%
   full_join(R_RKI_adjAll[,c("date", "R_calc")] %>% rename(RKI = R_calc), by = "date") %>% 
   full_join(R_SDSC_EpiEstim_adjAll[,c("date", "R_calc")] %>% rename(SDSC = R_calc), by = "date") %>% 
   full_join(R_ETH_EpiEstim_adjAll[,c("date", "R_calc")] %>% rename(ETH = R_calc), by = "date") %>% 
-  #full_join(R_AGES_EpiEstim_adjAll[,c("date", "R_calc")] %>% rename(AGES = R_calc), by = "date") %>% 
   full_join(R_Ilmenau_adjAll[,c("date", "R_calc")] %>% rename(Ilmenau = R_calc), by = "date") %>% 
   full_join(R_epiforecasts_adjAll[,c("date", "R_calc")] %>% rename(epiforecasts = R_calc), by = "date") %>%
   full_join(R_globalrt_smoother_adjAll[,c("date", "R_calc")] %>% rename(globalrt = R_calc), by = "date") %>%
@@ -344,16 +378,14 @@ estimates_adjAll <- R_consensus_adjAll[,c("date", "R_calc")] %>% rename(consensu
   full_join(R_HZI_adjAll[,c("date", "R_calc")] %>% rename(HZI = R_calc), by = "date") %>%
   arrange(date)
 
-write_csv(estimates_adjAll, paste0(path_estimates, "R_adjInputWindowGTDDelays_2021-07-10.csv"))
+write_csv(estimates_adjAll, paste0(path_estimates, "R_adjAll_2021-07-10.csv"))
 
 estimates_adjAll_ci <- R_consensus_adjAll %>% rename(R.consensus = R_calc, lower.consensus = lower, upper.consensus = upper) %>%
   full_join(R_SDSC_EpiEstim_adjAll %>% rename(R.SDSC = R_calc, lower.SDSC = lower, upper.SDSC = upper), by = "date") %>%
   full_join(R_ETH_EpiEstim_adjAll %>% rename(R.ETH = R_calc, lower.ETH = lower, upper.ETH = upper), by = "date") %>%
-  #full_join(R_AGES_EpiEstim_adjAll %>% rename(R.AGES = R_calc, lower.AGES = lower, upper.AGES = upper), by = "date") %>%
   full_join(R_Ilmenau_adjAll %>% rename(R.Ilmenau = R_calc, lower.Ilmenau = lower, upper.Ilmenau = upper), by = "date") %>%
   full_join(R_epiforecasts_adjAll %>% rename(R.epiforecasts = R_calc, lower.epiforecasts = lower, upper.epiforecasts = upper), by = "date") %>%
   full_join(R_globalrt_smoother_adjAll %>% rename(R.globalrt = R_calc, lower.globalrt = lower, upper.globalrt = upper), by = "date") %>%
   full_join(R_rtlive_adjAll %>% rename(R.rtlive = R_calc, lower.rtlive = lower, upper.rtlive = upper), by = "date")
 
-write_csv(estimates_adjAll_ci, paste0(path_estimates, "R_adjInputWindowGTDDelays_CI_2021-07-10.csv"))
-
+write_csv(estimates_adjAll_ci, paste0(path_estimates, "R_adjAll_CI_2021-07-10.csv"))
