@@ -48,6 +48,7 @@ load_published_R_estimates <- function(source,
   
   R_est <- R_est %>%
     dplyr::filter(location==!!location) %>%
+    mutate(quantile = as.double(quantile)) %>%
     mutate(quantile = replace_na(quantile, 0.5)) %>%
     dplyr::select(date, quantile, value) %>%
     pivot_wider(names_from = c(quantile)) %>%
