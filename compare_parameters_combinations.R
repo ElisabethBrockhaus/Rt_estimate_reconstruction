@@ -20,7 +20,7 @@ methods <- c("ETH",   "RKI",      "Ilmenau", "SDSC",  "AGES",  "epiforecasts", "
 gt_dist <- c("gamma", "constant", "ad hoc",  "gamma", "gamma", "gamma",        "lognorm", "exponential", "convolution of exponential")
 mean_gt <- c(4.8,      4,          5.6,       4.8,     3.4,     3.6,            4.7,       7,             10.3)
 sd_gt <-   c(2.3,      0,          4.2,       2.3,     1.8,     3.1,            2.9,       7,             7.6)
-delay <-   c(11,       1,          7,         10,      0,       12,             12,        0,             0)
+delay <-   c(11,       1,          7,         10,      0,       12,             12,        0,             1)
 
 params <- data.frame(gtd=gt_dist, gt_mean=mean_gt, gt_sd=sd_gt, delay=delay)
 rownames(params) <- methods
@@ -328,7 +328,7 @@ R_rtlive_adjInputWindowGTDDelay <- R_rtlive_adjInputWindowGTD
 R_rtlive_adjInputWindowGTDDelay$date <- R_rtlive_adjInputWindowGTDDelay$date + params["rtlive", "delay"] - mean_delay
 
 R_HZI_adjAll <- R_HZI_adjInputWindowGTD
-R_HZI_adjAll$date <- R_HZI_adjAll$date + params["HZI", "delay"] - mean_delay
+R_HZI_adjAll$date <- R_HZI_adjAll$date + params["HZI", "delay"] - mean_delays
 
 estimates_adjInputWindowGTDDelay <- R_consensus_adjAll[,c("date", "R_calc")] %>% rename(consensus = R_calc) %>%
   full_join(R_RKI_adjAll[,c("date", "R_calc")] %>% rename(RKI = R_calc), by = "date") %>% 
