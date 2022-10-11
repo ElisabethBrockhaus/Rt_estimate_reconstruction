@@ -556,10 +556,17 @@ plot_real_time_estimates_with_CI <- function(estimates,
   
   R_plot <-  R_plot +
     geom_line(data=R_est[R_est$model!=name_consensus & !is.na(R_est$R),],
-              aes(x = date, y = R, group=model, color=model), size = .5, na.rm = T) +
-    geom_ribbon(data=R_est[R_est$model!=name_consensus & !is.na(R_est$R),],
-                aes(ymin = l, ymax = u, fill = model), alpha = .25) +
-    #scale_fill_manual(values=col_values, name=legend_name) +
+              aes(x = date, y = R, group=model, color=model), size = .5, na.rm = T)
+  
+  
+  if ("l" %in% names(R_est)) {
+    R_plot <-  R_plot +
+      geom_ribbon(data=R_est[R_est$model!=name_consensus & !is.na(R_est$R),],
+                  aes(ymin = l, ymax = u, fill = model), alpha = .25) #+
+      #scale_fill_manual(values=col_values, name=legend_name)
+  }
+  
+  R_plot <-  R_plot +
     geom_vline(data=R_est[R_est$model!=name_consensus & !is.na(R_est$R),],
                aes(xintercept=as_date(model), group=model, color=model),
                size = .5, na.rm = T) + 

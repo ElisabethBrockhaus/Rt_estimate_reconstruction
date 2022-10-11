@@ -22,8 +22,8 @@ path_estimates <- "reproductive_numbers/data-processed/"
 # methods <- methods[!methods %in% c("", "AW_7day", "AW_WVday", "owid", "ETHZ_step",
 #                                    "ETHZ_sliding_window_deaths", "ETHZ_step_deaths",
 #                                    "zidatalab")]
-methods <- c("Braunschweig", "ilmenau", "ETHZ_sliding_window", "RKI_7day",
-             "rtlive", "SDSC", "epiforecasts", "globalrt_7d")
+methods <- c("Braunschweig", "ETHZ_sliding_window", "RKI_7day",
+             "rtlive", "SDSC", "epiforecasts", "ilmenau", "globalrt_7d")
 methods
 
 available_countries <- read.csv("Rt_estimate_reconstruction/otherFiles/available_countries.csv", row.names = 1)
@@ -36,10 +36,8 @@ pub_delays <- read.csv("Rt_estimate_reconstruction/otherFiles/pub_delays.csv", r
 
 # period for which RKI was criticized to correct always upwards
 start_default <- "2020-10-01"
-end_default <- as.character(as_date(start_default) + weeks(10))
-
 start_globalrt <- "2021-02-15"
-end_globalrt <- as.character(as_date(start_globalrt) + weeks(10))
+start_ilmenau <- "2020-11-16"
 
 {plots <- list()
 
@@ -150,16 +148,17 @@ ggsave(plots_arranged, filename = paste0("Figures/estimates_realtime_raw/", end_
 
 plots_CI <- list()
 
-for (method in methods[methods!="Braunschweig"]){
+for (method in methods){
   print(method)
   
   if (method == "globalrt_7d"){
     start <- start_globalrt
-    end <- end_globalrt
+  } else if (method == "ilmenau"){
+    start <- start_ilmenau
   } else {
     start <- start_default
-    end <- end_default
   }
+  end <- as.character(as_date(start) + weeks(10))
   
   pub_dates <- list.files(paste0(path_estimates, method),
                           pattern = "\\d{4}-\\d{2}-\\d{2}",
@@ -168,6 +167,7 @@ for (method in methods[methods!="Braunschweig"]){
   final_version <- as.character(as_date(end) %m+% months(6))
   if (method == "epiforecasts") final_version <- as.character(as.Date(start) + 105)
   if (method == "globalrt_7d") final_version <- "2021-10-25"
+  if (method == "Braunschweig") final_version <- "2021-06-09"
   
   pub_dates <- pub_dates[which(pub_dates <= end &
                                  pub_dates >= start)]
@@ -178,8 +178,6 @@ for (method in methods[methods!="Braunschweig"]){
     intersect(as.character(seq(from=start_date, to=end_date, by="week")))
   
   pub_dates <- c(pub_dates, final_version)
-  
-  print(pub_dates)
   
   for (country in c("DE", "AT", "CH")[1]){
     print(country)
@@ -194,15 +192,16 @@ for (method in methods[methods!="Braunschweig"]){
                                                 pub_date = pub_date,
                                                 location = country,
                                                 verbose = F) %>%
-              dplyr::select(date, R_pub, lower, upper)
-            if (pub_date != final_version){
+              dplyr::select(any_of(c("date", "R_pub", "lower", "upper")))
+            if ((pub_date != final_version) & (dim(R_est)[2] > 1)){
               last <- max(R_est[rowSums(!is.na(R_est))>1, "date"])
               R_est <- R_est %>% dplyr::filter(date <= last, date > last - 21)
             }
-            names(R_est) <- c("date",
-                              paste0("R.", pub_date),
-                              paste0("l.", pub_date),
-                              paste0("u.", pub_date))
+            names <- c("date",
+                       paste0("R.", pub_date),
+                       paste0("l.", pub_date),
+                       paste0("u.", pub_date))
+            names(R_est) <- names[1:dim(R_est)[2]]
           },
           error = function(e) {R_est <<- data.frame(date = seq(as_date("2019-12-28"),
                                                                as_date(final_version),
@@ -254,11 +253,12 @@ for (method in methods[methods!="Braunschweig"]){
 }
 
 plots_arranged <- ggarrange(plots_CI[[methods[1]]], plots_CI[[methods[2]]], plots_CI[[methods[3]]],
-                            plots_CI[[methods[4]]], plots_CI[[methods[5]]],
-                            plots_CI[[methods[6]]], plots_CI[[methods[7]]],
+                            plots_CI[[methods[4]]], plots_CI[[methods[5]]], plots_CI[[methods[6]]],
+                            plots_CI[[methods[7]]], plots_CI[[methods[8]]],
                             ncol=1, nrow=length(plots_CI),
-                            common.legend = T, legend="bottom",
-                            legend.grob = get_legend(plots_CI[["RKI_7day"]]))
+                            #common.legend = T, legend="bottom",
+                            #legend.grob = get_legend(plots_CI[["RKI_7day"]]))
+                            legend = "none")
 print(plots_arranged)
 ggsave(plots_arranged, filename = paste0("Figures/estimates_realtime_raw_CI/", end_default,
                                          "/all_methods.pdf"),
