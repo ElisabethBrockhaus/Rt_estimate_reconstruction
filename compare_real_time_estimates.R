@@ -36,8 +36,8 @@ pub_delays <- read.csv("Rt_estimate_reconstruction/otherFiles/pub_delays.csv", r
 
 # period for which RKI was criticized to correct always upwards
 start_default <- "2020-10-01"
-start_globalrt <- "2021-02-15"
-start_ilmenau <- "2020-11-16"
+start_globalrt <- "2021-02-18"
+start_ilmenau <- "2020-11-19"
 
 {plots <- list()
 
@@ -166,7 +166,7 @@ for (method in methods){
   
   final_version <- as.character(as_date(end) %m+% months(6))
   if (method == "epiforecasts") final_version <- as.character(as.Date(start) + 105)
-  if (method == "globalrt_7d") final_version <- "2021-10-25"
+  if (method == "globalrt_7d") final_version <- "2021-10-28"
   if (method == "Braunschweig") final_version <- "2021-06-09"
   
   pub_dates <- pub_dates[which(pub_dates <= end &
@@ -223,9 +223,9 @@ for (method in methods){
         }
         
         if (method == "ilmenau"){
-          ylim <- c(0.3, 2.15)
+          ylim <- c(0.3, 1.75)
         } else if(method == "Braunschweig"){
-          ylim <- c(0.9, 1.75)
+          ylim <- c(0.9, 1.8)
         } else {
           ylim <- c(0.9, 1.5)
         }
@@ -259,8 +259,8 @@ plots_arranged <- ggarrange(plots_CI[[methods[1]]], plots_CI[[methods[2]]], plot
                             #common.legend = T, legend="bottom",
                             #legend.grob = get_legend(plots_CI[["RKI_7day"]]))
                             legend = "none")
-print(plots_arranged)
-ggsave(plots_arranged, filename = paste0("Figures/estimates_realtime_raw_CI/", end_default,
+ggsave(plots_arranged, filename = paste0("Figures/estimates_realtime_raw_CI/",
+                                         as.character(as_date(start_default) + weeks(10)),
                                          "/all_methods.pdf"),
        bg = "transparent", width = 17, height = 21)
 

@@ -13,7 +13,21 @@ library(lubridate)
 Sys.setlocale("LC_TIME", "English")
 
 get_colors <- function(methods, palette, name_consensus = "consensus"){
-  all_methods <- c("AGES", "HZI", "consensus", "epiforecasts", "ETH", "globalrt", "Ilmenau", "RKI", "RKI_4day", "rtlive", "SDSC")
+  all_methods <- c("AGES", "HZI", "consensus", "epiforecasts", "ETH", "globalrt",
+                   "Ilmenau", "RKI", "RKI_4day", "rtlive", "SDSC")
+  default_pub_dates <- c("2020-10-01", "2020-10-08", "2020-10-15", "2020-10-22",
+                         "2020-10-29", "2020-11-05", "2020-11-12", "2020-11-19",
+                         "2020-11-26", "2020-12-03", "2020-12-10", # default
+                         "2020-12-17", "2020-12-24", "2020-12-31", "2021-01-07",
+                         "2021-01-14", "2021-01-21", "2021-01-28", # ilmenau
+                         "2021-02-04", "2021-02-11", # fill gap
+                         "2021-02-18", "2021-02-25", "2021-03-04", "2021-03-11", "2021-04-01",
+                         "2021-04-08", "2021-04-15", "2021-04-22", "2021-04-29", # globalrt
+                         "2021-05-06", # fill gap
+                         "2020-09-29", "2020-10-06", "2020-10-13", "2020-10-20",
+                         "2020-10-27", "2020-11-03", "2020-11-10", "2020-11-17",
+                         "2020-11-24", "2020-12-01") # HZI + gaps
+  final_versions <- c("2021-06-10", "2021-01-14", "2021-07-28", "2021-10-28", "2021-06-09")
   num_est <- length(methods)
   
   # constant colors for different models
@@ -32,6 +46,22 @@ get_colors <- function(methods, palette, name_consensus = "consensus"){
     names(cols) <- all_methods
     cols <- cols[methods]
   
+  # constant colors for different pub dates
+  } else if (all(methods %in% c(default_pub_dates, final_versions))){
+    cols <- c(rep(c("#ff0000",
+                    "#ff6f00",
+                    "#ffe100",
+                    "#33ff00",
+                    "#0dba27",
+                    "#00e1ff",
+                    "#006aff",
+                    "#2200ff",
+                    "#a600ff",
+                    "#ff00ff"), 4),
+              rep("#000000", 5))
+    names(cols) <- c(default_pub_dates, final_versions)
+    cols <- cols[methods]
+
   # if all EpiEstim use color palette
   } else {
     if (palette == "YlGn"){
@@ -70,7 +100,7 @@ get_colors <- function(methods, palette, name_consensus = "consensus"){
     }
   }
   
-  #show_col(cols, ncol = num_est, labels = F)
+  cols[names(cols) == name_consensus] <- "#000000"
   return(cols)
 }
 
@@ -506,7 +536,7 @@ plot_real_time_estimates <- function(estimates,
 
 plot_real_time_estimates_with_CI <- function(estimates,
                                              start_date = "2021-04-01", end_date = "2021-05-01",
-                                             legend_name="weekday (pub date)", plot_title="",
+                                             legend_name="pub date", plot_title="",
                                              name_consensus="2021-07-16",
                                              filenames = "_latest_plot.pdf",
                                              ylim_l=0.5, ylim_u=1.5) {
@@ -540,30 +570,30 @@ plot_real_time_estimates_with_CI <- function(estimates,
       axis.line.y.right = element_line(),
       axis.line.x.top = element_line(),
       legend.position = "bottom",
-      panel.border = element_rect(fill = "transparent", size = 0.5),
-      panel.background = element_rect(fill = "transparent"),
+      panel.background = element_rect(fill = "transparent", size = 0.5),
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
     ggtitle(plot_title) +
     labs(x = NULL, y = "R") +
-    scale_x_date(limits = as.Date(c(start_date,end_date)),
+    scale_x_date(limits = as.Date(c(start_date, end_date)),
                  date_labels = "%b %d", expand = c(0,1),
-                 breaks = date_breaks("1 week"))
+                 breaks = seq(from=min(as_date(R_est$model)), by="week", length.out=11))
   
-  #col_values <- get_colors(methods = c(unique(R_est$weekday), name_consensus),
-  #                         "Spectral", name_consensus = name_consensus)
+  col_values <- get_colors(methods = c(unique(R_est$model)),
+                           palette = "pub_dates", name_consensus = name_consensus)
   
   R_plot <-  R_plot +
     geom_line(data=R_est[R_est$model!=name_consensus & !is.na(R_est$R),],
               aes(x = date, y = R, group=model, color=model), size = .5, na.rm = T)
   
-  
   if ("l" %in% names(R_est)) {
     R_plot <-  R_plot +
+      geom_ribbon(data=R_est[R_est$model==name_consensus & !is.na(R_est$R),],
+                  aes(ymin = l, ymax = u, fill = model), alpha = .1) +
       geom_ribbon(data=R_est[R_est$model!=name_consensus & !is.na(R_est$R),],
-                  aes(ymin = l, ymax = u, fill = model), alpha = .25) #+
-      #scale_fill_manual(values=col_values, name=legend_name)
+                  aes(ymin = l, ymax = u, fill = model), alpha = .2) +
+      scale_fill_manual(values=col_values, name=legend_name)
   }
   
   R_plot <-  R_plot +
@@ -571,9 +601,9 @@ plot_real_time_estimates_with_CI <- function(estimates,
                aes(xintercept=as_date(model), group=model, color=model),
                size = .5, na.rm = T) + 
     geom_line(data=R_est[R_est$model==name_consensus,],
-              aes(x = date, y = R), size = .8, color="black") #+
-    #scale_color_manual(values=col_values, name=legend_name)
-  
+              aes(x = date, y = R), size = .8, color="black") +
+    scale_color_manual(values=col_values, name=legend_name)
+
   R_plot <- R_plot +
     coord_cartesian(ylim = c(ylim_l-0.05, ylim_u+0.05), expand = FALSE)
   
