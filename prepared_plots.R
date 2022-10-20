@@ -756,8 +756,8 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
-    ylab("proportion containing final estimate") +
-    coord_cartesian(xlim = c(-20, 0), ylim = c(-0.03, 1.03), expand = FALSE, clip = "off") +
+    ylab("part with final est.") +
+    coord_cartesian(xlim = c(-20.3, 0.3), ylim = c(-0.03, 1.03), expand = FALSE, clip = "off") +
     scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
   
   methods_legend <- unique(coverage_data$method)
@@ -825,7 +825,7 @@ plot_CI_widths <- function(conf_level = "95"){
       panel.grid.minor = element_blank()
     ) +
     ylab("width of 95%-CI") +
-    coord_cartesian(xlim = c(-20, 0), ylim = c(-0.01, 0.875), expand = FALSE, clip = "off") +
+    coord_cartesian(xlim = c(-20.3, 0.3), ylim = c(-0.01, 0.875), expand = FALSE, clip = "off") +
     scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
   
   methods_legend <- unique(width_data$method)
@@ -882,9 +882,9 @@ plot_diff_prev <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.15)) {
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
-    ylab(ifelse(diff_type == "diff", "mean difference to estimate from previous day",
-                "mean absolute difference to estimate from previous day")) +
-    coord_cartesian(xlim = c(-20, 0), ylim = ylim, expand = FALSE) +
+    ylab(ifelse(diff_type == "diff", "MD to previous est.",
+                "MAD to previous est.")) +
+    coord_cartesian(xlim = c(-20.3, 0.3), ylim = ylim, expand = FALSE) +
     scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
   
   methods_legend <- unique(diff_data$method)
@@ -899,8 +899,9 @@ plot_diff_prev <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.15)) {
     geom_text(data=subset(diff_data, value > ylim[2]),
               aes(label = round(value, 2),
                   x = variable,
-                  y = ylim[2] - 0.03 * (ylim[2] + abs(ylim[1])),
+                  y = ylim[2] - 0.06 * (ylim[2] + abs(ylim[1])),
                   color = method),
+              angle=90,
               show.legend = FALSE) +
     scale_color_manual(values = col_values, name = "method")
   
@@ -947,9 +948,9 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.15)) {
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
-    ylab(ifelse(diff_type == "diff", "mean difference to final estimate",
-                "mean absolute difference to final estimate")) +
-    coord_cartesian(xlim = c(-20, 0), ylim = ylim, expand = FALSE) +
+    ylab(ifelse(diff_type == "diff", "MD to final est.",
+                "MAD to final est.")) +
+    coord_cartesian(xlim = c(-20.3, 0.3), ylim = ylim, expand = FALSE) +
     scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
   
   methods_legend <- unique(diff_data$method)
@@ -961,19 +962,28 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.15)) {
                   y = value,
                   color = method),
               size = .8, na.rm = T) +
-    geom_text(data=subset(diff_data, value > ylim[2]),
-              aes(label = round(value, 2),
-                  x = variable,
-                  y = ylim[2] - 0.03 * (ylim[2] + abs(ylim[1])),
-                  color = method),
-              show.legend = FALSE) +
-    geom_text(data=subset(diff_data, value < ylim[1]),
-              aes(label = round(value, 2),
-                  x = variable,
-                  y = ylim[1] + 0.03 * (ylim[2] + abs(ylim[1])),
-                  color = method),
-              show.legend = FALSE) +
     scale_color_manual(values=col_values, name="method")
+
+  if (dim(subset(diff_data, value > ylim[2]))[1] > 0) {
+    diff_plot <- diff_plot + 
+      geom_text(data=subset(diff_data, value > ylim[2]),
+                aes(label = round(value, 2),
+                    x = variable,
+                    y = ylim[2] - 0.06 * (ylim[2] + abs(ylim[1])),
+                    color = method),
+                angle=90,
+                show.legend = FALSE)
+  }
+  if (dim(subset(diff_data, value < ylim[1]))[1] > 0) {
+    diff_plot <- diff_plot + 
+      geom_text(data=subset(diff_data, value < ylim[1]),
+                aes(label = round(value, 2),
+                    x = variable,
+                    y = ylim[1] + 0.06 * (ylim[2] + abs(ylim[1])),
+                    color = method),
+                angle=90,
+                show.legend = FALSE)   
+  }
   
   ggsave(diff_plot, filename = paste0("Figures/CI/", diff_type, "_to_final.pdf"),
          bg = "transparent", width = 8, height = 5.8)

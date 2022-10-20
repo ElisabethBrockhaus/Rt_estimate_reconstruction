@@ -330,8 +330,8 @@ plot1 <- plot_CI_coverage_rates(); plot1
 plot2 <- plot_CI_widths(); plot2
 plot3 <- plot_diff_prev(diff_type = "abs_diff"); plot3
 plot4 <- plot_diff_final(diff_type = "abs_diff"); plot4
-plot5 <- plot_diff_prev(diff_type = "diff", ylim = c(-0.025, 0.02)); plot5
-plot6 <- plot_diff_final(diff_type = "diff", ylim = c(-0.025, 0.02)); plot6
+plot5 <- plot_diff_prev(diff_type = "diff", ylim = c(-0.02, 0.02)); plot5
+plot6 <- plot_diff_final(diff_type = "diff", ylim = c(-0.02, 0.02)); plot6
 
 consistence_plot <- ggarrange(plot1, plot2, plot3, plot4, plot5, plot6, ncol=2, nrow=3,
                               labels = list("A", "B", "C", "D", "E", "F"),
