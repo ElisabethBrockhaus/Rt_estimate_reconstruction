@@ -337,7 +337,7 @@ consistence_plot <- ggarrange(plot1, plot2, plot3, plot4, plot5, plot6, ncol=2, 
                               labels = list("A", "B", "C", "D", "E", "F"),
                               font.label = list(size = 18, face = "bold"),
                               common.legend = T, legend="bottom",
-                              legend.grob = get_legend(plot2))
+                              legend.grob = get_legend(plot3))
 print(consistence_plot)
 ggsave(consistence_plot, filename = paste0("Figures/CI/consistence_plots.pdf"),
        bg = "transparent", width = 16, height = 11.6)

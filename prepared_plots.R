@@ -470,7 +470,8 @@ plot_real_time_estimates <- function(estimates,
                                      legend_name="weekday (pub date)", plot_title="",
                                      name_consensus="2021-07-16",
                                      filenames = "_latest_plot.pdf",
-                                     ylim_l=0.5, ylim_u=1.5) {
+                                     ylim_l=0.5, ylim_u=1.5,
+                                     show.legend = TRUE) {
   
   estimates <- estimates %>%
     dplyr::filter(date >= start_date, date <= end_date)
@@ -502,7 +503,7 @@ plot_real_time_estimates <- function(estimates,
       axis.line = element_line(),
       axis.line.y.right = element_line(),
       axis.line.x.top = element_line(),
-      legend.position = "bottom",
+      legend.position = ifelse(show.legend, "bottom", "none"),
       panel.border = element_rect(fill = "transparent", size = 0.5),
       panel.background = element_rect(fill = "transparent"),
       panel.grid.major = element_line(),
@@ -519,7 +520,8 @@ plot_real_time_estimates <- function(estimates,
   
   R_plot <-  R_plot +
     geom_line(data=R_est[R_est$model!=name_consensus & !is.na(R_est$R),],
-              aes(x = date, y = R, group=model, color=weekday), size = .5, na.rm = T) +
+              aes(x = date, y = R, group=model, color=weekday),
+              size = .5, na.rm = T) +
     geom_line(data=R_est[R_est$model==name_consensus,],
               aes(x = date, y = R, color=model), size = .8) +
     scale_color_manual(values=col_values, name=legend_name)
@@ -578,14 +580,16 @@ plot_real_time_estimates_with_CI <- function(estimates,
     labs(x = NULL, y = "R") +
     scale_x_date(limits = as.Date(c(start_date, end_date)),
                  date_labels = "%b %d", expand = c(0,1),
-                 breaks = seq(from=min(as_date(R_est$model)), by="week", length.out=11))
+                 breaks = seq(from=min(as_date(R_est$model)),
+                              to=max(as_date(R_est$model)), by="week"))
   
   col_values <- get_colors(methods = c(unique(R_est$model)),
-                           palette = "pub_dates", name_consensus = name_consensus)
+                           palette = "Spectral", name_consensus = name_consensus)
   
   R_plot <-  R_plot +
     geom_line(data=R_est[R_est$model!=name_consensus & !is.na(R_est$R),],
-              aes(x = date, y = R, group=model, color=model), size = .5, na.rm = T)
+              aes(x = date, y = R, group=model, color=model),
+              size = .5, na.rm = T, show.legend = F)
   
   if ("l" %in% names(R_est)) {
     R_plot <-  R_plot +
@@ -599,7 +603,7 @@ plot_real_time_estimates_with_CI <- function(estimates,
   R_plot <-  R_plot +
     geom_vline(data=R_est[R_est$model!=name_consensus & !is.na(R_est$R),],
                aes(xintercept=as_date(model), group=model, color=model),
-               size = .5, na.rm = T) + 
+               size = .5, na.rm = T, show.legend = FALSE) + 
     geom_line(data=R_est[R_est$model==name_consensus,],
               aes(x = date, y = R), size = .8, color="black") +
     scale_color_manual(values=col_values, name=legend_name)
@@ -756,7 +760,7 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
-    ylab("part with final est.") +
+    ylab("coverage of final est.") +
     coord_cartesian(xlim = c(-20.3, 0.3), ylim = c(-0.03, 1.03), expand = FALSE, clip = "off") +
     scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
   
