@@ -18,13 +18,8 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 path_estimates <- "reproductive_numbers/data-processed/"
 
 # sources of published real-time estimates
-# methods <- list.dirs(path_estimates, full.names = F, recursive = F)
-# methods <- methods[!methods %in% c("", "AW_7day", "AW_WVday", "owid", "ETHZ_step",
-#                                    "ETHZ_sliding_window_deaths", "ETHZ_step_deaths",
-#                                    "zidatalab")]
 methods <- c("Braunschweig", "ETHZ_sliding_window", "RKI_7day",
              "rtlive", "SDSC", "epiforecasts", "ilmenau", "globalrt_7d")
-methods
 
 available_countries <- read.csv("Rt_estimate_reconstruction/otherFiles/available_countries.csv", row.names = 1)
 pub_delays <- read.csv("Rt_estimate_reconstruction/otherFiles/pub_delays.csv", row.names = 1)
@@ -84,13 +79,15 @@ for (method in methods){
                                                 end = as_date(pub_date) - pub_delays[method, country],
                                                 pub_date = pub_date,
                                                 location = country,
+                                                include_label = TRUE,
                                                 verbose = F) %>%
-              dplyr::select(any_of(c("date", "R_pub", "lower", "upper")))
+              dplyr::select(any_of(c("date", "label", "R_pub", "lower", "upper")))
             if ((pub_date != final_version) & (dim(R_est)[2] > 1)){
               last <- max(R_est[rowSums(!is.na(R_est))>1, "date"])
               R_est <- R_est %>% dplyr::filter(date <= last, date > last - 21)
             }
             names <- c("date",
+                       paste0("label.", pub_date),
                        paste0("R.", pub_date),
                        paste0("l.", pub_date),
                        paste0("u.", pub_date))
