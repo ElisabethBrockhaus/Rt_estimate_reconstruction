@@ -18,6 +18,7 @@ load_published_R_estimates <- function(source,
                                        end = Sys.Date(),
                                        location = "DE",
                                        conf_level = "95",
+                                       include_label = FALSE,
                                        verbose = T){
   
   if (source %in% c("Braunschweig", "zidatalab")) {
@@ -30,6 +31,10 @@ load_published_R_estimates <- function(source,
     columns <- c("date", "0.5", "0.25", "0.75")
   } else if (conf_level == "None") {
     columns <- c("date", "0.5", "", "")
+  }
+  
+  if(include_label) {
+    columns <- c(columns, "label")
   }
   
   # define path where Rt estimates are located
@@ -50,7 +55,7 @@ load_published_R_estimates <- function(source,
     dplyr::filter(location==!!location) %>%
     mutate(quantile = as.double(quantile)) %>%
     mutate(quantile = replace_na(quantile, 0.5)) %>%
-    dplyr::select(date, quantile, value) %>%
+    dplyr::select(date, quantile, value, label) %>%
     pivot_wider(names_from = c(quantile)) %>%
     dplyr::select(any_of(columns)) %>%
     rename(any_of(c(R_pub = "0.5", lower = columns[3], upper = columns[4])))
