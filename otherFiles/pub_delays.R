@@ -5,6 +5,7 @@ source("Rt_estimate_reconstruction/load_data.R")
 
 # path of published estimates
 path_estimates <- "reproductive_numbers/data-processed/"
+available_countries <- read.csv("Rt_estimate_reconstruction/otherFiles/available_countries.csv", row.names = 1)
 
 # sources of published real-time estimates
 methods <- c("Braunschweig", "ETHZ_sliding_window", "RKI_7day",
@@ -16,9 +17,9 @@ init <- rep(NA, n)
 pub_delays_list <- list()
 for (method in methods) {
   pub_delays_list[[method]] <- data.frame(DE = rep(0, 17),
-                                     AT = rep(0, 17),
-                                     CH = rep(0, 17),
-                                     row.names = 0:16)
+                                          AT = rep(0, 17),
+                                          CH = rep(0, 17),
+                                          row.names = 0:16)
 }
 
 min_lag <- 0
@@ -40,9 +41,10 @@ for (method in methods){
   } else {
     start <- start_default
   }
-  end <- as.character(as_date(start) + weeks(10))
+  end <- as.character(as_date(start) + months(6))
   
   pub_dates <- pub_dates[which((pub_dates <= end) & (pub_dates >= start))]
+  print(length(pub_dates))
 
   for (country in c("DE", "AT", "CH")){
     print(country)
@@ -68,10 +70,9 @@ for (method in methods){
             pub_delays_list[[method]][as.character(min_delay), country] <- 1 + pub_delays_list[[method]][as.character(min_delay), country]
             
           },
-          error = function(e) {}
+          error = function(e) {if (country == "DE") print(paste("Error for:", method, pub_date))}
         )
       }
-      pub_delays[method, country] <- min_lag
     }
   }
 }
@@ -90,7 +91,8 @@ for (method in methods){
     num.est <- sum(min_pub_delays_list[[method]][, country])
     if(num.est > 0){
       cum.num.est <- cumsum(min_pub_delays_list[[method]][, country])
-      min.index <- which.max(cum.num.est/num.est >= 0.7)
+      print((cum.num.est/num.est))
+      min.index <- which.max(cum.num.est/num.est >= 0.75)
       pub_delays[method, country] <- row.names(min_pub_delays_list[[method]])[min.index]
     }
   }
