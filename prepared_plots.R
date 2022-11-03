@@ -544,7 +544,10 @@ plot_real_time_estimates_with_CI <- function(estimates,
                                              ylim_l=0.5, ylim_u=1.5) {
   
   estimates <- estimates %>%
-    dplyr::filter(date >= start_date, date <= end_date)
+    dplyr::filter(date >= start_date, date <= end_date) %>%
+    mutate_at(vars(matches("label")), function(x) ifelse(x=="estimate", 1,
+                                                         ifelse(x=="estimate based on partial data", 2,
+                                                                ifelse(x=="forecast", 3, NA))))
   
   # reshape data
   R_est  <- estimates %>%
@@ -581,16 +584,21 @@ plot_real_time_estimates_with_CI <- function(estimates,
     scale_x_date(limits = as.Date(c(start_date, end_date)),
                  date_labels = "%b %d", expand = c(0,1),
                  breaks = seq(from=min(as_date(R_est$model)),
-                              to=max(as_date(R_est$model)), by="week"))
-  
+                              to=max(as_date(R_est$model)), by="week")) +
+    coord_cartesian(ylim = c(ylim_l-0.05, ylim_u+0.05), expand = FALSE)
+
   col_values <- get_colors(methods = c(unique(R_est$model)),
                            palette = "Spectral", name_consensus = name_consensus)
   
-  R_plot <-  R_plot +
-    geom_line(data=R_est[R_est$model!=name_consensus & !is.na(R_est$R),],
-              aes(x = date, y = R, group=model, color=model),
-              size = .5, na.rm = T, show.legend = F)
-  
+  for (l in 1:3){
+    R_plot <-  R_plot +
+      geom_line(data=R_est[R_est$model!=name_consensus &
+                             !is.na(R_est$R) &
+                             R_est$label==l,],
+                aes(x = date, y = R, group=model, color=model),
+                size = .5, linetype=l, na.rm = T, show.legend = F) 
+  }
+
   if ("l" %in% names(R_est)) {
     R_plot <-  R_plot +
       geom_ribbon(data=R_est[R_est$model==name_consensus & !is.na(R_est$R),],
@@ -608,9 +616,6 @@ plot_real_time_estimates_with_CI <- function(estimates,
               aes(x = date, y = R), size = .8, color="black") +
     scale_color_manual(values=col_values, name=legend_name)
 
-  R_plot <- R_plot +
-    coord_cartesian(ylim = c(ylim_l-0.05, ylim_u+0.05), expand = FALSE)
-  
   ggsave(R_plot, filename = paste0("Figures/estimates", filenames),  bg = "transparent",
          width = 13.1, height = 5.8)
   return(R_plot)
@@ -732,6 +737,15 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
     as.data.frame() %>%
     column_to_rownames("...1")
   
+  labels <- read_csv("Rt_estimate_reconstruction/otherFiles/estimate_labels.csv") %>%
+    as.data.frame() %>%
+    rename(method = ...1) %>%
+    mutate(method = plyr::mapvalues(method,
+                                    c("ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
+                                    c("ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
+    pivot_longer(!method, names_to = "variable", values_to = "label")
+    
+  
   coverage_data <- CI_coverage[, c(as.character(0:20), "min_lag")] %>%
     rownames_to_column("method") %>%
     dplyr::filter(method %in% methods) %>%
@@ -741,8 +755,13 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
     arrange(method)
   
   coverage_data <- coverage_data %>%
-    gather("variable", "value", 2:(dim(coverage_data)[2] - 1)) %>%
-    mutate(variable = -1 * as.numeric(variable))
+    gather("variable", "value", 2:(dim(coverage_data)[2] - 1))
+  
+  coverage_data <- merge(coverage_data, labels, by=c("method", "variable")) %>%
+    mutate(variable = -1 * as.numeric(variable),
+           label = ifelse(label=="estimate", 1,
+                          ifelse(label=="estimate based on partial data", 2,
+                                 ifelse(label=="forecast", 3, NA))))
   
   coverage_plot <- ggplot() +
     theme_minimal() +
@@ -766,21 +785,22 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
   
   methods_legend <- unique(coverage_data$method)
   col_values <- get_colors(methods = methods_legend, palette = "methods")
-  line_types <- rep(1, length(methods_legend))
-  names(line_types) <- methods_legend
-  if (("rtlive" %in% methods_legend) &
-      ("globalrt" %in% methods_legend) &
-      (conf_level == "95")) line_types["rtlive"] <- 2
+  # line_types <- rep(1, length(methods_legend))
+  # names(line_types) <- methods_legend
+  # if (("rtlive" %in% methods_legend) &
+  #     ("globalrt" %in% methods_legend) &
+  #     (conf_level == "95")) line_types["rtlive"] <- 2
   
-  coverage_plot <- coverage_plot + 
-    geom_line(data=coverage_data,
-              aes(x = variable,
-                  y = value,
-                  color = method,
-                  linetype = method),
-              size = .8, na.rm = T) +
-    scale_color_manual(values=col_values, name="method") +
-    scale_linetype_manual(values=line_types)
+  for (l in 1:3){
+    coverage_plot <-  coverage_plot +
+      geom_line(data=coverage_data[coverage_data$label==l,],
+                aes(x = variable, y = value, color=method),
+                size = .8, linetype=l, na.rm = T)
+  }
+  
+  coverage_plot <- coverage_plot +
+    scale_color_manual(values=col_values, name="method") #+
+    #scale_linetype_manual(values=line_types)
     
   coverage_plot <- coverage_plot +
     geom_hline(yintercept=0.95, linetype="dashed") +
@@ -800,6 +820,14 @@ plot_CI_widths <- function(conf_level = "95"){
     as.data.frame() %>%
     column_to_rownames("...1")
   
+  labels <- read_csv("Rt_estimate_reconstruction/otherFiles/estimate_labels.csv") %>%
+    as.data.frame() %>%
+    rename(method = ...1) %>%
+    mutate(method = plyr::mapvalues(method,
+                                    c("ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
+                                    c("ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
+    pivot_longer(!method, names_to = "variable", values_to = "label")
+  
   width_data <- CI_width[, c(as.character(0:20), "min_lag")] %>%
     rownames_to_column("method") %>%
     dplyr::filter(method %in% methods) %>%
@@ -809,8 +837,13 @@ plot_CI_widths <- function(conf_level = "95"){
     arrange(method)
   
   width_data <- width_data %>%
-    gather("variable", "value", 2:(dim(width_data)[2] - 1)) %>%
-    mutate(variable = -1 * as.numeric(variable))
+    gather("variable", "value", 2:(dim(width_data)[2] - 1))
+  
+  width_data <- merge(width_data, labels, by=c("method", "variable")) %>%
+    mutate(variable = -1 * as.numeric(variable),
+           label = ifelse(label=="estimate", 1,
+                          ifelse(label=="estimate based on partial data", 2,
+                                 ifelse(label=="forecast", 3, NA))))
   
   width_plot <- ggplot() +
     theme_minimal() +
@@ -835,12 +868,14 @@ plot_CI_widths <- function(conf_level = "95"){
   methods_legend <- unique(width_data$method)
   col_values <- get_colors(methods = methods_legend, palette = "methods")
   
-  width_plot <- width_plot + 
-    geom_line(data=width_data,
-              aes(x = variable,
-                  y = value,
-                  color = method),
-              size = .8, na.rm = T) +
+  for (l in 1:3){
+    width_plot <-  width_plot +
+      geom_line(data=width_data[width_data$label==l,],
+                aes(x = variable, y = value, color=method),
+                size = .8, linetype=l, na.rm = T)
+  }
+  
+  width_plot <- width_plot +
     scale_color_manual(values=col_values, name="method")
 
   ggsave(width_plot, filename = paste0("Figures/CI/", conf_level, "_CI_widths.pdf"),
@@ -849,7 +884,7 @@ plot_CI_widths <- function(conf_level = "95"){
 }
 
 
-plot_diff_prev <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.15)) {
+plot_diff_prev <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175)) {
   methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
                "ilmenau", "RKI_7day", "rtlive", "SDSC")
   
@@ -857,6 +892,14 @@ plot_diff_prev <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.15)) {
                                   diff_type, "_to_prev.csv")) %>%
     as.data.frame() %>%
     column_to_rownames("...1")
+  
+  labels <- read_csv("Rt_estimate_reconstruction/otherFiles/estimate_labels.csv") %>%
+    as.data.frame() %>%
+    rename(method = ...1) %>%
+    mutate(method = plyr::mapvalues(method,
+                                    c("ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
+                                    c("ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
+    pivot_longer(!method, names_to = "variable", values_to = "label")
   
   diff_data <- diff_to_prev %>%
     rownames_to_column("method") %>%
@@ -867,8 +910,13 @@ plot_diff_prev <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.15)) {
     arrange(method)
   
   diff_data <- diff_data %>%
-    gather("variable", "value", as.character(0:20)) %>%
-    mutate(variable = -1 * as.numeric(variable))
+    gather("variable", "value", as.character(0:20))
+  
+  diff_data <- merge(diff_data, labels, by=c("method", "variable")) %>%
+    mutate(variable = -1 * as.numeric(variable),
+           label = ifelse(label=="estimate", 1,
+                          ifelse(label=="estimate based on partial data", 2,
+                                 ifelse(label=="forecast", 3, NA))))
   
   diff_plot <- ggplot() +
     theme_minimal() +
@@ -894,12 +942,14 @@ plot_diff_prev <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.15)) {
   methods_legend <- unique(diff_data$method)
   col_values <- get_colors(methods = methods_legend, palette = "methods")
   
+  for (l in 1:3){
+    diff_plot <-  diff_plot +
+      geom_line(data=diff_data[diff_data$label==l,],
+                aes(x = variable, y = value, color=method),
+                size = .8, linetype=l, na.rm = T)
+  }
+  
   diff_plot <- diff_plot + 
-    geom_line(data=diff_data,
-              aes(x = variable,
-                  y = value,
-                  color = method),
-              size = .8, na.rm = T) +
     geom_text(data=subset(diff_data, value > ylim[2]),
               aes(label = round(value, 2),
                   x = variable,
@@ -915,7 +965,7 @@ plot_diff_prev <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.15)) {
 }
 
 
-plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.15)) {
+plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175)) {
   methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
                "ilmenau", "RKI_7day", "rtlive", "SDSC")
   
@@ -923,6 +973,14 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.15)) {
                                    diff_type, "_to_final.csv")) %>%
     as.data.frame() %>%
     column_to_rownames("...1")
+  
+  labels <- read_csv("Rt_estimate_reconstruction/otherFiles/estimate_labels.csv") %>%
+    as.data.frame() %>%
+    rename(method = ...1) %>%
+    mutate(method = plyr::mapvalues(method,
+                                    c("ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
+                                    c("ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
+    pivot_longer(!method, names_to = "variable", values_to = "label")
   
   diff_data <- diff_to_final %>%
     rownames_to_column("method") %>%
@@ -933,8 +991,13 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.15)) {
     arrange(method)
   
   diff_data <- diff_data %>%
-    gather("variable", "value", as.character(0:20)) %>%
-    mutate(variable = -1 * as.numeric(variable))
+    gather("variable", "value", as.character(0:20))
+  
+  diff_data <- merge(diff_data, labels, by=c("method", "variable")) %>%
+    mutate(variable = -1 * as.numeric(variable),
+           label = ifelse(label=="estimate", 1,
+                          ifelse(label=="estimate based on partial data", 2,
+                                 ifelse(label=="forecast", 3, NA))))
   
   diff_plot <- ggplot() +
     theme_minimal() +
@@ -960,12 +1023,14 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.15)) {
   methods_legend <- unique(diff_data$method)
   col_values <- get_colors(methods = methods_legend, palette = "methods")
   
+  for (l in 1:3){
+    diff_plot <-  diff_plot +
+      geom_line(data=diff_data[diff_data$label==l,],
+                aes(x = variable, y = value, color=method),
+                size = .8, linetype=l, na.rm = T)
+  }
+  
   diff_plot <- diff_plot + 
-    geom_line(data=diff_data,
-              aes(x = variable,
-                  y = value,
-                  color = method),
-              size = .8, na.rm = T) +
     scale_color_manual(values=col_values, name="method")
 
   if (dim(subset(diff_data, value > ylim[2]))[1] > 0) {
