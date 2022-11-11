@@ -11,8 +11,8 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 path_estimates <- "reproductive_numbers/data-processed/"
 methods <- c("RKI_7day", "ETHZ_sliding_window", "ilmenau", "sdsc", "globalrt_7d", "epiforecasts", "rtlive", "Braunschweig")
 
-start_date <- as_date("2020-11-16")
-end_date <- as_date("2021-05-01")
+start_date <- as_date("2020-10-01")
+end_date <- as_date("2021-10-28")
 target_dates <- seq(start_date, end_date, by = "day")
 
 df_missing_dates <- data.frame(matrix(rep(NA, length(methods)*length(target_dates)),
@@ -35,8 +35,8 @@ plot_dates <- df_missing_dates %>%
   gather(method, value, -date) %>%
   filter(value==TRUE) %>%
   mutate(method = plyr::mapvalues(method,
-                                  c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
-                                  c("HZI",          "ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
+                                  c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day", "sdsc"),
+                                  c("HZI",          "ETH",                 "globalrt",    "Ilmenau", "RKI",      "SDSC"))) %>%
   arrange(desc(method))
 
 methods_legend <- unique(plot_dates$method)
