@@ -862,8 +862,9 @@ plot_CI_widths <- function(conf_level = "95"){
       panel.grid.minor = element_blank()
     ) +
     ylab("width of 95%-CI") +
-    coord_cartesian(xlim = c(-20.3, 0.3), ylim = c(-0.01, 0.875), expand = FALSE, clip = "off") +
-    scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
+    coord_cartesian(xlim = c(-20.3, 0.3), ylim = c(-0.03, 0.83), expand = FALSE, clip = "off") +
+    scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back")) +
+    scale_y_continuous(labels=function(x) sprintf("    %.1f", x))
   
   methods_legend <- unique(width_data$method)
   col_values <- get_colors(methods = methods_legend, palette = "methods")
@@ -938,6 +939,10 @@ plot_diff_prev <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175)) {
                 "MAD to previous est.")) +
     coord_cartesian(xlim = c(-20.3, 0.3), ylim = ylim, expand = FALSE) +
     scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
+  
+  if (diff_type == "diff") {
+    diff_plot <- diff_plot + geom_hline(yintercept = 0)
+  }
   
   methods_legend <- unique(diff_data$method)
   col_values <- get_colors(methods = methods_legend, palette = "methods")
@@ -1019,6 +1024,10 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175)) {
                 "MAD to final est.")) +
     coord_cartesian(xlim = c(-20.3, 0.3), ylim = ylim, expand = FALSE) +
     scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
+  
+  if (diff_type == "diff") {
+    diff_plot <- diff_plot + geom_hline(yintercept = 0)
+  }
   
   methods_legend <- unique(diff_data$method)
   col_values <- get_colors(methods = methods_legend, palette = "methods")
