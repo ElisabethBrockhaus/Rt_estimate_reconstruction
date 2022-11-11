@@ -77,16 +77,24 @@ calc_consistence_metrics <- function(methods,
       start_date <- start_default
     }
 
-    final_version <- as.character(as_date(as_date(start_date) + weeks(10)) %m+% months(6))
-    if (method == "epiforecasts") final_version <- as.character(as.Date(start_date) + 105)
+    end_date <- as.character(as_date(as_date(start_date) + weeks(10)) %m+% months(5))
+    final_version <- as.character(as_date(end_date) + months(1))
+    if (method == "epiforecasts") {
+      final_version <- as.character(as.Date(start_date) + weeks(15))
+      end_date <- as.character(as.Date(final_version) - months(1))
+    }
     if (method == "globalrt_7d") final_version <- "2021-10-28" # "2021-10-29" (which would be start + weeks(10) + month(6)) is not available
     if (method == "Braunschweig") final_version <- "2021-06-09" # "2021-06-10" (which would be start + weeks(10) + month(6)) is not available
     
+    print(cat("end_date:", end_date, "; final_version:", final_version))
+
     pub_dates <- list.files(paste0(path_estimates, method),
                             pattern = "\\d{4}-\\d{2}-\\d{2}",
                             full.names = F) %>% substr(1, 10)
-    pub_dates <- pub_dates[which(as_date(pub_dates) <= as_date(final_version) &
+    pub_dates <- pub_dates[which(as_date(pub_dates) <= as_date(end_date) &
                                    as_date(pub_dates) >= as_date(start_date) - days(max_lag))]
+    
+    pub_dates <- c(pub_dates, final_version)
     
     if (available_countries[method, country]) {
       if (exists("R_est_ts")) {rm(R_est_ts)}
@@ -378,13 +386,11 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 
 plot1 <- plot_CI_coverage_rates(); plot1
 plot2 <- plot_CI_widths(); plot2
-plot3 <- plot_diff_prev(diff_type = "abs_diff"); plot3
-plot4 <- plot_diff_final(diff_type = "abs_diff"); plot4
-plot5 <- plot_diff_prev(diff_type = "diff", ylim = c(-0.017, 0.03)); plot5
-plot6 <- plot_diff_final(diff_type = "diff", ylim = c(-0.017, 0.03)); plot6
+plot3 <- plot_diff_final(diff_type = "abs_diff"); plot3
+plot4 <- plot_diff_final(diff_type = "diff", ylim = c(-0.029, 0.029)); plot4
 
-consistence_plot <- ggarrange(plot1, plot2, plot3, plot4, plot5, plot6, ncol=2, nrow=3,
-                              labels = list("A", "B", "C", "D", "E", "F"),
+consistence_plot <- ggarrange(plot1, plot2, plot3, plot4, ncol=2, nrow=2,
+                              labels = list("A", "B", "C", "D"),
                               font.label = list(size = 18, face = "bold"),
                               common.legend = T, legend="bottom",
                               legend.grob = get_legend(plot3))
@@ -392,13 +398,18 @@ print(consistence_plot)
 ggsave(consistence_plot, filename = paste0("Figures/CI/consistence_plots.pdf"),
        bg = "transparent", width = 16, height = 11.6)
 
+# appendix
+plot_diff_prev_A <- plot_diff_prev(diff_type = "abs_diff", ylim = c(-0.01, 0.115)); plot_diff_prev_A
+plot_diff_prev_B <- plot_diff_prev(diff_type = "diff", ylim = c(-0.006, 0.021)); plot_diff_prev_B
+plot_diff_prev <- ggarrange(plot_diff_prev_A, plot_diff_prev_B, ncol=2, nrow=1,
+                            labels = list("A", "B"),
+                            font.label = list(size = 18, face = "bold"),
+                            common.legend = T, legend="bottom",
+                            legend.grob = get_legend(plot_diff_prev_A))
+print(plot_diff_prev)
+ggsave(plot_diff_prev, filename = paste0("Figures/CI/diff_prev_plots.pdf"),
+       bg = "transparent", width = 16, height = 5)
+
 plot_abs_diff_first(max_lag=20)
 
-CI_coverage_50 <- calc_consistence_metrics(c("Braunschweig", "epiforecasts", "rtlive"),
-                                    conf_level = 50)
-write.csv(CI_coverage_50[[1]], "Rt_estimate_reconstruction/otherFiles/50_CI_coverage.csv")
-write.csv(CI_coverage_50[[2]], "Rt_estimate_reconstruction/otherFiles/50_CI_width.csv")
-
-plot_CI_coverage_rates("50")
-plot_CI_widths("50")
 
