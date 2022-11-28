@@ -594,7 +594,7 @@ plot_real_time_estimates_with_CI <- function(estimates,
     R_plot <-  R_plot +
       geom_line(data=R_est[R_est$model!=name_consensus &
                              !is.na(R_est$R) &
-                             R_est$label==l,],
+                             R_est$label<=l,],
                 aes(x = date, y = R, group=model, color=model),
                 size = .5, linetype=l, na.rm = T, show.legend = F) 
   }
@@ -793,7 +793,7 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
   
   for (l in 1:3){
     coverage_plot <-  coverage_plot +
-      geom_line(data=coverage_data[coverage_data$label==l,],
+      geom_line(data=coverage_data[coverage_data$label<=l,],
                 aes(x = variable, y = value, color=method),
                 size = .8, linetype=l, na.rm = T)
   }
@@ -871,7 +871,7 @@ plot_CI_widths <- function(conf_level = "95"){
   
   for (l in 1:3){
     width_plot <-  width_plot +
-      geom_line(data=width_data[width_data$label==l,],
+      geom_line(data=width_data[width_data$label<=l,],
                 aes(x = variable, y = value, color=method),
                 size = .8, linetype=l, na.rm = T)
   }
@@ -949,7 +949,7 @@ plot_diff_prev <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175)) {
   
   for (l in 1:3){
     diff_plot <-  diff_plot +
-      geom_line(data=diff_data[diff_data$label==l,],
+      geom_line(data=diff_data[diff_data$label<=l,],
                 aes(x = variable, y = value, color=method),
                 size = .8, linetype=l, na.rm = T)
   }
@@ -1034,7 +1034,7 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175)) {
   
   for (l in 1:3){
     diff_plot <-  diff_plot +
-      geom_line(data=diff_data[diff_data$label==l,],
+      geom_line(data=diff_data[diff_data$label<=l,],
                 aes(x = variable, y = value, color=method),
                 size = .8, linetype=l, na.rm = T)
   }
