@@ -13,8 +13,8 @@ library(lubridate)
 Sys.setlocale("LC_TIME", "English")
 
 get_colors <- function(methods, palette, name_consensus = "consensus"){
-  all_methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window",
-                   "globalrt_7d", "ilmenau", "RKI_7day", "rtlive", "SDSC", "consensus")
+  all_methods <- c("HZI", "epiforecasts", "ETH", "globalrt",
+                   "Ilmenau", "RKI", "rtlive", "SDSC", "consensus")
   default_pub_dates <- c("2020-10-01", "2020-10-08", "2020-10-15", "2020-10-22",
                          "2020-10-29", "2020-11-05", "2020-11-12", "2020-11-19",
                          "2020-11-26", "2020-12-03", "2020-12-10", # default
