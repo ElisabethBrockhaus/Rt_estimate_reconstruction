@@ -11,9 +11,10 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 path_estimates <- "reproductive_numbers/data-processed/"
 methods <- c("RKI_7day", "ETHZ_sliding_window", "ilmenau", "sdsc", "globalrt_7d", "epiforecasts", "rtlive", "Braunschweig")
 
-start_date <- as_date("2020-10-01")
-end_date <- as_date("2021-10-28")
-target_dates <- seq(start_date, end_date, by = "day")
+start_plot <- as_date("2020-10-01")
+end_plot <- as_date(as_date("2021-02-18") + weeks(10)) %m+% months(5)
+
+target_dates <- seq(start_plot, end_plot, by = "day")
 
 df_missing_dates <- data.frame(matrix(rep(NA, length(methods)*length(target_dates)),
                                       ncol = length(methods)),
@@ -33,19 +34,41 @@ plot_dates <- df_missing_dates %>%
   rownames_to_column("date") %>%
   mutate(date = as_date(date)) %>%
   gather(method, value, -date) %>%
-  filter(value==TRUE) %>%
+  #filter(value==TRUE) %>%
+  mutate(value = ifelse(value, 2, 1)) %>%
   mutate(method = plyr::mapvalues(method,
                                   c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day", "sdsc"),
                                   c("HZI",          "ETH",                 "globalrt",    "Ilmenau", "RKI",      "SDSC"))) %>%
   arrange(desc(method))
 
 methods_legend <- unique(plot_dates$method)
-col_values <- get_colors(methods = methods_legend, palette = "methods")
+col_values <- get_colors(methods = methods_legend, palette = "Set2")
 
 plot_dates <- plot_dates %>%
   mutate(method = factor(method, levels = methods_legend))
 
-plot <- ggplot(data=plot_dates, aes(date, method, col=method)) +
+# add column whether data is used in Fig. 5
+plot_dates$used <- FALSE
+
+start_default <- "2020-10-01"
+start_globalrt <- "2021-02-18"
+start_ilmenau <- "2020-11-19"
+
+for (method in unique(plot_dates$method)){
+  if (method == "globalrt"){
+    start_date <- as_date(start_globalrt)
+  } else if (method == "Ilmenau"){
+    start_date <- as_date(start_ilmenau)
+  } else {
+    start_date <- as_date(start_default)
+  }
+  end_date <- as_date(start_date + weeks(10)) %m+% months(5)
+  plot_dates[(plot_dates$method == method) &
+               (plot_dates$date >= start_date) &
+               (plot_dates$date <= end_date), "used"] <- TRUE
+}
+
+plot <- ggplot(data=plot_dates, aes(x=date, y=method, col=method, size=value)) +
   theme_minimal() +
   theme(
     plot.margin = unit(c(1,9,1,2), "mm"),
@@ -62,9 +85,13 @@ plot <- ggplot(data=plot_dates, aes(date, method, col=method)) +
     panel.grid.minor = element_blank()
   ) +
   geom_point() +
+  scale_size(range = c(0,2)) +
   scale_x_date(date_labels = "%b %y",
-               limits = c(start_date, end_date), expand = expansion(0.01)) +
-  scale_color_manual(values=col_values, name="method")
+               limits = c(start_plot, end_plot), expand = expansion(0.01)) +
+  scale_color_manual(values=col_values, name="method") +
+  geom_line(data=plot_dates[plot_dates$used,], aes(x=date, y=method),
+            color="black", size=10, alpha=0.15)
+  
 print(plot)
 ggsave(plot, filename = paste0("Figures/missing_pub_dates.pdf"),
        bg = "transparent", width = 14, height = 5)
