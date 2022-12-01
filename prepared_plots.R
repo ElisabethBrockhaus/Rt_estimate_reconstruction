@@ -13,8 +13,8 @@ library(lubridate)
 Sys.setlocale("LC_TIME", "English")
 
 get_colors <- function(methods, palette, name_consensus = "consensus"){
-  all_methods <- c("AGES", "HZI", "consensus", "epiforecasts", "ETH", "globalrt",
-                   "Ilmenau", "RKI", "RKI_4day", "rtlive", "SDSC")
+  all_methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window",
+                   "globalrt_7d", "ilmenau", "RKI_7day", "rtlive", "SDSC", "consensus")
   default_pub_dates <- c("2020-10-01", "2020-10-08", "2020-10-15", "2020-10-22",
                          "2020-10-29", "2020-11-05", "2020-11-12", "2020-11-19",
                          "2020-11-26", "2020-12-03", "2020-12-10", # default
@@ -32,17 +32,7 @@ get_colors <- function(methods, palette, name_consensus = "consensus"){
   
   # constant colors for different models
   if (all(methods %in% all_methods)){
-    cols <- c("#E41A1C", # red
-              "#f0bc00", # yellow
-              "#000000", # black
-              "#ff8b00", # orange
-              "#00d333", # light green
-              "#00922c", # dark green
-              "#0397d8", # light blue
-              "#1502a0", # medium blue
-              "#230082", # dark blue 
-              "#bb2881", # berry
-              "#7c007c") # violett
+    cols <- c(brewer.pal(length(all_methods) - 1, "Set2"), "#000000")
     names(cols) <- all_methods
     cols <- cols[methods]
   
