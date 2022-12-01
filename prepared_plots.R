@@ -722,16 +722,18 @@ plot_weekday_effects <- function(estimates,
 
 
 
-plot_CI_coverage_rates <- function(conf_level = "95"){
+plot_CI_coverage_rates <- function(conf_level = "95", days_until_final = 70){
   methods <- c("epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
                "ilmenau", "RKI_7day", "rtlive", "SDSC")
   
-  CI_coverage <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/",
+  CI_coverage <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/",
+                                 days_until_final, "/",
                                  conf_level, "_CI_coverage.csv")) %>%
     as.data.frame() %>%
     column_to_rownames("...1")
   
-  labels <- read_csv("Rt_estimate_reconstruction/otherFiles/estimate_labels.csv") %>%
+  labels <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/",
+                            days_until_final, "/estimate_labels.csv")) %>%
     as.data.frame() %>%
     rename(method = ...1) %>%
     mutate(method = plyr::mapvalues(method,
@@ -806,15 +808,17 @@ plot_CI_coverage_rates <- function(conf_level = "95"){
 }
 
 
-plot_CI_widths <- function(conf_level = "95"){
+plot_CI_widths <- function(conf_level = "95", days_until_final = 70){
   methods <- c("epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
                "ilmenau", "RKI_7day", "rtlive", "SDSC")
   
-  CI_width <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/", conf_level, "_CI_width.csv")) %>%
+  CI_width <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/",
+                              days_until_final, "/", conf_level, "_CI_width.csv")) %>%
     as.data.frame() %>%
     column_to_rownames("...1")
   
-  labels <- read_csv("Rt_estimate_reconstruction/otherFiles/estimate_labels.csv") %>%
+  labels <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/",
+                            days_until_final, "/estimate_labels.csv")) %>%
     as.data.frame() %>%
     rename(method = ...1) %>%
     mutate(method = plyr::mapvalues(method,
@@ -879,11 +883,12 @@ plot_CI_widths <- function(conf_level = "95"){
 }
 
 
-plot_diff_prev <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175)) {
+plot_diff_prev <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days_until_final = 70) {
   methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
                "ilmenau", "RKI_7day", "rtlive", "SDSC")
   
-  diff_to_prev <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/",
+  diff_to_prev <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/",
+                                  days_until_final, "/",
                                   diff_type, "_to_prev.csv")) %>%
     as.data.frame() %>%
     column_to_rownames("...1")
@@ -964,16 +969,18 @@ plot_diff_prev <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175)) {
 }
 
 
-plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175)) {
+plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days_until_final = 70) {
   methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
                "ilmenau", "RKI_7day", "rtlive", "SDSC")
   
-  diff_to_final <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/",
+  diff_to_final <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/",
+                                   days_until_final, "/",
                                    diff_type, "_to_final.csv")) %>%
     as.data.frame() %>%
     column_to_rownames("...1")
   
-  labels <- read_csv("Rt_estimate_reconstruction/otherFiles/estimate_labels.csv") %>%
+  labels <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/",
+                            days_until_final, "/estimate_labels.csv")) %>%
     as.data.frame() %>%
     rename(method = ...1) %>%
     mutate(method = plyr::mapvalues(method,
@@ -1063,11 +1070,12 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175)) {
 }
 
 
-plot_abs_diff_first <- function(max_lag = 20) {
+plot_abs_diff_first <- function(max_lag = 20, days_until_final = 70) {
   methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
                "ilmenau", "RKI_7day", "rtlive", "SDSC")
   
-  diff_to_first <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/diff_to_first.csv")) %>%
+  diff_to_first <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/",
+                                   days_until_final, "/diff_to_first.csv")) %>%
     as.data.frame() %>%
     column_to_rownames("...1")
   
@@ -1100,7 +1108,7 @@ plot_abs_diff_first <- function(max_lag = 20) {
       panel.grid.minor = element_blank()
     ) +
     ylab("MAD to first estimate") +
-    coord_cartesian(xlim = c(0,max_lag), ylim = c(-0.01, 0.37), expand = FALSE, clip = "off") +
+    coord_cartesian(xlim = c(0,max_lag), ylim = c(-0.01, 0.3), expand = FALSE, clip = "off") +
     scale_x_continuous(labels = paste0(seq(0, max_lag, 5), "d later"))
   
   methods_legend <- unique(diff_data$method)
