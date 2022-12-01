@@ -551,7 +551,7 @@ plot_real_time_estimates_with_CI <- function(estimates,
   
   # plot
   R_plot <- ggplot(data = R_est, aes(x = date, y = R), color = model) +
-    geom_hline(aes(yintercept = 1)) +
+    geom_hline(aes(yintercept = 1), linetype="dotted") +
     
     theme_minimal() +
     theme(
@@ -587,15 +587,19 @@ plot_real_time_estimates_with_CI <- function(estimates,
                              R_est$label<=l,],
                 aes(x = date, y = R, group=model, color=model),
                 size = .5, linetype=l, na.rm = T, show.legend = F) 
-  }
-
-  if ("l" %in% names(R_est)) {
-    R_plot <-  R_plot +
-      geom_ribbon(data=R_est[R_est$model==name_consensus & !is.na(R_est$R),],
-                  aes(ymin = l, ymax = u, fill = model), alpha = .1) +
-      geom_ribbon(data=R_est[R_est$model!=name_consensus & !is.na(R_est$R),],
-                  aes(ymin = l, ymax = u, fill = model), alpha = .2) +
-      scale_fill_manual(values=col_values, name=legend_name)
+    
+    if ("l" %in% names(R_est)) {
+      R_plot <-  R_plot +
+        geom_ribbon(data=R_est[R_est$model==name_consensus &
+                                 !is.na(R_est$R) &
+                                 R_est$label<=l,],
+                    aes(ymin = l, ymax = u, fill = model), alpha = 0.025*l) +
+        geom_ribbon(data=R_est[R_est$model!=name_consensus &
+                                 !is.na(R_est$R) &
+                                 R_est$label<=l,],
+                    aes(ymin = l, ymax = u, fill = model), alpha = 0.033*l) +
+        scale_fill_manual(values=col_values, name=legend_name)
+    }
   }
   
   R_plot <-  R_plot +
