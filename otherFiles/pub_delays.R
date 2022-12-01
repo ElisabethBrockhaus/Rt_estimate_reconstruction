@@ -14,16 +14,16 @@ methods <- c("Braunschweig", "ETHZ_sliding_window", "RKI_7day",
 n <- length(methods)
 init <- rep(NA, n)
 
+min_lag <- 0
+max_lag <- 20
+
 pub_delays_list <- list()
 for (method in methods) {
-  pub_delays_list[[method]] <- data.frame(DE = rep(0, 17),
-                                          AT = rep(0, 17),
-                                          CH = rep(0, 17),
-                                          row.names = 0:16)
+  pub_delays_list[[method]] <- data.frame(DE = rep(0, max_lag+1),
+                                          AT = rep(0, max_lag+1),
+                                          CH = rep(0, max_lag+1),
+                                          row.names = min_lag:max_lag)
 }
-
-min_lag <- 0
-max_lag <- 16
 
 start_default <- "2020-10-01"
 start_globalrt <- "2021-02-18"
@@ -41,7 +41,7 @@ for (method in methods){
   } else {
     start <- start_default
   }
-  end <- as.character(as_date(start) + months(6))
+  end <- as.character(as_date(as_date(start) + weeks(10)) %m+% months(5))
   
   pub_dates <- pub_dates[which((pub_dates <= end) & (pub_dates >= start))]
   print(length(pub_dates))
@@ -84,15 +84,32 @@ saveRDS(pub_delays_list, file="Rt_estimate_reconstruction/otherFiles/pub_delays_
 min_pub_delays_list <- readRDS("Rt_estimate_reconstruction/otherFiles/pub_delays_list.RData")
 min_pub_delays_list
 
+delays_given_min_share <- data.frame(total_num = init,
+                                     d0.8 = init, d0.85 = init, d0.9 = init, d0.95 = init,
+                                     row.names = methods)
+country <- "DE"
+
+for (method in methods){
+  num.est <- sum(min_pub_delays_list[[method]][, country])
+  delays_given_min_share[method, "total_num"] <- num.est
+  cum.num.est <- cumsum(min_pub_delays_list[[method]][, country])
+  
+  for (share in seq(0.8,0.95,0.05)){
+    min.index <- which.max(cum.num.est/num.est >= share)
+    delays_given_min_share[method, paste0("d", share)] <- row.names(min_pub_delays_list[[method]])[min.index]
+  }
+}
+delays_given_min_share # d0.x is the min_pub_delay given at least x% of the estimates are available
+
 pub_delays <- data.frame(DE = init, AT = init, CH = init, row.names = methods)
 
 for (method in methods){
   for (country in c("DE", "AT", "CH")){
     num.est <- sum(min_pub_delays_list[[method]][, country])
+    print(paste("total number of estimates", num.est))
     if(num.est > 0){
       cum.num.est <- cumsum(min_pub_delays_list[[method]][, country])
-      print((cum.num.est/num.est))
-      min.index <- which.max(cum.num.est/num.est >= 0.75)
+      min.index <- which.max(cum.num.est/num.est >= 0.9)
       pub_delays[method, country] <- row.names(min_pub_delays_list[[method]])[min.index]
     }
   }
