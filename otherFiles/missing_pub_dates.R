@@ -53,6 +53,7 @@ plot_dates$used <- FALSE
 start_default <- "2020-10-01"
 start_globalrt <- "2021-02-18"
 start_ilmenau <- "2020-11-19"
+days_until_final <- 70
 
 for (method in unique(plot_dates$method)){
   if (method == "globalrt"){
@@ -62,7 +63,8 @@ for (method in unique(plot_dates$method)){
   } else {
     start_date <- as_date(start_default)
   }
-  end_date <- as_date(start_date + weeks(10)) %m+% months(5)
+  end_date <- as_date(as_date(start_globalrt) + weeks(10)) %m+% months(5)
+  if (method == "rtlive") end_date <- as_date("2021-07-31") - days(days_until_final)
   plot_dates[(plot_dates$method == method) &
                (plot_dates$date >= start_date) &
                (plot_dates$date <= end_date), "used"] <- TRUE
@@ -84,7 +86,7 @@ plot <- ggplot(data=plot_dates, aes(x=date, y=method, col=method, size=value)) +
     panel.grid.major = element_line(),
     panel.grid.minor = element_blank()
   ) +
-  geom_point() +
+  geom_point(shape=108) +
   scale_size(range = c(0,2)) +
   scale_x_date(date_labels = "%b %y",
                limits = c(start_plot, end_plot), expand = expansion(0.01)) +

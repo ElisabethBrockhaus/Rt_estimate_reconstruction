@@ -79,7 +79,8 @@ calc_consistence_metrics <- function(methods,
       start_date <- start_default
     }
 
-    end_date <- as.character(as_date(as_date(start_date) + weeks(10)) %m+% months(5))
+    end_date <- as.character(as_date(as_date(start_globalrt) + weeks(10)) %m+% months(5))
+    if (method == "rtlive") end_date <- as.character(as_date("2021-07-31") - days(days_until_final))
     
     pub_dates <- list.files(paste0(path_estimates, method),
                             pattern = "\\d{4}-\\d{2}-\\d{2}",
@@ -406,7 +407,7 @@ calc_consistence_metrics <- function(methods,
 methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window",
              "globalrt_7d", "ilmenau", "RKI_7day", "rtlive", "SDSC")
 
-for (d in c(50,70,80)){
+for (d in c(50,70,80)[2]){
   CI_eval <- calc_consistence_metrics(methods, days_until_final=d)
   path <- paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/", d, "/")
   write.csv(CI_eval[[1]], paste0(path, "95_CI_coverage.csv"))
@@ -421,11 +422,11 @@ for (d in c(50,70,80)){
 
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
-for (d in c(50,70,80)){
+for (d in c(50,70,80)[2]){
   plot1 <- plot_CI_coverage_rates(days_until_final = d); plot1
   plot2 <- plot_CI_widths(days_until_final = d); plot2
   plot3 <- plot_diff_final(diff_type = "abs_diff", days_until_final = d); plot3
-  plot4 <- plot_diff_final(diff_type = "diff", ylim = c(-0.02, 0.037), days_until_final = d); plot4
+  plot4 <- plot_diff_final(diff_type = "diff", ylim = c(-0.015, 0.055), days_until_final = d); plot4
   
   consistence_plot <- ggarrange(plot1, plot2, plot3, plot4, ncol=2, nrow=2,
                                 labels = list("A", "B", "C", "D"),
