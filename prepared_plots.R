@@ -328,7 +328,7 @@ plot_for_comparison <- function(estimates, comp_methods,
     coord_cartesian(ylim = c(ylim_l-0.05, ylim_u+0.05), expand = FALSE)
 
   ggsave(R_plot, filename = paste0("Figures/estimates", filenames),  bg = "transparent",
-         width = 13.1, height = 5.8)
+         width = 13.1, height = ifelse(ylim_l == 0, 5.8, 4.2))
   print(R_plot)
   
   if(plot_diff_matrices) {

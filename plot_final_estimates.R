@@ -154,16 +154,20 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
                       filenames = "_adjInput.pdf", ylim_u = ylim_u,
                       plot_diff_matrices=T, include_consensus=F)
   plot_for_comparison(estimates_adjInputWindow, comp_methods,
-                      filenames = "_adjInputWindow.pdf", ylim_u = ylim_u,
+                      filenames = "_adjInputWindow.pdf",
+                      ylim_l = 0.5, ylim_u = 1.5,
                       plot_diff_matrices=T, include_consensus=F)
   plot_for_comparison(estimates_adjInputWindowGTD, comp_methods,
-                      filenames = "_adjInputWindowGTD.pdf", ylim_u = ylim_u,
+                      filenames = "_adjInputWindowGTD.pdf",
+                      ylim_l = 0.5, ylim_u = 1.5,
                       plot_diff_matrices=T, include_consensus=F)
   plot_for_comparison(estimates_adjInputWindowGTDDelay, comp_methods,
-                      filenames = "_adjInputWindowGTDDelays.pdf", ylim_u = ylim_u,
+                      filenames = "_adjInputWindowGTDDelays.pdf",
+                      ylim_l = 0.5, ylim_u = 1.5,
                       plot_diff_matrices=T, include_consensus=F)
   plot_for_comparison(estimates_adjAll, comp_methods,
-                      filenames = "_adjAll.pdf", ylim_u = ylim_u,
+                      filenames = "_adjAll.pdf",
+                      ylim_l = 0.5, ylim_u = 1.5,
                       plot_diff_matrices=T, include_consensus=F)
 }
 
