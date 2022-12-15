@@ -79,7 +79,7 @@ calc_consistence_metrics <- function(methods,
       start_date <- start_default
     }
 
-    end_date <- as.character(as_date(as_date(start_globalrt) + weeks(10)) %m+% months(5))
+    end_date <- "2021-09-30" #as.character(as_date(as_date(start_globalrt) + weeks(10)) %m+% months(5))
     if (method == "rtlive") end_date <- as.character(as_date("2021-07-31") - days(days_until_final))
     
     pub_dates <- list.files(paste0(path_estimates, method),

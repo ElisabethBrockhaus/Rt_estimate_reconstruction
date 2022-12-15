@@ -12,7 +12,7 @@ path_estimates <- "reproductive_numbers/data-processed/"
 methods <- c("RKI_7day", "ETHZ_sliding_window", "ilmenau", "sdsc", "globalrt_7d", "epiforecasts", "rtlive", "Braunschweig")
 
 start_plot <- as_date("2020-10-01")
-end_plot <- as_date(as_date("2021-02-18") + weeks(10)) %m+% months(5)
+end_plot <- as_date("2021-09-30") #as_date(as_date("2021-02-18") + weeks(10)) %m+% months(5)
 
 target_dates <- seq(start_plot, end_plot, by = "day")
 
