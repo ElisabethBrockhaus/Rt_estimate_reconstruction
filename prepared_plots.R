@@ -893,7 +893,8 @@ plot_diff_prev <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days_
     as.data.frame() %>%
     column_to_rownames("...1")
   
-  labels <- read_csv("Rt_estimate_reconstruction/otherFiles/estimate_labels.csv") %>%
+  labels <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/",
+                            days_until_final, "/estimate_labels.csv")) %>%
     as.data.frame() %>%
     rename(method = ...1) %>%
     mutate(method = plyr::mapvalues(method,
