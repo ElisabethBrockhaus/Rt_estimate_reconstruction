@@ -29,8 +29,8 @@ path_estimates = "reproductive_numbers/data-processed/"
 #############################################
 
 start_default <- "2020-10-01"
-start_globalrt <- "2021-02-18"
-start_ilmenau <- "2020-11-19"
+start_globalrt <- "2021-02-15"
+start_ilmenau <- "2020-11-16"
 
 calc_consistence_metrics <- function(methods,
                                      country = "DE",

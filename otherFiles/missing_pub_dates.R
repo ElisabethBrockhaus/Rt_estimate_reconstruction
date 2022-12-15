@@ -35,7 +35,7 @@ plot_dates <- df_missing_dates %>%
   mutate(date = as_date(date)) %>%
   gather(method, value, -date) %>%
   #filter(value==TRUE) %>%
-  mutate(value = ifelse(value, 2, 1)) %>%
+  mutate(value = ifelse(value, 1, 2)) %>%
   mutate(method = plyr::mapvalues(method,
                                   c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day", "sdsc"),
                                   c("HZI",          "ETH",                 "globalrt",    "Ilmenau", "RKI",      "SDSC"))) %>%
@@ -51,8 +51,8 @@ plot_dates <- plot_dates %>%
 plot_dates$used <- FALSE
 
 start_default <- "2020-10-01"
-start_globalrt <- "2021-02-18"
-start_ilmenau <- "2020-11-19"
+start_globalrt <- "2021-02-15"
+start_ilmenau <- "2020-11-16"
 days_until_final <- 70
 
 for (method in unique(plot_dates$method)){
@@ -63,7 +63,7 @@ for (method in unique(plot_dates$method)){
   } else {
     start_date <- as_date(start_default)
   }
-  end_date <- as_date(as_date(start_globalrt) + weeks(10)) %m+% months(5)
+  end_date <- as_date("2021-09-30") #as_date(as_date(start_globalrt) + weeks(10)) %m+% months(5)
   if (method == "rtlive") end_date <- as_date("2021-07-31") - days(days_until_final)
   plot_dates[(plot_dates$method == method) &
                (plot_dates$date >= start_date) &
