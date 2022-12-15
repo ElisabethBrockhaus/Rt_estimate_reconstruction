@@ -148,7 +148,8 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 # plot median
 {
   plot_for_comparison(estimates_pub, org_methods, legend_name = "research group",
-                      filenames = "_real-time.pdf", ylim_u = ylim_u)
+                      filenames = "_real-time.pdf", ylim_u = ylim_u,
+                      plot_diff_matrices=T, include_consensus=F)
   plot_for_comparison(estimates_adjInput, comp_methods,
                       filenames = "_adjInput.pdf", ylim_u = ylim_u,
                       plot_diff_matrices=T, include_consensus=F)
@@ -170,7 +171,8 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 # plot CI
 {
   plot_for_comparison(estimates_pub_ci, org_methods_CI, include_CI = T, legend_name = "research group",
-                      filenames = "_CI_real-time.pdf", ylim_u = ylim_u, plot_width_diff_matrices=T)
+                      filenames = "_CI_real-time.pdf", ylim_u = ylim_u,
+                      include_consensus=F, plot_width_diff_matrices=T)
   plot_for_comparison(estimates_adjInput_ci, comp_CI, include_CI = T,
                       filenames = "_CI_adjInput.pdf", ylim_u = ylim_u,
                       include_consensus=F, plot_width_diff_matrices=T)
@@ -209,6 +211,14 @@ ylim_u_long <- 4
 
 # some plots over more days
 {
+  plot_for_comparison(estimates_pub, org_methods,
+                      #start_absdiff = "2020-03-16",
+                      start_date = "2020-03-01", end_date = "2021-07-10",
+                      filenames = "_real-time_long.pdf",
+                      long_time_frame = T,
+                      ylim_u = ylim_u_long,
+                      plot_diff_matrices = F,
+                      include_consensus = F)
   plot_for_comparison(estimates_adjInput, comp_methods,
                       #start_absdiff = "2020-03-16",
                       start_date = "2020-03-01", end_date = "2021-07-10",
