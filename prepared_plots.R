@@ -32,7 +32,7 @@ get_colors <- function(methods, palette, name_consensus = "consensus"){
   
   # constant colors for different models
   if (all(methods %in% all_methods)){
-    cols <- c(brewer.pal(length(all_methods) - 1, "Set2"), "#000000")
+    cols <- c(brewer.pal(length(all_methods) - 1, "Dark2"), "#000000")
     names(cols) <- all_methods
     cols <- cols[methods]
   
@@ -897,8 +897,8 @@ plot_diff_prev <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days_
     as.data.frame() %>%
     rename(method = ...1) %>%
     mutate(method = plyr::mapvalues(method,
-                                    c("ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
-                                    c("ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
+                                    c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
+                                    c("HZI",          "ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
     pivot_longer(!method, names_to = "variable", values_to = "label")
   
   diff_data <- diff_to_prev %>%
@@ -984,8 +984,8 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
     as.data.frame() %>%
     rename(method = ...1) %>%
     mutate(method = plyr::mapvalues(method,
-                                    c("ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
-                                    c("ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
+                                    c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
+                                    c("HZI",          "ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
     pivot_longer(!method, names_to = "variable", values_to = "label")
   
   diff_data <- diff_to_final %>%
