@@ -377,11 +377,19 @@ plot_for_comparison <- function(estimates, comp_methods,
       df <- df[order(row.names(df)), order(colnames(df))]
     }
     
+    colnames(df) <- paste0("(", 1:length(methods), ")")
+    colnames(df)[length(methods_)] <- "SDSC"
+    rownames(df) <- paste0("(", 1:length(methods), ") ", rownames(df))
+    
+    df[lower.tri(df)] <- NA
+    diag(df) <- NA
+    df <- df[-length(methods_),-1]
+    
     mean_abs_diff <- pheatmap(df, color = viridis(100), breaks = seq(0,0.2,0.2/100),
                               border_color = NA, cellwidth = unit(2, "cm"), cellheight = unit(1, "cm"),
-                              display_numbers = TRUE,
+                              display_numbers = TRUE, na_col="white",
                               fontsize = 18, fontsize_number=22, number_color = "white",
-                              angle_col = 315, cluster_rows = FALSE, cluster_cols = FALSE,
+                              angle_col = 0, cluster_rows = FALSE, cluster_cols = FALSE,
                               legend = FALSE)
     save_pheatmap_pdf(mean_abs_diff, paste0("Figures/mean_abs_difference", filenames))
   }
