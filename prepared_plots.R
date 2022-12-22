@@ -615,6 +615,79 @@ plot_real_time_estimates_with_CI <- function(estimates,
 
 
 
+plot_estimates_with_different_lags <- function(estimates,
+                                               start_date = "2020-10-01", end_date = "2021-12-10",
+                                               legend_name="lag", plot_title="",
+                                               name_consensus="R+70",
+                                               filenames = "_latest_plot.pdf",
+                                               ylim_l=0.5, ylim_u=1.5) {
+  
+  estimates <- estimates %>%
+    mutate_at(vars(matches("label")), function(x) ifelse(x=="estimate", 1,
+                                                         ifelse(x=="estimate based on partial data", 2,
+                                                                ifelse(x=="forecast", 3, NA))))
+  
+  # reshape data
+  R_est  <- estimates %>%
+    gather("variable", "value", 2:dim(estimates)[2]) %>%
+    separate(variable,
+             into = c("type", "lag"),
+             sep = "[+]",
+             extra = "merge",
+             remove = TRUE) %>%
+    spread(type, value)
+  
+  # plot
+  R_plot <- ggplot(data = R_est, aes(x = date, y = R), color = lag) +
+    geom_hline(aes(yintercept = 1), linetype="dotted") +
+    theme_minimal() +
+    theme(
+      plot.margin = unit(c(2,10,1,2), "mm"),
+      plot.title = element_text(size=18),
+      axis.text=element_text(size=16),
+      axis.title=element_text(size=18),
+      legend.text=element_text(size=16),
+      legend.title=element_text(size=18),
+      axis.line = element_line(),
+      axis.line.y.right = element_line(),
+      axis.line.x.top = element_line(),
+      legend.position = "bottom",
+      panel.background = element_rect(fill = "transparent", size = 0.5),
+      panel.grid.major = element_line(),
+      panel.grid.minor = element_blank()
+    ) +
+    ggtitle(plot_title) +
+    labs(x = NULL, y = "R") +
+    scale_x_date(limits = as.Date(c(start_date, end_date)),
+                 date_labels = "%b %d", expand = c(0,1),
+                 breaks = seq(from=min(R_est$date),
+                              to=max(R_est$date), by="week")) +
+    coord_cartesian(ylim = c(ylim_l-0.05, ylim_u+0.05), expand = FALSE)
+  
+  col_values <- c("#ff0000", "#33ff00", "#006aff", "#000000")
+  names(col_values) <- c("1", "14", "50", "70")
+  
+  for (l in 1:3){
+    R_plot <-  R_plot +
+      geom_line(data=R_est[R_est$lag!=name_consensus &
+                             !is.na(R_est$R) &
+                             R_est$label<=l,],
+                aes(x = date, y = R, group=lag, color=lag),
+                size = .5, linetype=l, na.rm = T, show.legend = T)
+  }
+  
+  R_plot <-  R_plot +
+    geom_line(data=R_est[R_est$lag==name_consensus,],
+              aes(x = date, y = R), size = .8, color="black") +
+    scale_color_manual(values=col_values, name=legend_name)
+  
+  ggsave(R_plot, filename = paste0("Figures/estimates", filenames),  bg = "transparent",
+         width = 13.1, height = 5.8)
+  return(R_plot)
+}
+
+
+
 plot_weekday_effects <- function(estimates,
                                  legend_name="estimated on",
                                  plot_title="Mean estimates in week previous to pub date",

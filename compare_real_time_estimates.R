@@ -24,15 +24,15 @@ methods <- c("Braunschweig", "ETHZ_sliding_window", "RKI_7day",
 available_countries <- read.csv("Rt_estimate_reconstruction/otherFiles/available_countries.csv", row.names = 1)
 pub_delays <- read.csv("Rt_estimate_reconstruction/otherFiles/pub_delays.csv", row.names = 1)
 
-
-#################################
-# plot estimates as time series #
-#################################
-
 # period for which RKI was criticized to correct always upwards
 start_default <- "2020-10-01"
 start_globalrt <- "2021-02-15"
 start_ilmenau <- "2020-11-16"
+
+
+#################################
+# plot estimates as time series #
+#################################
 
 plots_CI <- list()
 
@@ -227,6 +227,121 @@ if (exists("R_est_ts")){
                            show.legend = FALSE)
 }
 
+
+
+
+
+#################################################
+# plot different estimates for same target date #
+#################################################
+
+plots_lags <- list()
+
+for (method in methods){
+  print(method)
+  
+  if (method == "globalrt_7d"){
+    start <- start_globalrt
+  } else if (method == "ilmenau"){
+    start <- start_ilmenau
+  } else {
+    start <- start_default
+  }
+  start_date <- as_date(start)
+  end <- as.character(start_date + weeks(10))
+  end_date <- as_date(end)
+  
+  pub_dates_available <- list.files(paste0(path_estimates, method),
+                              pattern = "\\d{4}-\\d{2}-\\d{2}",
+                              full.names = F) %>% substr(1, 10)
+  
+  pub_dates <- seq(start_date, end_date, by = "day")
+  
+  for (country in c("DE", "AT", "CH")[1]){
+    if (available_countries[method, country]) {
+      if (exists("R_est_ts")) rm(R_est_ts)
+      for (pub_date in pub_dates){
+        if (exists("R_est")) rm(R_est)
+        for (lag in c(1,14,50,70)){
+          if (exists("R_est_lag")) rm(R_est_lag)
+          if ((as.character(as_date(pub_date) + days(lag)) %in% pub_dates_available) &
+              (pub_delays[method, country] <= lag)){
+              tryCatch(
+                {
+                  R_est_lag <- load_published_R_estimates(method,
+                                                          start = as_date(pub_date),
+                                                          end = as_date(pub_date),
+                                                          pub_date = as.character(as_date(pub_date) + days(lag)),
+                                                          location = country,
+                                                          include_label = TRUE,
+                                                          verbose = F) %>%
+                    dplyr::select(any_of(c("date", "label", "R_pub")))
+                  names(R_est_lag) <- c("date",
+                                    paste0("label+", lag),
+                                    paste0("R+", lag))
+                },
+                error = function(e) {R_est_lag <<- data.frame(date = seq(start_date, end_date, by = "day"))}
+              )
+              if (!exists("R_est")){
+                R_est <- R_est_lag
+              } else{
+                R_est <- R_est %>% full_join(R_est_lag, by="date")
+              }
+          }
+        }
+        if(exists("R_est")){
+          if (!exists("R_est_ts")){
+            R_est_ts <- R_est
+          } else{
+            R_est_ts <- bind_rows(R_est_ts, R_est)
+          }
+        }
+      }
+      if (exists("R_est_ts")){
+        folder_ending <- "_realtime_compare_lags/"
+        folder <- paste0("Figures/estimates", folder_ending)
+        if (!dir.exists(folder)) {
+          dir.create(folder)
+        }
+        
+        if (method == "ilmenau"){
+          ylim <- c(0.3, 1.75)
+        } else if(method == "Braunschweig"){
+          ylim <- c(0.9, 1.8)
+        } else {
+          ylim <- c(0.9, 1.5)
+        }
+        
+        title <- ifelse(method == "Braunschweig", "HZI",
+                        ifelse(method == "ETHZ_sliding_window", "ETH",
+                               ifelse(method == "globalrt_7d", "globalrt",
+                                      ifelse(method == "ilmenau", "Ilmenau",
+                                             ifelse(method == "RKI_7day", "RKI",
+                                                    method)))))
+        
+        plots_lags[[method]] <- plot_estimates_with_different_lags(R_est_ts,
+                                                                 start_date = start,
+                                                                 end_date = end,
+                                                                 plot_title = title,
+                                                                 name_consensus = "70",
+                                                                 filenames = paste0(folder_ending,
+                                                                                    method, "_", country, ".pdf"),
+                                                                 ylim_l = ylim[1], ylim_u = ylim[2])
+      }
+    } else {
+      print(paste("No estimates from", method, "for", country, "."))
+    }
+  }
+}
+
+plots_arranged <- ggarrange(plots_lags[[methods[1]]], plots_lags[[methods[2]]], plots_lags[[methods[3]]],
+                            plots_lags[[methods[4]]], plots_lags[[methods[5]]], plots_lags[[methods[6]]],
+                            plots_lags[[methods[7]]], plots_lags[[methods[8]]],
+                            ncol=1, nrow=length(plots_lags),
+                            common.legend = T, legend="bottom",
+                            legend.grob = get_legend(plots_lags[["SDSC"]]))
+ggsave(plots_arranged, filename = "Figures/estimates_realtime_compare_lags/all_methods.pdf",
+       bg = "transparent", width = 17, height = 21)
 
 
 #####################################################################################
