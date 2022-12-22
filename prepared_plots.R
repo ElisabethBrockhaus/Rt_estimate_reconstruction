@@ -15,19 +15,6 @@ Sys.setlocale("LC_TIME", "English")
 get_colors <- function(methods, palette, name_consensus = "consensus"){
   all_methods <- c("HZI", "epiforecasts", "ETH", "globalrt",
                    "Ilmenau", "RKI", "rtlive", "SDSC", "consensus")
-  default_pub_dates <- c("2020-10-01", "2020-10-08", "2020-10-15", "2020-10-22",
-                         "2020-10-29", "2020-11-05", "2020-11-12", "2020-11-19",
-                         "2020-11-26", "2020-12-03", "2020-12-10", # default
-                         "2020-12-17", "2020-12-24", "2020-12-31", "2021-01-07",
-                         "2021-01-14", "2021-01-21", "2021-01-28", # ilmenau
-                         "2021-02-04", "2021-02-11", # fill gap
-                         "2021-02-18", "2021-02-25", "2021-03-04", "2021-03-11", "2021-04-01",
-                         "2021-04-08", "2021-04-15", "2021-04-22", "2021-04-29", # globalrt
-                         "2021-05-06", # fill gap
-                         "2020-09-29", "2020-10-06", "2020-10-13", "2020-10-20",
-                         "2020-10-27", "2020-11-03", "2020-11-10", "2020-11-17",
-                         "2020-11-24", "2020-12-01") # HZI + gaps
-  final_versions <- c("2021-06-10", "2021-01-14", "2021-07-28", "2021-10-28", "2021-06-09")
   num_est <- length(methods)
   
   # constant colors for different models
@@ -36,21 +23,23 @@ get_colors <- function(methods, palette, name_consensus = "consensus"){
     names(cols) <- all_methods
     cols <- cols[methods]
   
-  # constant colors for different pub dates
-  } else if (all(methods %in% c(default_pub_dates, final_versions))){
-    cols <- c(rep(c("#ff0000",
-                    "#ff6f00",
-                    "#ffe100",
-                    "#33ff00",
-                    "#0dba27",
-                    "#00e1ff",
-                    "#006aff",
-                    "#2200ff",
-                    "#a600ff",
-                    "#ff00ff"), 4),
-              rep("#000000", 5))
-    names(cols) <- c(default_pub_dates, final_versions)
-    cols <- cols[methods]
+  # constant colors for different pub dates depending on the calender week
+  } else if (palette == "calender week"){
+    color_values <- c("#ff0000",
+                      "#ff6f00",
+                      "#ffe100",
+                      "#33ff00",
+                      "#0dba27",
+                      "#00e1ff",
+                      "#006aff",
+                      "#2200ff",
+                      "#a600ff",
+                      "#ff00ff")
+    weeks <- as.numeric(strftime(methods, "%V"))
+    color_index <- weeks %% 10 + 1
+    cols <- color_values[color_index]
+    names(cols) <- methods
+    cols[name_consensus] <- "#000000"
 
   # if all EpiEstim use color palette
   } else {
@@ -586,7 +575,8 @@ plot_real_time_estimates_with_CI <- function(estimates,
     coord_cartesian(ylim = c(ylim_l-0.05, ylim_u+0.05), expand = FALSE)
 
   col_values <- get_colors(methods = c(unique(R_est$model)),
-                           palette = "Spectral", name_consensus = name_consensus)
+                           palette = "calender week",
+                           name_consensus = name_consensus)
   
   for (l in 1:3){
     R_plot <-  R_plot +

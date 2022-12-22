@@ -31,8 +31,8 @@ pub_delays <- read.csv("Rt_estimate_reconstruction/otherFiles/pub_delays.csv", r
 
 # period for which RKI was criticized to correct always upwards
 start_default <- "2020-10-01"
-start_globalrt <- "2021-02-18"
-start_ilmenau <- "2020-11-19"
+start_globalrt <- "2021-02-15"
+start_ilmenau <- "2020-11-16"
 
 plots_CI <- list()
 
@@ -57,15 +57,20 @@ for (method in methods){
   if (method == "globalrt_7d") final_version <- "2021-10-28"
   if (method == "Braunschweig") final_version <- "2021-06-09"
   
-  pub_dates <- pub_dates[which(pub_dates <= end &
+  pub_dates_available <- pub_dates[which(pub_dates <= end &
                                  pub_dates >= start)]
-  start_date <- as_date(min(pub_dates))
-  end_date <- as_date(max(pub_dates))
+  start_date <- as_date(start)
+  end_date <- as_date(end)
   
-  pub_dates <- pub_dates %>%
-    intersect(as.character(seq(from=start_date, to=end_date, by="week")))
+  pub_dates_wanted <- seq(from=start_date+weeks(1), to=end_date, by="week")
   
-  pub_dates <- c(pub_dates, final_version)
+  pub_dates <- c()
+  for (pd in pub_dates_wanted){
+    pub_dates <- c(pub_dates,
+                   pub_dates_available[which.min(abs(as_date(pub_dates_available) - as_date(pd)))])
+  }
+  
+  pub_dates <- c(unique(pub_dates), final_version)
   
   for (country in c("DE", "AT", "CH")[1]){
     print(country)
