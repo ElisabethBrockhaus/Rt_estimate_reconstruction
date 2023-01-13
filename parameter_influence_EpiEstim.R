@@ -24,7 +24,6 @@ ETH_incid_deconvoluted <- read_csv("Rt_estimate_reconstruction/incidence_data/rt
 # read incidence data used by rtlive (sourced from RKI line-list data) for other estimations
 RKI_incid <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid_21_07_10.csv")
 
-
 # function to calculate min/max over all columns of a data frame
 colMax <- function(data) sapply(data, max, na.rm = TRUE)
 colMin <- function(data) sapply(data, min, na.rm = TRUE)
@@ -115,11 +114,15 @@ plot_for_comparison(estimates_gtd, comp_methods = gtd_strs,
 rki_incid <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid_21_11_23.csv")
 who_incid <- read_csv("Rt_estimate_reconstruction/incidence_data/epiforecasts_incid_21_11_23.csv")
 jhu_incid <- read_csv("Rt_estimate_reconstruction/incidence_data/jhu_incid_21_11_23.csv")
+rki_incid_nowcast <- read_csv("https://raw.githubusercontent.com/robert-koch-institut/SARS-CoV-2-Nowcasting_und_-R-Schaetzung/main/Archiv/Nowcast_R_2021-11-23.csv") %>%
+  dplyr::select(Datum, PS_COVID_Faelle) %>%
+  rename(date = Datum)
 incids <- rki_incid %>%
   inner_join(who_incid, by = "date") %>%
   inner_join(jhu_incid, by = "date") %>%
+  inner_join(rki_incid_nowcast, by = "date") %>%
   dplyr::filter(date<=as_date("2021-07-10"))
-data_sources <- c("RKI", "WHO", "JHU")
+data_sources <- c("RKI", "WHO", "JHU", "RKI Nowcast")
 colnames(incids) <- c("date", data_sources)
 
 if (exists("estimates_input")) rm(estimates_input)
@@ -147,7 +150,7 @@ ylim_input_u <- max(colMax(estimates_input %>%
                              dplyr::select(ends_with(data_sources))))
 # plot
 plot_for_comparison(estimates_input, comp_methods = data_sources,
-                    col_palette = "Set1", name_consensus = "RKI",
+                    col_palette = "incidence data", name_consensus = "RKI",
                     legend_name = "data source", filenames = "_influence_input_data.pdf",
                     sort_numerically = FALSE, plot_diff_matrices=T,
                     ylim_l = ylim_input_l, ylim_u = ylim_input_u)
