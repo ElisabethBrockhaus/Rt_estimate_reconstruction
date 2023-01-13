@@ -19,13 +19,11 @@ path_estimates <- "Rt_estimate_reconstruction/estimates/"
   estimates_adjInputWindow <- read_csv(paste0(path_estimates, "R_adjInputWindow_2021-07-10.csv"))
   estimates_adjInputWindowGTD <- read_csv(paste0(path_estimates, "R_adjInputWindowGTD_2021-07-10.csv"))
   estimates_adjInputWindowGTDDelay <- read_csv(paste0(path_estimates, "R_adjInputWindowGTDDelays_2021-07-10.csv"))
-  estimates_adjAll <- read_csv(paste0(path_estimates, "R_adjAll_2021-07-10.csv"))
   estimates_pub_ci <- read_csv(paste0(path_estimates, "R_pub_ci_2021-07-10.csv"))
   estimates_adjInput_ci <- read_csv(paste0(path_estimates, "R_adjInput_ci_2021-07-10.csv"))
   estimates_adjInputWindow_ci <- read_csv(paste0(path_estimates, "R_adjInputWindow_ci_2021-07-10.csv"))
   estimates_adjInputWindowGTD_ci <- read_csv(paste0(path_estimates, "R_adjInputWindowGTD_ci_2021-07-10.csv"))
   estimates_adjInputWindowGTDDelay_ci <- read_csv(paste0(path_estimates, "R_adjInputWindowGTDDelays_ci_2021-07-10.csv"))
-  estimates_adjAll_ci <- read_csv(paste0(path_estimates, "R_adjAll_CI_2021-07-10.csv"))
 }
 
 # functions for extracting ylims
@@ -132,15 +130,13 @@ comp_CI <- c("consensus", "SDSC", "ETH",
   max_adjInputWindow <- max(colMax(estimates_adjInputWindow %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(!starts_with("date"))))
   max_adjInputWindowGTD <- max(colMax(estimates_adjInputWindowGTD %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(!starts_with("date"))))
   max_adjInputWindowGTDDelay <- max(colMax(estimates_adjInputWindowGTDDelay %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(!starts_with("date"))))
-  max_adjAll <- max(colMax(estimates_adjAll %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(!starts_with("date"))))
   max_pub_ci <- max(colMax(estimates_pub_ci %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(starts_with("upper"))))
   max_adjInput_ci <- max(colMax(estimates_adjInput_ci %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(starts_with("upper"))))
   max_adjInputWindow_ci <- max(colMax(estimates_adjInputWindow_ci %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(starts_with("upper"))))
   max_adjInputWindowGTD_ci <- max(colMax(estimates_adjInputWindowGTD_ci %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(starts_with("upper"))))
   max_adjInputWindowGTDDelay_ci <- max(colMax(estimates_adjInputWindowGTDDelay_ci %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(starts_with("upper"))))
-  max_adjAll_ci <- max(colMax(estimates_adjAll_ci %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(starts_with("upper"))))
-  ylim_u <- max(max_pub, max_adjInput, max_adjInputWindow, max_adjInputWindowGTD, max_adjInputWindowGTDDelay, max_adjAll,
-                max_pub_ci, max_adjInput_ci, max_adjInputWindow_ci, max_adjInputWindowGTD_ci, max_adjInputWindowGTDDelay_ci, max_adjAll_ci)
+  ylim_u <- max(max_pub, max_adjInput, max_adjInputWindow, max_adjInputWindowGTD, max_adjInputWindowGTDDelay,
+                max_pub_ci, max_adjInput_ci, max_adjInputWindow_ci, max_adjInputWindowGTD_ci, max_adjInputWindowGTDDelay_ci)
 }
 
 source("Rt_estimate_reconstruction/prepared_plots.R")
@@ -165,10 +161,6 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
                       filenames = "_adjInputWindowGTDDelays.pdf",
                       ylim_l = 0.5, ylim_u = 1.5,
                       plot_diff_matrices=T, include_consensus=F)
-  plot_for_comparison(estimates_adjAll, comp_methods,
-                      filenames = "_adjAll.pdf",
-                      ylim_l = 0.5, ylim_u = 1.5,
-                      plot_diff_matrices=T, include_consensus=F)
 }
 
 
@@ -181,16 +173,16 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
                       filenames = "_CI_adjInput.pdf", ylim_u = ylim_u,
                       include_consensus=F, plot_width_diff_matrices=T)
   plot_for_comparison(estimates_adjInputWindow_ci, comp_CI, include_CI = T,
-                      filenames = "_CI_adjInputWindow.pdf", ylim_u = ylim_u,
+                      filenames = "_CI_adjInputWindow.pdf",
+                      ylim_l = 0.5, ylim_u = 1.5,
                       include_consensus=F, plot_width_diff_matrices=T)
   plot_for_comparison(estimates_adjInputWindowGTD_ci, comp_CI, include_CI = T,
-                      filenames = "_CI_adjInputWindowGTD.pdf", ylim_u = ylim_u,
+                      filenames = "_CI_adjInputWindowGTD.pdf",
+                      ylim_l = 0.5, ylim_u = 1.5,
                       include_consensus=F, plot_width_diff_matrices=T)
   plot_for_comparison(estimates_adjInputWindowGTDDelay_ci, comp_CI, include_CI = T,
-                      filenames = "_CI_adjInputWindowGTDDelays.pdf", ylim_u = ylim_u,
-                      include_consensus=F, plot_width_diff_matrices=T)
-  plot_for_comparison(estimates_adjAll_ci, comp_CI, include_CI = T,
-                      filenames = "_CI_adjAll.pdf", ylim_u = ylim_u,
+                      filenames = "_CI_adjInputWindowGTDDelays.pdf",
+                      ylim_l = 0.5, ylim_u = 1.5,
                       include_consensus=F, plot_width_diff_matrices=T)
 }
 
@@ -201,15 +193,13 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
   max_adjInputWindow <- max(colMax(estimates_adjInputWindow %>% dplyr::filter(date>="2020-03-01", date<"2021-06-10") %>% dplyr::select(-date)))
   max_adjInputWindowGTD <- max(colMax(estimates_adjInputWindowGTD %>% dplyr::filter(date>="2020-03-01", date<"2021-06-10") %>% dplyr::select(-date)))
   max_adjInputWindowGTDDelay <- max(colMax(estimates_adjInputWindowGTDDelay %>% dplyr::filter(date>="2020-03-01", date<"2021-06-10") %>% dplyr::select(-date)))
-  max_adjAll <- max(colMax(estimates_adjAll %>% dplyr::filter(date>="2020-03-01", date<"2021-06-10") %>% dplyr::select(-date)))
   max_pub_ci <- max(colMax(estimates_pub_ci %>% dplyr::filter(date>="2020-03-01", date<"2021-06-10") %>% dplyr::select(starts_with("upper"))))
   max_adjInput_ci <- max(colMax(estimates_adjInput_ci %>% dplyr::filter(date>="2020-03-01", date<"2021-06-10") %>% dplyr::select(starts_with("upper"))))
   max_adjInputWindow_ci <- max(colMax(estimates_adjInputWindow_ci %>% dplyr::filter(date>="2020-03-01", date<"2021-06-10") %>% dplyr::select(starts_with("upper"))))
   max_adjInputWindowGTD_ci <- max(colMax(estimates_adjInputWindowGTD_ci %>% dplyr::filter(date>="2020-03-01", date<"2021-06-10") %>% dplyr::select(starts_with("upper"))))
   max_adjInputWindowGTDDelay_ci <- max(colMax(estimates_adjInputWindowGTDDelay_ci %>% dplyr::filter(date>="2020-03-01", date<"2021-06-10") %>% dplyr::select(starts_with("upper"))))
-  max_adjAll_ci <- max(colMax(estimates_adjAll_ci %>% dplyr::filter(date>="2020-03-01", date<"2021-06-10") %>% dplyr::select(starts_with("upper"))))
-  ylim_u_long <- max(max_pub, max_adjInput, max_adjInputWindow, max_adjInputWindowGTD, max_adjInputWindowGTDDelay, max_adjAll,
-                max_pub_ci, max_adjInput_ci, max_adjInputWindow_ci, max_adjInputWindowGTD_ci, max_adjInputWindowGTDDelay_ci, max_adjAll_ci)
+  ylim_u_long <- max(max_pub, max_adjInput, max_adjInputWindow, max_adjInputWindowGTD, max_adjInputWindowGTDDelay,
+                max_pub_ci, max_adjInput_ci, max_adjInputWindow_ci, max_adjInputWindowGTD_ci, max_adjInputWindowGTDDelay_ci)
 }
 ylim_u_long <- 4
 
@@ -251,14 +241,6 @@ ylim_u_long <- 4
                       #start_absdiff = "2020-03-16", 
                       start_date = "2020-03-01", end_date = "2021-07-10",
                       filenames = "_adjInputWindowGTDDelays_long.pdf",
-                      long_time_frame = T,
-                      ylim_u = ylim_u_long,
-                      plot_diff_matrices = F,
-                      include_consensus = F)
-  plot_for_comparison(estimates_adjAll, comp_methods,
-                      #start_absdiff = "2020-03-16", 
-                      start_date = "2020-03-01", end_date = "2021-07-10",
-                      filenames = "_adjAll_long.pdf",
                       long_time_frame = T,
                       ylim_u = ylim_u_long,
                       plot_diff_matrices = F,
