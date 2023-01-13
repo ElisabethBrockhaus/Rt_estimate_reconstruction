@@ -118,7 +118,7 @@ for (method in methods){
         }
         
         if (method == "ilmenau"){
-          ylim <- c(0.3, 1.75)
+          ylim <- c(0.15, 1.75)
         } else if(method == "Braunschweig"){
           ylim <- c(0.9, 1.8)
         } else {
@@ -305,7 +305,7 @@ for (method in methods){
         }
         
         if (method == "ilmenau"){
-          ylim <- c(0.3, 1.75)
+          ylim <- c(0.2, 1.75)
         } else if(method == "Braunschweig"){
           ylim <- c(0.9, 1.8)
         } else {

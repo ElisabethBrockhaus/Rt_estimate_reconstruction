@@ -371,9 +371,9 @@ plot_for_comparison <- function(estimates, comp_methods,
       df <- df[order(row.names(df)), order(colnames(df))]
     }
     
-    colnames(df) <- paste0("(", 1:length(methods), ")")
+    colnames(df) <- paste0("(", 1:length(methods_legend), ")")
     colnames(df)[length(methods_)] <- "SDSC"
-    rownames(df) <- paste0("(", 1:length(methods), ") ", rownames(df))
+    rownames(df) <- paste0("(", 1:length(methods_legend), ") ", rownames(df))
     
     df[lower.tri(df)] <- NA
     diag(df) <- NA
