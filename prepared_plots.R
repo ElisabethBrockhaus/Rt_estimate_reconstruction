@@ -41,6 +41,11 @@ get_colors <- function(methods, palette, name_consensus = "consensus"){
     names(cols) <- methods
     cols[name_consensus] <- "#000000"
 
+  } else if (palette == "incidence data"){
+    cols <- c("#ff0000", "#000000", "#33ff00", "#2200ff")
+    names(cols) <- methods
+    cols[name_consensus] <- "#000000"
+    
   # if all EpiEstim use color palette
   } else {
     if (palette == "YlGn"){

@@ -27,6 +27,10 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 #write_csv(rki_incid, "Rt_estimate_reconstruction/incidence_data/rtlive_incid_21_11_23.csv")
 rki_incid <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid_21_11_23.csv")
 
+rki_incid_nowcast <- read_csv("https://raw.githubusercontent.com/robert-koch-institut/SARS-CoV-2-Nowcasting_und_-R-Schaetzung/main/Archiv/Nowcast_R_2021-11-23.csv") %>%
+  dplyr::select(Datum, PS_COVID_Faelle) %>%
+  rename(date = Datum)
+
 ######################
 # epiforecasts (WHO) #
 ######################
@@ -52,8 +56,10 @@ jhu_incid <- read_csv("Rt_estimate_reconstruction/incidence_data/jhu_incid_21_11
 # join incidence time series
 incidence_data <- rki_incid %>%
   inner_join(who_incid, by = "date") %>%
-  inner_join(jhu_incid, by = "date")
-names(incidence_data) <- c("date", "RKI", "WHO", "JHU")
+  inner_join(jhu_incid, by = "date") %>%
+  inner_join(rki_incid_nowcast, by = "date") %>%
+  dplyr::filter(date<=as_date("2021-07-10"))
+names(incidence_data) <- c("date", "RKI", "WHO", "JHU", "RKI Nowcast")
 
 # reshape data
 incid  <- incidence_data %>%
@@ -61,7 +67,7 @@ incid  <- incidence_data %>%
   filter(date >= as.Date("2021-01-01")) %>%
   filter(date <= as.Date("2021-06-10"))
 
-col_values <- get_colors(c("JHU", "RKI", "WHO"), palette = "Set1", name_consensus = "RKI")
+col_values <- get_colors(c("JHU", "RKI", "WHO", "RKI Nowcast"), palette = "incidence data", name_consensus = "RKI")
 
 # plot
 R_plot <- ggplot(data = incid, aes(x = date, y = value)) +
