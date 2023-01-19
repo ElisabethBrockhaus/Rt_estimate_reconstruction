@@ -248,6 +248,8 @@ data <- raw_data %>%
   summarise(AnzahlFall=sum(AnzahlFall), Refdatum=mean(Refdatum))
 View(data)
 
-(data$AnzahlFall %*% as.numeric(data$Meldedatum - data$Refdatum)) / sum(data$AnzahlFall)
-
-
+delay_Meldedatum <- as.numeric(data[-15,]$Meldedatum - data[-15,]$Refdatum)
+mean_delay_RKI <- (data[-15,]$AnzahlFall %*% delay_Meldedatum) / sum(data[-15,]$AnzahlFall)
+mean_delay_RKI
+sd_delay_RKI <- (data[-15,]$AnzahlFall %*% (delay_Meldedatum-c(mean_delay_RKI))^2) / (sum(data[-15,]$AnzahlFall) - 1)
+sd_delay_RKI
