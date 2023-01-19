@@ -1,5 +1,7 @@
 library(readr)
 library(EpiNow2)
+library(dplyr)
+library(lubridate)
 
 setwd("../..")
 getwd()
@@ -49,6 +51,11 @@ names(constant_delay_symptom_to_report_distributions) <- paste0('Onset to ',  un
 constant_delay_distributions <- c(constant_delay_distributions, constant_delay_symptom_to_report_distributions)
 ########### end copied ###########
 
+# empirical moments of delay distribution
+mean((delays_onset_to_count %>% dplyr::filter(onset_date <= as_date("2021-06-01")))$delay)
+sd((delays_onset_to_count %>% dplyr::filter(onset_date <= as_date("2021-06-01")))$delay)
+
+# constant distribution (not used for Germany)
 View(constant_delay_distributions)
 
 ETH_incubation <- constant_delay_distributions$Symptoms
@@ -231,7 +238,7 @@ par(mfrow=c(1,1))
 #################################################################
 # Reporting delay RKI line list (Nowcast vs rtlive aggregation) #
 #################################################################
-raw_data <- read_csv("D:/EllasDaten/Uni/Wirtschaftsingenieurwesen/6Semester/Bachelorarbeit/Code/Rt_estimate_reconstruction/rtlive/rtlive-global/data/RKI_COVID19.csv")
+raw_data <- read_csv("Rt_estimate_reconstruction/rtlive/rtlive-global/data/RKI_COVID19_21_11_23.csv")
 raw_data$Meldedatum <- as_date(raw_data$Meldedatum)
 raw_data$Refdatum <- as_date(raw_data$Refdatum)
 data <- raw_data %>%
