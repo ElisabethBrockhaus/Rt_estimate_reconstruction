@@ -811,6 +811,7 @@ plot_CI_coverage_rates <- function(conf_level = "95", days_until_final = 70){
   labels <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/",
                             days_until_final, "/estimate_labels.csv")) %>%
     as.data.frame() %>%
+    dplyr::select(!num_est) %>%
     rename(method = ...1) %>%
     mutate(method = plyr::mapvalues(method,
                                     c("ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
@@ -896,6 +897,7 @@ plot_CI_widths <- function(conf_level = "95", days_until_final = 70){
   labels <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/",
                             days_until_final, "/estimate_labels.csv")) %>%
     as.data.frame() %>%
+    dplyr::select(!num_est) %>%
     rename(method = ...1) %>%
     mutate(method = plyr::mapvalues(method,
                                     c("ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
@@ -972,6 +974,7 @@ plot_diff_prev <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days_
   labels <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/",
                             days_until_final, "/estimate_labels.csv")) %>%
     as.data.frame() %>%
+    dplyr::select(!num_est) %>%
     rename(method = ...1) %>%
     mutate(method = plyr::mapvalues(method,
                                     c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
@@ -1059,6 +1062,7 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
   labels <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/",
                             days_until_final, "/estimate_labels.csv")) %>%
     as.data.frame() %>%
+    dplyr::select(!num_est) %>%
     rename(method = ...1) %>%
     mutate(method = plyr::mapvalues(method,
                                     c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
@@ -1074,6 +1078,8 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
     arrange(method)
   
   diff_data <- diff_data %>%
+    mutate(legend = paste0(method, " (n=", num_est, ")")) %>%
+    dplyr::select(!num_est) %>%
     gather("variable", "value", as.character(0:20))
   
   diff_data <- merge(diff_data, labels, by=c("method", "variable")) %>%
@@ -1107,6 +1113,7 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
     diff_plot <- diff_plot + geom_hline(yintercept = 0)
   }
   
+  # get colors and legend names
   methods_legend <- unique(diff_data$method)
   col_values <- get_colors(methods = methods_legend, palette = "methods")
   
@@ -1118,7 +1125,7 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
   }
   
   diff_plot <- diff_plot + 
-    scale_color_manual(values=col_values, name="method")
+    scale_color_manual(values=col_values, name="method", labels=unique(diff_data$legend))
 
   if (dim(subset(diff_data, value > ylim[2]))[1] > 0) {
     diff_plot <- diff_plot + 
