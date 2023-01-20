@@ -47,7 +47,7 @@ SDSC_incid <-  read_csv("Rt_estimate_reconstruction/incidence_data/SDSC_incid_21
 #write_csv(incid_for_ETH, "Rt_estimate_reconstruction/incidence_data/rtlive_incid_for_ETH_21_07_10.csv")
 incid_for_ETH <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid_for_ETH_21_07_10.csv")
 
-# read incidence data used by rtlive (sourced from RKI line-list data) for other estimations
+# read incidence data used by rtlive (RKI line-list data aggregated by Meldedatum) for other estimations
 incid <- read_csv("Rt_estimate_reconstruction/incidence_data/rtlive_incid_21_07_10.csv")
 
 
