@@ -18,7 +18,7 @@ pub_delays <- read.csv("Rt_estimate_reconstruction/otherFiles/pub_delays.csv", r
 
 methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window",
              "globalrt_7d", "ilmenau", "RKI_7day", "rtlive", "SDSC")
-method <- methods[2]
+method <- methods[7]
 country = "DE"
 conf_level = "95"
 days_until_final = 70
@@ -57,14 +57,14 @@ calc_consistence_metrics <- function(methods,
   df_abs_diff_to_prev <- data.frame(matrix(rep(NA, n*21), nrow = n), row.names = methods)
   colnames(df_abs_diff_to_prev) <- c(0:20)
   
-  df_diff_to_final <- data.frame(matrix(rep(NA, n*21), nrow = n), row.names = methods)
-  colnames(df_diff_to_final) <- c(0:20)
+  df_diff_to_final <- data.frame(matrix(rep(NA, n*22), nrow = n), row.names = methods)
+  colnames(df_diff_to_final) <- c(0:20, "num_est")
   
-  df_abs_diff_to_final <- data.frame(matrix(rep(NA, n*21), nrow = n), row.names = methods)
-  colnames(df_abs_diff_to_final) <- c(0:20)
+  df_abs_diff_to_final <- data.frame(matrix(rep(NA, n*22), nrow = n), row.names = methods)
+  colnames(df_abs_diff_to_final) <- c(0:20, "num_est")
   
-  df_labels <- data.frame(matrix(rep(NA, n*21), nrow = n), row.names = methods)
-  colnames(df_labels) <- c(0:20)
+  df_labels <- data.frame(matrix(rep(NA, n*22), nrow = n), row.names = methods)
+  colnames(df_labels) <- c(0:20, "num_est")
   
   for (method in methods){
     print(method)
@@ -155,6 +155,42 @@ calc_consistence_metrics <- function(methods,
           available_pub_dates <- available_pub_dates_long[(as_date(available_pub_dates_long) >= start_date) &
                                                             (as_date(available_pub_dates_long) <= end_date)]
           
+          
+          ######
+          # M(A)D to final estimate (constant lag)...
+          
+          {R_pub <- R_est_ts %>%
+            dplyr::select(starts_with("R_pub_") | date) %>%
+            column_to_rownames("date") %>%
+            rename_with(~ substr(.x, 7, 16)) %>%
+            dplyr::select(all_of(available_pub_dates))
+          diff_final <- data.frame(estimated_after = make_difftime(day = seq(0, max_lag),
+                                                                   units = "day")) %>%
+            column_to_rownames(var = "estimated_after")
+          
+          for (i_realtime in colnames(R_pub)[as_date(colnames(R_pub)) <= end_date]){
+            time_diffs <- as_date(available_pub_dates) - as_date(i_realtime)
+            time_diffs[time_diffs<days_until_final] <- 1000 # "big-M" in order to only consider dates at least days_until_final days later 
+            i_final <- available_pub_dates[which.min(time_diffs)]
+            diff <- R_pub[,i_final] - R_pub[,i_realtime]
+            i_diff <- as.character(as_date(i_realtime) - as_date(rownames(R_pub[which(!is.na(diff)),])))
+            diff_final[i_diff, i_realtime] <- diff %>% na.omit()
+          }
+          
+          # extract relevant rows
+          idx <- intersect(rownames(diff_final), as.character(min_lag:max_lag))
+          diff_final <- diff_final[idx,]
+          # drop columns containing any NA
+          diff_final <- diff_final[, colSums(is.na(diff_final)) == 0] 
+          
+          df_diff_to_final[method, idx] <- rowMeans(diff_final)
+          df_abs_diff_to_final[method, idx] <- rowMeans(abs(diff_final))
+          df_abs_diff_to_final[method, "num_est"] <- df_diff_to_final[method, "num_est"] <- ncol(diff_final)
+          }
+          
+          dates_used_for_diff_to_final <- colnames(diff_final)
+          
+          
           ######
           # CI coverage rates and width...
           
@@ -166,7 +202,7 @@ calc_consistence_metrics <- function(methods,
               data.frame(estimated_after = make_difftime(day = seq(max_lag, min_lag),
                                                          units = "day"))
   
-            for (pd in available_pub_dates){
+            for (pd in dates_used_for_diff_to_final){
               time_diffs <- as_date(available_pub_dates) - as_date(pd)
               time_diffs[time_diffs<days_until_final] <- 1000 # "big-M" in order to only consider dates at least days_until_final days later 
               date_final <- available_pub_dates[which.min(time_diffs)]
@@ -196,13 +232,13 @@ calc_consistence_metrics <- function(methods,
             CI_width <- CI_width %>%
               column_to_rownames(var = "estimated_after")
               
-            df_CI_coverage[method, rownames(R_covered_difftime)] <- rowMeans(R_covered_difftime, na.rm = TRUE)
+            df_CI_coverage[method, rownames(R_covered_difftime)] <- rowMeans(R_covered_difftime)
             df_CI_coverage[method, "min_lag"] <- min_lag
             df_CI_coverage[method, "num_CIs"] <- dim(R_covered_difftime)[2]
             df_CI_coverage[method, "min_pub_date"] <- min(colnames(R_covered_difftime))
             df_CI_coverage[method, "max_pub_date"] <- max(colnames(R_covered_difftime))
             
-            df_CI_width[method, rownames(CI_width)] <- rowMeans(CI_width, na.rm = TRUE)
+            df_CI_width[method, rownames(CI_width)] <- rowMeans(CI_width)
             df_CI_width[method, "min_lag"] <- min_lag
             df_CI_width[method, "num_CIs"] <- dim(CI_width)[2]
             df_CI_width[method, "min_pub_date"] <- min(colnames(CI_width))
@@ -289,76 +325,10 @@ calc_consistence_metrics <- function(methods,
           df_abs_diff_to_prev[method, idx] <- rowMeans(abs(diff_prev), na.rm = TRUE)[idx]}
           
           ######
-          # M(A)D to final estimate (constant lag)...
-          
-          {R_pub <- R_est_ts %>%
-            dplyr::select(starts_with("R_pub_") | date) %>%
-            column_to_rownames("date") %>%
-            rename_with(~ substr(.x, 7, 16)) %>%
-            dplyr::select(all_of(available_pub_dates))
-          diff_final <- data.frame(estimated_after = make_difftime(day = seq(0, max_lag),
-                                                                   units = "day")) %>%
-            column_to_rownames(var = "estimated_after")
-          
-          for (i_realtime in colnames(R_pub)[as_date(colnames(R_pub)) <= end_date]){
-            time_diffs <- as_date(available_pub_dates) - as_date(i_realtime)
-            time_diffs[time_diffs<days_until_final] <- 1000 # "big-M" in order to only consider dates at least days_until_final days later 
-            i_final <- available_pub_dates[which.min(time_diffs)]
-            diff <- R_pub[,i_final] - R_pub[,i_realtime]
-            i_diff <- as.character(as_date(i_realtime) - as_date(rownames(R_pub[which(!is.na(diff)),])))
-            diff_final[i_diff, i_realtime] <- diff %>% na.omit()
-          }
-          
-          idx <- intersect(rownames(diff_final), as.character(0:max_lag))
-          df_diff_to_final[method, idx] <- rowMeans(diff_final, na.rm = TRUE)[idx]
-          df_abs_diff_to_final[method, idx] <- rowMeans(abs(diff_final), na.rm = TRUE)[idx]}
-          
-          ######
-          # deprecated (nicht mehr verwendet und noch nicht angepasst an neue available pub dates)
-          # M(A)D to final estimate (constant day of final estimate)... 
-          {
-          # diff_final <- R_est_ts %>%
-          #   dplyr::select(date | R_final | starts_with("R_pub_")) %>%
-          #   # calculate difference to "final" estimate
-          #   mutate(across(!c(date,R_final), function(x) (R_final - x))) %>%
-          #   dplyr::select(!R_final) %>%
-          #   # add columns with difference between pub_date and target_date
-          #   mutate(across(!date, list(lag = ~ {as_date(substr(cur_column(), 7, 16)) - date}))) %>%
-          #   # order columns alphabetically
-          #   dplyr::select(colnames(.)[order(colnames(.))]) %>%
-          #   column_to_rownames("date") %>%          
-          #   # select columns corresponding to pub_dates after start_date
-          #   dplyr::select(colnames(.)[as_date(substr(colnames(.), 7, 16)) >= start_date])
-          # 
-          # # reshape wide to long
-          # cols <- colnames(dplyr::select(diff_final, !ends_with("_lag")))
-          # diff_final_long <- data.frame()
-          # for (col in cols){
-          #   df <- diff_final[,c(col, paste0(col, "_lag"))] %>% setNames(c("diff", "lag"))
-          #   diff_final_long <- bind_rows(df, diff_final_long)
-          # }
-          # diff_final_long <- na.omit(diff_final_long) %>% group_by(lag)
-          # diff_final_mean <- diff_final_long %>%
-          #   summarise(diff = mean(diff))
-          # abs_diff_final_mean <- diff_final_long %>%
-          #   summarise(diff = mean(abs(diff)))
-          # 
-          # idx <- as.character(intersect(0:max_lag, diff_final_long$lag))
-          # df_diff_to_final[method, idx] <- diff_final_mean %>%
-          #   dplyr::filter(as.character(lag) %in% idx) %>%
-          #   arrange(lag) %>%
-          #   dplyr::select(diff) %>% pull()
-          # df_abs_diff_to_final[method, idx] <- abs_diff_final_mean %>%
-          #   dplyr::filter(as.character(lag) %in% idx) %>%
-          #   arrange(lag) %>%
-          #   dplyr::select(diff) %>% pull()
-          }
-          
-          ######
           # extract labels...
           
           {labels <- R_est_ts %>%
-            dplyr::select(date | starts_with("label_")) %>%
+            dplyr::select(date | any_of(paste0("label_", dates_used_for_diff_to_final))) %>%
             # add columns with difference between pub_date and target_date
             mutate(across(!date, list(lag = ~ {as_date(substr(cur_column(), 7, 16)) - date}))) %>%
             # order columns alphabetically
@@ -384,13 +354,15 @@ calc_consistence_metrics <- function(methods,
           }
           
           labels_mode <- labels_long %>%
-            summarise(label = getmode(label))
+            summarise(label = getmode(label), num_est = n())
 
           idx <- as.character(intersect(0:max_lag, labels_mode$lag))
           df_labels[method, idx] <- labels_mode %>%
             dplyr::filter(as.character(lag) %in% idx) %>%
             arrange(lag) %>%
-            dplyr::select(label) %>% pull()}
+            dplyr::select(label) %>% pull()
+          df_labels[method, "num_est"] <- min((labels_mode %>% dplyr::filter(as.character(lag) %in% idx))[, "num_est"])
+          }
         }
       }
     } else {
