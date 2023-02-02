@@ -8,6 +8,7 @@ library(dplyr)
 setwd("../..")
 getwd()
 
+source("Rt_estimate_reconstruction/calculate_estimates.R")
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
 
@@ -69,20 +70,18 @@ estimate_R_glm <- function(incid, t, si_distr, window = 7, family = "Poisson"){
 }
 
 # define serial interval distribution
-si_distr <- c(0, diff(pexp(0:8, rate = 1/4)))
-si_distr <- si_distr/sum(si_distr)
-plot(si_distr, type = "h", xlab = "d", ylab = "prob")
+gtd <- get_infectivity_profile("gamma", 4, 4)
 
 ## estimate using EpiEstim                     
 R_EpiEstim <- estimate_R(incid = dat, 
                          method = "non_parametric_si",
-                         config = make_config(list(si_distr = si_distr)))$R
+                         config = make_config(list(si_distr = gtd)))$R
 R_EpiEstim$date <- tail(dat$date, nrow(R_EpiEstim))
 
 # estimate using Poisson GLM
 timepoints <- 8:nrow(dat)
 R_glm_pois <- estimate_R_glm(dat$I,
-                             si_distr = si_distr,
+                             si_distr = gtd,
                              t = timepoints,
                              family = "Pois", window = 7)
 R_glm_pois$date <- dat$date[timepoints]
@@ -90,20 +89,19 @@ R_glm_pois$date <- dat$date[timepoints]
 
 # estimate using NegBin GLM
 R_glm_NB <- estimate_R_glm(dat$I,
-                           si_distr = si_distr,
+                           si_distr = gtd,
                            t = timepoints,
                            family = "NegBin", window = 7)
 R_glm_NB$date <- dat$date[timepoints]
 
 # aggregate estimates
-methods <- c("EpiEstim", "Poisson GLM", "NegBin GLM")
 estimates <- R_EpiEstim %>%
   dplyr::select("date", "Mean(R)", "Quantile.0.025(R)", "Quantile.0.975(R)") %>%
   rename(R_EpiEstim = `Mean(R)`, lower_EpiEstim = `Quantile.0.025(R)`, upper_EpiEstim = `Quantile.0.975(R)`) %>%
-  full_join(R_glm_pois %>%
-              dplyr::select(date, R, R_lower, R_upper) %>%
-              rename(R_GLM_Poisson = R, lower_GLM_Poisson = R_lower, upper_GLM_Poisson = R_upper),
-            by = "date") %>%
+  # full_join(R_glm_pois %>%
+  #             dplyr::select(date, R, R_lower, R_upper) %>%
+  #             rename(R_GLM_Poisson = R, lower_GLM_Poisson = R_lower, upper_GLM_Poisson = R_upper),
+  #           by = "date") %>%
   full_join(R_glm_NB %>%
               dplyr::select(date, R, R_lower, R_upper) %>%
               rename(R_GLM_NegBin = R, lower_GLM_NegBin = R_lower, upper_GLM_NegBin = R_upper),
@@ -114,32 +112,18 @@ colMin <- function(data) sapply(data, min, na.rm = TRUE)
 colMax <- function(data) sapply(data, max, na.rm = TRUE)
 ylim_input_l <- min(colMin(estimates %>% 
                              dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>%
-                             dplyr::select(starts_with("R_"))))
-ylim_input_u <- max(colMax(estimates %>%
-                             dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>%
-                             dplyr::select(starts_with("R_"))))
-# Plot point estimates together
-plot_for_comparison(estimates,
-                    comp_methods = methods,
-                    col_palette = "Dark2", name_consensus = "none",
-                    legend_name = "estimation method", filenames = "_influence_type_of_distribution.pdf",
-                    sort_numerically = FALSE,
-                    ylim_l = ylim_input_l, ylim_u = ylim_input_u)
-# These agree almost perfectly.
-
-# Plot uncertainty intervals
-ylim_input_l <- min(colMin(estimates %>% 
-                             dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>%
                              dplyr::select(starts_with("lower_"))))
 ylim_input_u <- max(colMax(estimates %>%
                              dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>%
                              dplyr::select(starts_with("upper_"))))
+
+# Plot point estimates with uncertainty intervals
 plot_for_comparison(estimates,
-                    comp_methods = methods,
+                    comp_methods = c("EpiEstim/Poisson GLM", "NegBin GLM"),
                     col_palette = "Dark2", name_consensus = "none",
-                    legend_name = "estimation method", filenames = "_influence_type_of_distribution_CI.pdf",
-                    sort_numerically = FALSE, include_CI=T,
+                    legend_name = "estimation method", filenames = "_influence_type_of_distribution.pdf",
+                    sort_numerically = FALSE, point_and_CI=T,
                     ylim_l = ylim_input_l, ylim_u = ylim_input_u)
-# These are quite different.
+# The point estimates agree almost perfectly. The uncertainty intervals are quite different.
 
 
