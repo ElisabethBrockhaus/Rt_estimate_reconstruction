@@ -29,7 +29,8 @@ date_of_data <- "2021-07-10"
 calculacte_and_save_estimates <- function(reported_cases,
                                           generation_time,
                                           incubation_period,
-                                          reporting_delay){
+                                          reporting_delay,
+                                          family = "negbin"){
   start_time <- Sys.time()
   print(start_time)
   
@@ -38,6 +39,7 @@ calculacte_and_save_estimates <- function(reported_cases,
                       generation_time = generation_time,
                       delays = delay_opts(incubation_period, reporting_delay),
                       rt = rt_opts(prior = list(mean = 1, sd = 0.2)),
+                      obs = obs_opts(family = family),
                       stan = stan_opts(cores = 4),
                       horizon = 14,
                       CrIs = c(0.5, 0.95),
@@ -62,10 +64,12 @@ calculacte_and_save_estimates <- function(reported_cases,
 ############################
 
 # estimation with adjusted input data
-path <- "Rt_estimate_reconstruction/epiforecasts/distributions/"
-incubation_period <- readRDS(paste0(path, "incubation_period.rds"))
-reporting_delay <- readRDS(paste0(path, "onset_to_admission_delay.rds"))
-generation_time <- readRDS(paste0(path, "generation_time.rds"))
+distr_path <- "Rt_estimate_reconstruction/epiforecasts/distributions/"
+incubation_period <- readRDS(paste0(distr_path, "incubation_period.rds"))
+reporting_delay <- readRDS(paste0(distr_path, "onset_to_admission_delay.rds"))
+generation_time <- readRDS(paste0(distr_path, "generation_time.rds"))
+
+
 
 print("Start with estimation with adjusted input data")
 R_epiforecasts_adjInput <- calculacte_and_save_estimates(incid, generation_time,
@@ -84,6 +88,13 @@ R_epiforecasts_adjInputWindowGTD <- calculacte_and_save_estimates(incid, generat
                                                                   incubation_period, reporting_delay)
 
 qsave(R_epiforecasts_adjInputWindowGTD, paste0(output_path, "R_calc_", date_of_data, "_final_adjInputWindowGTD.qs"))
+
+print("Start with estimation with adjusted input data and generation time distribution but using Poisson model instead of Negative Binomial")
+R_epiforecasts_poisson_adjInputWindowGTD <- calculacte_and_save_estimates(incid, generation_time,
+                                                                          incubation_period, reporting_delay,
+                                                                          family = "poisson")
+
+qsave(R_epiforecasts_poisson_adjInputWindowGTD, paste0(output_path, "R_calc_", date_of_data, "_poisson_adjInputWindowGTD.qs"))
 
 # additionally adjust mean delay
 # first calculate mean delay considered in the estimation
