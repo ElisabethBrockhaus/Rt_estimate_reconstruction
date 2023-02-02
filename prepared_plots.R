@@ -135,7 +135,7 @@ plot_published_vs_calculated <- function(published, calculated, method_name, dif
 
 plot_multiple_estimates <- function(estimates, legend_name, plot_title="",
                                     col_palette="Set1", name_consensus="consensus",
-                                    include_CI=F, sort_numerically=F, long_time_frame = F) {
+                                    include_CI=F, point_and_CI=F, sort_numerically=F, long_time_frame = F) {
   
   # reshape data
   R_est  <- estimates %>%
@@ -199,11 +199,12 @@ plot_multiple_estimates <- function(estimates, legend_name, plot_title="",
   
   col_values <- get_colors(methods = unique(R_est$model), col_palette, name_consensus = name_consensus)
   
-  if (include_CI){
+  if (include_CI | point_and_CI){
     R_plot <-  R_plot +
       geom_ribbon(aes(ymin = lower, ymax = upper, fill = model), alpha = .25) +
       scale_fill_manual(values=col_values, name=legend_name)
-  } else {
+  }
+  if (!include_CI | point_and_CI) {
     R_plot <-  R_plot +
       #geom_line(aes(group = model, color=model)) +
       geom_line(data=R_est[R_est$model!=name_consensus & !is.na(R_est$R),],
@@ -278,7 +279,8 @@ plot_for_comparison <- function(estimates, comp_methods,
                                 include_consensus=T, name_consensus="consensus",
                                 filenames="_latest_plot.png",
                                 plot_diff_matrices=F,
-                                include_CI=F, plot_width_diff_matrices=F,
+                                include_CI=F, point_and_CI=F,
+                                plot_width_diff_matrices=F,
                                 sort_numerically=F,
                                 long_time_frame=F,
                                 ylim_l=0, ylim_u=2.05,
@@ -316,7 +318,7 @@ plot_for_comparison <- function(estimates, comp_methods,
 
   R_plot <- plot_multiple_estimates(estimates_plot, legend_name, plot_title = plot_title,
                                     col_palette = col_palette, name_consensus = name_consensus,
-                                    include_CI = include_CI,
+                                    include_CI = include_CI, point_and_CI = point_and_CI,
                                     sort_numerically = sort_numerically,
                                     long_time_frame = long_time_frame) +
     coord_cartesian(ylim = c(ylim_l-0.05, ylim_u+0.05), expand = FALSE)
