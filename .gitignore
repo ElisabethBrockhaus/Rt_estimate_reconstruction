@@ -55,8 +55,7 @@ SDSC/plot_SDSC_real_time_estimates.R
 archive/
 ArroyoMarioli/input_output_dataset/archive/
 ArroyoMarioli/estimates/archive/
-epiforecasts/estimates/
-!epiforecasts/estimates/R_calc_2021-07-10*
+epiforecasts/estimates/archive
 incidence_data/archive/
 otherFiles/diff_to_first_old.csv
 
