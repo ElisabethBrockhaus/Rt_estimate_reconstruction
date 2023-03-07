@@ -59,7 +59,7 @@ incidence_data <- rki_incid %>%
   inner_join(jhu_incid, by = "date") %>%
   inner_join(rki_incid_nowcast, by = "date") %>%
   dplyr::filter(date<=as_date("2021-07-10"))
-names(incidence_data) <- c("date", "RKI", "WHO", "JHU", "RKI Nowcast")
+names(incidence_data) <- c("date", "RKI, positive test", "WHO", "JHU", "RKI, symptom onset")
 
 # reshape data
 incid  <- incidence_data %>%
@@ -67,7 +67,7 @@ incid  <- incidence_data %>%
   filter(date >= as.Date("2021-01-01")) %>%
   filter(date <= as.Date("2021-06-10"))
 
-col_values <- get_colors(c("JHU", "RKI", "WHO", "RKI Nowcast"), palette = "incidence data", name_consensus = "RKI")
+col_values <- get_colors(c("JHU", "RKI, positive test", "WHO", "RKI, symptom onset"), palette = "incidence data", name_consensus = "RKI, positive test")
 
 # plot
 R_plot <- ggplot(data = incid, aes(x = date, y = value)) +
