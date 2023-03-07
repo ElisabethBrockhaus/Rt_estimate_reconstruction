@@ -115,6 +115,21 @@ colMin <- function(data) sapply(data, min, na.rm = TRUE)
                       ylim_l = ylim_preprocess_l, ylim_u = ylim_preprocess_u)
 }
 
+# model
+{
+  model <- c("RKI", "ETH", "Ilmenau", "SDSC", "globalrt", "epiforecasts", "rtlive")
+  estimates_model <- estimates_adjInputWindowGTDDelay %>% select(!c("consensus", "HZI"))
+  # find ylim
+  ylim_model_l <- min(colMin(estimates_model %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(model))))
+  ylim_model_u <- max(colMax(estimates_model %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(model))))
+  # plot
+  plot_for_comparison(estimates_model, comp_methods = model,
+                      col_palette = "Dark2", name_consensus = "none",
+                      legend_name = "model", filenames = "_influence_model.pdf",
+                      sort_numerically = FALSE, plot_diff_matrices=T,
+                      ylim_l = ylim_model_l, ylim_u = ylim_model_u)
+}
+
 
 
 ####################################
