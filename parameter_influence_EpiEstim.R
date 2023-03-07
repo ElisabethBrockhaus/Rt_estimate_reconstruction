@@ -76,7 +76,7 @@ gtd_strs <- c()
 
 if (exists("estimates_gtd")) rm(estimates_gtd)
 for (src in rownames(gtds)){
-  gtd_str <- paste0(gtds[src, "mean"], "(", gtds[src, "sd"], ")")
+  gtd_str <- paste0(gtds[src, "mean"], "(", gtds[src, "sd"], "), ", src)
   print(gtd_str)
   gtd_strs <- c(gtd_strs, gtd_str)
   R_est <- estimate_RKI_R(RKI_incid, method = "EpiEstim",
@@ -100,9 +100,8 @@ ylim_gtd_u <- max(colMax(estimates_gtd %>%
                            dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>%
                            dplyr::select(ends_with(gtd_strs))))
 # plot
-source("Rt_estimate_reconstruction/prepared_plots.R")
 plot_for_comparison(estimates_gtd, comp_methods = gtd_strs,
-                    col_palette = "YlGn", name_consensus = "4(4)",
+                    col_palette = "YlGn", name_consensus = "4(4), consensus",
                     legend_name = "GTD", filenames = "_influence_GTD.pdf",
                     sort_numerically = TRUE, plot_diff_matrices=T,
                     ylim_l = ylim_gtd_l, ylim_u = ylim_gtd_u)
@@ -122,12 +121,12 @@ incids <- rki_incid %>%
   inner_join(jhu_incid, by = "date") %>%
   inner_join(rki_incid_nowcast, by = "date") %>%
   dplyr::filter(date<=as_date("2021-07-10"))
-data_sources <- c("RKI", "WHO", "JHU", "RKI Nowcast")
+data_sources <- c("RKI, positive test", "WHO", "JHU", "RKI, symptom onset")
 colnames(incids) <- c("date", data_sources)
 
 if (exists("estimates_input")) rm(estimates_input)
 for (data_src in data_sources){
-  incid <- incids[c("date", data_src)] %>% rename(c("I"=data_src))
+  incid <- incids[c("date", all_of(data_src))] %>% rename(c("I"=data_src))
   R_est <- estimate_RKI_R(incid, method = "EpiEstim",
                           window = 7,
                           gt_type = "gamma",
@@ -150,7 +149,7 @@ ylim_input_u <- max(colMax(estimates_input %>%
                              dplyr::select(ends_with(data_sources))))
 # plot
 plot_for_comparison(estimates_input, comp_methods = data_sources,
-                    col_palette = "incidence data", name_consensus = "RKI",
+                    col_palette = "incidence data", name_consensus = "RKI, positive test",
                     legend_name = "data source", filenames = "_influence_input_data.pdf",
                     sort_numerically = FALSE, plot_diff_matrices=T,
                     ylim_l = ylim_input_l, ylim_u = ylim_input_u)
@@ -167,7 +166,7 @@ colnames(incids) <- c("date", preprocessing)
 
 if (exists("estimates_preprocess")) rm(estimates_preprocess)
 for (type in preprocessing){
-  incid <- incids[c("date", type)] %>% rename(c("I"=type))
+  incid <- incids[c("date", all_of(type))] %>% rename(c("I"=type))
   R_est <- estimate_RKI_R(incid, method = "EpiEstim",
                           window = 7,
                           gt_type = "gamma",

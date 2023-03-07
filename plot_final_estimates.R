@@ -59,18 +59,23 @@ colMin <- function(data) sapply(data, min, na.rm = TRUE)
   rownames(gtds) <- methods_gtd
   gtd_strs <- c()
   for (src in rownames(gtds)){
-    gtd_str <- paste0(gtds[src, "mean"], "(", gtds[src, "sd"], ")")
+    gtd_str <- paste0(gtds[src, "mean"], "(", gtds[src, "sd"], "), ", src)
     gtd_strs <- c(gtd_strs, gtd_str)
   }
   # find ylim
-  ylim_gtd_l <- min(colMin(estimates_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(gtd_strs))))
-  ylim_gtd_u <- max(colMax(estimates_gtd %>% dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>% dplyr::select(ends_with(gtd_strs))))
+  ylim_gtd_l <- min(colMin(estimates_gtd %>%
+                             dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>%
+                             dplyr::select(ends_with(gtd_strs))))
+  ylim_gtd_u <- max(colMax(estimates_gtd %>%
+                             dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>%
+                             dplyr::select(ends_with(gtd_strs))))
   # plot
   plot_for_comparison(estimates_gtd, comp_methods = gtd_strs,
-                      col_palette = "YlGn", name_consensus = "4(4)",
+                      col_palette = "YlGn", name_consensus = "4(4), consensus",
                       legend_name = "GTD", filenames = "_influence_GTD.pdf",
                       sort_numerically = TRUE, plot_diff_matrices=T,
                       ylim_l = ylim_gtd_l, ylim_u = ylim_gtd_u)
+  
   
   # standard deviation of the GTD 
   sds <- c(3.1, 0.001, 4.0, 2.9, 2.3, 4.2, 7.0, 7.6)
@@ -84,7 +89,7 @@ colMin <- function(data) sapply(data, min, na.rm = TRUE)
 
 # input data
 {
-  data_sources <- c("RKI", "WHO", "JHU")
+  data_sources <- c("RKI, positive test", "WHO", "JHU", "RKI, symptom onset")
   # find ylim
   ylim_input_l <- min(colMin(estimates_input %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(data_sources))))
   ylim_input_u <- max(colMax(estimates_input %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(data_sources))))
