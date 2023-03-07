@@ -11,6 +11,7 @@ library(lubridate)
 
 # set system locale time to English for correct labelling of x axes
 Sys.setlocale("LC_TIME", "English")
+par(family="serif")
 
 get_colors <- function(methods, palette, name_consensus = "consensus"){
   all_methods <- c("HZI", "epiforecasts", "ETH", "globalrt",
@@ -165,7 +166,7 @@ plot_multiple_estimates <- function(estimates, legend_name, plot_title="",
   # plot
   R_plot <- ggplot(data = R_est, aes(x = date, y = R)) +
     geom_hline(aes(yintercept = 1)) +
-    theme_minimal() +
+    theme_minimal(base_family="serif") +
     theme(
       plot.title = element_text(size=18),
       axis.text=element_text(size=16),
@@ -486,7 +487,7 @@ plot_real_time_estimates <- function(estimates,
   R_plot <- ggplot(data = R_est, aes(x = date, y = R), color = weekday) +
     geom_hline(aes(yintercept = 1)) +
     
-    theme_minimal() +
+    theme_minimal(base_family="serif") +
     theme(
       plot.margin = unit(c(2,10,1,2), "mm"),
       plot.title = element_text(size=18),
@@ -557,7 +558,7 @@ plot_real_time_estimates_with_CI <- function(estimates,
   R_plot <- ggplot(data = R_est, aes(x = date, y = R), color = model) +
     geom_hline(aes(yintercept = 1), linetype="dotted") +
     
-    theme_minimal() +
+    theme_minimal(base_family="serif") +
     theme(
       plot.margin = unit(c(2,10,1,2), "mm"),
       plot.title = element_text(size=18),
@@ -647,7 +648,7 @@ plot_estimates_with_different_lags <- function(estimates,
   # plot
   R_plot <- ggplot(data = R_est, aes(x = date, y = R), color = lag) +
     geom_hline(aes(yintercept = 1), linetype="dotted") +
-    theme_minimal() +
+    theme_minimal(base_family="serif") +
     theme(
       plot.margin = unit(c(2,10,1,2), "mm"),
       plot.title = element_text(size=18),
@@ -725,7 +726,7 @@ plot_weekday_effects <- function(estimates,
     scale_x_discrete()
   
   R_plot <- R_plot +
-    theme_minimal() +
+    theme_minimal(base_family="serif") +
     theme(
       plot.title = element_text(size=18),
       axis.text=element_text(size=16),
@@ -769,7 +770,7 @@ plot_weekday_effects <- function(estimates,
     scale_x_discrete()
   
   R_plot <- R_plot +
-    theme_minimal() +
+    theme_minimal(base_family="serif") +
     theme(
       plot.title = element_text(size=18),
       axis.text=element_text(size=16),
@@ -839,7 +840,7 @@ plot_CI_coverage_rates <- function(conf_level = "95", days_until_final = 70){
                                  ifelse(label=="forecast", 3, NA))))
   
   coverage_plot <- ggplot() +
-    theme_minimal() +
+    theme_minimal(base_family="serif") +
     theme(
       plot.margin = unit(c(3,14,2,3), "mm"),
       plot.title = element_text(size=18),
@@ -924,7 +925,7 @@ plot_CI_widths <- function(conf_level = "95", days_until_final = 70){
                                  ifelse(label=="forecast", 3, NA))))
   
   width_plot <- ggplot() +
-    theme_minimal() +
+    theme_minimal(base_family="serif") +
     theme(
       plot.margin = unit(c(3,14,2,3), "mm"),
       plot.title = element_text(size=18),
@@ -1001,7 +1002,7 @@ plot_diff_prev <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days_
                                  ifelse(label=="forecast", 3, NA))))
   
   diff_plot <- ggplot() +
-    theme_minimal() +
+    theme_minimal(base_family="serif") +
     theme(
       plot.margin = unit(c(3,14,2,3), "mm"),
       plot.title = element_text(size=18),
@@ -1091,7 +1092,7 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
                                  ifelse(label=="forecast", 3, NA))))
   
   diff_plot <- ggplot() +
-    theme_minimal() +
+    theme_minimal(base_family="serif") +
     theme(
       plot.margin = unit(c(3,14,2,3), "mm"),
       plot.title = element_text(size=18),
@@ -1178,7 +1179,7 @@ plot_abs_diff_first <- function(max_lag = 20, days_until_final = 70) {
     mutate(variable = as.numeric(variable))
   
   diff_plot <- ggplot() +
-    theme_minimal() +
+    theme_minimal(base_family="serif") +
     theme(
       plot.margin = unit(c(1,12,1,2), "mm"),
       plot.title = element_text(size=18),
