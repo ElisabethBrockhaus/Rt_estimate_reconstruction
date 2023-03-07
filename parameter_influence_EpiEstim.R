@@ -32,16 +32,23 @@ colMin <- function(data) sapply(data, min, na.rm = TRUE)
 ####################
 # vary window size #
 ####################
-windows <- c(1, 3, 4, 7, 10)
+methods_window <- c("Ilmenau", "ETH", "SDSC", "RKI")
+windows <-         c(1,         3,     4,      7)
+names(windows) <- methods_window
+window_strs <- c()
+
 if (exists("estimates_window")) rm(estimates_window)
-for (window in windows){
+for (src in names(windows)){
+  window_str <- paste0(windows[src], ", ", src)
+  print(window_str)
+  window_strs <- c(window_strs, window_str)
   R_est <- estimate_RKI_R(RKI_incid, method = "EpiEstim",
-                          window = window,
+                          window = windows[src],
                           gt_type = "gamma",
                           gt_mean = 4,
                           gt_sd = 4,
                           delay = 0)
-  names(R_est) <- c("date", window, paste0(window, ".lower"), paste0(window, ".upper"))
+  names(R_est) <- c("date", window_str, paste0(window_str, ".lower"), paste0(window_str, ".upper"))
   if (!exists("estimates_window")){
     estimates_window <- R_est
   } else {
@@ -51,13 +58,13 @@ for (window in windows){
 # find ylim
 ylim_window_l <- min(colMin(estimates_window %>%
                               dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>%
-                              dplyr::select(ends_with(as.character(windows)))))
+                              dplyr::select(ends_with(as.character(window_strs)))))
 ylim_window_u <- max(colMax(estimates_window %>%
                               dplyr::filter(date>="2021-01-01", date<"2021-06-10") %>%
-                              dplyr::select(ends_with(as.character(windows)))))
+                              dplyr::select(ends_with(as.character(window_strs)))))
 # plot
-plot_for_comparison(estimates_window, comp_methods = as.character(windows),
-                    col_palette = "YlOrRd", name_consensus = 7,
+plot_for_comparison(estimates_window, comp_methods = window_strs,
+                    col_palette = "YlOrRd", name_consensus = "7, RKI",
                     legend_name = "window size", filenames = "_influence_window.pdf",
                     sort_numerically = TRUE,  plot_diff_matrices=T,
                     ylim_l = ylim_window_l, ylim_u = ylim_window_u)

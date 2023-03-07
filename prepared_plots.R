@@ -149,7 +149,8 @@ plot_multiple_estimates <- function(estimates, legend_name, plot_title="",
     spread(type, value)
 
   if (sort_numerically) {
-    if(all(grepl("(", unique(R_est$model), fixed = T))) {
+    if(all(grepl("(", unique(R_est$model), fixed = T))|
+       all(grepl(",", unique(R_est$model), fixed = T))) {
       R_est <- R_est %>%
         mutate(sort_by_model = as.numeric(str_match(model, "(.*?)[(](.*?)")[,2])) %>%
         arrange(date, sort_by_model) %>%
