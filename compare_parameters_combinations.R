@@ -99,7 +99,14 @@ R_consensus_adjInput <- estimate_RKI_R(incid, method = "EpiEstim",
 
 R_RKI_adjInput <- estimate_RKI_R(RKI_incid)
 
-R_SDSC_EpiEstim_adjInput <- estimate_SDSC_R(SDSC_incid)
+# SDSC_incid <-  read_csv("Rt_estimate_reconstruction/incidence_data/JHU_cases_2021-07-10.csv") %>%
+#   dplyr::filter(country=="Germany") %>%
+#   dplyr::select(date,daily_smoothed) %>%
+#   rename(I=daily_smoothed)
+
+R_SDSC_EpiEstim_adjInput <- estimate_SDSC_R(SDSC_incid, estimateOffsetting=7)
+# plot(R_SDSC_EpiEstim_adjInput$date, R_SDSC_EpiEstim_adjInput$R_calc, type="l")
+# lines(SDSC_R_pub$date, SDSC_R_pub$R_pub, col="red")
 
 R_ETH_EpiEstim_adjInput <- estimate_ETH_R(incid_for_ETH)
 
