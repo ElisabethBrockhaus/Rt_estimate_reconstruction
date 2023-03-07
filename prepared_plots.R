@@ -345,7 +345,7 @@ plot_for_comparison <- function(estimates, comp_methods,
       methods_legend <- comp_methods[!comp_methods %in% c(name_consensus)]
     }
     methods_ <- methods_legend
-    for (i in c(" ", ",", "\\(", "\\)")) {methods_ <- gsub(i, ".", methods_)}
+    for (i in c(" ", ",", "\\(", "\\)", "/")) {methods_ <- gsub(i, ".", methods_)}
     
     n <- length(methods_)
     matr <- matrix(rep(rep(0,n), n), ncol=n)
@@ -374,9 +374,8 @@ plot_for_comparison <- function(estimates, comp_methods,
       df <- df[order(row.names(df)), order(colnames(df))]
     }
     
-    colnames(df) <- paste0("(", 1:length(methods_legend), ")")
-    colnames(df)[length(methods_)] <- "SDSC"
-    rownames(df) <- paste0("(", 1:length(methods_legend), ") ", rownames(df))
+    colnames(df)[1:(n-1)] <- paste0("(", letters[1:(n-1)], ")")
+    rownames(df) <- paste0("(", letters[1:n], ") ", rownames(df))      
     
     df[lower.tri(df)] <- NA
     diag(df) <- NA

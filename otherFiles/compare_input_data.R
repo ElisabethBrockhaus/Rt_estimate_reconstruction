@@ -75,7 +75,7 @@ R_plot <- ggplot(data = incid, aes(x = date, y = value)) +
   scale_x_date(limits = as.Date(c(min(incid$date),max(incid$date))),
                breaks = seq(as.Date(min(incid$date)), as.Date(max(incid$date)), "month"),
                date_labels = "%B %d", expand = c(0,1)) +
-  theme_minimal() +
+  theme_minimal(base_family = "serif") +
   theme(
     axis.text=element_text(size=16),
     axis.title=element_text(size=18),
