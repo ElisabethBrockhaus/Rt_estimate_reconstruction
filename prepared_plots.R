@@ -1157,6 +1157,108 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
 }
 
 
+
+plot_proportion_corrected_upward <- function(ylim = c(-0.01, 1.01), days_until_final = 70) {
+  methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
+               "ilmenau", "RKI_7day", "rtlive", "SDSC")
+  
+  corrected_upwards <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/",
+                                       days_until_final, "/proportion_corrected_upward.csv")) %>%
+    as.data.frame() %>%
+    column_to_rownames("...1")
+  
+  labels <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/",
+                            days_until_final, "/estimate_labels.csv")) %>%
+    as.data.frame() %>%
+    dplyr::select(!num_est) %>%
+    rename(method = ...1) %>%
+    mutate(method = plyr::mapvalues(method,
+                                    c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
+                                    c("HZI",          "ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
+    pivot_longer(!method, names_to = "variable", values_to = "label")
+  
+  correction_data <- corrected_upwards %>%
+    rownames_to_column("method") %>%
+    dplyr::filter(method %in% methods) %>%
+    mutate(method = plyr::mapvalues(method,
+                                    c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
+                                    c("HZI",          "ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
+    arrange(method)
+  
+  correction_data <- correction_data %>%
+    mutate(legend = paste0(method, " (n=", num_est, ")")) %>%
+    dplyr::select(!num_est) %>%
+    gather("variable", "value", as.character(0:20))
+  
+  correction_data <- merge(correction_data, labels, by=c("method", "variable")) %>%
+    mutate(variable = -1 * as.numeric(variable),
+           label = ifelse(label=="estimate", 1,
+                          ifelse(label=="estimate based on partial data", 2,
+                                 ifelse(label=="forecast", 3, NA))))
+  
+  correction_plot <- ggplot() +
+    theme_minimal(base_family="serif") +
+    theme(
+      plot.margin = unit(c(3,14,2,3), "mm"),
+      plot.title = element_text(size=18),
+      axis.text=element_text(size=16),
+      axis.title.y=element_text(size=18),
+      axis.title.x = element_blank(),
+      legend.text=element_text(size=16),
+      legend.title=element_text(size=18),
+      legend.position = "bottom",
+      panel.border= element_rect(fill = "transparent", size = 0.5),
+      panel.background = element_rect(fill = "transparent"),
+      panel.grid.major = element_line(),
+      panel.grid.minor = element_blank()
+    ) +
+    ylab("proportion corrected upward") +
+    coord_cartesian(xlim = c(-20.3, 0.3), ylim = ylim, expand = FALSE) +
+    scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back")) +
+    geom_hline(yintercept = 0.5)
+  
+  # get colors and legend names
+  methods_legend <- unique(correction_data$method)
+  col_values <- get_colors(methods = methods_legend, palette = "methods")
+  
+  for (l in 1:3){
+    correction_plot <-  correction_plot +
+      geom_line(data=correction_data[correction_data$label<=l,],
+                aes(x = variable, y = value, color=method),
+                size = .8, linetype=l, na.rm = T)
+  }
+  
+  correction_plot <- correction_plot + 
+    scale_color_manual(values=col_values, name="method", labels=unique(correction_data$legend))
+  
+  if (dim(subset(correction_data, value > ylim[2]))[1] > 0) {
+    correction_plot <- correction_plot + 
+      geom_text(data=subset(correction_data, value > ylim[2]),
+                aes(label = round(value, 2),
+                    x = variable,
+                    y = ylim[2] - 0.06 * (ylim[2] + abs(ylim[1])),
+                    color = method),
+                angle=90,
+                show.legend = FALSE)
+  }
+  if (dim(subset(correction_data, value < ylim[1]))[1] > 0) {
+    correction_plot <- correction_plot + 
+      geom_text(data=subset(correction_data, value < ylim[1]),
+                aes(label = round(value, 2),
+                    x = variable,
+                    y = ylim[1] + 0.06 * (ylim[2] + abs(ylim[1])),
+                    color = method),
+                angle=90,
+                show.legend = FALSE)   
+  }
+  
+  ggsave(correction_plot, filename = "Figures/CI/proportion_corrected_upward.pdf",
+         bg = "transparent", width = 8, height = 5.8)
+  return(correction_plot)
+}
+
+
+
 plot_abs_diff_first <- function(max_lag = 20, days_until_final = 70) {
   methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
                "ilmenau", "RKI_7day", "rtlive", "SDSC")

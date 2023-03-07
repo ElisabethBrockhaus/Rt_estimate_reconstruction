@@ -63,6 +63,9 @@ calc_consistence_metrics <- function(methods,
   df_abs_diff_to_final <- data.frame(matrix(rep(NA, n*22), nrow = n), row.names = methods)
   colnames(df_abs_diff_to_final) <- c(0:20, "num_est")
   
+  df_upward_correction <- data.frame(matrix(rep(NA, n*22), nrow = n), row.names = methods)
+  colnames(df_upward_correction) <- c(0:20, "num_est")
+  
   df_labels <- data.frame(matrix(rep(NA, n*22), nrow = n), row.names = methods)
   colnames(df_labels) <- c(0:20, "num_est")
   
@@ -79,7 +82,7 @@ calc_consistence_metrics <- function(methods,
       start_date <- start_default
     }
 
-    end_date <- "2021-09-30" #as.character(as_date(as_date(start_globalrt) + weeks(10)) %m+% months(5))
+    end_date <- "2021-09-30"
     if (method == "rtlive") end_date <- as.character(as_date("2021-07-31") - days(days_until_final))
     
     pub_dates <- list.files(paste0(path_estimates, method),
@@ -181,11 +184,16 @@ calc_consistence_metrics <- function(methods,
           idx <- intersect(rownames(diff_final), as.character(min_lag:max_lag))
           diff_final <- diff_final[idx,]
           # drop columns containing any NA
-          diff_final <- diff_final[, colSums(is.na(diff_final)) == 0] 
+          diff_final <- diff_final[, colSums(is.na(diff_final)) == 0]
           
           df_diff_to_final[method, idx] <- rowMeans(diff_final)
           df_abs_diff_to_final[method, idx] <- rowMeans(abs(diff_final))
           df_abs_diff_to_final[method, "num_est"] <- df_diff_to_final[method, "num_est"] <- ncol(diff_final)
+          
+          corrected_upwards <- diff_final %>%
+            mutate_all(list(~ ifelse(.>0, 1, 0)))
+          df_upward_correction[method, idx] <- rowMeans(corrected_upwards)
+          df_upward_correction[method, "num_est"] <- ncol(corrected_upwards)
           }
           
           dates_used_for_diff_to_final <- colnames(diff_final)
@@ -373,7 +381,8 @@ calc_consistence_metrics <- function(methods,
   return(list(df_CI_coverage, df_CI_width,
               df_abs_diff_to_prev, df_abs_diff_to_final,
               df_diff_to_prev, df_diff_to_final,
-              df_diff_to_first, df_labels))
+              df_diff_to_first, df_labels,
+              df_upward_correction))
 }
 
 methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window",
@@ -390,6 +399,7 @@ for (d in c(50,70,80)[2]){
   write.csv(CI_eval[[6]], paste0(path, "diff_to_final.csv"))
   write.csv(CI_eval[[7]], paste0(path, "diff_to_first.csv"))
   write.csv(CI_eval[[8]], paste0(path, "estimate_labels.csv"))
+  write.csv(CI_eval[[9]], paste0(path, "proportion_corrected_upward.csv"))
 }
 
 source("Rt_estimate_reconstruction/prepared_plots.R")
@@ -398,7 +408,7 @@ for (d in c(50,70,80)[2]){
   plot1 <- plot_CI_coverage_rates(days_until_final = d); plot1
   plot2 <- plot_CI_widths(days_until_final = d); plot2
   plot3 <- plot_diff_final(diff_type = "abs_diff", days_until_final = d); plot3
-  plot4 <- plot_diff_final(diff_type = "diff", ylim = c(-0.015, 0.055), days_until_final = d); plot4
+  plot4 <- plot_proportion_corrected_upward(days_until_final = d); plot4
   
   consistence_plot <- ggarrange(plot1, plot2, plot3, plot4, ncol=2, nrow=2,
                                 labels = list("A", "B", "C", "D"),
