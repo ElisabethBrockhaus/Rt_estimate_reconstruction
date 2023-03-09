@@ -18,7 +18,7 @@ pub_delays <- read.csv("Rt_estimate_reconstruction/otherFiles/pub_delays.csv", r
 
 methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window",
              "globalrt_7d", "ilmenau", "RKI_7day", "rtlive", "SDSC")
-method <- methods[7]
+method <- methods[3]
 country = "DE"
 conf_level = "95"
 days_until_final = 70
@@ -42,10 +42,10 @@ calc_consistence_metrics <- function(methods,
   n_CI <- length(methods_CI)
   n <- length(methods)
   
-  df_CI_coverage <- data.frame(matrix(rep(NA, n_CI*25), nrow = n_CI), row.names = methods_CI)
+  df_CI_coverage <- data.frame(matrix(rep(NA, (n_CI+2)*25), nrow = n_CI+2), row.names = c(methods_CI, "ETH_old", "ETH_new"))
   colnames(df_CI_coverage) <- c(0:20, "num_CIs", "min_lag", "min_pub_date", "max_pub_date")
   
-  df_CI_width <- data.frame(matrix(rep(NA, n_CI*25), nrow = n_CI), row.names = methods_CI)
+  df_CI_width <- data.frame(matrix(rep(NA, (n_CI+2)*25), nrow = n_CI+2), row.names = c(methods_CI, "ETH_old", "ETH_new"))
   colnames(df_CI_width) <- c(0:20, "num_CIs", "min_lag", "min_pub_date", "max_pub_date")
   
   df_diff_to_first <- data.frame(matrix(rep(NA, n*21), nrow = n), row.names = methods)
@@ -57,10 +57,10 @@ calc_consistence_metrics <- function(methods,
   df_abs_diff_to_prev <- data.frame(matrix(rep(NA, n*21), nrow = n), row.names = methods)
   colnames(df_abs_diff_to_prev) <- c(0:20)
   
-  df_diff_to_final <- data.frame(matrix(rep(NA, n*22), nrow = n), row.names = methods)
+  df_diff_to_final <- data.frame(matrix(rep(NA, (n+2)*22), nrow = n+2), row.names = c(methods, "ETH_old", "ETH_new"))
   colnames(df_diff_to_final) <- c(0:20, "num_est")
   
-  df_abs_diff_to_final <- data.frame(matrix(rep(NA, n*22), nrow = n), row.names = methods)
+  df_abs_diff_to_final <- data.frame(matrix(rep(NA, (n+2)*22), nrow = n+2), row.names = c(methods, "ETH_old", "ETH_new"))
   colnames(df_abs_diff_to_final) <- c(0:20, "num_est")
   
   df_upward_correction <- data.frame(matrix(rep(NA, n*22), nrow = n), row.names = methods)
@@ -196,9 +196,20 @@ calc_consistence_metrics <- function(methods,
           df_upward_correction[method, "num_est"] <- ncol(corrected_upwards)
           }
           
+          if(method=="ETHZ_sliding_window"){
+            diff_final_old <- diff_final %>% dplyr::select(1:"2021-01-25")
+            diff_final_new <- diff_final %>% dplyr::select("2021-01-26":dim(diff_final)[2])
+            df_diff_to_final["ETH_old", idx] <- rowMeans(diff_final_old)
+            df_diff_to_final["ETH_new", idx] <- rowMeans(diff_final_new)
+            df_abs_diff_to_final["ETH_old", idx] <- rowMeans(abs(diff_final_old))
+            df_abs_diff_to_final["ETH_new", idx] <- rowMeans(abs(diff_final_new))
+            df_abs_diff_to_final["ETH_old", "num_est"] <- df_diff_to_final["ETH_old", "num_est"] <- ncol(diff_final_old)
+            df_abs_diff_to_final["ETH_new", "num_est"] <- df_diff_to_final["ETH_new", "num_est"] <- ncol(diff_final_new)
+          }
+          
           dates_used_for_diff_to_final <- colnames(diff_final)
-          
-          
+
+                    
           ######
           # CI coverage rates and width...
           
@@ -251,6 +262,22 @@ calc_consistence_metrics <- function(methods,
             df_CI_width[method, "num_CIs"] <- dim(CI_width)[2]
             df_CI_width[method, "min_pub_date"] <- min(colnames(CI_width))
             df_CI_width[method, "max_pub_date"] <- max(colnames(CI_width))
+          }
+          
+          if(method=="ETHZ_sliding_window"){
+            R_covered_difftime_old <- R_covered_difftime %>% dplyr::select(1:"2021-01-25")
+            R_covered_difftime_new <- R_covered_difftime %>% dplyr::select("2021-01-26":dim(diff_final)[2])
+            df_CI_coverage["ETH_old", rownames(R_covered_difftime_old)] <- rowMeans(R_covered_difftime_old)
+            df_CI_coverage["ETH_new", rownames(R_covered_difftime_new)] <- rowMeans(R_covered_difftime_new)
+            df_CI_coverage["ETH_old", "num_est"] <- ncol(R_covered_difftime_old)
+            df_CI_coverage["ETH_new", "num_est"] <- ncol(R_covered_difftime_new)
+            
+            CI_width_old <- CI_width %>% dplyr::select(1:"2021-01-25")
+            CI_width_new <- CI_width %>% dplyr::select("2021-01-26":dim(diff_final)[2])
+            df_CI_width["ETH_old", idx] <- rowMeans(CI_width_old)
+            df_CI_width["ETH_new", idx] <- rowMeans(CI_width_new)
+            df_CI_width["ETH_old", "num_est"] <- ncol(diff_final_old)
+            df_CI_width["ETH_new", "num_est"] <- ncol(diff_final_new)
           }
           
           
@@ -408,7 +435,7 @@ for (d in c(50,70,80)[2]){
   plot1 <- plot_CI_coverage_rates(days_until_final = d); plot1
   plot2 <- plot_CI_widths(days_until_final = d); plot2
   plot3 <- plot_diff_final(diff_type = "abs_diff", days_until_final = d); plot3
-  plot4 <- plot_diff_final(diff_type = "diff", days_until_final = d, ylim = c(-0.015,0.06)); plot4
+  plot4 <- plot_diff_final(diff_type = "diff", days_until_final = d, ylim = c(-0.021,0.06)); plot4
   #plot4 <- plot_proportion_corrected_upward(days_until_final = d); plot4
   
   consistence_plot <- ggarrange(plot1, plot2, plot3, plot4, ncol=2, nrow=2,

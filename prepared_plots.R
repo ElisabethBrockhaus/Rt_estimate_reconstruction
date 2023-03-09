@@ -804,7 +804,7 @@ plot_weekday_effects <- function(estimates,
 
 plot_CI_coverage_rates <- function(conf_level = "95", days_until_final = 70){
   methods <- c("epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
-               "ilmenau", "RKI_7day", "rtlive", "SDSC")
+               "ilmenau", "RKI_7day", "rtlive", "SDSC", "ETH_old", "ETH_new")
   
   CI_coverage <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/",
                                  days_until_final, "/",
@@ -819,7 +819,13 @@ plot_CI_coverage_rates <- function(conf_level = "95", days_until_final = 70){
     rename(method = ...1) %>%
     mutate(method = plyr::mapvalues(method,
                                     c("ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
-                                    c("ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
+                                    c("ETH",                 "globalrt",    "Ilmenau", "RKI")))
+  
+  labels[nrow(labels)+1:2,] <- labels[labels$method=="ETH",]
+  labels[nrow(labels)-1,"method"] <- "ETH_old"
+  labels[nrow(labels),"method"] <- "ETH_new"
+  
+  labels <- labels %>%
     pivot_longer(!method, names_to = "variable", values_to = "label")
     
   
@@ -839,6 +845,9 @@ plot_CI_coverage_rates <- function(conf_level = "95", days_until_final = 70){
            label = ifelse(label=="estimate", 1,
                           ifelse(label=="estimate based on partial data", 2,
                                  ifelse(label=="forecast", 3, NA))))
+  
+  coverage_data_ETH <- coverage_data %>% filter(method %in% c("ETH_old", "ETH_new"))
+  coverage_data <- coverage_data %>% filter(!(method %in% c("ETH_old", "ETH_new")))
   
   coverage_plot <- ggplot() +
     theme_minimal(base_family="serif") +
@@ -862,11 +871,6 @@ plot_CI_coverage_rates <- function(conf_level = "95", days_until_final = 70){
   
   methods_legend <- unique(coverage_data$method)
   col_values <- get_colors(methods = methods_legend, palette = "methods")
-  # line_types <- rep(1, length(methods_legend))
-  # names(line_types) <- methods_legend
-  # if (("rtlive" %in% methods_legend) &
-  #     ("globalrt" %in% methods_legend) &
-  #     (conf_level == "95")) line_types["rtlive"] <- 2
   
   for (l in 1:3){
     coverage_plot <-  coverage_plot +
@@ -876,8 +880,19 @@ plot_CI_coverage_rates <- function(conf_level = "95", days_until_final = 70){
   }
   
   coverage_plot <- coverage_plot +
-    scale_color_manual(values=col_values, name="method") #+
-    #scale_linetype_manual(values=line_types)
+    geom_line(data=coverage_data_ETH,
+              aes(x = variable, y = value, group=method),
+              size = .5, color=col_values["ETH"],
+              na.rm = T, show.legend=FALSE) +
+    geom_text(data=subset(coverage_data_ETH, variable == -14),
+              aes(label = ifelse(method == "ETH_old", "old", "new"),
+                  x = variable+0.5,
+                  y = value),
+              color = col_values["ETH"],
+              show.legend = FALSE)
+  
+  coverage_plot <- coverage_plot +
+    scale_color_manual(values=col_values, name="method")
     
   coverage_plot <- coverage_plot +
     geom_hline(yintercept=0.95, linetype="dashed") +
@@ -891,7 +906,7 @@ plot_CI_coverage_rates <- function(conf_level = "95", days_until_final = 70){
 
 plot_CI_widths <- function(conf_level = "95", days_until_final = 70){
   methods <- c("epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
-               "ilmenau", "RKI_7day", "rtlive", "SDSC")
+               "ilmenau", "RKI_7day", "rtlive", "SDSC", "ETH_old", "ETH_new")
   
   CI_width <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/",
                               days_until_final, "/", conf_level, "_CI_width.csv")) %>%
@@ -905,7 +920,13 @@ plot_CI_widths <- function(conf_level = "95", days_until_final = 70){
     rename(method = ...1) %>%
     mutate(method = plyr::mapvalues(method,
                                     c("ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
-                                    c("ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
+                                    c("ETH",                 "globalrt",    "Ilmenau", "RKI")))
+  
+  labels[nrow(labels)+1:2,] <- labels[labels$method=="ETH",]
+  labels[nrow(labels)-1,"method"] <- "ETH_old"
+  labels[nrow(labels),"method"] <- "ETH_new"
+  
+  labels <- labels %>%
     pivot_longer(!method, names_to = "variable", values_to = "label")
   
   width_data <- CI_width[, c(as.character(0:20), "min_lag")] %>%
@@ -924,6 +945,9 @@ plot_CI_widths <- function(conf_level = "95", days_until_final = 70){
            label = ifelse(label=="estimate", 1,
                           ifelse(label=="estimate based on partial data", 2,
                                  ifelse(label=="forecast", 3, NA))))
+  
+  width_data_ETH <- width_data %>% filter(method %in% c("ETH_old", "ETH_new"))
+  width_data <- width_data %>% filter(!(method %in% c("ETH_old", "ETH_new")))
   
   width_plot <- ggplot() +
     theme_minimal(base_family="serif") +
@@ -955,6 +979,19 @@ plot_CI_widths <- function(conf_level = "95", days_until_final = 70){
                 aes(x = variable, y = value, color=method),
                 size = .8, linetype=l, na.rm = T)
   }
+  
+  width_plot <- width_plot +
+    geom_line(data=width_data_ETH,
+              aes(x = variable, y = value, group=method),
+              size = .5, color=col_values["ETH"],
+              na.rm = T, show.legend=FALSE) +
+    geom_text(data=subset(width_data_ETH, variable == -14),
+              aes(label = ifelse(method == "ETH_old", "old", "new"),
+                  x = variable+0.5,
+                  y = value),
+              color = col_values["ETH"],
+              show.legend = FALSE)
+  
   
   width_plot <- width_plot +
     scale_color_manual(values=col_values, name="method")
@@ -1055,7 +1092,7 @@ plot_diff_prev <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days_
 
 plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days_until_final = 70) {
   methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window", "globalrt_7d",
-               "ilmenau", "RKI_7day", "rtlive", "SDSC")
+               "ilmenau", "RKI_7day", "rtlive", "SDSC", "ETH_old", "ETH_new")
   
   diff_to_final <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/",
                                    days_until_final, "/",
@@ -1069,8 +1106,14 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
     dplyr::select(!num_est) %>%
     rename(method = ...1) %>%
     mutate(method = plyr::mapvalues(method,
-                                    c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
-                                    c("HZI",          "ETH",                 "globalrt",    "Ilmenau", "RKI"))) %>%
+                                    c("ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
+                                    c("ETH",                 "globalrt",    "Ilmenau", "RKI")))
+  
+  labels[nrow(labels)+1:2,] <- labels[labels$method=="ETH",]
+  labels[nrow(labels)-1,"method"] <- "ETH_old"
+  labels[nrow(labels),"method"] <- "ETH_new"
+  
+  labels <- labels %>%
     pivot_longer(!method, names_to = "variable", values_to = "label")
   
   diff_data <- diff_to_final %>%
@@ -1091,6 +1134,9 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
            label = ifelse(label=="estimate", 1,
                           ifelse(label=="estimate based on partial data", 2,
                                  ifelse(label=="forecast", 3, NA))))
+  
+  diff_data_ETH <- diff_data %>% filter(method %in% c("ETH_old", "ETH_new"))
+  diff_data <- diff_data %>% filter(!(method %in% c("ETH_old", "ETH_new")))
   
   diff_plot <- ggplot() +
     theme_minimal(base_family="serif") +
@@ -1127,6 +1173,18 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
                 aes(x = variable, y = value, color=method),
                 size = .8, linetype=l, na.rm = T)
   }
+  
+  diff_plot <- diff_plot +
+    geom_line(data=diff_data_ETH,
+              aes(x = variable, y = value, group=method),
+              size = .5, color=col_values["ETH"],
+              na.rm = T, show.legend=FALSE) +
+    geom_text(data=subset(diff_data_ETH, variable == -14),
+              aes(label = ifelse(method == "ETH_old", "old", "new"),
+                  x = variable+0.5,
+                  y = value),
+              color = col_values["ETH"],
+              show.legend = FALSE)
   
   diff_plot <- diff_plot + 
     scale_color_manual(values=col_values, name="method", labels=unique(diff_data$legend))
