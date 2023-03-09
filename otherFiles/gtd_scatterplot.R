@@ -28,7 +28,7 @@ NL_first <- data.frame(gt_mean=4, gt_sd=2)
 
 # plot assumed mean and sd of generation times
 gtd_scatterplot <- ggplot(data = gtd_scatter, aes(x = gt_mean, y = gt_sd, color = grey)) +
-  labs(x = "mean", y = "standard deviation") +
+  labs(x = "mean GTD", y = "standard deviation of GTD") +
   theme_minimal() +
   theme(
     panel.grid.minor.x = element_line(colour = "transparent"),
