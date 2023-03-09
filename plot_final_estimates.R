@@ -19,11 +19,15 @@ path_estimates <- "Rt_estimate_reconstruction/estimates/"
   estimates_adjInputWindow <- read_csv(paste0(path_estimates, "R_adjInputWindow_2021-07-10.csv"))
   estimates_adjInputWindowGTD <- read_csv(paste0(path_estimates, "R_adjInputWindowGTD_2021-07-10.csv"))
   estimates_adjInputWindowGTDDelay <- read_csv(paste0(path_estimates, "R_adjInputWindowGTDDelays_2021-07-10.csv"))
+  estimates_adjInputWindowGTDIncRep <- read_csv(paste0(path_estimates, "R_adjInputWindowGTDIncRep_2021-07-10.csv"))
+  estimates_adjInputWindowGTDIncRepType <- read_csv(paste0(path_estimates, "R_adjInputWindowGTDIncRepType_2021-07-10.csv"))
   estimates_pub_ci <- read_csv(paste0(path_estimates, "R_pub_ci_2021-07-10.csv"))
   estimates_adjInput_ci <- read_csv(paste0(path_estimates, "R_adjInput_ci_2021-07-10.csv"))
   estimates_adjInputWindow_ci <- read_csv(paste0(path_estimates, "R_adjInputWindow_ci_2021-07-10.csv"))
   estimates_adjInputWindowGTD_ci <- read_csv(paste0(path_estimates, "R_adjInputWindowGTD_ci_2021-07-10.csv"))
   estimates_adjInputWindowGTDDelay_ci <- read_csv(paste0(path_estimates, "R_adjInputWindowGTDDelays_ci_2021-07-10.csv"))
+  estimates_adjInputWindowGTDIncRep_ci <- read_csv(paste0(path_estimates, "R_adjInputWindowGTDIncRep_ci_2021-07-10.csv"))
+  estimates_adjInputWindowGTDIncRepType_ci <- read_csv(paste0(path_estimates, "R_adjInputWindowGTDIncRepType_ci_2021-07-10.csv"))
 }
 
 # functions for extracting ylims
@@ -196,6 +200,8 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 }
 
 
+
+
 # plot CI
 {
   plot_for_comparison(estimates_pub_ci, org_methods_CI, include_CI = T, legend_name = "research group",
@@ -217,6 +223,14 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
                       ylim_l = 0.5, ylim_u = 1.5,
                       include_consensus=F, plot_width_diff_matrices=T)
 }
+
+
+
+
+
+############
+# APPENDIX #
+############
 
 # find ylim for longer time period
 {
@@ -277,4 +291,18 @@ ylim_u_long <- 4
                       ylim_u = ylim_u_long,
                       plot_diff_matrices = F,
                       include_consensus = F)
+}
+
+
+# plot median with old delay adjustments
+{
+  BA_methods <- c("consensus", "RKI", "SDSC", "ETH", "Ilmenau", "epiforecasts", "globalrt", "rtlive")
+  plot_for_comparison(estimates_adjInputWindowGTDIncRep, BA_methods,
+                      filenames = "_adjInputWindowGTDIncRep.pdf",
+                      ylim_l = 0.5, ylim_u = 1.5,
+                      plot_diff_matrices=T, include_consensus=F)
+  plot_for_comparison(estimates_adjInputWindowGTDIncRepType, BA_methods,
+                      filenames = "_adjInputWindowGTDIncRepType.pdf",
+                      ylim_l = 0.5, ylim_u = 1.5,
+                      plot_diff_matrices=T, include_consensus=F)
 }

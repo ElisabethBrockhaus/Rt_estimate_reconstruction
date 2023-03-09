@@ -375,3 +375,120 @@ estimates_adjInputWindowGTDDelay_ci <- R_consensus_adjAll %>%
 write_csv(estimates_adjInputWindowGTDDelay_ci, paste0(path_estimates, "R_adjInputWindowGTDDelays_CI_2021-07-10.csv"))
 
 
+
+
+
+
+
+#############################################
+# APPENDIX: old version of delay adjustment #
+#############################################
+
+###################################################
+# adjust input data, window size, gtd, mean delay #
+###################################################
+window <- 7
+gt_type <- "gamma"
+gt_mean <- 4
+gt_sd <- 4
+mean_delay <- 7
+
+R_consensus_adjInputWindowGTDIncRep <- estimate_RKI_R(incid, method = "EpiEstim",
+                                     window = window,
+                                     gt_type = gt_type, gt_mean = gt_mean, gt_sd = gt_sd,
+                                     delay = mean_delay)
+
+R_RKI_adjInputWindowGTDIncRep <- estimate_RKI_R(RKI_incid,
+                               window = window,
+                               gt_mean = gt_mean, # RKI always assumes constant generation time
+                               delay = mean_delay-3) # account for delay in preprocessing
+
+R_SDSC_EpiEstim_adjInputWindowGTDIncRep <- estimate_SDSC_R(SDSC_incid,
+                                          window = window,
+                                          gt_type = gt_type, gt_mean = gt_mean, gt_sd = gt_sd,
+                                          estimateOffsetting = mean_delay)
+
+R_ETH_EpiEstim_adjInputWindowGTDIncRep <- estimate_ETH_R(incid_for_ETH,
+                                        window = window,
+                                        gt_type = gt_type, gt_mean = gt_mean, gt_sd = gt_sd,
+                                        shift = params["ETH", "delay"] - mean_delay) # TODO: check sign
+
+R_Ilmenau_adjInputWindowGTDIncRep <- estimate_Ilmenau_R(incid,
+                                       window = window,
+                                       gt_type = gt_type, gt_mean = gt_mean, gt_sd = gt_sd,
+                                       delay = mean_delay)
+
+path <- "Rt_estimate_reconstruction/epiforecasts/estimates/"
+file <- "R_calc_2021-07-10_final_AdjAll.qs"
+R_epiforecasts_adjInputWindowGTDIncRep <- qread(paste0(path, file))
+R_epiforecasts_adjInputWindowGTDIncRep <- R_epiforecasts_adjInputWindowGTDIncRep[,c("date", "median", "lower_95", "upper_95")]
+names(R_epiforecasts_adjInputWindowGTDIncRep) <- c("date", "R_calc", "lower", "upper")
+R_epiforecasts_adjInputWindowGTDIncRep$date <- R_epiforecasts_adjInputWindowGTDIncRep$date - mean_delay
+
+R_globalrt_smoother_adjInputWindowGTDIncRep <- R_globalrt_smoother_adjInputWindowGTD
+R_globalrt_smoother_adjInputWindowGTDIncRep$date <- R_globalrt_smoother_adjInputWindowGTDIncRep$date - mean_delay
+
+R_rtlive_adjInputWindowGTDIncRep <- R_rtlive_adjInputWindowGTD
+R_rtlive_adjInputWindowGTDIncRep$date <- R_rtlive_adjInputWindowGTDIncRep$date + params["rtlive", "delay"] - mean_delay
+
+estimates_adjInputWindowGTDIncRep <- R_consensus_adjInputWindowGTDIncRep[,c("date", "R_calc")] %>% rename(consensus = R_calc) %>%
+  full_join(R_RKI_adjInputWindowGTDIncRep[,c("date", "R_calc")] %>% rename(RKI = R_calc), by = "date") %>% 
+  full_join(R_SDSC_EpiEstim_adjInputWindowGTDIncRep[,c("date", "R_calc")] %>% rename(SDSC = R_calc), by = "date") %>% 
+  full_join(R_ETH_EpiEstim_adjInputWindowGTDIncRep[,c("date", "R_calc")] %>% rename(ETH = R_calc), by = "date") %>% 
+  full_join(R_Ilmenau_adjInputWindowGTDIncRep[,c("date", "R_calc")] %>% rename(Ilmenau = R_calc), by = "date") %>% 
+  full_join(R_epiforecasts_adjInputWindowGTDIncRep[,c("date", "R_calc")] %>% rename(epiforecasts = R_calc), by = "date") %>%
+  full_join(R_globalrt_smoother_adjInputWindowGTDIncRep[,c("date", "R_calc")] %>% rename(globalrt = R_calc), by = "date") %>%
+  full_join(R_rtlive_adjInputWindowGTDIncRep[,c("date", "R_calc")] %>% rename(rtlive = R_calc), by = "date") %>%
+  arrange(date)
+
+write_csv(estimates_adjInputWindowGTDIncRep, paste0(path_estimates, "R_adjInputWindowGTDIncRep_2021-07-10.csv"))
+
+estimates_adjInputWindowGTDIncRep_ci <- R_consensus_adjInputWindowGTDIncRep %>% rename(R.consensus = R_calc, lower.consensus = lower, upper.consensus = upper) %>%
+  full_join(R_SDSC_EpiEstim_adjInputWindowGTDIncRep %>% rename(R.SDSC = R_calc, lower.SDSC = lower, upper.SDSC = upper), by = "date") %>%
+  full_join(R_ETH_EpiEstim_adjInputWindowGTDIncRep %>% rename(R.ETH = R_calc, lower.ETH = lower, upper.ETH = upper), by = "date") %>%
+  full_join(R_Ilmenau_adjInputWindowGTDIncRep %>% rename(R.Ilmenau = R_calc, lower.Ilmenau = lower, upper.Ilmenau = upper), by = "date") %>%
+  full_join(R_epiforecasts_adjInputWindowGTDIncRep %>% rename(R.epiforecasts = R_calc, lower.epiforecasts = lower, upper.epiforecasts = upper), by = "date") %>%
+  full_join(R_globalrt_smoother_adjInputWindowGTDIncRep %>% rename(R.globalrt = R_calc, lower.globalrt = lower, upper.globalrt = upper), by = "date") %>%
+  full_join(R_rtlive_adjInputWindowGTDIncRep %>% rename(R.rtlive = R_calc, lower.rtlive = lower, upper.rtlive = upper), by = "date")
+
+write_csv(estimates_adjInputWindowGTDIncRep_ci, paste0(path_estimates, "R_adjInputWindowGTDIncRep_CI_2021-07-10.csv"))
+
+
+
+############################################################
+# adjust everything                                        #
+# input data, window size, gtd, mean delay, instant<->case #
+############################################################
+gt_mean <- 4
+
+R_globalrt_smoother_adjInputWindowGTDIncRepType <- R_globalrt_smoother_adjInputWindowGTDIncRep
+R_globalrt_smoother_adjInputWindowGTDIncRepType$date <- R_globalrt_smoother_adjInputWindowGTDIncRepType$date + gt_mean
+
+R_rtlive_adjInputWindowGTDIncRepType <- R_rtlive_adjInputWindowGTDIncRep
+R_rtlive_adjInputWindowGTDIncRepType$date <- R_rtlive_adjInputWindowGTDIncRepType$date + gt_mean
+
+estimates_adjInputWindowGTDIncRepType <- R_consensus_adjInputWindowGTDIncRep[,c("date", "R_calc")] %>% rename(consensus = R_calc) %>%
+  full_join(R_RKI_adjInputWindowGTDIncRep[,c("date", "R_calc")] %>% rename(RKI = R_calc), by = "date") %>% 
+  full_join(R_SDSC_EpiEstim_adjInputWindowGTDIncRep[,c("date", "R_calc")] %>% rename(SDSC = R_calc), by = "date") %>% 
+  full_join(R_ETH_EpiEstim_adjInputWindowGTDIncRep[,c("date", "R_calc")] %>% rename(ETH = R_calc), by = "date") %>% 
+  full_join(R_Ilmenau_adjInputWindowGTDIncRep[,c("date", "R_calc")] %>% rename(Ilmenau = R_calc), by = "date") %>% 
+  full_join(R_epiforecasts_adjInputWindowGTDIncRep[,c("date", "R_calc")] %>% rename(epiforecasts = R_calc), by = "date") %>%
+  full_join(R_globalrt_smoother_adjInputWindowGTDIncRepType[,c("date", "R_calc")] %>% rename(globalrt = R_calc), by = "date") %>%
+  full_join(R_rtlive_adjInputWindowGTDIncRepType[,c("date", "R_calc")] %>% rename(rtlive = R_calc), by = "date") %>%
+  arrange(date)
+
+write_csv(estimates_adjInputWindowGTDIncRepType, paste0(path_estimates, "R_adjInputWindowGTDIncRepType_2021-07-10.csv"))
+
+estimates_adjInputWindowGTDIncRepType_ci <- R_consensus_adjInputWindowGTDIncRep %>% rename(R.consensus = R_calc, lower.consensus = lower, upper.consensus = upper) %>%
+  full_join(R_SDSC_EpiEstim_adjInputWindowGTDIncRep %>% rename(R.SDSC = R_calc, lower.SDSC = lower, upper.SDSC = upper), by = "date") %>%
+  full_join(R_ETH_EpiEstim_adjInputWindowGTDIncRep %>% rename(R.ETH = R_calc, lower.ETH = lower, upper.ETH = upper), by = "date") %>%
+  full_join(R_Ilmenau_adjInputWindowGTDIncRep %>% rename(R.Ilmenau = R_calc, lower.Ilmenau = lower, upper.Ilmenau = upper), by = "date") %>%
+  full_join(R_epiforecasts_adjInputWindowGTDIncRep %>% rename(R.epiforecasts = R_calc, lower.epiforecasts = lower, upper.epiforecasts = upper), by = "date") %>%
+  full_join(R_globalrt_smoother_adjInputWindowGTDIncRepType %>% rename(R.globalrt = R_calc, lower.globalrt = lower, upper.globalrt = upper), by = "date") %>%
+  full_join(R_rtlive_adjInputWindowGTDIncRepType %>% rename(R.rtlive = R_calc, lower.rtlive = lower, upper.rtlive = upper), by = "date")
+
+write_csv(estimates_adjInputWindowGTDIncRepType_ci, paste0(path_estimates, "R_adjInputWindowGTDIncRepType_CI_2021-07-10.csv"))
+
+
+
+
