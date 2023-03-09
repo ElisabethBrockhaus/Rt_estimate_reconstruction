@@ -376,7 +376,8 @@ plot_for_comparison <- function(estimates, comp_methods,
     }
     
     colnames(df)[1:(n-1)] <- paste0("(", letters[1:(n-1)], ")")
-    rownames(df) <- paste0("(", letters[1:n], ") ", rownames(df))      
+    colnames(df)[n] <- str_extract_all(colnames(df)[n], "[\\d\\(\\)\\.]+")
+    rownames(df) <- paste0("(", letters[1:n], ") ", str_extract_all(rownames(df), "[\\d\\(\\)\\.]+"))
     
     df[lower.tri(df)] <- NA
     diag(df) <- NA
