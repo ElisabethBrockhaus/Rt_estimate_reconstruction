@@ -29,7 +29,7 @@ NL_first <- data.frame(gt_mean=4, gt_sd=2)
 # plot assumed mean and sd of generation times
 gtd_scatterplot <- ggplot(data = gtd_scatter, aes(x = gt_mean, y = gt_sd, color = grey)) +
   labs(x = "mean GTD", y = "standard deviation of GTD") +
-  theme_minimal() +
+  theme_minimal(base_family = "serif") +
   theme(
     panel.grid.minor.x = element_line(colour = "transparent"),
     panel.background = element_rect(fill = "transparent"),
@@ -43,7 +43,7 @@ gtd_scatterplot <- ggplot(data = gtd_scatter, aes(x = gt_mean, y = gt_sd, color 
   geom_point(size = 2) +
   geom_text(label = rownames(gtd_scatter),
             position = position_nudge(y = ifelse(rownames(gtd_scatter) %in% c("AT", "RKI", "rtlive/DK/BE"), +0.33, -0.28)),
-            size = 4) + 
+            size = 4, family="serif") + 
   scale_x_continuous(breaks = seq(0,10,2)) +
   scale_color_manual(values=c("#000000", "#909090")) +
   
@@ -52,7 +52,8 @@ gtd_scatterplot <- ggplot(data = gtd_scatter, aes(x = gt_mean, y = gt_sd, color 
   geom_point(data = AT_first, colour = "#909090", shape=21, size = 2) +
   geom_text(mapping = aes(x=AT_first$gt_mean, y=AT_first$gt_sd),
             label="(AT)", color="#909090",
-            nudge_y = -0.24, check_overlap = TRUE, size = 2.5) +
+            nudge_y = -0.24, check_overlap = TRUE, size = 2.5,
+            family="serif") +
   geom_segment(aes(x=AT_first$gt_mean, y=AT_first$gt_sd,
                    xend=gtds["AT","gt_mean"], yend=gtds["AT","gt_sd"]),
                arrow=arrow(length=unit(2.5, "mm")), color="#909090", size=0.01, linetype=5) +
@@ -60,7 +61,8 @@ gtd_scatterplot <- ggplot(data = gtd_scatter, aes(x = gt_mean, y = gt_sd, color 
   geom_point(data = NL_first, colour = "#909090", shape=21, size = 2) +
   geom_text(mapping = aes(x=NL_first$gt_mean, y=NL_first$gt_sd),
             label="(NL)", color="#909090",
-            nudge_y = -0.24, check_overlap = TRUE, size = 2.5) +
+            nudge_y = -0.24, check_overlap = TRUE, size = 2.5,
+            family="serif") +
   geom_segment(aes(x=NL_first$gt_mean, y=NL_first$gt_sd,
                    xend=gtds["NL","gt_mean"], yend=gtds["NL","gt_sd"]),
                arrow=arrow(length=unit(2.5, "mm")), color="#909090", size=0.01, linetype=5) +
