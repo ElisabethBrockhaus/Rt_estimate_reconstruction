@@ -71,7 +71,7 @@ col_values <- get_colors(c("JHU", "RKI, positive test", "WHO", "RKI, symptom ons
 
 # plot
 R_plot <- ggplot(data = incid, aes(x = date, y = value)) +
-  labs(x = NULL, y = "new infections") +
+  labs(x = NULL, y = "daily new cases") +
   scale_x_date(limits = as.Date(c(min(incid$date),max(incid$date))),
                breaks = seq(as.Date(min(incid$date)), as.Date(max(incid$date)), "month"),
                date_labels = "%B %d", expand = c(0,1)) +
