@@ -182,18 +182,18 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
   plot_for_comparison(estimates_pub, org_methods, legend_name = "method",
                       filenames = "_real-time.pdf", ylim_u = ylim_u,
                       plot_diff_matrices=T, include_consensus=F)
-  plot_for_comparison(estimates_adjInput, comp_methods,
+  plot_for_comparison(estimates_adjInput, comp_methods, legend_name = "method",
                       filenames = "_adjInput.pdf", ylim_u = ylim_u,
                       plot_diff_matrices=T, include_consensus=F)
-  plot_for_comparison(estimates_adjInputWindow, comp_methods,
+  plot_for_comparison(estimates_adjInputWindow, comp_methods, legend_name = "method",
                       filenames = "_adjInputWindow.pdf",
                       ylim_l = 0.5, ylim_u = 1.5,
                       plot_diff_matrices=T, include_consensus=F)
-  plot_for_comparison(estimates_adjInputWindowGTD, comp_methods,
+  plot_for_comparison(estimates_adjInputWindowGTD, comp_methods, legend_name = "method",
                       filenames = "_adjInputWindowGTD.pdf",
                       ylim_l = 0.5, ylim_u = 1.5,
                       plot_diff_matrices=T, include_consensus=F)
-  plot_for_comparison(estimates_adjInputWindowGTDDelay, comp_methods,
+  plot_for_comparison(estimates_adjInputWindowGTDDelay, comp_methods, legend_name = "method",
                       filenames = "_adjInputWindowGTDDelays.pdf",
                       ylim_l = 0.5, ylim_u = 1.5,
                       plot_diff_matrices=T, include_consensus=F)
@@ -206,22 +206,22 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 {
   plot_for_comparison(estimates_pub_ci, org_methods_CI, include_CI = T, legend_name = "method",
                       filenames = "_CI_real-time.pdf", ylim_u = ylim_u,
-                      include_consensus=F, plot_width_diff_matrices=T)
+                      include_consensus=F, plot_width_diff_matrices=F)
   plot_for_comparison(estimates_adjInput_ci, comp_CI, include_CI = T,
                       filenames = "_CI_adjInput.pdf", ylim_u = ylim_u,
-                      include_consensus=F, plot_width_diff_matrices=T)
-  plot_for_comparison(estimates_adjInputWindow_ci, comp_CI, include_CI = T,
+                      include_consensus=F, plot_width_diff_matrices=F)
+  plot_for_comparison(estimates_adjInputWindow_ci, comp_CI, include_CI = T, legend_name = "method",
                       filenames = "_CI_adjInputWindow.pdf",
                       ylim_l = 0.5, ylim_u = 1.5,
-                      include_consensus=F, plot_width_diff_matrices=T)
-  plot_for_comparison(estimates_adjInputWindowGTD_ci, comp_CI, include_CI = T,
+                      include_consensus=F, plot_width_diff_matrices=F)
+  plot_for_comparison(estimates_adjInputWindowGTD_ci, comp_CI, include_CI = T, legend_name = "method",
                       filenames = "_CI_adjInputWindowGTD.pdf",
                       ylim_l = 0.5, ylim_u = 1.5,
-                      include_consensus=F, plot_width_diff_matrices=T)
-  plot_for_comparison(estimates_adjInputWindowGTDDelay_ci, comp_CI, include_CI = T,
+                      include_consensus=F, plot_width_diff_matrices=F)
+  plot_for_comparison(estimates_adjInputWindowGTDDelay_ci, comp_CI, include_CI = T, legend_name = "method",
                       filenames = "_CI_adjInputWindowGTDDelays.pdf",
                       ylim_l = 0.5, ylim_u = 1.5,
-                      include_consensus=F, plot_width_diff_matrices=T)
+                      include_consensus=F, plot_width_diff_matrices=F)
 }
 
 
