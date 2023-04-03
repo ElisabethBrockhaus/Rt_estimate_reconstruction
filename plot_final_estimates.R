@@ -105,13 +105,13 @@ colMin <- function(data) sapply(data, min, na.rm = TRUE)
 
 # input data
 {
-  data_sources <- c("RKI, positive test", "WHO", "JHU", "RKI, symptom onset")
+  data_sources <- c("JHU", "RKI, positive test", "RKI, symptom onset", "WHO")
   # find ylim
   ylim_input_l <- min(colMin(estimates_input %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(data_sources))))
   ylim_input_u <- max(colMax(estimates_input %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(data_sources))))
   # plot
   plot_for_comparison(estimates_input, comp_methods = data_sources,
-                      col_palette = "Set1", name_consensus = "RKI",
+                      col_palette = "incidence data", name_consensus = "RKI, positive test",
                       legend_name = "data source", filenames = "_influence_input_data.pdf",
                       sort_numerically = FALSE, plot_diff_matrices=T,
                       ylim_l = ylim_input_l, ylim_u = ylim_input_u)
@@ -125,7 +125,7 @@ colMin <- function(data) sapply(data, min, na.rm = TRUE)
   ylim_preprocess_u <- max(colMax(estimates_preprocess %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(preprocessing))))
   # plot
   plot_for_comparison(estimates_preprocess, comp_methods = preprocessing,
-                      col_palette = "Dark2", name_consensus = "none",
+                      col_palette = "incidence data", name_consensus = "none",
                       legend_name = "preprocessing", filenames = "_influence_preprocessing.pdf",
                       sort_numerically = FALSE, plot_diff_matrices=T,
                       ylim_l = ylim_preprocess_l, ylim_u = ylim_preprocess_u)
@@ -134,7 +134,7 @@ colMin <- function(data) sapply(data, min, na.rm = TRUE)
 # model
 {
   model <- c("RKI", "ETH", "Ilmenau", "SDSC", "globalrt", "epiforecasts", "rtlive")
-  estimates_model <- estimates_adjInputWindowGTDDelay %>% select(!c("consensus", "HZI"))
+  estimates_model <- estimates_adjInputWindowGTDDelay %>% dplyr::select(!c("consensus", "HZI"))
   # find ylim
   ylim_model_l <- min(colMin(estimates_model %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(model))))
   ylim_model_u <- max(colMax(estimates_model %>% dplyr::filter(date>="2021-01-01", date<="2021-06-10") %>% dplyr::select(ends_with(model))))
