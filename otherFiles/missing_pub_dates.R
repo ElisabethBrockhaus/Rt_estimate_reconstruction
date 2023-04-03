@@ -12,7 +12,7 @@ path_estimates <- "reproductive_numbers/data-processed/"
 methods <- c("RKI_7day", "ETHZ_sliding_window", "ilmenau", "sdsc", "globalrt_7d", "epiforecasts", "rtlive", "Braunschweig")
 
 start_plot <- as_date("2020-10-01")
-end_plot <- as_date("2021-09-30") #as_date(as_date("2021-02-18") + weeks(10)) %m+% months(5)
+end_plot <- as_date("2021-09-30")
 
 target_dates <- seq(start_plot, end_plot, by = "day")
 
@@ -34,7 +34,6 @@ plot_dates <- df_missing_dates %>%
   rownames_to_column("date") %>%
   mutate(date = as_date(date)) %>%
   gather(method, value, -date) %>%
-  #filter(value==TRUE) %>%
   mutate(value = ifelse(value, 1, 2)) %>%
   mutate(method = plyr::mapvalues(method,
                                   c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day", "sdsc"),
@@ -71,7 +70,7 @@ for (method in unique(plot_dates$method)){
 }
 
 plot <- ggplot(data=plot_dates, aes(x=date, y=method, col=method, size=value)) +
-  theme_minimal() +
+  theme_minimal(base_family = "serif") +
   theme(
     plot.margin = unit(c(1,9,1,2), "mm"),
     plot.title = element_text(size=18),
