@@ -154,9 +154,7 @@ plots_arranged <- ggarrange(plots_CI[[methods[1]]], plots_CI[[methods[2]]], plot
                             #common.legend = T, legend="bottom",
                             #legend.grob = get_legend(plots_CI[["RKI_7day"]]))
                             legend = "none")
-ggsave(plots_arranged, filename = paste0("Figures/estimates_realtime_raw_CI/",
-                                         as.character(as_date(start_default) + weeks(10)),
-                                         "/all_methods.pdf"),
+ggsave(plots_arranged, filename = "Figures/estimates_real_time_all_methods.pdf",
        bg = "transparent", width = 17, height = 21)
 
 
