@@ -131,7 +131,7 @@ colMin <- function(data) sapply(data, min, na.rm = TRUE)
                       ylim_l = ylim_preprocess_l, ylim_u = ylim_preprocess_u)
 }
 
-# model
+# method
 {
   model <- c("RKI", "ETH", "Ilmenau", "SDSC", "globalrt", "epiforecasts", "rtlive")
   estimates_model <- estimates_adjInputWindowGTDDelay %>% dplyr::select(!c("consensus", "HZI"))
@@ -141,7 +141,7 @@ colMin <- function(data) sapply(data, min, na.rm = TRUE)
   # plot
   plot_for_comparison(estimates_model, comp_methods = model,
                       col_palette = "Dark2", name_consensus = "none",
-                      legend_name = "model", filenames = "_influence_model.pdf",
+                      legend_name = "method", filenames = "_influence_model.pdf",
                       sort_numerically = FALSE, plot_diff_matrices=T,
                       ylim_l = ylim_model_l, ylim_u = ylim_model_u)
 }
@@ -179,7 +179,7 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 
 # plot median
 {
-  plot_for_comparison(estimates_pub, org_methods, legend_name = "research group",
+  plot_for_comparison(estimates_pub, org_methods, legend_name = "method",
                       filenames = "_real-time.pdf", ylim_u = ylim_u,
                       plot_diff_matrices=T, include_consensus=F)
   plot_for_comparison(estimates_adjInput, comp_methods,
@@ -204,7 +204,7 @@ source("Rt_estimate_reconstruction/prepared_plots.R")
 
 # plot CI
 {
-  plot_for_comparison(estimates_pub_ci, org_methods_CI, include_CI = T, legend_name = "research group",
+  plot_for_comparison(estimates_pub_ci, org_methods_CI, include_CI = T, legend_name = "method",
                       filenames = "_CI_real-time.pdf", ylim_u = ylim_u,
                       include_consensus=F, plot_width_diff_matrices=T)
   plot_for_comparison(estimates_adjInput_ci, comp_CI, include_CI = T,
