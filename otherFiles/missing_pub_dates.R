@@ -62,7 +62,7 @@ for (method in unique(plot_dates$method)){
   } else {
     start_date <- as_date(start_default)
   }
-  end_date <- as_date("2021-09-30") #as_date(as_date(start_globalrt) + weeks(10)) %m+% months(5)
+  end_date <- as_date("2021-09-30") - days(days_until_final)
   if (method == "rtlive") end_date <- as_date("2021-07-31") - days(days_until_final)
   plot_dates[(plot_dates$method == method) &
                (plot_dates$date >= start_date) &
