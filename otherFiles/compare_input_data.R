@@ -67,7 +67,7 @@ incid  <- incidence_data %>%
   filter(date >= as.Date("2021-01-01")) %>%
   filter(date <= as.Date("2021-06-10"))
 
-col_values <- get_colors(c("JHU", "RKI, positive test", "WHO", "RKI, symptom onset"), palette = "incidence data", name_consensus = "RKI, positive test")
+col_values <- get_colors(c("JHU", "RKI, positive test", "RKI, symptom onset", "WHO"), palette = "incidence data", name_consensus = "RKI, positive test")
 
 # plot
 R_plot <- ggplot(data = incid, aes(x = date, y = value)) +
@@ -85,10 +85,14 @@ R_plot <- ggplot(data = incid, aes(x = date, y = value)) +
     axis.line.y.right = element_line(),
     axis.line.x.top = element_line(),
     legend.position = "bottom",
+    legend.key.width= unit(1.2, 'cm'),
     panel.background = element_rect(fill = "transparent")
   ) +
-  geom_line(aes(group = variable, color = variable)) +
-  scale_color_manual(values=col_values, name="data source")
+  geom_line(aes(group = variable, color = variable, linetype = variable), size=1) +
+  scale_color_manual(values=col_values) +
+  labs(linetype="data source") +
+  guides(linetype = guide_legend(override.aes = list(size=1.2, color=col_values)),
+         color = "none")
 
 print(R_plot)
 ggsave(R_plot, filename = "Figures/incidence_data.pdf",  bg = "transparent",
