@@ -297,11 +297,11 @@ ylim_u_long <- 4
 # plot median with old delay adjustments
 {
   BA_methods <- c("consensus", "RKI", "SDSC", "ETH", "Ilmenau", "epiforecasts", "globalrt", "rtlive")
-  plot_for_comparison(estimates_adjInputWindowGTDIncRep, BA_methods,
+  plot_for_comparison(estimates_adjInputWindowGTDIncRep, BA_methods, legend_name = "method",
                       filenames = "_adjInputWindowGTDIncRep.pdf",
                       ylim_l = 0.5, ylim_u = 1.5,
                       plot_diff_matrices=T, include_consensus=F)
-  plot_for_comparison(estimates_adjInputWindowGTDIncRepType, BA_methods,
+  plot_for_comparison(estimates_adjInputWindowGTDIncRepType, BA_methods, legend_name = "method",
                       filenames = "_adjInputWindowGTDIncRepType.pdf",
                       ylim_l = 0.5, ylim_u = 1.5,
                       plot_diff_matrices=T, include_consensus=F)
