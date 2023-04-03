@@ -599,7 +599,8 @@ plot_real_time_estimates_with_CI <- function(estimates,
       axis.line.x.top = element_line(),
       legend.position = "bottom",
       panel.background = element_rect(fill = "transparent", size = 0.5),
-      panel.grid.major = element_line(),
+      panel.grid.major.x = element_blank(),
+      panel.grid.major.y = element_line(),
       panel.grid.minor = element_blank()
     ) +
     ggtitle(plot_title) +
@@ -620,7 +621,7 @@ plot_real_time_estimates_with_CI <- function(estimates,
                              !is.na(R_est$R) &
                              R_est$label<=l,],
                 aes(x = date, y = R, group=model, color=model),
-                size = .5, linetype=l, na.rm = T, show.legend = F) 
+                size = 1, linetype=l, na.rm = T, show.legend = F) 
     
     if ("l" %in% names(R_est)) {
       R_plot <-  R_plot +
@@ -639,7 +640,7 @@ plot_real_time_estimates_with_CI <- function(estimates,
   R_plot <-  R_plot +
     geom_vline(data=R_est[R_est$model!=name_consensus & !is.na(R_est$R),],
                aes(xintercept=as_date(model), group=model, color=model),
-               size = .5, na.rm = T, show.legend = FALSE) + 
+               size = .8, na.rm = T, show.legend = FALSE) + 
     geom_line(data=R_est[R_est$model==name_consensus,],
               aes(x = date, y = R), size = .8, color="black") +
     scale_color_manual(values=col_values, name=legend_name)
