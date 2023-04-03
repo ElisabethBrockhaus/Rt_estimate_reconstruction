@@ -28,10 +28,9 @@ NL_first <- data.frame(gt_mean=4, gt_sd=2)
 
 # plot assumed mean and sd of generation times
 gtd_scatterplot <- ggplot(data = gtd_scatter, aes(x = gt_mean, y = gt_sd, color = grey)) +
-  labs(x = "mean GTD", y = "standard deviation of GTD") +
+  labs(x = "mean GTD (days)", y = "standard deviation of GTD (days)") +
   theme_minimal(base_family = "serif") +
   theme(
-    panel.grid.minor.x = element_line(colour = "transparent"),
     panel.background = element_rect(fill = "transparent"),
     axis.text=element_text(size=16),
     axis.title=element_text(size=18),
@@ -40,19 +39,30 @@ gtd_scatterplot <- ggplot(data = gtd_scatter, aes(x = gt_mean, y = gt_sd, color 
     axis.line.x.top = element_line(),
     legend.position = "none"
   ) +
+  
+  geom_linerange(data = gtd_scatter["epiforecasts",],
+                 aes(ymin = gt_sd - 2*0.8, ymax = gt_sd + 2*0.8),
+                 alpha = .5, linetype=2) +
+  geom_linerange(data = gtd_scatter["epiforecasts",],
+                 aes(xmin = gt_mean - 2*0.7, xmax = gt_mean + 2*0.7),
+                 alpha = .5, linetype=2) +
+  
   geom_point(size = 2) +
   geom_text(label = rownames(gtd_scatter),
-            position = position_nudge(y = ifelse(rownames(gtd_scatter) %in% c("AT", "RKI", "rtlive/DK/BE"), +0.33, -0.28)),
+            position = position_nudge(y = ifelse(rownames(gtd_scatter) %in% c("AT", "RKI"), +0.25,
+                                                 ifelse(rownames(gtd_scatter) %in% c("ETH(CH)/SDSC/SE", "rtlive/DK/BE"), 0.02, -0.2)),
+                                      x = ifelse(rownames(gtd_scatter) == "ETH(CH)/SDSC/SE", 0.9,
+                                                 ifelse(rownames(gtd_scatter) == "rtlive/DK/BE", 0.6, 0))),
             size = 4, family="serif") + 
   scale_x_continuous(breaks = seq(0,10,2)) +
   scale_color_manual(values=c("#000000", "#909090")) +
   
-  geom_point(data = data.frame(gt_mean=4, gt_sd=4), colour = "red", size = 3) + 
+  geom_point(data = data.frame(gt_mean=4, gt_sd=4), colour = "red", size = 5, shape = 18) + 
   
   geom_point(data = AT_first, colour = "#909090", shape=21, size = 2) +
   geom_text(mapping = aes(x=AT_first$gt_mean, y=AT_first$gt_sd),
             label="(AT)", color="#909090",
-            nudge_y = -0.24, check_overlap = TRUE, size = 2.5,
+            nudge_y = -0.2, check_overlap = TRUE, size = 2.5,
             family="serif") +
   geom_segment(aes(x=AT_first$gt_mean, y=AT_first$gt_sd,
                    xend=gtds["AT","gt_mean"], yend=gtds["AT","gt_sd"]),
@@ -61,7 +71,7 @@ gtd_scatterplot <- ggplot(data = gtd_scatter, aes(x = gt_mean, y = gt_sd, color 
   geom_point(data = NL_first, colour = "#909090", shape=21, size = 2) +
   geom_text(mapping = aes(x=NL_first$gt_mean, y=NL_first$gt_sd),
             label="(NL)", color="#909090",
-            nudge_y = -0.24, check_overlap = TRUE, size = 2.5,
+            nudge_y = -0.2, check_overlap = TRUE, size = 2.5,
             family="serif") +
   geom_segment(aes(x=NL_first$gt_mean, y=NL_first$gt_sd,
                    xend=gtds["NL","gt_mean"], yend=gtds["NL","gt_sd"]),
@@ -72,4 +82,4 @@ gtd_scatterplot <- ggplot(data = gtd_scatter, aes(x = gt_mean, y = gt_sd, color 
 print(gtd_scatterplot)
 
 ggsave(gtd_scatterplot, filename = "Figures/gtd_scatterplot.png",  bg = "transparent",
-       width = 10, height = 5)
+       width = 10, height = 7.8)
