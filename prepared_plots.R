@@ -15,12 +15,21 @@ par(family="serif")
 
 get_colors <- function(methods, palette, name_consensus = "consensus"){
   all_methods <- c("HZI", "epiforecasts", "ETH", "globalrt",
-                   "Ilmenau", "RKI", "rtlive", "SDSC", "consensus")
+                   "Ilmenau", "RKI", "rtlive", "SDSC", "consensus", "none")
   num_est <- length(methods)
   
   # constant colors for different models
   if (all(methods %in% all_methods)){
-    cols <- c(brewer.pal(length(all_methods) - 1, "Dark2"), "#000000")
+    cols <- c("#1F77B4",
+              "#FF7F0E",
+              "#2CA02C",
+              "#D62728",
+              "#9467BD",
+              "#8C564B",
+              "#E377C2",
+              "#FFC300",
+              "#000000",
+              "#000000")
     names(cols) <- all_methods
     cols <- cols[methods]
   
@@ -43,7 +52,7 @@ get_colors <- function(methods, palette, name_consensus = "consensus"){
     cols[name_consensus] <- "#000000"
 
   } else if (palette == "incidence data"){
-    cols <- c("#ff0000", "#000000", "#33ff00", "#2200ff")
+    cols <- c("#008080", "#000000", "#FF7F50", "#800080")
     names(cols) <- methods
     cols[name_consensus] <- "#000000"
     
@@ -178,6 +187,7 @@ plot_multiple_estimates <- function(estimates, legend_name, plot_title="",
       axis.line.y.right = element_line(),
       axis.line.x.top = element_line(),
       legend.position = "bottom",
+      legend.key.width= unit(1.2, 'cm'),
       panel.border = element_rect(fill = "transparent", size = 0.5),
       panel.background = element_rect(fill = "transparent"),
       panel.grid.major = element_line(),
@@ -203,18 +213,33 @@ plot_multiple_estimates <- function(estimates, legend_name, plot_title="",
   
   if (include_CI | point_and_CI){
     R_plot <-  R_plot +
-      geom_ribbon(aes(ymin = lower, ymax = upper, fill = model), alpha = .25) +
-      scale_fill_manual(values=col_values, name=legend_name)
+      geom_ribbon(aes(ymin = lower, ymax = upper, fill = model), alpha = .5) +
+      scale_fill_manual(values=col_values, name=legend_name) +
+      guides(color = guide_legend(override.aes = list(size=3)))
   }
   if (!include_CI | point_and_CI) {
-    R_plot <-  R_plot +
-      #geom_line(aes(group = model, color=model)) +
-      geom_line(data=R_est[R_est$model!=name_consensus & !is.na(R_est$R),],
-                aes(x = date, y = R, color=model), size = .5, na.rm = T) +
-      geom_line(data=R_est[R_est$model==name_consensus,],
-                aes(x = date, y = R, color=model), size = .8) +
-      scale_color_manual(values=col_values, name=legend_name)
+    if(col_palette == "incidence data"){
+      R_plot <-  R_plot +
+        geom_line(data=R_est[R_est$model!=name_consensus & !is.na(R_est$R),],
+                  aes(x = date, y = R, color=model, linetype=model), size = .8, na.rm = T) +
+        geom_line(data=R_est[R_est$model==name_consensus,],
+                  aes(x = date, y = R, color=model, linetype=model), size = 1) +
+        scale_color_manual(values=col_values, name=legend_name) +
+        guides(linetype = guide_legend(override.aes = list(size=1.2, color=col_values)),
+               color = "none")
+    } else {
+      R_plot <-  R_plot +
+        geom_line(data=R_est[R_est$model!=name_consensus & !is.na(R_est$R),],
+                  aes(x = date, y = R, color=model), size = .8, na.rm = T) +
+        geom_line(data=R_est[R_est$model==name_consensus,],
+                  aes(x = date, y = R, color=model), size = 1) +
+        scale_color_manual(values=col_values, name=legend_name) +
+        guides(color = guide_legend(override.aes = list(size=3)))
+    }
   }
+
+  R_plot <- R_plot +
+    labs(color=legend_name, linetype=legend_name)
   
   return(R_plot)
 }
@@ -347,7 +372,7 @@ plot_for_comparison <- function(estimates, comp_methods,
     }
     methods_ <- methods_legend
     for (i in c(" ", ",", "\\(", "\\)", "/")) {methods_ <- gsub(i, ".", methods_)}
-    
+
     n <- length(methods_)
     matr <- matrix(rep(rep(0,n), n), ncol=n)
     colnames(matr) <- rownames(matr) <- methods_legend
@@ -376,9 +401,11 @@ plot_for_comparison <- function(estimates, comp_methods,
     }
     
     colnames(df)[1:(n-1)] <- paste0("(", letters[1:(n-1)], ")")
-    colnames(df)[n] <- str_extract_all(colnames(df)[n], "[\\d\\(\\)\\.]+")
-    rownames(df) <- paste0("(", letters[1:n], ") ", str_extract_all(rownames(df), "[\\d\\(\\)\\.]+"))
-    
+    if (grepl("\\d", methods_legend[1])){
+      colnames(df)[n] <- str_extract_all(colnames(df)[n], "[\\d\\(\\)\\.]+")
+      rownames(df) <- paste0("(", letters[1:n], ") ", str_extract_all(rownames(df), "[\\d\\(\\)\\.]+"))
+    } 
+
     df[lower.tri(df)] <- NA
     diag(df) <- NA
     df <- df[-length(methods_),-1]
@@ -876,19 +903,20 @@ plot_CI_coverage_rates <- function(conf_level = "95", days_until_final = 70){
     coverage_plot <-  coverage_plot +
       geom_line(data=coverage_data[coverage_data$label<=l,],
                 aes(x = variable, y = value, color=method),
-                size = .8, linetype=l, na.rm = T)
+                size = 1.5, linetype=l, na.rm = T)
   }
   
   coverage_plot <- coverage_plot +
     geom_line(data=coverage_data_ETH,
               aes(x = variable, y = value, group=method),
-              size = .5, color=col_values["ETH"],
+              size = 1, color=col_values["ETH"],
               na.rm = T, show.legend=FALSE) +
     geom_text(data=subset(coverage_data_ETH, variable == -14),
               aes(label = ifelse(method == "ETH_old", "old", "new"),
-                  x = variable+0.5,
+                  x = variable+0.6,
                   y = value),
               color = col_values["ETH"],
+              size = 5, family="serif",
               show.legend = FALSE)
   
   coverage_plot <- coverage_plot +
@@ -896,7 +924,10 @@ plot_CI_coverage_rates <- function(conf_level = "95", days_until_final = 70){
     
   coverage_plot <- coverage_plot +
     geom_hline(yintercept=0.95, linetype="dashed") +
-    annotate("text", label = "nominal level: 95%", x = -2.5, y = 0.92, size = 5)
+    annotate("text", label = "nominal level: 95%", x = -2.5, y = 0.92, size = 5, family = "serif")
+  
+  coverage_plot <- coverage_plot +
+    guides(color = guide_legend(override.aes = list(size=3)))
   
   ggsave(coverage_plot, filename = paste0("Figures/CI/", conf_level, "_coverage_rates.pdf"),
          bg = "transparent", width = 8, height = 5.8)
@@ -977,24 +1008,26 @@ plot_CI_widths <- function(conf_level = "95", days_until_final = 70){
     width_plot <-  width_plot +
       geom_line(data=width_data[width_data$label<=l,],
                 aes(x = variable, y = value, color=method),
-                size = .8, linetype=l, na.rm = T)
+                size = 1.5, linetype=l, na.rm = T)
   }
   
   width_plot <- width_plot +
     geom_line(data=width_data_ETH,
               aes(x = variable, y = value, group=method),
-              size = .5, color=col_values["ETH"],
+              size = 1, color=col_values["ETH"],
               na.rm = T, show.legend=FALSE) +
     geom_text(data=subset(width_data_ETH, variable == -14),
               aes(label = ifelse(method == "ETH_old", "old", "new"),
-                  x = variable+0.5,
+                  x = variable+0.6,
                   y = value),
               color = col_values["ETH"],
+              size = 5, family="serif",
               show.legend = FALSE)
   
   
   width_plot <- width_plot +
-    scale_color_manual(values=col_values, name="method")
+    scale_color_manual(values=col_values, name="method") +
+    guides(color = guide_legend(override.aes = list(size=3)))
 
   ggsave(width_plot, filename = paste0("Figures/CI/", conf_level, "_CI_widths.pdf"),
          bg = "transparent", width = 8, height = 5.8)
@@ -1154,7 +1187,7 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
-    ylab(ifelse(diff_type == "diff", "MD to final est.",
+    ylab(ifelse(diff_type == "diff", "MSD to final est.",
                 "MAD to final est.")) +
     coord_cartesian(xlim = c(-20.3, 0.3), ylim = ylim, expand = FALSE) +
     scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
@@ -1171,23 +1204,25 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
     diff_plot <-  diff_plot +
       geom_line(data=diff_data[diff_data$label<=l,],
                 aes(x = variable, y = value, color=method),
-                size = .8, linetype=l, na.rm = T)
+                size = 1.5, linetype=l, na.rm = T)
   }
   
   diff_plot <- diff_plot +
     geom_line(data=diff_data_ETH,
               aes(x = variable, y = value, group=method),
-              size = .5, color=col_values["ETH"],
+              size = 1, color=col_values["ETH"],
               na.rm = T, show.legend=FALSE) +
     geom_text(data=subset(diff_data_ETH, variable == -14),
               aes(label = ifelse(method == "ETH_old", "old", "new"),
-                  x = variable+0.5,
+                  x = variable+0.6,
                   y = value),
               color = col_values["ETH"],
+              size = 5, family="serif",
               show.legend = FALSE)
   
   diff_plot <- diff_plot + 
-    scale_color_manual(values=col_values, name="method", labels=unique(diff_data$legend))
+    scale_color_manual(values=col_values, name="method", labels=unique(diff_data$legend)) +
+    guides(color = guide_legend(override.aes = list(size=3)))
 
   if (dim(subset(diff_data, value > ylim[2]))[1] > 0) {
     diff_plot <- diff_plot + 
@@ -1197,6 +1232,7 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
                     y = ylim[2] - 0.06 * (ylim[2] + abs(ylim[1])),
                     color = method),
                 angle=90,
+                size = 5, family="serif",
                 show.legend = FALSE)
   }
   if (dim(subset(diff_data, value < ylim[1]))[1] > 0) {
@@ -1207,6 +1243,7 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
                     y = ylim[1] + 0.06 * (ylim[2] + abs(ylim[1])),
                     color = method),
                 angle=90,
+                size = 5, family="serif",
                 show.legend = FALSE)   
   }
   
