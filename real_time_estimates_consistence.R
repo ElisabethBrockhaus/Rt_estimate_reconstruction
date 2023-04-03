@@ -18,7 +18,7 @@ pub_delays <- read.csv("Rt_estimate_reconstruction/otherFiles/pub_delays.csv", r
 
 methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window",
              "globalrt_7d", "ilmenau", "RKI_7day", "rtlive", "SDSC")
-method <- methods[3]
+method <- methods[5]
 country = "DE"
 conf_level = "95"
 days_until_final = 70
@@ -42,37 +42,25 @@ calc_consistence_metrics <- function(methods,
   n_CI <- length(methods_CI)
   n <- length(methods)
   
-  df_CI_coverage <- data.frame(matrix(rep(NA, (n_CI+2)*25), nrow = n_CI+2), row.names = c(methods_CI, "ETH_old", "ETH_new"))
-  colnames(df_CI_coverage) <- c(0:20, "num_CIs", "min_lag", "min_pub_date", "max_pub_date")
+  df_CI_coverage <- data.frame(matrix(rep(NA, (n_CI+2)*39), nrow = n_CI+2), row.names = c(methods_CI, "ETH_old", "ETH_new"))
+  colnames(df_CI_coverage) <- c(0:34, "num_CIs", "min_lag", "min_pub_date", "max_pub_date")
   
-  df_CI_width <- data.frame(matrix(rep(NA, (n_CI+2)*25), nrow = n_CI+2), row.names = c(methods_CI, "ETH_old", "ETH_new"))
-  colnames(df_CI_width) <- c(0:20, "num_CIs", "min_lag", "min_pub_date", "max_pub_date")
+  df_CI_width <- data.frame(matrix(rep(NA, (n_CI+2)*39), nrow = n_CI+2), row.names = c(methods_CI, "ETH_old", "ETH_new"))
+  colnames(df_CI_width) <- c(0:34, "num_CIs", "min_lag", "min_pub_date", "max_pub_date")
   
-  df_diff_to_first <- data.frame(matrix(rep(NA, n*21), nrow = n), row.names = methods)
-  colnames(df_diff_to_first) <- c(0:20)
+  df_diff_to_final <- data.frame(matrix(rep(NA, (n+2)*36), nrow = n+2), row.names = c(methods, "ETH_old", "ETH_new"))
+  colnames(df_diff_to_final) <- c(0:34, "num_est")
   
-  df_diff_to_prev <- data.frame(matrix(rep(NA, n*21), nrow = n), row.names = methods)
-  colnames(df_diff_to_prev) <- c(0:20)
+  df_abs_diff_to_final <- data.frame(matrix(rep(NA, (n+2)*36), nrow = n+2), row.names = c(methods, "ETH_old", "ETH_new"))
+  colnames(df_abs_diff_to_final) <- c(0:34, "num_est")
   
-  df_abs_diff_to_prev <- data.frame(matrix(rep(NA, n*21), nrow = n), row.names = methods)
-  colnames(df_abs_diff_to_prev) <- c(0:20)
-  
-  df_diff_to_final <- data.frame(matrix(rep(NA, (n+2)*22), nrow = n+2), row.names = c(methods, "ETH_old", "ETH_new"))
-  colnames(df_diff_to_final) <- c(0:20, "num_est")
-  
-  df_abs_diff_to_final <- data.frame(matrix(rep(NA, (n+2)*22), nrow = n+2), row.names = c(methods, "ETH_old", "ETH_new"))
-  colnames(df_abs_diff_to_final) <- c(0:20, "num_est")
-  
-  df_upward_correction <- data.frame(matrix(rep(NA, n*22), nrow = n), row.names = methods)
-  colnames(df_upward_correction) <- c(0:20, "num_est")
-  
-  df_labels <- data.frame(matrix(rep(NA, n*22), nrow = n), row.names = methods)
-  colnames(df_labels) <- c(0:20, "num_est")
+  df_labels <- data.frame(matrix(rep(NA, n*36), nrow = n), row.names = methods)
+  colnames(df_labels) <- c(0:34, "num_est")
   
   for (method in methods){
     print(method)
     
-    max_lag <- 20
+    max_lag <- 34
 
     if (method == "globalrt_7d"){
       start_date <- start_globalrt
@@ -171,7 +159,7 @@ calc_consistence_metrics <- function(methods,
                                                                    units = "day")) %>%
             column_to_rownames(var = "estimated_after")
           
-          for (i_realtime in colnames(R_pub)[as_date(colnames(R_pub)) <= end_date]){
+          for (i_realtime in colnames(R_pub)[as_date(colnames(R_pub)) <= as_date(end_date) - days_until_final]){
             time_diffs <- as_date(available_pub_dates) - as_date(i_realtime)
             time_diffs[time_diffs<days_until_final] <- 1000 # "big-M" in order to only consider dates at least days_until_final days later 
             i_final <- available_pub_dates[which.min(time_diffs)]
@@ -189,11 +177,6 @@ calc_consistence_metrics <- function(methods,
           df_diff_to_final[method, idx] <- rowMeans(diff_final)
           df_abs_diff_to_final[method, idx] <- rowMeans(abs(diff_final))
           df_abs_diff_to_final[method, "num_est"] <- df_diff_to_final[method, "num_est"] <- ncol(diff_final)
-          
-          corrected_upwards <- diff_final %>%
-            mutate_all(list(~ ifelse(.>0, 1, 0)))
-          df_upward_correction[method, idx] <- rowMeans(corrected_upwards)
-          df_upward_correction[method, "num_est"] <- ncol(corrected_upwards)
           }
           
           if(method=="ETHZ_sliding_window"){
@@ -282,84 +265,6 @@ calc_consistence_metrics <- function(methods,
           
           
           ######
-          # MAD to first estimate...
-
-          # for each target date extract date and value of first estimate
-          {R_pub <- R_est_ts %>%
-            dplyr::select(starts_with("R_pub_") | date) %>%
-            column_to_rownames("date")
-          first_est <- R_est_ts %>%
-            dplyr::select(date) %>%
-            rename(target_date = date)
-          first_est$first_date <- apply(R_pub, 1,
-                                        function(x) names(which(!is.na(x)))[1]) %>%
-            substr(7, 16)
-          first_est$first_R <- apply(R_pub, 1,
-                                     function(x) x[which(!is.na(x))][1])
-          first_est <- first_est %>%
-            na.omit() %>%
-            dplyr::filter(target_date <= end_date)
-          
-          abs_diff_first <- R_est_ts %>%
-            dplyr::select(date | starts_with("R_pub_")) %>%
-            # only use rows for which the first published R value is in "first_est"
-            dplyr::filter(date %in% first_est$target_date) %>%
-            # calculate absolute difference to first published estimate for the target_date
-            mutate(across(!date, function(x) abs(x - first_est$first_R))) %>%
-            # add columns with difference between pub_dates
-            mutate(across(!date, list(lag = ~ {as_date(substr(cur_column(), 7, 16)) -
-                as_date(first_est[first_est$target_date == date, "first_date"])} ))) %>%
-            # order columns alphabetically
-            dplyr::select(colnames(.)[order(colnames(.))]) %>%
-            column_to_rownames("date") %>%
-            # select columns corresponding to pub_dates after start_date
-            dplyr::select(colnames(.)[as_date(substr(colnames(.), 7, 16)) >= start_date])
-          
-          # reshape wide to long
-          cols <- colnames(dplyr::select(abs_diff_first, !ends_with("_lag")))
-          abs_diff_first_long <- data.frame()
-          for (col in cols){
-            df <- abs_diff_first[,c(col, paste0(col, "_lag"))] %>% setNames(c("diff", "lag"))
-            abs_diff_first_long <- bind_rows(df, abs_diff_first_long)
-          }
-          abs_diff_first_long <- na.omit(abs_diff_first_long)
-          abs_diff_first_mean <- abs_diff_first_long %>%
-            group_by(lag) %>%
-            summarise(diff = mean(diff))
-          
-          idx <- as.character(intersect(0:max_lag, abs_diff_first_mean$lag))
-          df_diff_to_first[method, idx] <- abs_diff_first_mean %>%
-            dplyr::filter(as.character(lag) %in% idx) %>%
-            arrange(lag) %>%
-            dplyr::select(diff) %>% pull()}
-          
-          ######
-          # M(A)D to previous estimate...
-          
-          {R_pub <- R_est_ts %>%
-            dplyr::select(starts_with("R_pub_") | date) %>%
-            column_to_rownames("date") %>%
-            rename_with(~ substr(.x, 7, 16)) %>%
-            dplyr::select(all_of(available_pub_dates))
-          diff_prev <- data.frame(estimated_after = make_difftime(day = seq(max_lag, min_lag),
-                                                                  units = "day")) %>%
-            column_to_rownames(var = "estimated_after")
-          
-          for (c in colnames(R_pub)){
-            if ((as_date(c) - 1) %in% as_date(colnames(R_pub))){
-              j <- which(as_date(colnames(R_pub)) == as_date(c) - 1)
-              diff <- R_pub[,c] - R_pub[,j]
-              diff_prev[as.character(as_date(c) -
-                                       as_date(rownames(R_pub[which(!is.na(diff)),]))),
-                        c] <- diff %>% na.omit
-            }
-          }
-          
-          idx <- intersect(rownames(diff_prev), as.character(0:max_lag))
-          df_diff_to_prev[method, idx] <- rowMeans(diff_prev, na.rm = TRUE)[idx]
-          df_abs_diff_to_prev[method, idx] <- rowMeans(abs(diff_prev), na.rm = TRUE)[idx]}
-          
-          ######
           # extract labels...
           
           {labels <- R_est_ts %>%
@@ -406,10 +311,8 @@ calc_consistence_metrics <- function(methods,
   }
   
   return(list(df_CI_coverage, df_CI_width,
-              df_abs_diff_to_prev, df_abs_diff_to_final,
-              df_diff_to_prev, df_diff_to_final,
-              df_diff_to_first, df_labels,
-              df_upward_correction))
+              df_abs_diff_to_final, df_diff_to_final,
+              df_labels))
 }
 
 methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window",
@@ -420,46 +323,26 @@ for (d in c(50,70,80)[2]){
   path <- paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/", d, "/")
   write.csv(CI_eval[[1]], paste0(path, "95_CI_coverage.csv"))
   write.csv(CI_eval[[2]], paste0(path, "95_CI_width.csv"))
-  write.csv(CI_eval[[3]], paste0(path, "abs_diff_to_prev.csv"))
-  write.csv(CI_eval[[4]], paste0(path, "abs_diff_to_final.csv"))
-  write.csv(CI_eval[[5]], paste0(path, "diff_to_prev.csv"))
-  write.csv(CI_eval[[6]], paste0(path, "diff_to_final.csv"))
-  write.csv(CI_eval[[7]], paste0(path, "diff_to_first.csv"))
-  write.csv(CI_eval[[8]], paste0(path, "estimate_labels.csv"))
-  write.csv(CI_eval[[9]], paste0(path, "proportion_corrected_upward.csv"))
+  write.csv(CI_eval[[3]], paste0(path, "abs_diff_to_final.csv"))
+  write.csv(CI_eval[[4]], paste0(path, "diff_to_final.csv"))
+  write.csv(CI_eval[[5]], paste0(path, "estimate_labels.csv"))
 }
 
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
-for (d in c(50,70,80)[2]){
-  plot1 <- plot_CI_coverage_rates(days_until_final = d); plot1
-  plot2 <- plot_CI_widths(days_until_final = d); plot2
-  plot3 <- plot_diff_final(diff_type = "abs_diff", days_until_final = d); plot3
-  plot4 <- plot_diff_final(diff_type = "diff", days_until_final = d, ylim = c(-0.021,0.06)); plot4
-  #plot4 <- plot_proportion_corrected_upward(days_until_final = d); plot4
-  
-  consistence_plot <- ggarrange(plot1, plot2, plot3, plot4, ncol=2, nrow=2,
-                                labels = list("A", "B", "C", "D"),
-                                font.label = list(size = 18, face = "bold"),
-                                common.legend = T, legend="bottom",
-                                legend.grob = get_legend(plot3))
-  print(consistence_plot)
-  ggsave(consistence_plot, filename = paste0("Figures/CI/consistence_plots_", d, ".pdf"),
-         bg = "transparent", width = 16, height = 11.6)
-}
+d <- 70
+plot1 <- plot_CI_coverage_rates(days_until_final = d); plot1
+plot2 <- plot_CI_widths(days_until_final = d); plot2
+plot3 <- plot_diff_final(diff_type = "abs_diff", days_until_final = d); plot3
+plot4 <- plot_diff_final(diff_type = "diff", days_until_final = d, ylim = c(-0.021,0.06)); plot4
 
-# appendix
-plot_diff_prev_A <- plot_diff_prev(diff_type = "abs_diff", ylim = c(-0.01, 0.075)); plot_diff_prev_A
-plot_diff_prev_B <- plot_diff_prev(diff_type = "diff", ylim = c(-0.0035, 0.01)); plot_diff_prev_B
-plots_diff_prev <- ggarrange(plot_diff_prev_A, plot_diff_prev_B, ncol=2, nrow=1,
-                            labels = list("A", "B"),
-                            font.label = list(size = 18, face = "bold"),
-                            common.legend = T, legend="bottom",
-                            legend.grob = get_legend(plot_diff_prev_A))
-print(plots_diff_prev)
-ggsave(plots_diff_prev, filename = paste0("Figures/CI/diff_prev_plots.pdf"),
-       bg = "transparent", width = 16, height = 5)
-
-plot_abs_diff_first(max_lag=20)
+consistence_plot <- ggarrange(plot1, plot2, plot3, plot4, ncol=2, nrow=2,
+                              labels = list("A", "B", "C", "D"),
+                              font.label = list(size = 18, face = "bold", family = "serif"),
+                              common.legend = T, legend="bottom",
+                              legend.grob = get_legend(plot3))
+print(consistence_plot)
+ggsave(consistence_plot, filename = paste0("Figures/CI/consistence_plots_", d, ".pdf"),
+       bg = "transparent", width = 16, height = 11.6)
 
 
