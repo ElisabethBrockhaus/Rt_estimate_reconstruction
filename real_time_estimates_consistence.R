@@ -42,25 +42,25 @@ calc_consistence_metrics <- function(methods,
   n_CI <- length(methods_CI)
   n <- length(methods)
   
-  df_CI_coverage <- data.frame(matrix(rep(NA, (n_CI+2)*39), nrow = n_CI+2), row.names = c(methods_CI, "ETH_old", "ETH_new"))
-  colnames(df_CI_coverage) <- c(0:34, "num_CIs", "min_lag", "min_pub_date", "max_pub_date")
+  df_CI_coverage <- data.frame(matrix(rep(NA, (n_CI+2)*44), nrow = n_CI+2), row.names = c(methods_CI, "ETH_old", "ETH_new"))
+  colnames(df_CI_coverage) <- c(0:39, "num_CIs", "min_lag", "min_pub_date", "max_pub_date")
   
-  df_CI_width <- data.frame(matrix(rep(NA, (n_CI+2)*39), nrow = n_CI+2), row.names = c(methods_CI, "ETH_old", "ETH_new"))
-  colnames(df_CI_width) <- c(0:34, "num_CIs", "min_lag", "min_pub_date", "max_pub_date")
+  df_CI_width <- data.frame(matrix(rep(NA, (n_CI+2)*44), nrow = n_CI+2), row.names = c(methods_CI, "ETH_old", "ETH_new"))
+  colnames(df_CI_width) <- c(0:39, "num_CIs", "min_lag", "min_pub_date", "max_pub_date")
   
-  df_diff_to_final <- data.frame(matrix(rep(NA, (n+2)*36), nrow = n+2), row.names = c(methods, "ETH_old", "ETH_new"))
-  colnames(df_diff_to_final) <- c(0:34, "num_est")
+  df_diff_to_final <- data.frame(matrix(rep(NA, (n+2)*41), nrow = n+2), row.names = c(methods, "ETH_old", "ETH_new"))
+  colnames(df_diff_to_final) <- c(0:39, "num_est")
   
-  df_abs_diff_to_final <- data.frame(matrix(rep(NA, (n+2)*36), nrow = n+2), row.names = c(methods, "ETH_old", "ETH_new"))
-  colnames(df_abs_diff_to_final) <- c(0:34, "num_est")
+  df_abs_diff_to_final <- data.frame(matrix(rep(NA, (n+2)*41), nrow = n+2), row.names = c(methods, "ETH_old", "ETH_new"))
+  colnames(df_abs_diff_to_final) <- c(0:39, "num_est")
   
-  df_labels <- data.frame(matrix(rep(NA, n*36), nrow = n), row.names = methods)
-  colnames(df_labels) <- c(0:34, "num_est")
+  df_labels <- data.frame(matrix(rep(NA, n*41), nrow = n), row.names = methods)
+  colnames(df_labels) <- c(0:39, "num_est")
   
   for (method in methods){
     print(method)
     
-    max_lag <- 34
+    max_lag <- 39
 
     if (method == "globalrt_7d"){
       start_date <- start_globalrt
