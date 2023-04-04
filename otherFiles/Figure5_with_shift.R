@@ -1,5 +1,8 @@
-library(ggplot2)
-library(dplyr)
+library(ggpubr)
+
+setwd("../..")
+# needs to be the directory with the repos "Rt_estimate_reconstruction", "reproductive_numbers" 
+getwd()
 
 source("Rt_estimate_reconstruction/prepared_plots.R")
 
