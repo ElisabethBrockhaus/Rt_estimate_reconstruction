@@ -334,7 +334,7 @@ d <- 70
 plot1 <- plot_CI_coverage_rates(days_until_final = d); plot1
 plot2 <- plot_CI_widths(days_until_final = d); plot2
 plot3 <- plot_diff_final(diff_type = "abs_diff", days_until_final = d); plot3
-plot4 <- plot_diff_final(diff_type = "diff", days_until_final = d, ylim = c(-0.021,0.06)); plot4
+plot4 <- plot_diff_final(diff_type = "diff", days_until_final = d, ylim = c(-0.012,0.06)); plot4
 
 consistence_plot <- ggarrange(plot1, plot2, plot3, plot4, ncol=2, nrow=2,
                               labels = list("A", "B", "C", "D"),
