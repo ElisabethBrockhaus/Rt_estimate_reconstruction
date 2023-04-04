@@ -1153,7 +1153,7 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
     dplyr::select(as.character(0:20), "num_est") %>%
     rownames_to_column("method") %>%
     full_join(read_csv(paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/",
-                              days_until_final, "/", conf_level, "_CI_width.csv")) %>%
+                              days_until_final, "/95_CI_width.csv")) %>%
                 as.data.frame() %>%
                 column_to_rownames("...1") %>%
                 dplyr::select("min_lag") %>%
@@ -1197,7 +1197,6 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
                           ifelse(label=="estimate based on partial data", 2,
                                  ifelse(label=="forecast", 3, NA))))
   
-  diff_data_ETH <- diff_data %>% filter(method %in% c("ETH_old", "ETH_new"))
   diff_data <- diff_data %>% filter(!(method %in% c("ETH_old", "ETH_new")))
   
   diff_plot <- ggplot() +
@@ -1255,19 +1254,6 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
                 size = 4, family="serif",
                 show.legend = FALSE)
   }
-
-  diff_plot <- diff_plot +
-    geom_line(data=diff_data_ETH,
-              aes(x = variable, y = value, group=method),
-              size = 1, color=col_values["ETH"],
-              na.rm = T, show.legend=FALSE) +
-    geom_text(data=subset(diff_data_ETH, variable == -14),
-              aes(label = ifelse(method == "ETH_old", "old", "new"),
-                  x = variable+0.6,
-                  y = value),
-              color = col_values["ETH"],
-              size = 4, family="serif",
-              show.legend = FALSE)
   
   diff_plot <- diff_plot + 
     scale_color_manual(values=col_values, name="method", labels=unique(diff_data$legend)) +
