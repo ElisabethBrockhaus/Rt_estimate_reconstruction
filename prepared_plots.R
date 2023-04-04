@@ -894,7 +894,7 @@ plot_CI_coverage_rates <- function(conf_level = "95", days_until_final = 70){
       panel.grid.minor = element_blank()
     ) +
     ylab("coverage of final est.") +
-    coord_cartesian(xlim = c(-20.3, 0.3), ylim = c(-0.03, 1.03), expand = FALSE, clip = "off") +
+    coord_cartesian(xlim = c(-20.3, 0.3), ylim = c(-0.05, 1.05), expand = FALSE, clip = "off") +
     scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
   
   methods_legend <- unique(coverage_data$method)
@@ -907,6 +907,14 @@ plot_CI_coverage_rates <- function(conf_level = "95", days_until_final = 70){
                 size = 1.5, linetype=l, na.rm = T)
   }
   
+  coverage_plot <-  coverage_plot +
+    geom_text(data=subset(coverage_data, variable == -1 * min_lag),
+              aes(label = method, color = method,
+                  x = ifelse(method=="epiforecasts", variable-1, variable),
+                  y = ifelse(method=="globalrt", 1.025, value-0.02)),
+              size = 4, family="serif",
+              show.legend = FALSE)
+  
   coverage_plot <- coverage_plot +
     geom_line(data=coverage_data_ETH,
               aes(x = variable, y = value, group=method),
@@ -917,7 +925,7 @@ plot_CI_coverage_rates <- function(conf_level = "95", days_until_final = 70){
                   x = variable+0.6,
                   y = value),
               color = col_values["ETH"],
-              size = 5, family="serif",
+              size = 4, family="serif",
               show.legend = FALSE)
   
   coverage_plot <- coverage_plot +
@@ -928,7 +936,7 @@ plot_CI_coverage_rates <- function(conf_level = "95", days_until_final = 70){
     annotate("text", label = "nominal level: 95%", x = -2.5, y = 0.92, size = 5, family = "serif")
   
   coverage_plot <- coverage_plot +
-    guides(color = guide_legend(override.aes = list(size=3)))
+    guides(color = guide_legend(override.aes = list(size=3, label="")))
   
   ggsave(coverage_plot, filename = paste0("Figures/CI/", conf_level, "_coverage_rates.pdf"),
          bg = "transparent", width = 8, height = 5.8)
@@ -1012,6 +1020,15 @@ plot_CI_widths <- function(conf_level = "95", days_until_final = 70){
                 size = 1.5, linetype=l, na.rm = T)
   }
   
+  width_plot <-  width_plot +
+    geom_text(data=subset(width_data, variable == -1 * min_lag),
+              aes(label = method, color = method,
+                  x = ifelse(method=="epiforecasts", variable-1,
+                             ifelse(method=="globalrt", variable-1.5, variable)),
+                  y = ifelse(method %in% c("ETH", "globalrt"), value-0.02, value+0.02)),
+              size = 4, family="serif",
+              show.legend = FALSE)
+  
   width_plot <- width_plot +
     geom_line(data=width_data_ETH,
               aes(x = variable, y = value, group=method),
@@ -1019,8 +1036,8 @@ plot_CI_widths <- function(conf_level = "95", days_until_final = 70){
               na.rm = T, show.legend=FALSE) +
     geom_text(data=subset(width_data_ETH, variable == -14),
               aes(label = ifelse(method == "ETH_old", "old", "new"),
-                  x = variable+0.6,
-                  y = value),
+                  x = ifelse(method == "ETH_old", variable, variable+0.6),
+                  y = ifelse(method == "ETH_old", value-0.02, value)),
               color = col_values["ETH"],
               size = 5, family="serif",
               show.legend = FALSE)
@@ -1132,7 +1149,18 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
                                    days_until_final, "/",
                                    diff_type, "_to_final.csv")) %>%
     as.data.frame() %>%
-    column_to_rownames("...1")
+    column_to_rownames("...1") %>%
+    dplyr::select(as.character(0:20), "num_est") %>%
+    rownames_to_column("method") %>%
+    full_join(read_csv(paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/",
+                              days_until_final, "/", conf_level, "_CI_width.csv")) %>%
+                as.data.frame() %>%
+                column_to_rownames("...1") %>%
+                dplyr::select("min_lag") %>%
+                rownames_to_column("method"),
+              by = "method") %>%
+    column_to_rownames("method")
+  diff_to_final["Braunschweig", "min_lag"] <- 3
   
   labels <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/",
                             days_until_final, "/estimate_labels.csv")) %>%
@@ -1140,8 +1168,8 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
     dplyr::select(!num_est) %>%
     rename(method = ...1) %>%
     mutate(method = plyr::mapvalues(method,
-                                    c("ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
-                                    c("ETH",                 "globalrt",    "Ilmenau", "RKI")))
+                                    c("Braunschweig", "ETHZ_sliding_window", "globalrt_7d", "ilmenau", "RKI_7day"),
+                                    c("HZI",          "ETH",                 "globalrt",    "Ilmenau", "RKI")))
   
   labels[nrow(labels)+1:2,] <- labels[labels$method=="ETH",]
   labels[nrow(labels)-1,"method"] <- "ETH_old"
@@ -1208,6 +1236,26 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
                 size = 1.5, linetype=l, na.rm = T)
   }
   
+  if(diff_type=="abs_diff"){
+    diff_plot <-  diff_plot +
+      geom_text(data=subset(diff_data, variable == -1 * min_lag),
+                aes(label = method, color = method,
+                    x = ifelse(method %in% c("Ilmenau", "epiforecasts"), variable-1.4, variable+0.7),
+                    y = ifelse(method == "Ilmenau", 0.17, value+0.001)),
+                size = 4, family="serif",
+                show.legend = FALSE)
+  } else {
+    diff_plot <-  diff_plot +
+      geom_text(data=subset(diff_data, variable == -1 * min_lag),
+                aes(label = method, color = method,
+                    x = ifelse(method %in% c("Ilmenau", "epiforecasts"), variable-1.8, variable+0.3),
+                    y = ifelse(method == "Ilmenau", 0.055,
+                               ifelse(method =="rtlive", value+0.003,
+                                      ifelse(method %in% c("epiforecasts", "RKI"), value-0.002, value+0.002)))),
+                size = 4, family="serif",
+                show.legend = FALSE)
+  }
+
   diff_plot <- diff_plot +
     geom_line(data=diff_data_ETH,
               aes(x = variable, y = value, group=method),
@@ -1218,7 +1266,7 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
                   x = variable+0.6,
                   y = value),
               color = col_values["ETH"],
-              size = 5, family="serif",
+              size = 4, family="serif",
               show.legend = FALSE)
   
   diff_plot <- diff_plot + 
