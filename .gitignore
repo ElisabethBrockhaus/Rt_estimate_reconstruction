@@ -1,11 +1,16 @@
 # environment
 *.Rhistory
+*.Rapp.history
 *.RData
+*.DS_Store
 
 # checkpoints
 */.ipynb_checkpoints
 */.pytest_cache
 *.pyc
+
+# files that are not longer relevant for the paper
+oldFiles/
 
 # data that is not needed for estimation
 incidence_data/*
