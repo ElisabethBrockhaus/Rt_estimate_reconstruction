@@ -1,3 +1,6 @@
+# this file was copied from https://github.com/ekkrym/CovidTrendModel/tree/main/source
+# MIT license
+
 import numpy as np
 from statsmodels.tsa.seasonal import STL
 
