@@ -70,7 +70,6 @@ load_published_R_estimates <- function(source,
 ####################################################
 # load incidence data depending on source/preproc. #
 ####################################################
-# TODO: add rtlive and globalrt
 load_incidence_data <- function(method, location="DE", ...){
   
   # depending on method call functions
@@ -199,7 +198,6 @@ load_ETH_data <- function(country = "Germany", region = "DEU", source = "",
 load_Ilmenau_data <- function(){
   
   # path to preprocessed RKI incidence data
-  # TODO: make sure that file exists
   path_incid <- "Rt_estimate_reconstruction/Ilmenau/data_ger_tot.qs"
   
   # load incidence data
