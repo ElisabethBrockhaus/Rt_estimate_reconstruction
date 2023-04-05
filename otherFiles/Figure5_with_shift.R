@@ -81,7 +81,7 @@ coverage_plot <- ggplot() +
     panel.grid.major = element_line(),
     panel.grid.minor = element_blank()
   ) +
-  ylab("coverage of final est.") +
+  ylab("coverage of consolidated est.") +
   coord_cartesian(xlim = c(-20.3, 0.3), ylim = c(-0.05, 1.05), expand = FALSE, clip = "off") +
   scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
 
@@ -301,8 +301,8 @@ for(diff_type in c("abs_diff", "diff")) {
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
-    ylab(ifelse(diff_type == "diff", "MSD to final est.",
-                "MAD to final est.")) +
+    ylab(ifelse(diff_type == "diff", "MSD to consolidated est.",
+                "MAD to consolidated est.")) +
     coord_cartesian(xlim = c(-20.3, 0.3), ylim = ylim, expand = FALSE) +
     scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
   

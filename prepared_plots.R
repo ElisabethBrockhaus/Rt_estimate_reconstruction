@@ -893,7 +893,7 @@ plot_CI_coverage_rates <- function(conf_level = "95", days_until_final = 70){
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
-    ylab("coverage of final est.") +
+    ylab("coverage of consolidated est.") +
     coord_cartesian(xlim = c(-20.3, 0.3), ylim = c(-0.05, 1.05), expand = FALSE, clip = "off") +
     scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
   
@@ -1215,8 +1215,8 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
-    ylab(ifelse(diff_type == "diff", "MSD to final est.",
-                "MAD to final est.")) +
+    ylab(ifelse(diff_type == "diff", "MSD to consolidated est.",
+                "MAD to consolidated est.")) +
     coord_cartesian(xlim = c(-20.3, 0.3), ylim = ylim, expand = FALSE) +
     scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
   
