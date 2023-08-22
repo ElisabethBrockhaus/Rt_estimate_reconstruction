@@ -1215,8 +1215,11 @@ plot_diff_final <- function(diff_type = "abs_diff", ylim = c(-0.01, 0.175), days
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
-    ylab(ifelse(diff_type == "diff", "MSD to consolidated est.",
-                "MAD to consolidated est.")) +
+    ylab(switch(diff_type,
+                "diff" = "MSD to consolidated est.",
+                "abs_diff" = "MAD to consolidated est.",
+                "switch" = "prop. flip above / below 1",
+                "switch2" = "prop. flip above / below [0.97, 1.03]    ")) +
     coord_cartesian(xlim = c(-20.3, 0.3), ylim = ylim, expand = FALSE) +
     scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
   

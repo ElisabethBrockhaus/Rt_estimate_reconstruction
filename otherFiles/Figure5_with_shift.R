@@ -238,12 +238,12 @@ ggsave(width_plot, filename = paste0("Figures/CI/", conf_level, "_CI_widths_shif
 # diff to final #
 #################
   
-for(diff_type in c("abs_diff", "diff")) {
-  if(diff_type == "abs_diff"){
-    ylim <- c(-0.01, 0.175)
-  } else {
-    ylim <- c(-0.018, 0.06)
-  }
+for(diff_type in c("abs_diff", "diff", "switch", "switch2")) {
+  ylim <- switch (diff_type,
+              "abs_diff" = c(-0.01, 0.175),
+              "diff" = c(-0.018, 0.06),
+              "switch" = c(-0.01, 0.4),
+              "switch2" = c(-0.01, 0.4))
   
   diff_to_final <- read_csv(paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/",
                                    days_until_final, "/",
@@ -285,7 +285,7 @@ for(diff_type in c("abs_diff", "diff")) {
   
   diff_data <- diff_data %>% filter(!(method %in% c("ETH_old", "ETH_new")))
   
-  diff_plot <- ggplot() +
+  diff_plot_temp <- ggplot() +
     theme_minimal(base_family="serif") +
     theme(
       plot.margin = unit(c(3,14,2,3), "mm"),
@@ -301,13 +301,16 @@ for(diff_type in c("abs_diff", "diff")) {
       panel.grid.major = element_line(),
       panel.grid.minor = element_blank()
     ) +
-    ylab(ifelse(diff_type == "diff", "MSD to consolidated est.",
-                "MAD to consolidated est.")) +
+    ylab(switch(diff_type,
+                "diff" = "MSD to consolidated est.",
+                "abs_diff" = "MAD to consolidated est.",
+                "switch" = "proportion flip above / below 1",
+                "switch2" = "proportion flip above / below [0.97, 1.03]")) +
     coord_cartesian(xlim = c(-20.3, 0.3), ylim = ylim, expand = FALSE) +
     scale_x_continuous(labels = paste0(seq(20, 0, -5), "d back"))
   
   if (diff_type == "diff") {
-    diff_plot <- diff_plot + geom_hline(yintercept = 0)
+    diff_plot_temp <- diff_plot_temp + geom_hline(yintercept = 0)
   }
   
   # get colors and legend names
@@ -315,14 +318,14 @@ for(diff_type in c("abs_diff", "diff")) {
   col_values <- get_colors(methods = methods_legend, palette = "methods")
   
   for (l in 1:3){
-    diff_plot <-  diff_plot +
+    diff_plot_temp <-  diff_plot_temp +
       geom_line(data=diff_data[diff_data$label<=l,],
                 aes(x = variable, y = value, color=method),
                 size = 1.5, linetype=l, na.rm = T)
   }
   
   if(diff_type=="abs_diff"){
-    diff_plot <-  diff_plot +
+    diff_plot_temp <-  diff_plot_temp +
       geom_text(data=subset(diff_data, (variable == -1 * min_lag + optimal_shift[method]) |
                               (variable == 0 & !(method %in% c("ETH", "Ilmenau", "RKI")))),
                 aes(label = method, color = method,
@@ -336,7 +339,7 @@ for(diff_type in c("abs_diff", "diff")) {
                 size = 4, family="serif",
                 show.legend = FALSE)
   } else {
-    diff_plot <-  diff_plot +
+    diff_plot_temp <-  diff_plot_temp +
       geom_text(data=subset(diff_data, (variable == -1 * min_lag + optimal_shift[method]) |
                               (variable == 0 & !(method %in% c("ETH", "Ilmenau", "RKI")))),
                 aes(label = method, color = method,
@@ -350,12 +353,12 @@ for(diff_type in c("abs_diff", "diff")) {
                 show.legend = FALSE)
   }
   
-  diff_plot <- diff_plot + 
+  diff_plot_temp <- diff_plot_temp + 
     scale_color_manual(values=col_values, name="method", labels=unique(diff_data$legend)) +
     guides(color = guide_legend(override.aes = list(size=3)))
   
   if (dim(subset(diff_data, value > ylim[2]))[1] > 0) {
-    diff_plot <- diff_plot + 
+    diff_plot_temp <- diff_plot_temp + 
       geom_text(data=subset(diff_data, value > ylim[2]),
                 aes(label = round(value, 2),
                     x = variable,
@@ -366,7 +369,7 @@ for(diff_type in c("abs_diff", "diff")) {
                 show.legend = FALSE)
   }
   if (dim(subset(diff_data, value < ylim[1]))[1] > 0) {
-    diff_plot <- diff_plot + 
+    diff_plot_temp <- diff_plot_temp + 
       geom_text(data=subset(diff_data, value < ylim[1]),
                 aes(label = round(value, 2),
                     x = variable,
@@ -377,12 +380,12 @@ for(diff_type in c("abs_diff", "diff")) {
                 show.legend = FALSE)   
   }
   
-  print(diff_plot)
+  print(diff_plot_temp)
   
-  ggsave(diff_plot, filename = paste0("Figures/CI/", diff_type, "_to_final.pdf"),
+  ggsave(diff_plot_temp, filename = paste0("Figures/CI/", diff_type, "_to_final.pdf"),
          bg = "transparent", width = 8, height = 5.8)
   
-  assign(paste0(diff_type, "_plot"), diff_plot)
+  assign(paste0(diff_type, "_plot"), diff_plot_temp)
 }
 
 
@@ -390,13 +393,14 @@ for(diff_type in c("abs_diff", "diff")) {
 # put together #
 ################
 
-consistence_plot <- ggarrange(coverage_plot, width_plot, abs_diff_plot, diff_plot, ncol=2, nrow=2,
-                              labels = list("A", "B", "C", "D"),
+consistence_plot <- ggarrange(coverage_plot, width_plot, abs_diff_plot, diff_plot,
+                              switch_plot, switch2_plot, ncol=2, nrow=3,
+                              labels = list("A", "B", "C", "D", "E", "F"),
                               font.label = list(size = 18, face = "bold", family = "serif"),
                               common.legend = T, legend="bottom",
                               legend.grob = get_legend(abs_diff_plot))
 print(consistence_plot)
 ggsave(consistence_plot, filename = "Figures/CI/consistence_plots_with_shift.pdf",
-       bg = "transparent", width = 16, height = 11.6)
+       bg = "transparent", width = 16, height = 13.6)
 
 

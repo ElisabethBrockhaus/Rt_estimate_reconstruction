@@ -1,6 +1,6 @@
 library(ggpubr)
 
-setwd("..")
+setwd("/home/johannes/Documents/Projects/R_t")
 # needs to be the directory with the repos "Rt_estimate_reconstruction", "reproductive_numbers" 
 getwd()
 
@@ -53,6 +53,9 @@ calc_consistence_metrics <- function(methods,
   
   df_abs_diff_to_final <- data.frame(matrix(rep(NA, (n+2)*41), nrow = n+2), row.names = c(methods, "ETH_old", "ETH_new"))
   colnames(df_abs_diff_to_final) <- c(0:39, "num_est")
+  
+  df_switch_final <- df_switch2_final <- data.frame(matrix(rep(NA, (n+2)*41), nrow = n+2), row.names = c(methods, "ETH_old", "ETH_new"))
+  colnames(df_switch_final) <- colnames(df_switch2_final) <- c(0:39, "num_est")
   
   df_labels <- data.frame(matrix(rep(NA, n*41), nrow = n), row.names = methods)
   colnames(df_labels) <- c(0:39, "num_est")
@@ -155,7 +158,7 @@ calc_consistence_metrics <- function(methods,
             column_to_rownames("date") %>%
             rename_with(~ substr(.x, 7, 16)) %>%
             dplyr::select(all_of(available_pub_dates))
-          diff_final <- data.frame(estimated_after = make_difftime(day = seq(0, max_lag),
+          diff_final <- switch_final <- switch2_final <- data.frame(estimated_after = make_difftime(day = seq(0, max_lag),
                                                                    units = "day")) %>%
             column_to_rownames(var = "estimated_after")
           
@@ -163,9 +166,20 @@ calc_consistence_metrics <- function(methods,
             time_diffs <- as_date(available_pub_dates) - as_date(i_realtime)
             time_diffs[time_diffs<days_until_final] <- 1000 # "big-M" in order to only consider dates at least days_until_final days later 
             i_final <- available_pub_dates[which.min(time_diffs)]
+            
             diff <- R_pub[,i_final] - R_pub[,i_realtime]
             i_diff <- as.character(as_date(i_realtime) - as_date(rownames(R_pub[which(!is.na(diff)),])))
             diff_final[i_diff, i_realtime] <- diff %>% na.omit()
+            
+            switch <- as.numeric((R_pub[,i_final] > 1) != (R_pub[,i_realtime] > 1))
+            i_switch <- as.character(as_date(i_realtime) - as_date(rownames(R_pub[which(!is.na(switch)),])))
+            switch_final[i_switch, i_realtime] <- switch %>% na.omit()
+            
+            switch2 <- as.numeric(((R_pub[,i_final] > 1.03) &(R_pub[,i_realtime] < 0.97)) |
+                                   ((R_pub[,i_final] < 0.97) & (R_pub[,i_realtime] > 1.03)))
+            i_switch2 <- as.character(as_date(i_realtime) - as_date(rownames(R_pub[which(!is.na(switch2)),])))
+            switch2_final[i_switch2, i_realtime] <- switch2 %>% na.omit()
+            
           }
           
           # extract relevant rows
@@ -177,6 +191,25 @@ calc_consistence_metrics <- function(methods,
           df_diff_to_final[method, idx] <- rowMeans(diff_final)
           df_abs_diff_to_final[method, idx] <- rowMeans(abs(diff_final))
           df_abs_diff_to_final[method, "num_est"] <- df_diff_to_final[method, "num_est"] <- ncol(diff_final)
+          
+          # extract relevant rows for switch
+          idx_switch <- intersect(rownames(switch_final), as.character(min_lag:max_lag))
+          switch_final <- switch_final[idx_switch,]
+          # drop columns containing any NA
+          switch_final <- switch_final[, colSums(is.na(switch_final)) == 0]
+          
+          df_switch_final[method, idx_switch] <- rowMeans(switch_final)
+          df_switch_final[method, "num_est"] <- ncol(switch_final)
+          
+          
+          # extract relevant rows for switch2
+          idx_switch2 <- intersect(rownames(switch2_final), as.character(min_lag:max_lag))
+          switch2_final <- switch2_final[idx_switch2,]
+          # drop columns containing any NA
+          switch2_final <- switch2_final[, colSums(is.na(switch2_final)) == 0]
+          
+          df_switch2_final[method, idx_switch2] <- rowMeans(switch2_final)
+          df_switch2_final[method, "num_est"] <- ncol(switch2_final)
           }
           
           if(method=="ETHZ_sliding_window"){
@@ -192,6 +225,7 @@ calc_consistence_metrics <- function(methods,
           
           dates_used_for_diff_to_final <- colnames(diff_final)
 
+        
                     
           ######
           # CI coverage rates and width...
@@ -310,22 +344,30 @@ calc_consistence_metrics <- function(methods,
     }
   }
   
-  return(list(df_CI_coverage, df_CI_width,
-              df_abs_diff_to_final, df_diff_to_final,
-              df_labels))
+  return(list(CI_coverage = df_CI_coverage, 
+              CI_width = df_CI_width,
+              abs_diff_to_final = df_abs_diff_to_final, 
+              diff_to_final = df_diff_to_final,
+              switch_final = df_switch_final,
+              switch2_final = df_switch2_final,
+              labels = df_labels))
 }
 
 methods <- c("Braunschweig", "epiforecasts", "ETHZ_sliding_window",
              "globalrt_7d", "ilmenau", "RKI_7day", "rtlive", "SDSC")
 
+# methods <- c("rtlive")
+
 for (d in c(50,70,80)[2]){
   CI_eval <- calc_consistence_metrics(methods, days_until_final=d)
   path <- paste0("Rt_estimate_reconstruction/otherFiles/consistence_measures/", d, "/")
-  write.csv(CI_eval[[1]], paste0(path, "95_CI_coverage.csv"))
-  write.csv(CI_eval[[2]], paste0(path, "95_CI_width.csv"))
-  write.csv(CI_eval[[3]], paste0(path, "abs_diff_to_final.csv"))
-  write.csv(CI_eval[[4]], paste0(path, "diff_to_final.csv"))
-  write.csv(CI_eval[[5]], paste0(path, "estimate_labels.csv"))
+  write.csv(CI_eval$CI_coverage, paste0(path, "95_CI_coverage.csv"))
+  write.csv(CI_eval$CI_width, paste0(path, "95_CI_width.csv"))
+  write.csv(CI_eval$abs_diff_to_final, paste0(path, "abs_diff_to_final.csv"))
+  write.csv(CI_eval$diff_to_final, paste0(path, "diff_to_final.csv"))
+  write.csv(CI_eval$switch_to_final, paste0(path, "switch_to_final.csv"))
+  write.csv(CI_eval$switch2_to_final, paste0(path, "switch2_to_final.csv"))
+  write.csv(CI_eval$labels, paste0(path, "estimate_labels.csv"))
 }
 
 source("Rt_estimate_reconstruction/prepared_plots.R")
@@ -335,14 +377,28 @@ plot1 <- plot_CI_coverage_rates(days_until_final = d); plot1
 plot2 <- plot_CI_widths(days_until_final = d); plot2
 plot3 <- plot_diff_final(diff_type = "abs_diff", days_until_final = d); plot3
 plot4 <- plot_diff_final(diff_type = "diff", days_until_final = d, ylim = c(-0.012,0.06)); plot4
+plot5 <- plot_diff_final(diff_type = "switch", days_until_final = d, ylim = c(-0.012,0.4)); plot5
+plot6 <- plot_diff_final(diff_type = "switch2", days_until_final = d, ylim = c(-0.012,0.4)); plot6
 
-consistence_plot <- ggarrange(plot1, plot2, plot3, plot4, ncol=2, nrow=2,
-                              labels = list("A", "B", "C", "D"),
+# consistence plot for main manuscript:
+consistence_plot <- ggarrange(plot1, plot2, plot3, plot4, plot5, plot6, ncol=2, nrow=3,
+                              labels = list("A", "B", "C", "D", "E", "F"),
                               font.label = list(size = 18, face = "bold", family = "serif"),
                               common.legend = T, legend="bottom",
                               legend.grob = get_legend(plot3))
 print(consistence_plot)
 ggsave(consistence_plot, filename = paste0("Figures/CI/consistence_plots_", d, ".pdf"),
-       bg = "transparent", width = 16, height = 11.6)
+       bg = "transparent", width = 16, height = 13.6)
+
+
+# # supplementary figure on switching above / below 0 or [0.97, 1.03]
+# switch_plot <- ggarrange(plot5, plot6, ncol=2, nrow=1,
+#                               labels = list("A", "B"),
+#                               font.label = list(size = 18, face = "bold", family = "serif"),
+#                               common.legend = T, legend="bottom",
+#                               legend.grob = get_legend(plot3))
+# print(switch_plot)
+# ggsave(switch_plot, filename = paste0("Figures/CI/switch_plots_", d, ".pdf"),
+#        bg = "transparent", width = 16, height = 6)
 
 
